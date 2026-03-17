@@ -70,7 +70,7 @@ export function generateTournaments(count = 12): Tournament[] {
 export function generateUser(overrides?: Partial<User>): User {
   return {
     id: faker.string.uuid(),
-    username: faker.internet.userName(),
+    username: faker.internet.username(),
     email: faker.internet.email(),
     token: faker.string.alphanumeric(64),
     ...overrides,

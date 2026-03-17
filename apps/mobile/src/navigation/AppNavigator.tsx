@@ -6,6 +6,7 @@ import TournamentListScreen from '../screens/TournamentListScreen';
 import TournamentDetailScreen from '../screens/TournamentDetailScreen';
 import LoginScreen from '../screens/LoginScreen';
 import RegisterScreen from '../screens/RegisterScreen';
+import OnboardingScreen from '../screens/OnboardingScreen';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -40,6 +41,11 @@ export default function AppNavigator() {
           name="Register"
           component={RegisterScreen}
           options={{ title: 'Create Account' }}
+        />
+        <Stack.Screen
+          name="Onboarding"
+          component={OnboardingScreen}
+          options={{ headerShown: false }}
         />
       </Stack.Navigator>
     </NavigationContainer>

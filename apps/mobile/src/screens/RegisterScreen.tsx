@@ -37,7 +37,7 @@ export default function RegisterScreen({ navigation }: Props) {
     clearError();
     try {
       await register({ username, email, password });
-      navigation.navigate("TournamentList");
+      navigation.replace("Onboarding");
     } catch {
       // error displayed from context
     }

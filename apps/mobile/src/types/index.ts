@@ -41,4 +41,5 @@ export type RootStackParamList = {
   TournamentDetail: { tournamentId: string };
   Login: { redirect?: 'tournament'; tournamentId?: string };
   Register: undefined;
+  Onboarding: undefined;
 };
