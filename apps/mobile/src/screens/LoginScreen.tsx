@@ -39,7 +39,7 @@ export default function LoginScreen({ navigation, route }: Props) {
       if (redirect === "tournament" && tournamentId) {
         navigation.replace("TournamentDetail", { tournamentId });
       } else {
-        navigation.goBack();
+        navigation.replace("MainTabs");
       }
     } catch {
       // error displayed from context
@@ -52,15 +52,16 @@ export default function LoginScreen({ navigation, route }: Props) {
       <SafeAreaView style={styles.safeArea}>
         {/* Black top area */}
         <View style={styles.topArea}>
-          <TouchableOpacity
-            onPress={() => navigation.goBack()}
-            style={styles.backBtn}
-            activeOpacity={0.7}
-          >
-            <Text style={styles.backArrow}>←</Text>
-            <Text style={styles.backText}>Back</Text>
-          </TouchableOpacity>
-          <Text style={styles.topTitle}>Login</Text>
+          {navigation.canGoBack() && (
+            <TouchableOpacity
+              onPress={() => navigation.goBack()}
+              style={styles.backBtn}
+              activeOpacity={0.7}
+            >
+              <Text style={styles.backArrow}>←</Text>
+              <Text style={styles.backText}>Back</Text>
+            </TouchableOpacity>
+          )}
         </View>
 
         {/* Orange gradient card */}
@@ -125,11 +126,14 @@ export default function LoginScreen({ navigation, route }: Props) {
                 {loading ? (
                   <ActivityIndicator color="#E8601A" />
                 ) : (
-                  <Text style={styles.signInBtnText}>Sign Up</Text>
+                  <Text style={styles.signInBtnText}>Accedi</Text>
                 )}
               </TouchableOpacity>
 
-              <TouchableOpacity style={styles.linkBtn}>
+              <TouchableOpacity
+                style={styles.linkBtn}
+                onPress={() => navigation.navigate("ForgotPassword")}
+              >
                 <Text style={styles.linkText}>Forgot Password?</Text>
               </TouchableOpacity>
 
@@ -164,13 +168,12 @@ const styles = StyleSheet.create({
   topArea: {
     paddingHorizontal: 20,
     paddingTop: 8,
-    paddingBottom: 80,
+    paddingBottom: 100,
   },
   backBtn: {
     flexDirection: "row",
     alignItems: "center",
     gap: 6,
-    marginBottom: 12,
   },
   backArrow: { color: "#fff", fontSize: 20, lineHeight: 24 },
   backText: { color: "#fff", fontSize: 15, fontWeight: "500" },

@@ -2,6 +2,40 @@ import { isMocking, apiFetch } from './config';
 import { generateUser } from '../mock/data';
 import type { LoginCredentials, RegisterCredentials, User } from '../types';
 
+export async function forgotPassword(email: string): Promise<void> {
+  if (isMocking) {
+    await new Promise((r) => setTimeout(r, 800));
+    if (!email) throw new Error('Email is required');
+    return;
+  }
+  return apiFetch('/auth/forgot-password', {
+    method: 'POST',
+    body: JSON.stringify({ email }),
+  });
+}
+
+export async function updateProfile(
+  data: { firstName?: string; lastName?: string; username?: string; location?: string; password?: string; avatarUri?: string },
+  currentUser: User | null,
+): Promise<User> {
+  if (isMocking) {
+    await new Promise((r) => setTimeout(r, 600));
+    if (!currentUser) throw new Error('Not authenticated');
+    return {
+      ...currentUser,
+      ...(data.firstName !== undefined ? { firstName: data.firstName } : {}),
+      ...(data.lastName !== undefined ? { lastName: data.lastName } : {}),
+      ...(data.username ? { username: data.username } : {}),
+      ...(data.location !== undefined ? { location: data.location } : {}),
+      ...(data.avatarUri !== undefined ? { avatarUri: data.avatarUri } : {}),
+    };
+  }
+  return apiFetch<User>('/auth/profile', {
+    method: 'PATCH',
+    body: JSON.stringify(data),
+  });
+}
+
 export async function login(credentials: LoginCredentials): Promise<User> {
   if (isMocking) {
     await new Promise((r) => setTimeout(r, 800));
@@ -23,7 +57,13 @@ export async function register(credentials: RegisterCredentials): Promise<User> 
     if (!credentials.username || !credentials.email || !credentials.password) {
       throw new Error('All fields are required');
     }
-    return generateUser({ email: credentials.email, username: credentials.username });
+    return generateUser({
+      firstName: credentials.firstName,
+      lastName: credentials.lastName,
+      email: credentials.email,
+      username: credentials.username,
+      dateOfBirth: credentials.dateOfBirth,
+    });
   }
 
   return apiFetch<User>('/auth/register', {

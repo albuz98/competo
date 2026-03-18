@@ -4,7 +4,6 @@ import {
   Text,
   TouchableOpacity,
   StyleSheet,
-  ScrollView,
   Animated,
   Dimensions,
   NativeSyntheticEvent,
@@ -54,7 +53,7 @@ const SLIDES = [
 
 export default function OnboardingScreen({ navigation }: Props) {
   const [activeIndex, setActiveIndex] = useState(0);
-  const scrollRef = useRef<ScrollView>(null);
+  const scrollRef = useRef<any>(null);
   const scrollX = useRef(new Animated.Value(0)).current;
 
   useLayoutEffect(() => {
@@ -67,11 +66,11 @@ export default function OnboardingScreen({ navigation }: Props) {
       scrollRef.current?.scrollTo({ x: next * SNAP, animated: true });
       setActiveIndex(next);
     } else {
-      navigation.replace("TournamentList");
+      navigation.reset({ index: 0, routes: [{ name: "MainTabs" }] });
     }
   };
 
-  const skip = () => navigation.replace("TournamentList");
+  const skip = () => navigation.reset({ index: 0, routes: [{ name: "MainTabs" }] });
 
   const slide = SLIDES[activeIndex];
 
@@ -87,7 +86,7 @@ export default function OnboardingScreen({ navigation }: Props) {
 
         {/* Carousel */}
         <View style={styles.carouselWrapper}>
-          <ScrollView
+          <Animated.ScrollView
             ref={scrollRef}
             horizontal
             decelerationRate="fast"
@@ -162,7 +161,7 @@ export default function OnboardingScreen({ navigation }: Props) {
                 </Animated.View>
               );
             })}
-          </ScrollView>
+          </Animated.ScrollView>
         </View>
 
         {/* Dots */}

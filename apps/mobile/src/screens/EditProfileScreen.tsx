@@ -1,4 +1,4 @@
-import React, { useState, useLayoutEffect } from "react";
+import React, { useState } from "react";
 import {
   View,
   Text,
@@ -17,59 +17,45 @@ import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import type { RootStackParamList } from "../types";
 import { useAuth } from "../context/AuthContext";
 
-type Props = NativeStackScreenProps<RootStackParamList, "Register">;
+type Props = NativeStackScreenProps<RootStackParamList, "EditProfile">;
 
-export default function RegisterScreen({ navigation }: Props) {
-  const { register, loading, error, clearError } = useAuth();
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
-  const [username, setUsername] = useState("");
-  const [email, setEmail] = useState("");
-  const [dateOfBirth, setDateOfBirth] = useState("");
-  const [password, setPassword] = useState("");
+export default function EditProfileScreen({ navigation }: Props) {
+  const { user, location, updateProfile } = useAuth();
+
+  const [username, setUsername] = useState(user?.username ?? "");
+  const [locationVal, setLocationVal] = useState(location ?? "");
+  const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  useLayoutEffect(() => {
-    navigation.setOptions({ headerShown: false });
-  }, [navigation]);
-
-  // Auto-format GG/MM/AAAA as the user types
-  const handleDateChange = (text: string) => {
-    const digits = text.replace(/\D/g, "").slice(0, 8);
-    let formatted = digits;
-    if (digits.length > 4) formatted = `${digits.slice(0, 2)}/${digits.slice(2, 4)}/${digits.slice(4)}`;
-    else if (digits.length > 2) formatted = `${digits.slice(0, 2)}/${digits.slice(2)}`;
-    setDateOfBirth(formatted);
-  };
-
-  const isDobValid = /^\d{2}\/\d{2}\/\d{4}$/.test(dateOfBirth);
   const passwordMismatch =
-    confirmPassword.length > 0 && password !== confirmPassword;
+    newPassword.length > 0 &&
+    confirmPassword.length > 0 &&
+    newPassword !== confirmPassword;
 
   const isValid =
-    firstName.trim().length >= 2 &&
-    lastName.trim().length >= 2 &&
-    username.length >= 3 &&
-    email.includes("@") &&
-    isDobValid &&
-    password.length >= 6 &&
-    password === confirmPassword;
+    username.trim().length >= 2 &&
+    (newPassword === "" ||
+      (newPassword.length >= 6 && newPassword === confirmPassword));
 
-  const handleRegister = async () => {
+  const handleSave = async () => {
     if (!isValid) return;
-    clearError();
+    setError(null);
+    setLoading(true);
     try {
-      await register({
-        firstName: firstName.trim(),
-        lastName: lastName.trim(),
-        username,
-        email,
-        dateOfBirth,
-        password,
+      await updateProfile({
+        username: username.trim(),
+        location: locationVal.trim() || undefined,
+        ...(newPassword ? { password: newPassword } : {}),
       });
-      navigation.replace("Onboarding");
-    } catch {
-      // error displayed from context
+      navigation.goBack();
+    } catch (e) {
+      setError(
+        e instanceof Error ? e.message : "Errore durante il salvataggio"
+      );
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -103,37 +89,13 @@ export default function RegisterScreen({ navigation }: Props) {
               keyboardShouldPersistTaps="handled"
               showsVerticalScrollIndicator={false}
             >
-              <Text style={styles.cardTitle}>Crea account</Text>
+              <Text style={styles.cardTitle}>Modifica Profilo</Text>
 
               {error && (
                 <View style={styles.errorBox}>
                   <Text style={styles.errorText}>{error}</Text>
                 </View>
               )}
-
-              <Text style={styles.label}>NOME</Text>
-              <TextInput
-                style={styles.input}
-                value={firstName}
-                onChangeText={setFirstName}
-                placeholder="Mario"
-                autoCapitalize="words"
-                autoCorrect={false}
-                placeholderTextColor="rgba(255,255,255,0.5)"
-                returnKeyType="next"
-              />
-
-              <Text style={styles.label}>COGNOME</Text>
-              <TextInput
-                style={styles.input}
-                value={lastName}
-                onChangeText={setLastName}
-                placeholder="Rossi"
-                autoCapitalize="words"
-                autoCorrect={false}
-                placeholderTextColor="rgba(255,255,255,0.5)"
-                returnKeyType="next"
-              />
 
               <Text style={styles.label}>USERNAME</Text>
               <TextInput
@@ -142,85 +104,76 @@ export default function RegisterScreen({ navigation }: Props) {
                 onChangeText={setUsername}
                 placeholder="mariorossi99"
                 autoCapitalize="none"
-                autoCorrect={false}
                 placeholderTextColor="rgba(255,255,255,0.5)"
                 returnKeyType="next"
               />
 
               <Text style={styles.label}>EMAIL</Text>
+              <View style={styles.inputReadonly}>
+                <Text style={styles.inputReadonlyText}>
+                  {user?.email ?? ""}
+                </Text>
+              </View>
+
+              <Text style={styles.label}>POSIZIONE</Text>
               <TextInput
                 style={styles.input}
-                value={email}
-                onChangeText={setEmail}
-                placeholder="hello@gmail.com"
-                keyboardType="email-address"
-                autoCapitalize="none"
-                autoComplete="email"
+                value={locationVal}
+                onChangeText={setLocationVal}
+                placeholder="Es. Milano, Roma..."
                 placeholderTextColor="rgba(255,255,255,0.5)"
                 returnKeyType="next"
               />
 
-              <Text style={styles.label}>DATA DI NASCITA</Text>
+              <Text style={styles.label}>NUOVA PASSWORD (opzionale)</Text>
               <TextInput
                 style={styles.input}
-                value={dateOfBirth}
-                onChangeText={handleDateChange}
-                placeholder="GG/MM/AAAA"
-                keyboardType="number-pad"
-                placeholderTextColor="rgba(255,255,255,0.5)"
-                returnKeyType="next"
-                maxLength={10}
-              />
-
-              <Text style={styles.label}>PASSWORD</Text>
-              <TextInput
-                style={styles.input}
-                value={password}
-                onChangeText={setPassword}
-                placeholder="Minimo 6 caratteri"
+                value={newPassword}
+                onChangeText={setNewPassword}
+                placeholder="Lascia vuoto per non cambiare"
                 secureTextEntry
                 placeholderTextColor="rgba(255,255,255,0.5)"
                 returnKeyType="next"
               />
 
-              <Text style={styles.label}>CONFERMA PASSWORD</Text>
-              <TextInput
-                style={[styles.input, passwordMismatch && styles.inputError]}
-                value={confirmPassword}
-                onChangeText={setConfirmPassword}
-                placeholder="Ripeti la password"
-                secureTextEntry
-                placeholderTextColor="rgba(255,255,255,0.5)"
-                returnKeyType="done"
-                onSubmitEditing={handleRegister}
-              />
-              {passwordMismatch && (
-                <Text style={styles.fieldError}>Le password non coincidono</Text>
+              {newPassword.length > 0 && (
+                <>
+                  <Text style={styles.label}>CONFERMA PASSWORD</Text>
+                  <TextInput
+                    style={[
+                      styles.input,
+                      passwordMismatch && styles.inputError,
+                    ]}
+                    value={confirmPassword}
+                    onChangeText={setConfirmPassword}
+                    placeholder="Ripeti la password"
+                    secureTextEntry
+                    placeholderTextColor="rgba(255,255,255,0.5)"
+                    returnKeyType="done"
+                    onSubmitEditing={handleSave}
+                  />
+                  {passwordMismatch && (
+                    <Text style={styles.fieldError}>
+                      Le password non coincidono
+                    </Text>
+                  )}
+                </>
               )}
 
               <TouchableOpacity
                 style={[
-                  styles.signUpBtn,
-                  (!isValid || loading) && styles.signUpBtnDisabled,
+                  styles.saveBtn,
+                  (!isValid || loading) && styles.saveBtnDisabled,
                 ]}
-                onPress={handleRegister}
+                onPress={handleSave}
                 disabled={!isValid || loading}
                 activeOpacity={0.85}
               >
                 {loading ? (
                   <ActivityIndicator color="#E8601A" />
                 ) : (
-                  <Text style={styles.signUpBtnText}>Registrati</Text>
+                  <Text style={styles.saveBtnText}>Salva modifiche</Text>
                 )}
-              </TouchableOpacity>
-
-              <TouchableOpacity style={styles.linkBtn}>
-                <Text
-                  style={styles.linkText}
-                  onPress={() => navigation.replace("Login", {})}
-                >
-                  Hai già un account? Accedi
-                </Text>
               </TouchableOpacity>
 
               <View style={styles.logoArea}>
@@ -257,7 +210,7 @@ const styles = StyleSheet.create({
     fontSize: 34,
     fontWeight: "800",
     textAlign: "center",
-    marginBottom: 20,
+    marginBottom: 24,
   },
   errorBox: {
     backgroundColor: "rgba(0,0,0,0.25)",
@@ -285,6 +238,19 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "rgba(255,255,255,0.15)",
   },
+  inputReadonly: {
+    borderRadius: 12,
+    paddingHorizontal: 16,
+    paddingVertical: 14,
+    marginBottom: 16,
+    borderWidth: 1,
+    borderColor: "rgba(255,255,255,0.08)",
+    backgroundColor: "rgba(0,0,0,0.08)",
+  },
+  inputReadonlyText: {
+    fontSize: 15,
+    color: "rgba(255,255,255,0.45)",
+  },
   inputError: { borderColor: "rgba(255,120,120,0.7)" },
   fieldError: {
     color: "rgba(255,220,200,1)",
@@ -292,7 +258,7 @@ const styles = StyleSheet.create({
     marginTop: -12,
     marginBottom: 14,
   },
-  signUpBtn: {
+  saveBtn: {
     backgroundColor: "#fff",
     borderRadius: 50,
     paddingVertical: 16,
@@ -301,10 +267,8 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     elevation: 4,
   },
-  signUpBtnDisabled: { opacity: 0.6 },
-  signUpBtnText: { color: "#E8601A", fontSize: 16, fontWeight: "800" },
-  linkBtn: { alignItems: "center", marginBottom: 8 },
-  linkText: { color: "rgba(255,255,255,0.85)", fontSize: 14 },
+  saveBtnDisabled: { opacity: 0.6 },
+  saveBtnText: { color: "#E8601A", fontSize: 16, fontWeight: "800" },
   logoArea: { alignItems: "center", marginTop: 16 },
   logoText: {
     color: "#fff",

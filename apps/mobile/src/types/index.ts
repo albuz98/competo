@@ -16,13 +16,20 @@ export interface Tournament {
   organizer: string;
   rules: string[];
   isRegistered?: boolean;
+  lat?: number;
+  lng?: number;
 }
 
 export interface User {
   id: string;
+  firstName: string;
+  lastName: string;
   username: string;
   email: string;
   token: string;
+  dateOfBirth?: string;
+  location?: string;
+  avatarUri?: string;
 }
 
 export interface LoginCredentials {
@@ -31,15 +38,29 @@ export interface LoginCredentials {
 }
 
 export interface RegisterCredentials {
+  firstName: string;
+  lastName: string;
   username: string;
   email: string;
   password: string;
+  dateOfBirth: string;
 }
 
 export type RootStackParamList = {
-  TournamentList: undefined;
-  TournamentDetail: { tournamentId: string };
   Login: { redirect?: 'tournament'; tournamentId?: string };
   Register: undefined;
   Onboarding: undefined;
+  MainTabs: undefined;
+  TournamentDetail: { tournamentId: string; justRegistered?: boolean };
+  Payment: { tournamentId: string; entryFee: string; tournamentName: string };
+  ForgotPassword: undefined;
+  EditProfile: undefined;
+  Notifiche: undefined;
+};
+
+export type MainTabParamList = {
+  Home: undefined;
+  Esplora: undefined;
+  Preferiti: undefined;
+  Profilo: undefined;
 };

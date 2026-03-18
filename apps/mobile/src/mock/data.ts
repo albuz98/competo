@@ -2,16 +2,16 @@ import { faker } from '@faker-js/faker';
 import type { Tournament, User } from '../types';
 
 const GAMES = [
-  'League of Legends',
-  'Valorant',
-  'CS2',
-  'Dota 2',
-  'FIFA 25',
-  'Rocket League',
-  'Street Fighter 6',
-  'Tekken 8',
-  'Apex Legends',
-  'Fortnite',
+  'Calcio',
+  'Basket',
+  'Pallavolo',
+  'Tennis',
+  'Padel',
+  'Rugby',
+  'Ping Pong',
+  'Calcio a 5',
+  'Beach Volley',
+  'Badminton',
 ];
 
 const STATUSES = ['upcoming', 'ongoing', 'completed'] as const;
@@ -70,9 +70,12 @@ export function generateTournaments(count = 12): Tournament[] {
 export function generateUser(overrides?: Partial<User>): User {
   return {
     id: faker.string.uuid(),
+    firstName: faker.person.firstName(),
+    lastName: faker.person.lastName(),
     username: faker.internet.username(),
     email: faker.internet.email(),
     token: faker.string.alphanumeric(64),
+    dateOfBirth: faker.date.birthdate({ min: 18, max: 60, mode: 'age' }).toISOString().slice(0, 10),
     ...overrides,
   };
 }

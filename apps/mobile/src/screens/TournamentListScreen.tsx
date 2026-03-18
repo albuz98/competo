@@ -9,12 +9,11 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import type { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { useNavigation } from '@react-navigation/native';
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import type { RootStackParamList, Tournament } from '../types';
 import { fetchTournaments } from '../api/tournaments';
 import { useAuth } from '../context/AuthContext';
-
-type Props = NativeStackScreenProps<RootStackParamList, 'TournamentList'>;
 
 const STATUS_COLORS: Record<string, string> = {
   upcoming: '#3b82f6',
@@ -74,7 +73,8 @@ function TournamentCard({
   );
 }
 
-export default function TournamentListScreen({ navigation }: Props) {
+export default function TournamentListScreen() {
+  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const { user, logout } = useAuth();
   const [tournaments, setTournaments] = useState<Tournament[]>([]);
   const [loading, setLoading] = useState(true);
@@ -97,24 +97,6 @@ export default function TournamentListScreen({ navigation }: Props) {
   useEffect(() => {
     load();
   }, [load]);
-
-  useEffect(() => {
-    navigation.setOptions({
-      headerRight: () =>
-        user ? (
-          <TouchableOpacity onPress={logout} style={styles.headerBtn}>
-            <Text style={styles.headerBtnText}>Logout</Text>
-          </TouchableOpacity>
-        ) : (
-          <TouchableOpacity
-            onPress={() => navigation.navigate('Login', {})}
-            style={styles.headerBtn}
-          >
-            <Text style={styles.headerBtnText}>Login</Text>
-          </TouchableOpacity>
-        ),
-    });
-  }, [navigation, user, logout]);
 
   const handlePress = (tournament: Tournament) => {
     if (!user) {
