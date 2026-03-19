@@ -60,7 +60,8 @@ src/
 ├── context/
 │   ├── AuthContext.tsx     # User session, login/logout, updateProfile
 │   ├── TeamsContext.tsx    # Teams list, create/addMember/removeMember
-│   └── NotificationsContext.tsx  # Push notification permission + haversine alerts
+│   ├── NotificationsContext.tsx  # In-app notification list + addNotification
+│   └── FavoritesContext.tsx      # Tournament bookmarks (in-memory)
 ├── hooks/
 │   ├── useNotificationSetup.ts      # No-op on non-iOS
 │   └── useNotificationSetup.ios.ts  # iOS notification setup
@@ -97,7 +98,9 @@ src/
 <AuthProvider>
   <TeamsProvider>
     <NotificationsProvider>
-      <AppNavigator />
+      <FavoritesProvider>
+        <AppNavigator />
+      </FavoritesProvider>
     </NotificationsProvider>
   </TeamsProvider>
 </AuthProvider>
@@ -191,6 +194,28 @@ return getMockTeamCache();      // ✗ aliasing
 - **Pending invites**: `inviteMember` creates a `PendingInvite` rather than directly adding to `team.members`. Members appear in the roster only after calling `acceptInvite`
 - **Invite notifications**: fired at the screen level (`InvitePlayersScreen`) because `TeamsContext` wraps `NotificationsProvider` and cannot call `useNotifications` directly
 - Duplicate team name check: same representative cannot create two teams with the same name (validated in `api/teams.ts → createTeam`)
+
+### Favorites
+- `FavoritesContext` provides: `favorites`, `addFavorite`, `removeFavorite`, `isFavorite`
+- Bookmark button in `TournamentDetailScreen` header; `PreferitiScreen` lists bookmarks with navigation to detail
+- Auto-removed from favorites when a tournament is registered (in the `justRegistered` useEffect)
+
+### Map interaction (`EsploraScreen`)
+- Tapping a marker sets `selectedTournament` state → shows a bottom card overlay
+- **Do not use `<Callout>`** — it is unreliable on Android with custom views. Use marker `onPress` + a positioned `View` overlay instead
+
+### Push notification routing (`useNotificationSetup.ios.ts`)
+- Foreground/background taps: `addNotificationResponseReceivedListener`
+- Cold-start (app killed): `getLastNotificationResponseAsync()` on mount
+- Both paths use `navigateWhenReady()` which retries until `navigationRef.isReady()`
+- Invite notification payload: `{ screen: 'Teams' }` → navigates to `TeamsScreen` (shows "INVITI IN SOSPESO")
+
+### Genera torneo gate (`MyTournamentDetailScreen`)
+- `MyTournament` has `isOrganizer?: boolean` and `isGenerated?: boolean`
+- When `isGenerated === false`: bracket/groups are hidden; organizer sees a "Genera torneo" button
+- `activateTournament()` in `api/tournaments.ts` sets `isGenerated = true` on the cache entry
+- Live score simulation (`setInterval`) only starts when `isGenerated !== false`
+- Mock assignment: index 0 = organizer + ungenerated, index 1 = ungenerated (non-organizer), index 2+ = generated
 
 ### Tournament sign-up flow
 `TournamentDetail` → `TeamSelect` (modal, must pick a team) → `Payment` → `TournamentDetail` (justRegistered)

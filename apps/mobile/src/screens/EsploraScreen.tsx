@@ -12,7 +12,7 @@ import {
   Animated,
   PanResponder,
 } from "react-native";
-import MapView, { Circle, Marker, Callout } from "react-native-maps";
+import MapView, { Circle, Marker } from "react-native-maps";
 import type { Region } from "react-native-maps";
 import * as Location from "expo-location";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -50,6 +50,9 @@ export default function EsploraScreen() {
   const [center, setCenter] = useState<{ lat: number; lng: number } | null>(null);
   const [tournaments, setTournaments] = useState<Tournament[]>([]);
   const [geoLoading, setGeoLoading] = useState(true);
+
+  // Selected tournament (map pin tap)
+  const [selectedTournament, setSelectedTournament] = useState<Tournament | null>(null);
 
   // Edit modal state
   const [editModal, setEditModal] = useState(false);
@@ -248,39 +251,50 @@ export default function EsploraScreen() {
             <Marker
               key={t.id}
               coordinate={{ latitude: t.lat, longitude: t.lng }}
-              onCalloutPress={() =>
-                navigation.navigate("TournamentDetail", { tournamentId: t.id })
-              }
+              onPress={() => setSelectedTournament(t)}
             >
-              <View style={styles.pin}>
+              <View style={[styles.pin, selectedTournament?.id === t.id && styles.pinSelected]}>
                 <Text style={styles.pinEmoji}>🏆</Text>
               </View>
-              <Callout tooltip>
-                <View style={styles.callout}>
-                  <Text style={styles.calloutName} numberOfLines={2}>{t.name}</Text>
-                  <View style={styles.calloutRow}>
-                    <Ionicons name="football-outline" size={12} color="#E8601A" />
-                    <Text style={styles.calloutGame}>{t.game}</Text>
-                  </View>
-                  <View style={styles.calloutRow}>
-                    <Ionicons name="cash-outline" size={12} color="#64748b" />
-                    <Text style={styles.calloutMeta}>{t.entryFee}</Text>
-                  </View>
-                  <View style={styles.calloutRow}>
-                    <Ionicons name="people-outline" size={12} color="#64748b" />
-                    <Text style={styles.calloutMeta}>
-                      {t.currentParticipants}/{t.maxParticipants}
-                    </Text>
-                  </View>
-                  <View style={styles.calloutCta}>
-                    <Text style={styles.calloutCtaText}>Vedi dettagli →</Text>
-                  </View>
-                </View>
-              </Callout>
             </Marker>
           ) : null,
         )}
       </MapView>
+
+      {/* Tournament bottom card */}
+      {selectedTournament && (
+        <View style={[styles.tournamentCard, { bottom: insets.bottom + 90 }]}>
+          <TouchableOpacity
+            style={styles.tournamentCardDismiss}
+            onPress={() => setSelectedTournament(null)}
+            hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+          >
+            <Ionicons name="close" size={18} color="#94a3b8" />
+          </TouchableOpacity>
+          <Text style={styles.tournamentCardName} numberOfLines={2}>{selectedTournament.name}</Text>
+          <View style={styles.tournamentCardRow}>
+            <Ionicons name="football-outline" size={13} color="#E8601A" />
+            <Text style={styles.tournamentCardGame}>{selectedTournament.game}</Text>
+            <View style={styles.tournamentCardDot} />
+            <Ionicons name="cash-outline" size={13} color="#64748b" />
+            <Text style={styles.tournamentCardMeta}>{selectedTournament.entryFee}</Text>
+            <View style={styles.tournamentCardDot} />
+            <Ionicons name="people-outline" size={13} color="#64748b" />
+            <Text style={styles.tournamentCardMeta}>{selectedTournament.currentParticipants}/{selectedTournament.maxParticipants}</Text>
+          </View>
+          <TouchableOpacity
+            style={styles.tournamentCardBtn}
+            onPress={() => {
+              setSelectedTournament(null);
+              navigation.navigate("TournamentDetail", { tournamentId: selectedTournament.id });
+            }}
+            activeOpacity={0.85}
+          >
+            <Text style={styles.tournamentCardBtnText}>Vedi dettagli</Text>
+            <Ionicons name="arrow-forward" size={15} color="#fff" />
+          </TouchableOpacity>
+        </View>
+      )}
 
       {/* Top badge — tappable to edit */}
       <TouchableOpacity
@@ -473,28 +487,51 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderColor: "#E8601A",
   },
+  pinSelected: {
+    backgroundColor: "#FFF0E6",
+    borderColor: "#C44E0A",
+    transform: [{ scale: 1.2 }],
+  },
   pinEmoji: { fontSize: 18 },
 
-  // Callout
-  callout: {
+  // Tournament bottom card
+  tournamentCard: {
+    position: "absolute",
+    left: 16,
+    right: 16,
     backgroundColor: "#fff",
-    borderRadius: 14,
-    padding: 14,
-    width: 200,
+    borderRadius: 18,
+    padding: 16,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.18,
     shadowRadius: 12,
-    elevation: 8,
-    borderWidth: 1,
-    borderColor: "#f1f5f9",
+    elevation: 10,
   },
-  calloutName: { fontSize: 13, fontWeight: "800", color: "#1e293b", marginBottom: 8, lineHeight: 18 },
-  calloutRow: { flexDirection: "row", alignItems: "center", gap: 5, marginBottom: 4 },
-  calloutGame: { fontSize: 12, color: "#E8601A", fontWeight: "600" },
-  calloutMeta: { fontSize: 12, color: "#64748b" },
-  calloutCta: { marginTop: 8, backgroundColor: "#FFF0E6", borderRadius: 8, paddingVertical: 6, alignItems: "center" },
-  calloutCtaText: { fontSize: 12, fontWeight: "800", color: "#E8601A" },
+  tournamentCardDismiss: {
+    position: "absolute",
+    top: 12,
+    right: 12,
+    width: 28,
+    height: 28,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  tournamentCardName: { fontSize: 15, fontWeight: "800", color: "#1e293b", marginBottom: 8, paddingRight: 24, lineHeight: 20 },
+  tournamentCardRow: { flexDirection: "row", alignItems: "center", gap: 5, marginBottom: 14, flexWrap: "wrap" },
+  tournamentCardGame: { fontSize: 12, color: "#E8601A", fontWeight: "600" },
+  tournamentCardMeta: { fontSize: 12, color: "#64748b" },
+  tournamentCardDot: { width: 3, height: 3, borderRadius: 1.5, backgroundColor: "#cbd5e1" },
+  tournamentCardBtn: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 6,
+    backgroundColor: "#E8601A",
+    borderRadius: 50,
+    paddingVertical: 12,
+  },
+  tournamentCardBtnText: { color: "#fff", fontSize: 14, fontWeight: "800" },
 
   // Toast
   toast: {
