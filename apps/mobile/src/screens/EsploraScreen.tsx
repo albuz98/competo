@@ -10,6 +10,7 @@ import {
   KeyboardAvoidingView,
   Platform,
   Animated,
+  PanResponder,
 } from "react-native";
 import MapView, { Circle, Marker, Callout } from "react-native-maps";
 import type { Region } from "react-native-maps";
@@ -57,6 +58,38 @@ export default function EsploraScreen() {
 
   // Flag to skip geocoding when recenter sets center directly
   const skipGeocode = useRef(false);
+
+  // Modal swipe-to-dismiss
+  const panY = useRef(new Animated.Value(600)).current;
+
+  const openModal = () => {
+    panY.setValue(600);
+    setEditModal(true);
+    Animated.spring(panY, { toValue: 0, useNativeDriver: true, bounciness: 2 }).start();
+  };
+
+  const dismissModal = () => {
+    Animated.timing(panY, { toValue: 600, duration: 220, useNativeDriver: true }).start(() => {
+      setEditModal(false);
+      panY.setValue(600);
+    });
+  };
+
+  const modalPanResponder = useRef(
+    PanResponder.create({
+      onStartShouldSetPanResponder: () => true,
+      onPanResponderMove: (_, { dy }) => {
+        if (dy > 0) panY.setValue(dy);
+      },
+      onPanResponderRelease: (_, { dy, vy }) => {
+        if (dy > 60 || vy > 0.5) {
+          dismissModal();
+        } else {
+          Animated.spring(panY, { toValue: 0, useNativeDriver: true }).start();
+        }
+      },
+    })
+  ).current;
 
   // Toast for city-not-found
   const toastAnim = useRef(new Animated.Value(0)).current;
@@ -152,14 +185,14 @@ export default function EsploraScreen() {
   const openEdit = () => {
     setModalLoc(exploraLocation ?? "");
     setModalRadius(exploraRadius);
-    setEditModal(true);
+    openModal();
   };
 
   const applyEdit = () => {
     const trimmed = modalLoc.trim();
     if (trimmed) setExploraLocation(trimmed);
     setExploraRadius(modalRadius);
-    setEditModal(false);
+    dismissModal();
   };
 
   // First load: show full spinner until we have a center
@@ -297,8 +330,8 @@ export default function EsploraScreen() {
       <Modal
         visible={editModal}
         transparent
-        animationType="slide"
-        onRequestClose={() => setEditModal(false)}
+        animationType="none"
+        onRequestClose={dismissModal}
       >
         <KeyboardAvoidingView
           style={styles.modalOverlay}
@@ -306,12 +339,14 @@ export default function EsploraScreen() {
         >
           <TouchableOpacity
             style={styles.modalDismiss}
-            onPress={() => setEditModal(false)}
+            onPress={dismissModal}
             activeOpacity={1}
           />
-          <View style={styles.modalCard}>
-            <View style={styles.modalHandle} />
-            <Text style={styles.modalTitle}>Modifica area di ricerca</Text>
+          <Animated.View style={[styles.modalCard, { transform: [{ translateY: panY }] }]}>
+            <View {...modalPanResponder.panHandlers} style={styles.dragZone}>
+              <View style={styles.modalHandle} />
+              <Text style={styles.modalTitle}>Modifica area di ricerca</Text>
+            </View>
             <Text style={styles.modalLabel}>POSIZIONE</Text>
             <View style={styles.modalInputRow}>
               <Ionicons name="location-outline" size={18} color="#E8601A" style={{ marginRight: 8 }} />
@@ -353,7 +388,7 @@ export default function EsploraScreen() {
             >
               <Text style={styles.applyBtnText}>Applica</Text>
             </TouchableOpacity>
-          </View>
+          </Animated.View>
         </KeyboardAvoidingView>
       </Modal>
     </View>
@@ -491,13 +526,16 @@ const styles = StyleSheet.create({
     padding: 24,
     paddingBottom: 40,
   },
+  dragZone: {
+    paddingBottom: 4,
+  },
   modalHandle: {
     width: 36,
     height: 4,
     borderRadius: 2,
     backgroundColor: "#e2e8f0",
     alignSelf: "center",
-    marginBottom: 20,
+    marginBottom: 16,
   },
   modalTitle: { fontSize: 17, fontWeight: "800", color: "#1e293b", marginBottom: 20 },
   modalLabel: {

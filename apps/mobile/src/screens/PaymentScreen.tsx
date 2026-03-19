@@ -32,7 +32,7 @@ function formatExpiry(raw: string) {
 }
 
 export default function PaymentScreen({ navigation, route }: Props) {
-  const { tournamentId, entryFee, tournamentName } = route.params;
+  const { tournamentId, entryFee, tournamentName, teamId, teamName } = route.params;
   const { user } = useAuth();
   const insets = useSafeAreaInsets();
 
@@ -69,7 +69,7 @@ export default function PaymentScreen({ navigation, route }: Props) {
     setLoading(true);
     setError(null);
     try {
-      await signUpForTournament(tournamentId, user.token);
+      await signUpForTournament(tournamentId, user.token, teamId);
       navigation.dispatch(
         CommonActions.reset({
           index: 1,
@@ -118,6 +118,12 @@ export default function PaymentScreen({ navigation, route }: Props) {
             >
               <Text style={styles.cardTitle}>Pagamento</Text>
               <Text style={styles.cardSubtitle} numberOfLines={2}>{tournamentName}</Text>
+              {teamName && (
+                <View style={styles.teamBadge}>
+                  <Ionicons name="people-outline" size={13} color="#E8601A" />
+                  <Text style={styles.teamBadgeText}>{teamName}</Text>
+                </View>
+              )}
 
               <View style={styles.feeBadge}>
                 <Ionicons name="trophy-outline" size={14} color="#E8601A" />
@@ -293,6 +299,12 @@ const styles = StyleSheet.create({
   cardTitle: { color: "#fff", fontSize: 34, fontWeight: "800", textAlign: "center", marginBottom: 6 },
   cardSubtitle: { color: "rgba(255,255,255,0.85)", fontSize: 14, textAlign: "center", marginBottom: 12 },
 
+  teamBadge: {
+    flexDirection: "row", alignItems: "center", gap: 5,
+    backgroundColor: "rgba(255,255,255,0.2)", alignSelf: "center",
+    borderRadius: 20, paddingHorizontal: 12, paddingVertical: 5, marginBottom: 8,
+  },
+  teamBadgeText: { color: "#fff", fontWeight: "700", fontSize: 12 },
   feeBadge: {
     flexDirection: "row", alignItems: "center", gap: 6,
     backgroundColor: "#fff", alignSelf: "center",

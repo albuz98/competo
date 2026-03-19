@@ -15,6 +15,7 @@ import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import type { RootStackParamList, Tournament } from "../types";
 import { fetchTournament } from "../api/tournaments";
 import { useAuth } from "../context/AuthContext";
+import { useFavorites } from "../context/FavoritesContext";
 
 type Props = NativeStackScreenProps<RootStackParamList, "TournamentDetail">;
 
@@ -51,10 +52,17 @@ function Row({ icon, label, value }: { icon: any; label: string; value: string }
 export default function TournamentDetailScreen({ route, navigation }: Props) {
   const { tournamentId, justRegistered } = route.params;
   const { user } = useAuth();
+  const { isFavorite, addFavorite, removeFavorite } = useFavorites();
   const insets = useSafeAreaInsets();
   const [tournament, setTournament] = useState<Tournament | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  const favorited = tournament ? isFavorite(tournament.id) : false;
+  const toggleFavorite = () => {
+    if (!tournament) return;
+    favorited ? removeFavorite(tournament.id) : addFavorite(tournament);
+  };
 
   useLayoutEffect(() => {
     navigation.setOptions({ headerShown: false });
@@ -69,6 +77,7 @@ export default function TournamentDetailScreen({ route, navigation }: Props) {
 
   useEffect(() => {
     if (justRegistered) {
+      removeFavorite(tournamentId);
       setTournament((prev) =>
         prev ? { ...prev, isRegistered: true, currentParticipants: prev.currentParticipants + 1 } : prev,
       );
@@ -77,7 +86,7 @@ export default function TournamentDetailScreen({ route, navigation }: Props) {
 
   const handleGoToPayment = () => {
     if (!tournament) return;
-    navigation.navigate("Payment", {
+    navigation.navigate("TeamSelect", {
       tournamentId: tournament.id,
       entryFee: tournament.entryFee,
       tournamentName: tournament.name,
@@ -142,15 +151,20 @@ export default function TournamentDetailScreen({ route, navigation }: Props) {
               >
                 <Ionicons name="arrow-back" size={22} color="#fff" />
               </TouchableOpacity>
-              <View
-                style={[
-                  styles.statusBadge,
-                  { backgroundColor: STATUS_COLOR[tournament.status] },
-                ]}
-              >
-                <Text style={styles.statusText}>
-                  {STATUS_LABEL[tournament.status]}
-                </Text>
+              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+                <View
+                  style={[
+                    styles.statusBadge,
+                    { backgroundColor: STATUS_COLOR[tournament.status] },
+                  ]}
+                >
+                  <Text style={styles.statusText}>
+                    {STATUS_LABEL[tournament.status]}
+                  </Text>
+                </View>
+                <TouchableOpacity onPress={toggleFavorite} style={styles.bookmarkBtn} activeOpacity={0.7}>
+                  <Ionicons name={favorited ? 'bookmark' : 'bookmark-outline'} size={20} color="#fff" />
+                </TouchableOpacity>
               </View>
             </View>
 
@@ -280,6 +294,14 @@ const styles = StyleSheet.create({
     paddingBottom: 16,
   },
   backBtn: {
+    width: 38,
+    height: 38,
+    borderRadius: 19,
+    backgroundColor: "rgba(0,0,0,0.15)",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  bookmarkBtn: {
     width: 38,
     height: 38,
     borderRadius: 19,

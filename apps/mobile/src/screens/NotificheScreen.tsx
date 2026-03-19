@@ -9,6 +9,8 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
+import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import type { RootStackParamList } from "../types";
 import {
   useNotifications,
   type AppNotification,
@@ -58,7 +60,7 @@ function NotifItem({
 export default function NotificheScreen() {
   const { notifications, unreadCount, markAsRead, markAllAsRead } =
     useNotifications();
-  const navigation = useNavigation();
+  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
 
   return (
     <SafeAreaView style={styles.root} edges={["top"]}>
@@ -81,7 +83,15 @@ export default function NotificheScreen() {
         contentContainerStyle={styles.list}
         ItemSeparatorComponent={() => <View style={styles.separator} />}
         renderItem={({ item }) => (
-          <NotifItem item={item} onPress={() => markAsRead(item.id)} />
+          <NotifItem
+            item={item}
+            onPress={() => {
+              markAsRead(item.id);
+              if (item.tournamentId) {
+                navigation.navigate("TournamentDetail", { tournamentId: item.tournamentId });
+              }
+            }}
+          />
         )}
         ListEmptyComponent={
           <View style={styles.empty}>

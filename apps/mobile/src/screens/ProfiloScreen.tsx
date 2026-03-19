@@ -14,12 +14,14 @@ import { LinearGradient } from "expo-linear-gradient";
 import { Ionicons } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
 import { useAuth } from "../context/AuthContext";
+import { useTeams } from "../context/TeamsContext";
 import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import type { RootStackParamList } from "../types";
+import type { RootStackParamList, Team } from "../types";
 
 export default function ProfiloScreen() {
   const { user, location, logout, updateProfile } = useAuth();
+  const { teams, refreshTeams } = useTeams();
   const navigation =
     useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const insets = useSafeAreaInsets();
@@ -33,7 +35,8 @@ export default function ProfiloScreen() {
       if (y > 0) {
         setTimeout(() => scrollRef.current?.scrollTo({ y, animated: false }), 50);
       }
-    }, [])
+      if (user) refreshTeams();
+    }, [user?.id])
   );
 
   const initial = user?.firstName?.[0]?.toUpperCase() ?? user?.username?.[0]?.toUpperCase() ?? "U";
@@ -144,6 +147,58 @@ export default function ProfiloScreen() {
         ) : null}
       </View>
 
+      {/* ── Le mie squadre ─────────────────────── */}
+      <View style={styles.teamsHeader}>
+        <Text style={styles.teamsTitle}>Le mie squadre</Text>
+        <TouchableOpacity
+          onPress={() => navigation.navigate("Teams")}
+          activeOpacity={0.8}
+        >
+          <Text style={styles.teamsViewAll}>Vedi tutte</Text>
+        </TouchableOpacity>
+      </View>
+
+      {teams.length === 0 ? (
+        <TouchableOpacity
+          style={styles.createTeamCard}
+          onPress={() => navigation.navigate("CreateTeam")}
+          activeOpacity={0.85}
+        >
+          <LinearGradient colors={["#E8601A", "#F5A020"]} style={styles.createTeamIcon}>
+            <Ionicons name="add" size={22} color="#fff" />
+          </LinearGradient>
+          <View style={{ flex: 1 }}>
+            <Text style={styles.createTeamTitle}>Crea una squadra</Text>
+            <Text style={styles.createTeamSub}>Invita amici e partecipa ai tornei insieme</Text>
+          </View>
+          <Ionicons name="chevron-forward" size={18} color="#cbd5e1" />
+        </TouchableOpacity>
+      ) : (
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.teamsScroll}
+        >
+          {teams.slice(0, 5).map((t) => (
+            <TeamMiniCard
+              key={t.id}
+              team={t}
+              onPress={() => navigation.navigate("TeamDetail", { teamId: t.id })}
+            />
+          ))}
+          <TouchableOpacity
+            style={styles.addTeamBtn}
+            onPress={() => navigation.navigate("CreateTeam")}
+            activeOpacity={0.8}
+          >
+            <LinearGradient colors={["#E8601A", "#F5A020"]} style={styles.addTeamBtnGrad}>
+              <Ionicons name="add" size={20} color="#fff" />
+            </LinearGradient>
+            <Text style={styles.addTeamBtnText}>Nuova</Text>
+          </TouchableOpacity>
+        </ScrollView>
+      )}
+
       <TouchableOpacity
         style={styles.editBtn}
         onPress={() => navigation.navigate("EditProfile")}
@@ -164,6 +219,19 @@ export default function ProfiloScreen() {
 
       </ScrollView>
     </SafeAreaView>
+  );
+}
+
+function TeamMiniCard({ team, onPress }: { team: Team; onPress: () => void }) {
+  const initials = team.name.slice(0, 2).toUpperCase();
+  return (
+    <TouchableOpacity style={styles.teamMiniCard} onPress={onPress} activeOpacity={0.85}>
+      <LinearGradient colors={["#E8601A", "#F5A020"]} style={styles.teamMiniAvatar}>
+        <Text style={styles.teamMiniAvatarText}>{initials}</Text>
+      </LinearGradient>
+      <Text style={styles.teamMiniName} numberOfLines={2}>{team.name}</Text>
+      <Text style={styles.teamMiniSport}>{team.sport}</Text>
+    </TouchableOpacity>
   );
 }
 
@@ -302,6 +370,87 @@ const styles = StyleSheet.create({
     borderColor: "#fecaca",
   },
   logoutText: { color: "#ef4444", fontSize: 15, fontWeight: "700" },
+  // Teams section
+  teamsHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingHorizontal: 16,
+    marginTop: 20,
+    marginBottom: 10,
+  },
+  teamsTitle: { fontSize: 16, fontWeight: "800", color: "#1e293b" },
+  teamsViewAll: { fontSize: 13, color: "#E8601A", fontWeight: "700" },
+
+  teamsScroll: { paddingHorizontal: 16, gap: 10, paddingBottom: 4 },
+
+  teamMiniCard: {
+    width: 100,
+    backgroundColor: "#fff",
+    borderRadius: 16,
+    padding: 12,
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.06,
+    shadowRadius: 4,
+    elevation: 2,
+  },
+  teamMiniAvatar: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    alignItems: "center",
+    justifyContent: "center",
+    marginBottom: 8,
+  },
+  teamMiniAvatarText: { color: "#fff", fontSize: 16, fontWeight: "800" },
+  teamMiniName: {
+    fontSize: 11,
+    fontWeight: "700",
+    color: "#1e293b",
+    textAlign: "center",
+    lineHeight: 14,
+  },
+  teamMiniSport: { fontSize: 10, color: "#94a3b8", marginTop: 2 },
+
+  addTeamBtn: { width: 100, alignItems: "center", justifyContent: "center" },
+  addTeamBtnGrad: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    alignItems: "center",
+    justifyContent: "center",
+    marginBottom: 8,
+  },
+  addTeamBtnText: { fontSize: 11, fontWeight: "700", color: "#E8601A" },
+
+  createTeamCard: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#fff",
+    marginHorizontal: 16,
+    borderRadius: 16,
+    padding: 14,
+    gap: 12,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.05,
+    shadowRadius: 4,
+    elevation: 1,
+    borderWidth: 1.5,
+    borderColor: "#fed7aa",
+  },
+  createTeamIcon: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  createTeamTitle: { fontSize: 14, fontWeight: "700", color: "#1e293b" },
+  createTeamSub: { fontSize: 11, color: "#94a3b8", marginTop: 2 },
+
   // Guest state
   guestBox: { flex: 1, alignItems: "center", justifyContent: "center", padding: 32 },
   guestTitle: { fontSize: 18, fontWeight: "700", color: "#94a3b8", marginTop: 16 },

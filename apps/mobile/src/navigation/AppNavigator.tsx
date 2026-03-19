@@ -2,22 +2,36 @@ import React from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import type { RootStackParamList } from "../types";
+import { navigationRef } from "./navigationRef";
+import { useNotificationSetup } from "../hooks/useNotificationSetup";
 
 import LoginScreen from "../screens/LoginScreen";
 import RegisterScreen from "../screens/RegisterScreen";
 import OnboardingScreen from "../screens/OnboardingScreen";
 import TournamentDetailScreen from "../screens/TournamentDetailScreen";
+import MyTournamentDetailScreen from "../screens/MyTournamentDetailScreen";
 import PaymentScreen from "../screens/PaymentScreen";
+import TeamSelectScreen from "../screens/TeamSelectScreen";
 import ForgotPasswordScreen from "../screens/ForgotPasswordScreen";
 import EditProfileScreen from "../screens/EditProfileScreen";
 import NotificheScreen from "../screens/NotificheScreen";
+import TeamsScreen from "../screens/TeamsScreen";
+import CreateTeamScreen from "../screens/CreateTeamScreen";
+import TeamDetailScreen from "../screens/TeamDetailScreen";
+import InvitePlayersScreen from "../screens/InvitePlayersScreen";
 import MainTabNavigator from "./MainTabNavigator";
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
+function NavigationSetup() {
+  useNotificationSetup();
+  return null;
+}
+
 export default function AppNavigator() {
   return (
-    <NavigationContainer>
+    <NavigationContainer ref={navigationRef}>
+      <NavigationSetup />
       <Stack.Navigator
         initialRouteName="MainTabs"
         screenOptions={{
@@ -70,6 +84,36 @@ export default function AppNavigator() {
         <Stack.Screen
           name="Notifiche"
           component={NotificheScreen}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="MyTournamentDetail"
+          component={MyTournamentDetailScreen}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="TeamSelect"
+          component={TeamSelectScreen}
+          options={{ headerShown: false, presentation: "modal" }}
+        />
+        <Stack.Screen
+          name="Teams"
+          component={TeamsScreen}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="CreateTeam"
+          component={CreateTeamScreen}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="TeamDetail"
+          component={TeamDetailScreen}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="InvitePlayers"
+          component={InvitePlayersScreen}
           options={{ headerShown: false }}
         />
       </Stack.Navigator>

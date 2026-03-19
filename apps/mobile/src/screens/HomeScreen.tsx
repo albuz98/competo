@@ -24,6 +24,8 @@ import type { RootStackParamList, Tournament, MainTabParamList } from "../types"
 import { useAuth } from "../context/AuthContext";
 import { useNotifications } from "../context/NotificationsContext";
 import { generateTournaments } from "../mock/data";
+import { getMyTournamentsCache } from "../api/tournaments";
+import type { MyTournament } from "../types";
 
 type HomeNavProp = CompositeNavigationProp<
   BottomTabNavigationProp<MainTabParamList, "Home">,
@@ -57,8 +59,8 @@ const CARD_GRADIENTS: [string, string][] = [
   ["#3D2B0B", "#8B6020"],
 ];
 
-// Generated once at module level so data is stable
-const MY_TOURNAMENTS = generateTournaments(5);
+// Shared cache so MyTournamentDetailScreen finds the same IDs
+const MY_TOURNAMENTS: MyTournament[] = getMyTournamentsCache();
 const RECOMMENDED = generateTournaments(6);
 
 // ─── Big card (I Tuoi Tornei) ────────────────────────────────────────────────
@@ -180,6 +182,14 @@ export default function HomeScreen() {
       });
     } else {
       navigation.navigate("TournamentDetail", { tournamentId: id });
+    }
+  };
+
+  const goToMyTournament = (id: string) => {
+    if (!user) {
+      navigation.navigate("Login", { redirect: "tournament", tournamentId: id });
+    } else {
+      navigation.navigate("MyTournamentDetail", { tournamentId: id });
     }
   };
 
@@ -305,7 +315,7 @@ export default function HomeScreen() {
                 key={t.id}
                 tournament={t}
                 index={i}
-                onPress={() => goToDetail(t.id)}
+                onPress={() => goToMyTournament(t.id)}
               />
             ))}
           </ScrollView>
