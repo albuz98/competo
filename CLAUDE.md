@@ -54,14 +54,15 @@ src/
 ├── mock/data.ts            # Faker-based mock generators (tournaments, teams, users)
 ├── api/
 │   ├── config.ts           # isMocking flag, apiFetch helper
-│   ├── auth.ts             # Login, register, profile update
-│   ├── tournaments.ts      # Tournaments CRUD + MyTournament cache
-│   └── teams.ts            # Teams CRUD + mock cache
+│   ├── auth.ts             # Login, register, fetchProfile, updateProfile, registerPushToken
+│   ├── tournaments.ts      # Tournaments CRUD + MyTournament cache + fetchNearbyTournaments
+│   ├── teams.ts            # Teams CRUD + mock cache
+│   └── favorites.ts        # Favorites CRUD (fetchFavorites, addFavorite, removeFavorite)
 ├── context/
 │   ├── AuthContext.tsx     # User session, login/logout, updateProfile
 │   ├── TeamsContext.tsx    # Teams list, create/addMember/removeMember
 │   ├── NotificationsContext.tsx  # In-app notification list + addNotification
-│   └── FavoritesContext.tsx      # Tournament bookmarks (in-memory)
+│   └── FavoritesContext.tsx      # Tournament bookmarks — loads from API on login, persists on add/remove
 ├── hooks/
 │   ├── useNotificationSetup.ts      # No-op on non-iOS
 │   └── useNotificationSetup.ios.ts  # iOS notification setup
@@ -151,6 +152,37 @@ export const isMocking: boolean = Constants.expoConfig?.extra?.mocking ?? true;
 
 When `isMocking = true` (default), all API functions return faker-generated data from in-memory caches. Real API base URL: `https://api.competo.example.com`.
 
+### Complete API surface
+
+| Function | Method + Endpoint | File |
+|---|---|---|
+| `login` | POST `/auth/login` | auth.ts |
+| `register` | POST `/auth/register` | auth.ts |
+| `forgotPassword` | POST `/auth/forgot-password` | auth.ts |
+| `fetchProfile` | GET `/auth/profile` | auth.ts |
+| `updateProfile` | PATCH `/auth/profile` | auth.ts |
+| `registerPushToken` | POST `/auth/push-token` | auth.ts |
+| `fetchTournaments` | GET `/tournaments` | tournaments.ts |
+| `fetchTournament` | GET `/tournaments/{id}` | tournaments.ts |
+| `fetchNearbyTournaments` | GET `/tournaments/nearby?lat=&lng=&radius=` | tournaments.ts |
+| `signUpForTournament` | POST `/tournaments/{id}/signup` | tournaments.ts |
+| `fetchMyTournaments` | GET `/my-tournaments` | tournaments.ts |
+| `fetchMyTournament` | GET `/my-tournaments/{id}` | tournaments.ts |
+| `activateTournament` | POST `/my-tournaments/{id}/activate` | tournaments.ts |
+| `fetchFavorites` | GET `/favorites` | favorites.ts |
+| `addFavorite` | POST `/favorites/{id}` | favorites.ts |
+| `removeFavorite` | DELETE `/favorites/{id}` | favorites.ts |
+| `fetchUserTeams` | GET `/teams/mine` | teams.ts |
+| `createTeam` | POST `/teams` | teams.ts |
+| `inviteMember` | POST `/teams/{id}/invite` | teams.ts |
+| `removeMember` | DELETE `/teams/{id}/members/{memberId}` | teams.ts |
+| `updateMemberRole` | PATCH `/teams/{id}/members/{memberId}/role` | teams.ts |
+| `getPendingInvites` | GET `/teams/invites/pending` | teams.ts |
+| `getSentInvites` | GET `/teams/{id}/invites` | teams.ts |
+| `acceptInvite` | POST `/teams/invites/{id}/accept` | teams.ts |
+| `rejectInvite` | POST `/teams/invites/{id}/reject` | teams.ts |
+| `searchUsers` | GET `/users/search?q=` | teams.ts |
+
 ### Mock cache pattern
 
 Each API module keeps module-level cache variables (e.g. `mockTeamCache`, `mockUsersCache`, `pendingInviteCache`). Always return shallow copies from fetch functions — never the cache reference directly — to prevent React state from aliasing the mutable cache:
@@ -197,6 +229,9 @@ return getMockTeamCache();      // ✗ aliasing
 
 ### Favorites
 - `FavoritesContext` provides: `favorites`, `addFavorite`, `removeFavorite`, `isFavorite`
+- Loads favorites via `api/favorites.ts → fetchFavorites` on user login (resets to `[]` on logout)
+- `addFavorite`/`removeFavorite` update state immediately then fire API call in the background (fire-and-forget `.catch(() => {})`)
+- In mock mode `api/favorites.ts` keeps a module-level array as the backing store
 - Bookmark button in `TournamentDetailScreen` header; `PreferitiScreen` lists bookmarks with navigation to detail
 - Auto-removed from favorites when a tournament is registered (in the `justRegistered` useEffect)
 
@@ -205,10 +240,12 @@ return getMockTeamCache();      // ✗ aliasing
 - **Do not use `<Callout>`** — it is unreliable on Android with custom views. Use marker `onPress` + a positioned `View` overlay instead
 
 ### Push notification routing (`useNotificationSetup.ios.ts`)
+- On mount: requests permission, then calls `getExpoPushTokenAsync()` + `registerPushToken(token, userToken)` to register with the backend (no-op in mock mode)
 - Foreground/background taps: `addNotificationResponseReceivedListener`
 - Cold-start (app killed): `getLastNotificationResponseAsync()` on mount
 - Both paths use `navigateWhenReady()` which retries until `navigationRef.isReady()`
 - Invite notification payload: `{ screen: 'Teams' }` → navigates to `TeamsScreen` (shows "INVITI IN SOSPESO")
+- Tournament notification payload: `{ tournamentId }` → navigates to `TournamentDetail`
 
 ### Genera torneo gate (`MyTournamentDetailScreen`)
 - `MyTournament` has `isOrganizer?: boolean` and `isGenerated?: boolean`

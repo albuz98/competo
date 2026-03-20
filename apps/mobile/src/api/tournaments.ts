@@ -93,6 +93,27 @@ export async function signUpForTournament(
   );
 }
 
+// Returns tournaments within `radiusKm` km of the given coordinates.
+// In real mode the server returns lat/lng for each tournament.
+// In mock mode all tournaments are returned (EsploraScreen assigns fake coordinates client-side).
+export async function fetchNearbyTournaments(
+  lat: number,
+  lng: number,
+  radiusKm = 50,
+  token?: string,
+): Promise<Tournament[]> {
+  if (isMocking) {
+    await new Promise((r) => setTimeout(r, 400));
+    return [...getMockCache()];
+  }
+  const params = new URLSearchParams({
+    lat: String(lat),
+    lng: String(lng),
+    radius: String(radiusKm),
+  });
+  return apiFetch<Tournament[]>(`/tournaments/nearby?${params}`, {}, token);
+}
+
 export async function activateTournament(tournamentId: string, token: string): Promise<void> {
   if (isMocking) {
     await new Promise((r) => setTimeout(r, 600));

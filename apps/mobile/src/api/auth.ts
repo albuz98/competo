@@ -2,6 +2,22 @@ import { isMocking, apiFetch } from './config';
 import { generateUser } from '../mock/data';
 import type { LoginCredentials, RegisterCredentials, User } from '../types';
 
+// Reload the authenticated user from the server (e.g. on app restart with a stored token).
+// In mock mode the user is kept in AuthContext memory — call this only in real mode.
+export async function fetchProfile(token: string): Promise<User> {
+  if (isMocking) throw new Error('fetchProfile not available in mock mode');
+  return apiFetch<User>('/auth/profile', {}, token);
+}
+
+// Register the Expo push token for this device so the backend can send server-side notifications.
+export async function registerPushToken(pushToken: string, token: string): Promise<void> {
+  if (isMocking) return;
+  return apiFetch<void>('/auth/push-token', {
+    method: 'POST',
+    body: JSON.stringify({ pushToken }),
+  }, token);
+}
+
 export async function forgotPassword(email: string): Promise<void> {
   if (isMocking) {
     await new Promise((r) => setTimeout(r, 800));

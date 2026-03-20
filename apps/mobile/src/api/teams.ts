@@ -115,14 +115,17 @@ export async function inviteMember(
 }
 
 export async function removeMember(teamId: string, memberId: string, token: string): Promise<void> {
-  await new Promise<void>((res) => setTimeout(res, 300));
-  if (!mockTeamCache) return;
-  const team = mockTeamCache.find(t => t.id === teamId);
-  if (!team) throw new Error('Squadra non trovata');
-  const member = team.members.find(m => m.id === memberId);
-  if (!member) throw new Error('Membro non trovato');
-  if (member.role === 'representative') throw new Error('Non puoi rimuovere il rappresentante');
-  team.members = team.members.filter(m => m.id !== memberId);
+  if (isMocking) {
+    await new Promise<void>((res) => setTimeout(res, 300));
+    const team = getMockTeamCache().find(t => t.id === teamId);
+    if (!team) throw new Error('Squadra non trovata');
+    const member = team.members.find(m => m.id === memberId);
+    if (!member) throw new Error('Membro non trovato');
+    if (member.role === 'representative') throw new Error('Non puoi rimuovere il rappresentante');
+    team.members = team.members.filter(m => m.id !== memberId);
+    return;
+  }
+  return apiFetch<void>(`/teams/${teamId}/members/${memberId}`, { method: 'DELETE' }, token);
 }
 
 export async function searchUsers(query: string, token: string): Promise<AppUser[]> {

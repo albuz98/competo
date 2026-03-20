@@ -3,8 +3,10 @@ import * as Notifications from 'expo-notifications';
 import * as Location from 'expo-location';
 import { navigationRef } from '../navigation/navigationRef';
 import { useNotifications } from '../context/NotificationsContext';
+import { useAuth } from '../context/AuthContext';
 import { generateTournament } from '../mock/data';
 import { addToMockCache } from '../api/tournaments';
+import { registerPushToken } from '../api/auth';
 
 function haversineKm(lat1: number, lng1: number, lat2: number, lng2: number) {
   const R = 6371;
@@ -19,12 +21,18 @@ function haversineKm(lat1: number, lng1: number, lat2: number, lng2: number) {
 
 export function useNotificationSetup() {
   const { addNotification } = useNotifications();
+  const { user } = useAuth();
   const addNotificationRef = useRef(addNotification);
   const notificationSent = useRef(false);
+  const userTokenRef = useRef(user?.token);
 
   useEffect(() => {
     addNotificationRef.current = addNotification;
   }, [addNotification]);
+
+  useEffect(() => {
+    userTokenRef.current = user?.token;
+  }, [user?.token]);
 
   useEffect(() => {
     Notifications.setNotificationHandler({
@@ -35,7 +43,17 @@ export function useNotificationSetup() {
       }),
     });
 
-    Notifications.requestPermissionsAsync().catch(() => {});
+    // Request permission then register the Expo push token with the backend.
+    // In mock mode registerPushToken is a no-op.
+    (async () => {
+      try {
+        const { status } = await Notifications.requestPermissionsAsync();
+        if (status === 'granted' && userTokenRef.current) {
+          const tokenData = await Notifications.getExpoPushTokenAsync();
+          await registerPushToken(tokenData.data, userTokenRef.current);
+        }
+      } catch {}
+    })();
 
     const handleNotificationData = (data: Record<string, unknown>) => {
       const screen = data?.screen as string | undefined;
