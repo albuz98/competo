@@ -389,6 +389,13 @@ export default function MyTournamentDetailScreen({ route, navigation }: Props) {
       .finally(() => setLoading(false));
   }, [tournamentId]);
 
+  // Safety redirect: organizer tournaments have their own dedicated screen
+  useEffect(() => {
+    if (tournament?.isOrganizer) {
+      navigation.replace('OrganizerTournamentDetail', { tournamentId });
+    }
+  }, [tournament?.isOrganizer]);
+
   const handleGenerate = async () => {
     if (!tournament || generating) return;
     setGenerating(true);

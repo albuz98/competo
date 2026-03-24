@@ -16,6 +16,7 @@ import type { RootStackParamList, Tournament } from "../types";
 import { fetchTournament } from "../api/tournaments";
 import { useAuth } from "../context/AuthContext";
 import { useFavorites } from "../context/FavoritesContext";
+import { useNotifications } from "../context/NotificationsContext";
 
 type Props = NativeStackScreenProps<RootStackParamList, "TournamentDetail">;
 
@@ -52,7 +53,8 @@ function Row({ icon, label, value }: { icon: any; label: string; value: string }
 export default function TournamentDetailScreen({ route, navigation }: Props) {
   const { tournamentId, justRegistered } = route.params;
   const { user } = useAuth();
-  const { isFavorite, addFavorite, removeFavorite } = useFavorites();
+  const { isFavorite, addFavorite, removeFavorite, wasAddedWhenFull } = useFavorites();
+  const { addNotification } = useNotifications();
   const insets = useSafeAreaInsets();
   const [tournament, setTournament] = useState<Tournament | null>(null);
   const [loading, setLoading] = useState(true);
@@ -61,6 +63,7 @@ export default function TournamentDetailScreen({ route, navigation }: Props) {
   const favorited = tournament ? isFavorite(tournament.id) : false;
   const toggleFavorite = () => {
     if (!tournament) return;
+    if (tournament.isRegistered || tournament.status === 'completed') return;
     favorited ? removeFavorite(tournament.id) : addFavorite(tournament);
   };
 
@@ -70,7 +73,22 @@ export default function TournamentDetailScreen({ route, navigation }: Props) {
 
   useEffect(() => {
     fetchTournament(tournamentId)
-      .then(setTournament)
+      .then((t) => {
+        setTournament(t);
+        // Auto-remove from favorites if user is registered or tournament is over
+        if ((t.isRegistered || t.status === 'completed') && isFavorite(t.id)) {
+          removeFavorite(t.id);
+        }
+        // Notify if a spot opened for a full-when-added tournament
+        const spotsAvail = t.maxParticipants - t.currentParticipants;
+        if (spotsAvail > 0 && isFavorite(t.id) && wasAddedWhenFull(t.id)) {
+          addNotification({
+            title: 'Posto disponibile!',
+            body: `Si è liberato un posto nel torneo "${t.name}". Iscriviti ora!`,
+            timestamp: new Date().toISOString(),
+          });
+        }
+      })
       .catch((e) => setError(e instanceof Error ? e.message : "Errore nel caricamento"))
       .finally(() => setLoading(false));
   }, [tournamentId]);
@@ -162,9 +180,15 @@ export default function TournamentDetailScreen({ route, navigation }: Props) {
                     {STATUS_LABEL[tournament.status]}
                   </Text>
                 </View>
-                <TouchableOpacity onPress={toggleFavorite} style={styles.bookmarkBtn} activeOpacity={0.7}>
-                  <Ionicons name={favorited ? 'bookmark' : 'bookmark-outline'} size={20} color="#fff" />
-                </TouchableOpacity>
+                {!tournament.isRegistered && tournament.status !== 'completed' && (
+                  <TouchableOpacity
+                    onPress={toggleFavorite}
+                    style={styles.bookmarkBtn}
+                    activeOpacity={0.7}
+                  >
+                    <Ionicons name={favorited ? 'bookmark' : 'bookmark-outline'} size={20} color="#fff" />
+                  </TouchableOpacity>
+                )}
               </View>
             </View>
 

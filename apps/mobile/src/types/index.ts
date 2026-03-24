@@ -64,6 +64,27 @@ export interface MyTournament extends Tournament {
   isOrganizer?: boolean;   // true = current user is the tournament organizer
 }
 
+// ─── Stats & history types ────────────────────────────────────────────────────
+
+export interface MatchStats {
+  matchesPlayed: number;
+  wins: number;
+  losses: number;
+  draws: number;
+  tournamentsPlayed: number;
+  tournamentsWon: number;
+}
+
+export interface OrganizedTournamentRecord {
+  id: string;
+  name: string;
+  sport: string;
+  date: string;           // ISO date string of tournament start
+  location: string;
+  totalTeams: number;
+  totalPrizeMoney: string; // e.g. "$5,000"
+}
+
 // ─── Team types ───────────────────────────────────────────────────────────────
 
 export type TeamRole = 'representative' | 'calciatore' | 'allenatore' | 'portiere';
@@ -105,6 +126,41 @@ export interface AppUser {
   avatarUri?: string;
 }
 
+// ─── Tournament player & registration types ──────────────────────────────────
+
+export interface PlayerStats {
+  goals: number;
+  matchesPlayed: number;
+  yellowCards: number;
+  redCards: number;
+}
+
+export type TeamRegistrationStatus = 'pending_approval' | 'rejected' | 'accepted' | 'paid';
+
+export interface TournamentPlayer {
+  id: string;
+  firstName: string;
+  lastName: string;
+  username: string;
+  avatarUri?: string;
+  dateOfBirth?: string;
+  role: TeamRole;
+  stats: PlayerStats;
+}
+
+export interface TournamentRegisteredTeam {
+  id: string;
+  name: string;
+  players: TournamentPlayer[];
+  status: TeamRegistrationStatus;
+  registeredAt: string;
+  paymentDeadline?: string;
+}
+
+export interface OrganizerTournamentDetail extends MyTournament {
+  registeredTeams: TournamentRegisteredTeam[];
+}
+
 // ─── Auth types ───────────────────────────────────────────────────────────────
 
 export interface User {
@@ -117,6 +173,9 @@ export interface User {
   dateOfBirth?: string;
   location?: string;
   avatarUri?: string;
+  isOrganizer?: boolean;
+  matchStats?: MatchStats;
+  organizedTournaments?: OrganizedTournamentRecord[];
 }
 
 export interface LoginCredentials {
@@ -151,6 +210,8 @@ export type RootStackParamList = {
   CreateTeam: undefined;
   TeamDetail: { teamId: string };
   InvitePlayers: { teamId: string };
+  OrganizerTournamentDetail: { tournamentId: string };
+  PlayerProfile: { playerJson: string };
 };
 
 export type MainTabParamList = {

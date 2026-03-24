@@ -17,7 +17,7 @@ import { useAuth } from "../context/AuthContext";
 import { useTeams } from "../context/TeamsContext";
 import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import type { RootStackParamList, Team } from "../types";
+import type { RootStackParamList, Team, OrganizedTournamentRecord } from "../types";
 
 export default function ProfiloScreen() {
   const { user, location, logout, updateProfile } = useAuth();
@@ -141,11 +141,55 @@ export default function ProfiloScreen() {
         <Row icon="at-outline" label="Username" value={user.username} />
         <Row icon="mail-outline" label="Email" value={user.email} />
         <Row icon="lock-closed-outline" label="Password" value="••••••••" />
-        <Row icon="calendar-outline" label="Data di nascita" value={user.dateOfBirth ?? "–"} isLast={!location} />
-        {location ? (
-          <Row icon="location-outline" label="Posizione" value={location} isLast />
-        ) : null}
+        <Row icon="calendar-outline" label="Data di nascita" value={user.dateOfBirth ?? "–"} />
+        <Row icon="location-outline" label="Posizione" value={user.location ?? location ?? "–"} isLast />
       </View>
+
+      {/* ── Statistiche Partite ────────────────── */}
+      {user.matchStats && (
+        <>
+          <View style={styles.teamsHeader}>
+            <Text style={styles.teamsTitle}>Statistiche Partite</Text>
+          </View>
+          <View style={pStyles.statsCard}>
+            <View style={pStyles.statsRow}>
+              <View style={pStyles.statBubble}>
+                <Text style={[pStyles.statNum, { color: "#10b981" }]}>{user.matchStats.wins}</Text>
+                <Text style={pStyles.statLabel}>Vittorie</Text>
+              </View>
+              <View style={pStyles.statDivider} />
+              <View style={pStyles.statBubble}>
+                <Text style={[pStyles.statNum, { color: "#64748b" }]}>{user.matchStats.draws}</Text>
+                <Text style={pStyles.statLabel}>Pareggi</Text>
+              </View>
+              <View style={pStyles.statDivider} />
+              <View style={pStyles.statBubble}>
+                <Text style={[pStyles.statNum, { color: "#ef4444" }]}>{user.matchStats.losses}</Text>
+                <Text style={pStyles.statLabel}>Sconfitte</Text>
+              </View>
+            </View>
+            <View style={pStyles.statsTourneyRow}>
+              <View style={pStyles.statTourney}>
+                <Ionicons name="trophy-outline" size={18} color="#E8601A" />
+                <Text style={pStyles.statTourneyNum}>{user.matchStats.tournamentsWon}</Text>
+                <Text style={pStyles.statTourneyLabel}>Tornei vinti</Text>
+              </View>
+              <View style={pStyles.statTourneyDivider} />
+              <View style={pStyles.statTourney}>
+                <Ionicons name="medal-outline" size={18} color="#64748b" />
+                <Text style={pStyles.statTourneyNum}>{user.matchStats.tournamentsPlayed}</Text>
+                <Text style={pStyles.statTourneyLabel}>Tornei giocati</Text>
+              </View>
+              <View style={pStyles.statTourneyDivider} />
+              <View style={pStyles.statTourney}>
+                <Ionicons name="football-outline" size={18} color="#64748b" />
+                <Text style={pStyles.statTourneyNum}>{user.matchStats.matchesPlayed}</Text>
+                <Text style={pStyles.statTourneyLabel}>Partite totali</Text>
+              </View>
+            </View>
+          </View>
+        </>
+      )}
 
       {/* ── Le mie squadre ─────────────────────── */}
       <View style={styles.teamsHeader}>
@@ -197,6 +241,22 @@ export default function ProfiloScreen() {
             <Text style={styles.addTeamBtnText}>Nuova</Text>
           </TouchableOpacity>
         </ScrollView>
+      )}
+
+      {/* ── Tornei Organizzati ─────────────────── */}
+      {user.isOrganizer && user.organizedTournaments && user.organizedTournaments.length > 0 && (
+        <>
+          <View style={styles.teamsHeader}>
+            <Text style={styles.teamsTitle}>Tornei Organizzati</Text>
+          </View>
+          {user.organizedTournaments.map((t) => (
+            <OrgTournamentCard
+              key={t.id}
+              record={t}
+              onPress={() => navigation.navigate('OrganizerTournamentDetail', { tournamentId: t.id })}
+            />
+          ))}
+        </>
       )}
 
       <TouchableOpacity
@@ -254,6 +314,41 @@ function Row({
         <Text style={styles.rowValue}>{value}</Text>
       </View>
     </View>
+  );
+}
+
+function OrgTournamentCard({ record, onPress }: { record: OrganizedTournamentRecord; onPress: () => void }) {
+  const dateStr = new Date(record.date).toLocaleDateString("it-IT", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+  });
+  return (
+    <TouchableOpacity style={pStyles.orgCard} onPress={onPress} activeOpacity={0.85}>
+      <View style={pStyles.orgCardLeft} />
+      <View style={{ flex: 1 }}>
+        <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginBottom: 4 }}>
+          <Text style={pStyles.orgCardName} numberOfLines={1}>{record.name}</Text>
+          <View style={pStyles.orgSportBadge}>
+            <Text style={pStyles.orgSportText}>{record.sport}</Text>
+          </View>
+        </View>
+        <View style={pStyles.orgCardRow}>
+          <Ionicons name="location-outline" size={12} color="#94a3b8" />
+          <Text style={pStyles.orgCardMeta}> {record.location}</Text>
+          <Text style={pStyles.orgCardMetaDot}> · </Text>
+          <Ionicons name="calendar-outline" size={12} color="#94a3b8" />
+          <Text style={pStyles.orgCardMeta}> {dateStr}</Text>
+        </View>
+        <View style={pStyles.orgCardStatsRow}>
+          <Ionicons name="people-outline" size={13} color="#64748b" />
+          <Text style={pStyles.orgCardStat}> {record.totalTeams} squadre</Text>
+          <Text style={pStyles.orgCardMetaDot}> · </Text>
+          <Ionicons name="cash-outline" size={13} color="#64748b" />
+          <Text style={pStyles.orgCardStat}> {record.totalPrizeMoney}</Text>
+        </View>
+      </View>
+    </TouchableOpacity>
   );
 }
 
@@ -464,4 +559,134 @@ const styles = StyleSheet.create({
   },
   loginBtnText: { color: "#fff", fontSize: 15, fontWeight: "800" },
   registerLink: { color: "#E8601A", fontWeight: "600", fontSize: 14 },
+});
+
+const pStyles = StyleSheet.create({
+  // Match stats card
+  statsCard: {
+    backgroundColor: "#fff",
+    marginHorizontal: 16,
+    borderRadius: 16,
+    overflow: "hidden",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.05,
+    shadowRadius: 4,
+    elevation: 2,
+  },
+  statsRow: {
+    flexDirection: "row",
+    paddingVertical: 20,
+    borderBottomWidth: 1,
+    borderBottomColor: "#f1f5f9",
+  },
+  statBubble: {
+    flex: 1,
+    alignItems: "center",
+  },
+  statNum: {
+    fontSize: 28,
+    fontWeight: "800",
+    lineHeight: 32,
+  },
+  statLabel: {
+    fontSize: 11,
+    color: "#94a3b8",
+    marginTop: 4,
+    textTransform: "uppercase",
+    letterSpacing: 0.4,
+  },
+  statDivider: {
+    width: 1,
+    backgroundColor: "#f1f5f9",
+    alignSelf: "stretch",
+  },
+  statsTourneyRow: {
+    flexDirection: "row",
+    paddingVertical: 14,
+  },
+  statTourney: {
+    flex: 1,
+    alignItems: "center",
+    gap: 3,
+  },
+  statTourneyNum: {
+    fontSize: 18,
+    fontWeight: "800",
+    color: "#1e293b",
+  },
+  statTourneyLabel: {
+    fontSize: 10,
+    color: "#94a3b8",
+    textTransform: "uppercase",
+    letterSpacing: 0.3,
+  },
+  statTourneyDivider: {
+    width: 1,
+    backgroundColor: "#f1f5f9",
+    alignSelf: "stretch",
+  },
+  // Organized tournament cards
+  orgCard: {
+    flexDirection: "row",
+    backgroundColor: "#fff",
+    marginHorizontal: 16,
+    marginBottom: 8,
+    borderRadius: 14,
+    overflow: "hidden",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.05,
+    shadowRadius: 4,
+    elevation: 2,
+    padding: 14,
+    gap: 12,
+  },
+  orgCardLeft: {
+    width: 4,
+    borderRadius: 2,
+    backgroundColor: "#E8601A",
+    alignSelf: "stretch",
+  },
+  orgCardName: {
+    fontSize: 14,
+    fontWeight: "700",
+    color: "#1e293b",
+    flex: 1,
+    marginRight: 8,
+  },
+  orgSportBadge: {
+    backgroundColor: "#fff7ed",
+    borderRadius: 8,
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+  },
+  orgSportText: {
+    fontSize: 11,
+    color: "#E8601A",
+    fontWeight: "700",
+  },
+  orgCardRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginTop: 4,
+  },
+  orgCardMeta: {
+    fontSize: 11,
+    color: "#94a3b8",
+  },
+  orgCardMetaDot: {
+    fontSize: 11,
+    color: "#cbd5e1",
+  },
+  orgCardStatsRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginTop: 6,
+  },
+  orgCardStat: {
+    fontSize: 12,
+    color: "#64748b",
+    fontWeight: "600",
+  },
 });

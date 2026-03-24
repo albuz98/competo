@@ -1,6 +1,6 @@
 import { isMocking, apiFetch } from './config';
-import { generateTournaments, generateTournament, generateMyTournaments, generateMyTournament } from '../mock/data';
-import type { Tournament, MyTournament } from '../types';
+import { generateTournaments, generateTournament, generateMyTournaments, generateMyTournament, generateOrganizerTournamentDetail } from '../mock/data';
+import type { Tournament, MyTournament, OrganizerTournamentDetail } from '../types';
 
 // Persistent mock store so data stays consistent across navigation
 let mockCache: Tournament[] | null = null;
@@ -122,4 +122,68 @@ export async function activateTournament(tournamentId: string, token: string): P
     return;
   }
   return apiFetch<void>(`/my-tournaments/${tournamentId}/activate`, { method: 'POST' }, token);
+}
+
+// ─── Organizer tournament management ─────────────────────────────────────────
+
+let organizerCacheMap: Map<string, OrganizerTournamentDetail> | null = null;
+
+function getOrganizerCache(): Map<string, OrganizerTournamentDetail> {
+  if (!organizerCacheMap) {
+    organizerCacheMap = new Map();
+    getMyTournamentsCache()
+      .filter((t) => t.isOrganizer)
+      .forEach((t, i) => {
+        organizerCacheMap!.set(t.id, generateOrganizerTournamentDetail(t, i === 0));
+      });
+  }
+  return organizerCacheMap;
+}
+
+export async function fetchOrganizerTournament(id: string): Promise<OrganizerTournamentDetail> {
+  if (isMocking) {
+    await new Promise((r) => setTimeout(r, 300));
+    const cached = getOrganizerCache().get(id);
+    if (cached) return { ...cached, registeredTeams: [...cached.registeredTeams] };
+    const base = getMyTournamentsCache().find((t) => t.id === id) ?? generateMyTournament(id);
+    const detail = generateOrganizerTournamentDetail(base, false);
+    getOrganizerCache().set(id, detail);
+    return { ...detail, registeredTeams: [...detail.registeredTeams] };
+  }
+  return apiFetch<OrganizerTournamentDetail>(`/organizer/tournaments/${id}`);
+}
+
+export async function approveTeam(tournamentId: string, teamId: string): Promise<void> {
+  if (isMocking) {
+    await new Promise((r) => setTimeout(r, 400));
+    const t = getOrganizerCache().get(tournamentId);
+    const team = t?.registeredTeams.find((r) => r.id === teamId);
+    if (team) {
+      team.status = 'accepted';
+      team.paymentDeadline = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString();
+    }
+    return;
+  }
+  return apiFetch<void>(`/organizer/tournaments/${tournamentId}/teams/${teamId}/approve`, { method: 'POST' });
+}
+
+export async function rejectTeam(tournamentId: string, teamId: string): Promise<void> {
+  if (isMocking) {
+    await new Promise((r) => setTimeout(r, 400));
+    const t = getOrganizerCache().get(tournamentId);
+    const team = t?.registeredTeams.find((r) => r.id === teamId);
+    if (team) team.status = 'rejected';
+    return;
+  }
+  return apiFetch<void>(`/organizer/tournaments/${tournamentId}/teams/${teamId}/reject`, { method: 'POST' });
+}
+
+export async function removeTeam(tournamentId: string, teamId: string): Promise<void> {
+  if (isMocking) {
+    await new Promise((r) => setTimeout(r, 400));
+    const t = getOrganizerCache().get(tournamentId);
+    if (t) t.registeredTeams = t.registeredTeams.filter((r) => r.id !== teamId);
+    return;
+  }
+  return apiFetch<void>(`/organizer/tournaments/${tournamentId}/teams/${teamId}`, { method: 'DELETE' });
 }

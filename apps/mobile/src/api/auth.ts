@@ -1,11 +1,11 @@
 import { isMocking, apiFetch } from './config';
-import { generateUser } from '../mock/data';
+import { mockProfile } from '../mock/data';
 import type { LoginCredentials, RegisterCredentials, User } from '../types';
 
 // Reload the authenticated user from the server (e.g. on app restart with a stored token).
-// In mock mode the user is kept in AuthContext memory — call this only in real mode.
+// In mock mode returns the editable mockProfile object from src/mock/data.ts.
 export async function fetchProfile(token: string): Promise<User> {
-  if (isMocking) throw new Error('fetchProfile not available in mock mode');
+  if (isMocking) return { ...mockProfile };
   return apiFetch<User>('/auth/profile', {}, token);
 }
 
@@ -58,7 +58,7 @@ export async function login(credentials: LoginCredentials): Promise<User> {
     if (!credentials.email || !credentials.password) {
       throw new Error('Email and password are required');
     }
-    return generateUser({ email: credentials.email });
+    return { ...mockProfile, email: credentials.email };
   }
 
   return apiFetch<User>('/auth/login', {
@@ -73,13 +73,14 @@ export async function register(credentials: RegisterCredentials): Promise<User> 
     if (!credentials.username || !credentials.email || !credentials.password) {
       throw new Error('All fields are required');
     }
-    return generateUser({
+    return {
+      ...mockProfile,
       firstName: credentials.firstName,
       lastName: credentials.lastName,
       email: credentials.email,
       username: credentials.username,
       dateOfBirth: credentials.dateOfBirth,
-    });
+    };
   }
 
   return apiFetch<User>('/auth/register', {

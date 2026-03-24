@@ -11,6 +11,13 @@ import type {
   TeamMember,
   TeamRole,
   AppUser,
+  MatchStats,
+  OrganizedTournamentRecord,
+  PlayerStats,
+  TeamRegistrationStatus,
+  TournamentPlayer,
+  TournamentRegisteredTeam,
+  OrganizerTournamentDetail,
 } from '../types';
 
 export const GAMES = [
@@ -79,6 +86,59 @@ export function generateTournaments(count = 12): Tournament[] {
   return Array.from({ length: count }, () => generateTournament());
 }
 
+// ─── Mock profile ─────────────────────────────────────────────────────────────
+// Edit these fields directly to control what fetchProfile / login / register
+// return when isMocking = true.
+export const mockProfile: User = {
+  id: 'mock-user-001',
+  firstName: 'Mario',
+  lastName: 'Rossi',
+  username: 'mario.rossi',
+  email: 'mario.rossi@example.com',
+  token: 'mock-token-abc123',
+  dateOfBirth: '1990-05-15',
+  location: 'Milano, Italia',
+  avatarUri: undefined,
+  isOrganizer: true,
+  matchStats: {
+    matchesPlayed: 47,
+    wins: 28,
+    losses: 12,
+    draws: 7,
+    tournamentsPlayed: 8,
+    tournamentsWon: 3,
+  },
+  organizedTournaments: [
+    {
+      id: 'org-t-001',
+      name: 'Pro Cup 2025',
+      sport: 'Calcio',
+      date: '2025-09-14T10:00:00.000Z',
+      location: 'Milano, Italia',
+      totalTeams: 16,
+      totalPrizeMoney: '$800',
+    },
+    {
+      id: 'org-t-002',
+      name: 'Elite League 2025',
+      sport: 'Basket',
+      date: '2025-11-20T10:00:00.000Z',
+      location: 'Roma, Italia',
+      totalTeams: 8,
+      totalPrizeMoney: '$400',
+    },
+    {
+      id: 'org-t-003',
+      name: 'Grand Tournament 2024',
+      sport: 'Padel',
+      date: '2024-06-05T10:00:00.000Z',
+      location: 'Torino, Italia',
+      totalTeams: 32,
+      totalPrizeMoney: '$3,200',
+    },
+  ],
+};
+
 export function generateUser(overrides?: Partial<User>): User {
   return {
     id: faker.string.uuid(),
@@ -89,6 +149,86 @@ export function generateUser(overrides?: Partial<User>): User {
     token: faker.string.alphanumeric(64),
     dateOfBirth: faker.date.birthdate({ min: 18, max: 60, mode: 'age' }).toISOString().slice(0, 10),
     ...overrides,
+  };
+}
+
+export function generateMatchStats(): MatchStats {
+  const tournamentsPlayed = faker.number.int({ min: 3, max: 20 });
+  const tournamentsWon = faker.number.int({ min: 0, max: Math.floor(tournamentsPlayed / 2) });
+  const matchesPlayed = tournamentsPlayed * faker.number.int({ min: 3, max: 8 });
+  const wins = faker.number.int({ min: Math.floor(matchesPlayed * 0.2), max: Math.floor(matchesPlayed * 0.6) });
+  const draws = faker.number.int({ min: 0, max: Math.floor(matchesPlayed * 0.2) });
+  const losses = matchesPlayed - wins - draws;
+  return { matchesPlayed, wins, losses, draws, tournamentsPlayed, tournamentsWon };
+}
+
+export function generateOrganizedTournamentRecord(): OrganizedTournamentRecord {
+  const totalTeams = faker.helpers.arrayElement([8, 16, 32]);
+  const entryFee = faker.helpers.arrayElement([10, 25, 50, 100]);
+  return {
+    id: faker.string.uuid(),
+    name: `${faker.helpers.arrayElement(ADJECTIVES)} ${faker.helpers.arrayElement(NOUNS)} ${faker.date.recent({ days: 365 }).getFullYear()}`,
+    sport: faker.helpers.arrayElement(GAMES),
+    date: faker.date.recent({ days: 365 }).toISOString(),
+    location: faker.helpers.arrayElement([`${faker.location.city()}, Italia`, 'Online']),
+    totalTeams,
+    totalPrizeMoney: `$${(totalTeams * entryFee).toLocaleString()}`,
+  };
+}
+
+export function generatePlayerStats(): PlayerStats {
+  return {
+    goals: faker.number.int({ min: 0, max: 30 }),
+    matchesPlayed: faker.number.int({ min: 5, max: 60 }),
+    yellowCards: faker.number.int({ min: 0, max: 8 }),
+    redCards: faker.number.int({ min: 0, max: 2 }),
+  };
+}
+
+export function generateTournamentPlayer(role: TeamRole = 'calciatore'): TournamentPlayer {
+  return {
+    id: faker.string.uuid(),
+    firstName: faker.person.firstName(),
+    lastName: faker.person.lastName(),
+    username: faker.internet.username(),
+    dateOfBirth: faker.date.birthdate({ min: 16, max: 40, mode: 'age' }).toISOString().slice(0, 10),
+    role,
+    stats: generatePlayerStats(),
+  };
+}
+
+export function generateTournamentRegisteredTeam(status: TeamRegistrationStatus = 'pending_approval'): TournamentRegisteredTeam {
+  const playerCount = faker.number.int({ min: 5, max: 11 });
+  const extraRoles: TeamRole[] = Array(Math.max(0, playerCount - 3)).fill('calciatore');
+  const roles: TeamRole[] = ['representative', 'portiere', 'allenatore', ...extraRoles];
+  const players = roles.map((r) => generateTournamentPlayer(r));
+  return {
+    id: faker.string.uuid(),
+    name: `${faker.location.city()} ${faker.helpers.arrayElement(['FC', 'SC', 'United', 'Tigers', 'Eagles'])}`,
+    players,
+    status,
+    registeredAt: faker.date.recent({ days: 14 }).toISOString(),
+    paymentDeadline: status === 'accepted'
+      ? new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString()
+      : undefined,
+  };
+}
+
+export function generateOrganizerTournamentDetail(base: MyTournament, allPaid = false): OrganizerTournamentDetail {
+  const MAX_TEAMS = 4;
+  const registeredTeams: TournamentRegisteredTeam[] = allPaid
+    ? Array.from({ length: MAX_TEAMS }, () => generateTournamentRegisteredTeam('paid'))
+    : [
+        generateTournamentRegisteredTeam('paid'),
+        generateTournamentRegisteredTeam('paid'),
+        generateTournamentRegisteredTeam('accepted'),
+        generateTournamentRegisteredTeam('pending_approval'),
+      ];
+  return {
+    ...base,
+    maxParticipants: MAX_TEAMS,
+    currentParticipants: registeredTeams.filter((t) => t.status !== 'rejected').length,
+    registeredTeams,
   };
 }
 
@@ -200,8 +340,8 @@ function generateKnockoutStructure(): TournamentStructure {
 
 export function generateMyTournament(id?: string, index = -1): MyTournament {
   const base = generateTournament(id);
-  const isOrganizer = index === 0;
-  const isGenerated = index !== 0 && index !== 1; // indices 0 and 1 are ungenerated; -1 (standalone) is generated
+  const isOrganizer = index === 0 || index === 1;
+  const isGenerated = index >= 2 || index === -1;
   const structure: TournamentStructure =
     Math.random() < 0.7 ? generateGroupStructure() : generateKnockoutStructure();
   return {

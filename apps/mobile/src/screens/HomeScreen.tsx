@@ -60,7 +60,9 @@ const CARD_GRADIENTS: [string, string][] = [
 ];
 
 // Shared cache so MyTournamentDetailScreen finds the same IDs
-const MY_TOURNAMENTS: MyTournament[] = getMyTournamentsCache();
+const MY_ALL_TOURNAMENTS: MyTournament[] = getMyTournamentsCache();
+const MY_ORGANIZER_TOURNAMENTS = MY_ALL_TOURNAMENTS.filter((t) => t.isOrganizer);
+const MY_PARTICIPANT_TOURNAMENTS = MY_ALL_TOURNAMENTS.filter((t) => !t.isOrganizer);
 const RECOMMENDED = generateTournaments(6);
 
 // ─── Big card (I Tuoi Tornei) ────────────────────────────────────────────────
@@ -139,8 +141,16 @@ function SmallCard({
           </Text>
         </View>
         <View style={styles.smallCardRow}>
-          <Ionicons name="shield-checkmark" size={10} color="#94a3b8" />
-          <Text style={styles.smallCardMeta}> {tournament.game}</Text>
+          <Ionicons name="people-outline" size={10} color="#94a3b8" />
+          <Text style={styles.smallCardMeta}> {tournament.currentParticipants}/{tournament.maxParticipants} squadre</Text>
+        </View>
+        <View style={styles.smallCardRow}>
+          <Ionicons name="cash-outline" size={10} color="#94a3b8" />
+          <Text style={styles.smallCardMeta}> {tournament.entryFee}</Text>
+        </View>
+        <View style={styles.smallCardRow}>
+          <Ionicons name="trophy-outline" size={10} color="#94a3b8" />
+          <Text style={styles.smallCardMeta}> {tournament.prizePool}</Text>
         </View>
         <TouchableOpacity
           style={styles.vediAltroBtn}
@@ -151,6 +161,67 @@ function SmallCard({
         </TouchableOpacity>
       </View>
     </View>
+  );
+}
+
+// ─── Organizer manage card (Tornei che gestisci) ─────────────────────────────
+function OrganizerManageCard({
+  tournament,
+  onPress,
+}: {
+  tournament: MyTournament;
+  onPress: () => void;
+}) {
+  const emoji = SPORT_EMOJI[tournament.game] ?? "🏆";
+  const date = new Date(tournament.startDate).toLocaleDateString("it-IT", {
+    day: "2-digit",
+    month: "short",
+  });
+  const statusColor =
+    tournament.status === "ongoing"
+      ? "#10b981"
+      : tournament.status === "upcoming"
+      ? "#3b82f6"
+      : "#94a3b8";
+  const statusLabel =
+    tournament.status === "ongoing"
+      ? "In corso"
+      : tournament.status === "upcoming"
+      ? "In arrivo"
+      : "Concluso";
+
+  return (
+    <TouchableOpacity
+      style={hStyles.orgCard}
+      onPress={onPress}
+      activeOpacity={0.88}
+    >
+      <View style={hStyles.orgCardAccent} />
+      <View style={hStyles.orgCardEmoji}>
+        <Text style={{ fontSize: 24 }}>{emoji}</Text>
+      </View>
+      <View style={{ flex: 1 }}>
+        <Text style={hStyles.orgCardName} numberOfLines={1}>
+          {tournament.name}
+        </Text>
+        <View style={hStyles.orgCardMeta}>
+          <Ionicons name="location-sharp" size={11} color="#94a3b8" />
+          <Text style={hStyles.orgCardMetaText} numberOfLines={1}>
+            {" "}{tournament.location} · {date}
+          </Text>
+        </View>
+        <View style={hStyles.orgCardBottom}>
+          <View style={[hStyles.statusBadge, { backgroundColor: statusColor + "20" }]}>
+            <View style={[hStyles.statusDot, { backgroundColor: statusColor }]} />
+            <Text style={[hStyles.statusText, { color: statusColor }]}>{statusLabel}</Text>
+          </View>
+          <Text style={hStyles.orgTeamsText}>
+            {tournament.currentParticipants}/{tournament.maxParticipants} squadre
+          </Text>
+        </View>
+      </View>
+      <Ionicons name="chevron-forward" size={16} color="#cbd5e1" />
+    </TouchableOpacity>
   );
 }
 
@@ -190,6 +261,14 @@ export default function HomeScreen() {
       navigation.navigate("Login", { redirect: "tournament", tournamentId: id });
     } else {
       navigation.navigate("MyTournamentDetail", { tournamentId: id });
+    }
+  };
+
+  const goToOrganizerTournament = (id: string) => {
+    if (!user) {
+      navigation.navigate("Login", { redirect: "tournament", tournamentId: id });
+    } else {
+      navigation.navigate("OrganizerTournamentDetail", { tournamentId: id });
     }
   };
 
@@ -303,22 +382,42 @@ export default function HomeScreen() {
             />
           </View>
 
+          {/* ── Tornei che gestisci ────────────────── */}
+          {user?.isOrganizer && MY_ORGANIZER_TOURNAMENTS.length > 0 && (
+            <>
+              <Text style={styles.sectionTitle}>Tornei che gestisci</Text>
+              <View style={hStyles.orgList}>
+                {MY_ORGANIZER_TOURNAMENTS.map((t) => (
+                  <OrganizerManageCard
+                    key={t.id}
+                    tournament={t}
+                    onPress={() => goToOrganizerTournament(t.id)}
+                  />
+                ))}
+              </View>
+            </>
+          )}
+
           {/* ── I Tuoi Tornei ───────────────────────── */}
-          <Text style={styles.sectionTitle}>I Tuoi Tornei</Text>
-          <ScrollView
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            contentContainerStyle={styles.hList}
-          >
-            {MY_TOURNAMENTS.map((t, i) => (
-              <BigCard
-                key={t.id}
-                tournament={t}
-                index={i}
-                onPress={() => goToMyTournament(t.id)}
-              />
-            ))}
-          </ScrollView>
+          {MY_PARTICIPANT_TOURNAMENTS.length > 0 && (
+            <>
+              <Text style={[styles.sectionTitle, { marginTop: 20 }]}>I Tuoi Tornei</Text>
+              <ScrollView
+                horizontal
+                showsHorizontalScrollIndicator={false}
+                contentContainerStyle={styles.hList}
+              >
+                {MY_PARTICIPANT_TOURNAMENTS.map((t, i) => (
+                  <BigCard
+                    key={t.id}
+                    tournament={t}
+                    index={i}
+                    onPress={() => goToMyTournament(t.id)}
+                  />
+                ))}
+              </ScrollView>
+            </>
+          )}
 
           {/* ── Consigliati per te ──────────────────── */}
           <Text style={[styles.sectionTitle, { marginTop: 20 }]}>
@@ -552,5 +651,84 @@ const styles = StyleSheet.create({
     fontSize: 9,
     fontWeight: "800",
     letterSpacing: 0.5,
+  },
+});
+
+const hStyles = StyleSheet.create({
+  orgList: {
+    paddingHorizontal: 16,
+    gap: 8,
+    marginBottom: 4,
+  },
+  orgCard: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#fff",
+    borderRadius: 16,
+    overflow: "hidden",
+    paddingVertical: 14,
+    paddingRight: 14,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.07,
+    shadowRadius: 6,
+    elevation: 2,
+    gap: 12,
+  },
+  orgCardAccent: {
+    width: 4,
+    alignSelf: "stretch",
+    backgroundColor: "#E8601A",
+    borderRadius: 2,
+  },
+  orgCardEmoji: {
+    width: 44,
+    height: 44,
+    borderRadius: 12,
+    backgroundColor: "#fff7ed",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  orgCardName: {
+    fontSize: 14,
+    fontWeight: "700",
+    color: "#1e293b",
+    marginBottom: 3,
+  },
+  orgCardMeta: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 6,
+  },
+  orgCardMetaText: {
+    fontSize: 11,
+    color: "#94a3b8",
+  },
+  orgCardBottom: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
+  statusBadge: {
+    flexDirection: "row",
+    alignItems: "center",
+    borderRadius: 20,
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    gap: 4,
+  },
+  statusDot: {
+    width: 6,
+    height: 6,
+    borderRadius: 3,
+  },
+  statusText: {
+    fontSize: 11,
+    fontWeight: "700",
+  },
+  orgTeamsText: {
+    fontSize: 11,
+    color: "#64748b",
+    fontWeight: "600",
   },
 });

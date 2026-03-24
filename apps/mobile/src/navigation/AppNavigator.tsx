@@ -19,6 +19,8 @@ import TeamsScreen from "../screens/TeamsScreen";
 import CreateTeamScreen from "../screens/CreateTeamScreen";
 import TeamDetailScreen from "../screens/TeamDetailScreen";
 import InvitePlayersScreen from "../screens/InvitePlayersScreen";
+import OrganizerTournamentDetailScreen from "../screens/OrganizerTournamentDetailScreen";
+import PlayerProfileScreen from "../screens/PlayerProfileScreen";
 import MainTabNavigator from "./MainTabNavigator";
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -114,6 +116,16 @@ export default function AppNavigator() {
         <Stack.Screen
           name="InvitePlayers"
           component={InvitePlayersScreen}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="OrganizerTournamentDetail"
+          component={OrganizerTournamentDetailScreen}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="PlayerProfile"
+          component={PlayerProfileScreen}
           options={{ headerShown: false }}
         />
       </Stack.Navigator>
