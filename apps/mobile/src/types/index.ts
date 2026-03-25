@@ -1,4 +1,4 @@
-export type TournamentStatus = 'upcoming' | 'ongoing' | 'completed';
+export type TournamentStatus = "upcoming" | "ongoing" | "completed";
 
 export interface Tournament {
   id: string;
@@ -34,7 +34,7 @@ export interface TournamentMatch {
   awayTeam: TournamentTeam;
   homeScore: number | null;
   awayScore: number | null;
-  status: 'scheduled' | 'live' | 'finished';
+  status: "scheduled" | "live" | "finished";
   round?: string;
 }
 
@@ -55,13 +55,13 @@ export interface TournamentBracket {
 }
 
 export type TournamentStructure =
-  | { kind: 'groups'; groups: TournamentGroup[]; userGroupId: string }
-  | { kind: 'knockout'; bracket: TournamentBracket };
+  | { kind: "groups"; groups: TournamentGroup[]; userGroupId: string }
+  | { kind: "knockout"; bracket: TournamentBracket };
 
 export interface MyTournament extends Tournament {
   structure: TournamentStructure;
-  isGenerated?: boolean;   // false = waiting for organizer to generate the bracket; defaults to true
-  isOrganizer?: boolean;   // true = current user is the tournament organizer
+  isGenerated?: boolean; // false = waiting for organizer to generate the bracket; defaults to true
+  isOrganizer?: boolean; // true = current user is the tournament organizer
 }
 
 // ─── Stats & history types ────────────────────────────────────────────────────
@@ -79,7 +79,7 @@ export interface OrganizedTournamentRecord {
   id: string;
   name: string;
   sport: string;
-  date: string;           // ISO date string of tournament start
+  date: string; // ISO date string of tournament start
   location: string;
   totalTeams: number;
   totalPrizeMoney: string; // e.g. "$5,000"
@@ -87,7 +87,11 @@ export interface OrganizedTournamentRecord {
 
 // ─── Team types ───────────────────────────────────────────────────────────────
 
-export type TeamRole = 'representative' | 'calciatore' | 'allenatore' | 'portiere';
+export type TeamRole =
+  | "representative"
+  | "calciatore"
+  | "allenatore"
+  | "portiere";
 
 export interface PendingInvite {
   id: string;
@@ -135,7 +139,11 @@ export interface PlayerStats {
   redCards: number;
 }
 
-export type TeamRegistrationStatus = 'pending_approval' | 'rejected' | 'accepted' | 'paid';
+export type TeamRegistrationStatus =
+  | "pending_approval"
+  | "rejected"
+  | "accepted"
+  | "paid";
 
 export interface TournamentPlayer {
   id: string;
@@ -195,14 +203,25 @@ export interface RegisterCredentials {
 // ─── Navigation ───────────────────────────────────────────────────────────────
 
 export type RootStackParamList = {
-  Login: { redirect?: 'tournament'; tournamentId?: string };
+  ChoseAccess: undefined;
+  Login: { redirect?: "tournament"; tournamentId?: string };
   Register: undefined;
   Onboarding: undefined;
   MainTabs: undefined;
   TournamentDetail: { tournamentId: string; justRegistered?: boolean };
   MyTournamentDetail: { tournamentId: string };
-  Payment: { tournamentId: string; entryFee: string; tournamentName: string; teamId?: string; teamName?: string };
-  TeamSelect: { tournamentId: string; entryFee: string; tournamentName: string };
+  Payment: {
+    tournamentId: string;
+    entryFee: string;
+    tournamentName: string;
+    teamId?: string;
+    teamName?: string;
+  };
+  TeamSelect: {
+    tournamentId: string;
+    entryFee: string;
+    tournamentName: string;
+  };
   ForgotPassword: undefined;
   EditProfile: undefined;
   Notifiche: undefined;

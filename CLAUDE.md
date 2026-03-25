@@ -33,16 +33,16 @@ expo start --android
 
 ### Key dependencies
 
-| Package | Purpose |
-|---|---|
-| `@react-navigation/native-stack` | Stack navigation |
-| `@react-navigation/bottom-tabs` | Tab bar |
-| `expo-linear-gradient` | Orange gradient headers |
-| `expo-notifications` | Push notifications |
-| `expo-image-picker` | Avatar selection |
-| `expo-location` | User geolocation |
-| `react-native-safe-area-context` | Safe area insets |
-| `@faker-js/faker` | Mock data generation |
+| Package                          | Purpose                 |
+| -------------------------------- | ----------------------- |
+| `@react-navigation/native-stack` | Stack navigation        |
+| `@react-navigation/bottom-tabs`  | Tab bar                 |
+| `expo-linear-gradient`           | Orange gradient headers |
+| `expo-notifications`             | Push notifications      |
+| `expo-image-picker`              | Avatar selection        |
+| `expo-location`                  | User geolocation        |
+| `react-native-safe-area-context` | Safe area insets        |
+| `@faker-js/faker`                | Mock data generation    |
 
 ---
 
@@ -79,7 +79,7 @@ src/
     ├── TournamentDetailScreen.tsx  # Tournament info + sign-up CTA
     ├── MyTournamentDetailScreen.tsx # Bracket/groups live viewer (registered)
     ├── TeamSelectScreen.tsx        # Team picker modal (before payment)
-    ├── PaymentScreen.tsx           # Card / PayPal payment form
+    ├── PaymentScreen.tsx           # Card payment form
     ├── TeamsScreen.tsx             # Full teams list
     ├── CreateTeamScreen.tsx        # Create new team form
     ├── TeamDetailScreen.tsx        # Team detail + member management
@@ -114,23 +114,23 @@ src/
 
 ### Stack routes (`RootStackParamList`)
 
-| Route | Screen | Notes |
-|---|---|---|
-| `MainTabs` | MainTabNavigator | Initial route |
-| `Login` | LoginScreen | |
-| `Register` | RegisterScreen | |
-| `Onboarding` | OnboardingScreen | |
-| `TournamentDetail` | TournamentDetailScreen | `tournamentId`, `justRegistered?` |
-| `MyTournamentDetail` | MyTournamentDetailScreen | `tournamentId` |
-| `TeamSelect` | TeamSelectScreen | Modal; `tournamentId`, `entryFee`, `tournamentName` |
-| `Payment` | PaymentScreen | `tournamentId`, `entryFee`, `tournamentName`, `teamId?`, `teamName?` |
-| `Teams` | TeamsScreen | |
-| `CreateTeam` | CreateTeamScreen | |
-| `TeamDetail` | TeamDetailScreen | `teamId` |
-| `InvitePlayers` | InvitePlayersScreen | `teamId` |
-| `EditProfile` | EditProfileScreen | |
-| `Notifiche` | NotificheScreen | |
-| `ForgotPassword` | ForgotPasswordScreen | |
+| Route                | Screen                   | Notes                                                                |
+| -------------------- | ------------------------ | -------------------------------------------------------------------- |
+| `MainTabs`           | MainTabNavigator         | Initial route                                                        |
+| `Login`              | LoginScreen              |                                                                      |
+| `Register`           | RegisterScreen           |                                                                      |
+| `Onboarding`         | OnboardingScreen         |                                                                      |
+| `TournamentDetail`   | TournamentDetailScreen   | `tournamentId`, `justRegistered?`                                    |
+| `MyTournamentDetail` | MyTournamentDetailScreen | `tournamentId`                                                       |
+| `TeamSelect`         | TeamSelectScreen         | Modal; `tournamentId`, `entryFee`, `tournamentName`                  |
+| `Payment`            | PaymentScreen            | `tournamentId`, `entryFee`, `tournamentName`, `teamId?`, `teamName?` |
+| `Teams`              | TeamsScreen              |                                                                      |
+| `CreateTeam`         | CreateTeamScreen         |                                                                      |
+| `TeamDetail`         | TeamDetailScreen         | `teamId`                                                             |
+| `InvitePlayers`      | InvitePlayersScreen      | `teamId`                                                             |
+| `EditProfile`        | EditProfileScreen        |                                                                      |
+| `Notifiche`          | NotificheScreen          |                                                                      |
+| `ForgotPassword`     | ForgotPasswordScreen     |                                                                      |
 
 ### Bottom tabs (`MainTabParamList`)
 
@@ -155,34 +155,34 @@ When `isMocking = true` (default), all API functions return faker-generated data
 
 ### Complete API surface
 
-| Function | Method + Endpoint | File |
-|---|---|---|
-| `login` | POST `/auth/login` | auth.ts |
-| `register` | POST `/auth/register` | auth.ts |
-| `forgotPassword` | POST `/auth/forgot-password` | auth.ts |
-| `fetchProfile` | GET `/auth/profile` | auth.ts |
-| `updateProfile` | PATCH `/auth/profile` | auth.ts |
-| `registerPushToken` | POST `/auth/push-token` | auth.ts |
-| `fetchTournaments` | GET `/tournaments` | tournaments.ts |
-| `fetchTournament` | GET `/tournaments/{id}` | tournaments.ts |
+| Function                 | Method + Endpoint                           | File           |
+| ------------------------ | ------------------------------------------- | -------------- |
+| `login`                  | POST `/auth/login`                          | auth.ts        |
+| `register`               | POST `/auth/register`                       | auth.ts        |
+| `forgotPassword`         | POST `/auth/forgot-password`                | auth.ts        |
+| `fetchProfile`           | GET `/auth/profile`                         | auth.ts        |
+| `updateProfile`          | PATCH `/auth/profile`                       | auth.ts        |
+| `registerPushToken`      | POST `/auth/push-token`                     | auth.ts        |
+| `fetchTournaments`       | GET `/tournaments`                          | tournaments.ts |
+| `fetchTournament`        | GET `/tournaments/{id}`                     | tournaments.ts |
 | `fetchNearbyTournaments` | GET `/tournaments/nearby?lat=&lng=&radius=` | tournaments.ts |
-| `signUpForTournament` | POST `/tournaments/{id}/signup` | tournaments.ts |
-| `fetchMyTournaments` | GET `/my-tournaments` | tournaments.ts |
-| `fetchMyTournament` | GET `/my-tournaments/{id}` | tournaments.ts |
-| `activateTournament` | POST `/my-tournaments/{id}/activate` | tournaments.ts |
-| `fetchFavorites` | GET `/favorites` | favorites.ts |
-| `addFavorite` | POST `/favorites/{id}` | favorites.ts |
-| `removeFavorite` | DELETE `/favorites/{id}` | favorites.ts |
-| `fetchUserTeams` | GET `/teams/mine` | teams.ts |
-| `createTeam` | POST `/teams` | teams.ts |
-| `inviteMember` | POST `/teams/{id}/invite` | teams.ts |
-| `removeMember` | DELETE `/teams/{id}/members/{memberId}` | teams.ts |
-| `updateMemberRole` | PATCH `/teams/{id}/members/{memberId}/role` | teams.ts |
-| `getPendingInvites` | GET `/teams/invites/pending` | teams.ts |
-| `getSentInvites` | GET `/teams/{id}/invites` | teams.ts |
-| `acceptInvite` | POST `/teams/invites/{id}/accept` | teams.ts |
-| `rejectInvite` | POST `/teams/invites/{id}/reject` | teams.ts |
-| `searchUsers` | GET `/users/search?q=` | teams.ts |
+| `signUpForTournament`    | POST `/tournaments/{id}/signup`             | tournaments.ts |
+| `fetchMyTournaments`     | GET `/my-tournaments`                       | tournaments.ts |
+| `fetchMyTournament`      | GET `/my-tournaments/{id}`                  | tournaments.ts |
+| `activateTournament`     | POST `/my-tournaments/{id}/activate`        | tournaments.ts |
+| `fetchFavorites`         | GET `/favorites`                            | favorites.ts   |
+| `addFavorite`            | POST `/favorites/{id}`                      | favorites.ts   |
+| `removeFavorite`         | DELETE `/favorites/{id}`                    | favorites.ts   |
+| `fetchUserTeams`         | GET `/teams/mine`                           | teams.ts       |
+| `createTeam`             | POST `/teams`                               | teams.ts       |
+| `inviteMember`           | POST `/teams/{id}/invite`                   | teams.ts       |
+| `removeMember`           | DELETE `/teams/{id}/members/{memberId}`     | teams.ts       |
+| `updateMemberRole`       | PATCH `/teams/{id}/members/{memberId}/role` | teams.ts       |
+| `getPendingInvites`      | GET `/teams/invites/pending`                | teams.ts       |
+| `getSentInvites`         | GET `/teams/{id}/invites`                   | teams.ts       |
+| `acceptInvite`           | POST `/teams/invites/{id}/accept`           | teams.ts       |
+| `rejectInvite`           | POST `/teams/invites/{id}/reject`           | teams.ts       |
+| `searchUsers`            | GET `/users/search?q=`                      | teams.ts       |
 
 ### Mock cache pattern
 
@@ -190,7 +190,7 @@ Each API module keeps module-level cache variables (e.g. `mockTeamCache`, `mockU
 
 ```ts
 return [...getMockTeamCache()]; // ✓ shallow copy
-return getMockTeamCache();      // ✗ aliasing
+return getMockTeamCache(); // ✗ aliasing
 ```
 
 `api/teams.ts` seeds a pre-populated pending invite ("Marco Bianchi / Milano United") so the invite-acceptance flow is testable out-of-the-box.
@@ -217,11 +217,13 @@ return getMockTeamCache();      // ✗ aliasing
 ## Key features
 
 ### Tournament bracket viewer (`MyTournamentDetailScreen`)
+
 - **Groups** (`kind: 'groups'`): tab bar with Gironi + Classifica tabs; live score simulation via `setInterval` every 5s
 - **Knockout** (`kind: 'knockout'`): Sofascore-style bracket with absolute-positioned connector lines between rounds; `BracketMatchCard` with orange left border for live matches
 - Live simulation: `simulateLiveUpdate()` pure function, 40% chance of scoring per tick
 
 ### Team management
+
 - `TeamsContext` provides: `createTeam`, `addMember`, `removeMember`, `getTeamById`, `refreshTeams`, `acceptInvite`, `rejectInvite`, `updateMemberRole`, plus state `pendingReceivedInvites` and `sentPendingInvites`
 - **Role-based**: only `representative` can invite or remove members; enforced in both `TeamDetailScreen` and `InvitePlayersScreen`
 - **Roles**: `TeamRole = 'representative' | 'calciatore' | 'allenatore' | 'portiere'`. Max 1 `allenatore` and 1 `portiere` per team; `representative` role is immutable
@@ -230,6 +232,7 @@ return getMockTeamCache();      // ✗ aliasing
 - Duplicate team name check: same representative cannot create two teams with the same name (validated in `api/teams.ts → createTeam`)
 
 ### Favorites
+
 - `FavoritesContext` provides: `favorites`, `addFavorite`, `removeFavorite`, `isFavorite`
 - Loads favorites via `api/favorites.ts → fetchFavorites` on user login (resets to `[]` on logout)
 - `addFavorite`/`removeFavorite` update state immediately then fire API call in the background (fire-and-forget `.catch(() => {})`)
@@ -238,10 +241,12 @@ return getMockTeamCache();      // ✗ aliasing
 - Auto-removed from favorites when a tournament is registered (in the `justRegistered` useEffect)
 
 ### Map interaction (`EsploraScreen`)
+
 - Tapping a marker sets `selectedTournament` state → shows a bottom card overlay
 - **Do not use `<Callout>`** — it is unreliable on Android with custom views. Use marker `onPress` + a positioned `View` overlay instead
 
 ### Push notification routing (`useNotificationSetup.ios.ts`)
+
 - On mount: requests permission, then calls `getExpoPushTokenAsync()` + `registerPushToken(token, userToken)` to register with the backend (no-op in mock mode)
 - Foreground/background taps: `addNotificationResponseReceivedListener`
 - Cold-start (app killed): `getLastNotificationResponseAsync()` on mount
@@ -250,6 +255,7 @@ return getMockTeamCache();      // ✗ aliasing
 - Tournament notification payload: `{ tournamentId }` → navigates to `TournamentDetail`
 
 ### Genera torneo gate (`MyTournamentDetailScreen`)
+
 - `MyTournament` has `isOrganizer?: boolean` and `isGenerated?: boolean`
 - When `isGenerated === false`: bracket/groups are hidden; organizer sees a "Genera torneo" button
 - `activateTournament()` in `api/tournaments.ts` sets `isGenerated = true` on the cache entry
@@ -257,6 +263,7 @@ return getMockTeamCache();      // ✗ aliasing
 - Mock assignment: index 0 = organizer + ungenerated, index 1 = ungenerated (non-organizer), index 2+ = generated
 
 ### Tournament sign-up flow
+
 `TournamentDetail` → `TeamSelect` (modal, must pick a team) → `Payment` → `TournamentDetail` (justRegistered)
 
 ---
@@ -269,4 +276,5 @@ npx tsc --noEmit
 ```
 
 **Known pre-existing error** (not introduced by this project's code):
+
 - `src/hooks/useNotificationSetup.ios.ts`: `TS2322` — newer `expo-notifications` SDK requires `shouldShowBanner` and `shouldShowList` on `NotificationBehavior`. This is an upstream type mismatch; ignore it.

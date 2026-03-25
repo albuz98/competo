@@ -1,27 +1,28 @@
 import React from "react";
+import { ActivityIndicator, View } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import type { RootStackParamList } from "../types";
 import { navigationRef } from "./navigationRef";
 import { useNotificationSetup } from "../hooks/useNotificationSetup";
-
-import LoginScreen from "../screens/LoginScreen";
-import RegisterScreen from "../screens/RegisterScreen";
-import OnboardingScreen from "../screens/OnboardingScreen";
-import TournamentDetailScreen from "../screens/TournamentDetailScreen";
-import MyTournamentDetailScreen from "../screens/MyTournamentDetailScreen";
-import PaymentScreen from "../screens/PaymentScreen";
-import TeamSelectScreen from "../screens/TeamSelectScreen";
-import ForgotPasswordScreen from "../screens/ForgotPasswordScreen";
-import EditProfileScreen from "../screens/EditProfileScreen";
-import NotificheScreen from "../screens/NotificheScreen";
-import TeamsScreen from "../screens/TeamsScreen";
-import CreateTeamScreen from "../screens/CreateTeamScreen";
-import TeamDetailScreen from "../screens/TeamDetailScreen";
-import InvitePlayersScreen from "../screens/InvitePlayersScreen";
-import OrganizerTournamentDetailScreen from "../screens/OrganizerTournamentDetailScreen";
-import PlayerProfileScreen from "../screens/PlayerProfileScreen";
-import MainTabNavigator from "./MainTabNavigator";
+import TeamsScreen from "../screens/Teams/Teams";
+import MainTabNavigator from "./MainTabNavigator/MainTabNavigator";
+import { useAuth } from "../context/AuthContext";
+import CreateTeam from "../screens/CreateTeam/CreateTeam";
+import EditProfile from "../screens/EditProfile/EditProfile";
+import ForgotPassword from "../screens/ForgotPassword/ForgotPassword";
+import InvitePlayers from "../screens/InvitePlayers/InvitePlayers";
+import Login from "../screens/Login/Login";
+import MyTournamentDetail from "../screens/MyTournamentDetail/MyTournamentDetail";
+import Notifications from "../screens/Notifications/Notifications";
+import Onboarding from "../screens/Onboarding/Onboarding";
+import OrganizerTournamentDetail from "../screens/OrganizerTournamentDetail/OrganizerTournamentDetail";
+import Payment from "../screens/Payment/Payment";
+import PlayerProfile from "../screens/PlayerProfile/PlayerProfile";
+import Register from "../screens/Register/Register";
+import TeamDetail from "../screens/TeamDetail/TeamDetail";
+import TeamSelect from "../screens/TeamSelect/TeamSelect";
+import TournamentDetail from "../screens/TournamentDetail/TournamentDetail";
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -31,11 +32,28 @@ function NavigationSetup() {
 }
 
 export default function AppNavigator() {
+  const { user, bootstrapping } = useAuth();
+
+  if (bootstrapping) {
+    return (
+      <View
+        style={{
+          flex: 1,
+          justifyContent: "center",
+          alignItems: "center",
+          backgroundColor: "#f8fafc",
+        }}
+      >
+        <ActivityIndicator size="large" color="#E8601A" />
+      </View>
+    );
+  }
+
   return (
     <NavigationContainer ref={navigationRef}>
       <NavigationSetup />
       <Stack.Navigator
-        initialRouteName="MainTabs"
+        initialRouteName={user ? "MainTabs" : "ChoseAccess"}
         screenOptions={{
           headerStyle: { backgroundColor: "#4f46e5" },
           headerTintColor: "#fff",
@@ -45,17 +63,17 @@ export default function AppNavigator() {
       >
         <Stack.Screen
           name="Login"
-          component={LoginScreen}
+          component={Login}
           options={{ headerShown: false }}
         />
         <Stack.Screen
           name="Register"
-          component={RegisterScreen}
+          component={Register}
           options={{ headerShown: false }}
         />
         <Stack.Screen
           name="Onboarding"
-          component={OnboardingScreen}
+          component={Onboarding}
           options={{ headerShown: false }}
         />
         <Stack.Screen
@@ -65,37 +83,37 @@ export default function AppNavigator() {
         />
         <Stack.Screen
           name="TournamentDetail"
-          component={TournamentDetailScreen}
+          component={TournamentDetail}
           options={{ title: "Dettagli Torneo" }}
         />
         <Stack.Screen
           name="Payment"
-          component={PaymentScreen}
+          component={Payment}
           options={{ headerShown: false }}
         />
         <Stack.Screen
           name="ForgotPassword"
-          component={ForgotPasswordScreen}
+          component={ForgotPassword}
           options={{ headerShown: false }}
         />
         <Stack.Screen
           name="EditProfile"
-          component={EditProfileScreen}
+          component={EditProfile}
           options={{ headerShown: false }}
         />
         <Stack.Screen
           name="Notifiche"
-          component={NotificheScreen}
+          component={Notifications}
           options={{ headerShown: false }}
         />
         <Stack.Screen
           name="MyTournamentDetail"
-          component={MyTournamentDetailScreen}
+          component={MyTournamentDetail}
           options={{ headerShown: false }}
         />
         <Stack.Screen
           name="TeamSelect"
-          component={TeamSelectScreen}
+          component={TeamSelect}
           options={{ headerShown: false, presentation: "modal" }}
         />
         <Stack.Screen
@@ -105,27 +123,27 @@ export default function AppNavigator() {
         />
         <Stack.Screen
           name="CreateTeam"
-          component={CreateTeamScreen}
+          component={CreateTeam}
           options={{ headerShown: false }}
         />
         <Stack.Screen
           name="TeamDetail"
-          component={TeamDetailScreen}
+          component={TeamDetail}
           options={{ headerShown: false }}
         />
         <Stack.Screen
           name="InvitePlayers"
-          component={InvitePlayersScreen}
+          component={InvitePlayers}
           options={{ headerShown: false }}
         />
         <Stack.Screen
           name="OrganizerTournamentDetail"
-          component={OrganizerTournamentDetailScreen}
+          component={OrganizerTournamentDetail}
           options={{ headerShown: false }}
         />
         <Stack.Screen
           name="PlayerProfile"
-          component={PlayerProfileScreen}
+          component={PlayerProfile}
           options={{ headerShown: false }}
         />
       </Stack.Navigator>
