@@ -70,6 +70,7 @@ src/
 │   ├── AppNavigator.tsx    # Root stack navigator
 │   ├── MainTabNavigator.tsx # Bottom tabs (Home/Esplora/Preferiti/Profilo)
 │   └── navigationRef.ts    # Global navigation ref for use outside components
+├── styles/                 # One *.styles.ts per screen/navigator (see Styling conventions)
 └── screens/
     ├── HomeScreen.tsx              # Feed: I Tuoi Tornei + Esplora + map
     ├── EsploraScreen.tsx           # Tournament discovery
@@ -208,7 +209,8 @@ return getMockTeamCache();      // ✗ aliasing
 - **Text hierarchy**: `#1e293b` (primary) · `#64748b` (secondary) · `#94a3b8` (muted)
 - **Danger**: `#ef4444`
 - **Success**: `#10b981`
-- Each screen typically defines its own `StyleSheet.create({})` at the bottom, named after the screen (e.g. `s`, `tds`, `ip`, `cs`, `bStyles`)
+- All `StyleSheet.create` blocks live in `src/styles/<ScreenName>.styles.ts` — never inline in screen files. Each style file uses a named export that matches the original variable (e.g. `export const tds`, `export const s`, `export const bStyles`). Dimension/layout constants used in both the stylesheet and JSX (e.g. `BIG_W`, `CARD_WIDTH`, bracket constants) are also exported from the style file.
+- `MyTournamentDetailScreen.styles.ts` and `OrganizerTournamentDetailScreen.styles.ts` export shared bracket layout constants: `CARD_H`, `CARD_W`, `COL_GAP`, `SLOT_H`, `LABEL_H`, `LINE_W`, `LINE_COLOR`.
 
 ---
 
