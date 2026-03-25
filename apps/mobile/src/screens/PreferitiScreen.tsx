@@ -4,9 +4,9 @@ import {
   Text,
   FlatList,
   TouchableOpacity,
-  StyleSheet,
   StatusBar,
 } from 'react-native';
+import { pf } from '../styles/PreferitiScreen.styles';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
@@ -91,56 +91,3 @@ export default function PreferitiScreen() {
   );
 }
 
-const pf = StyleSheet.create({
-  root: { flex: 1, backgroundColor: '#fff' },
-  header: {
-    fontSize: 22,
-    fontWeight: '800',
-    color: '#1e293b',
-    paddingHorizontal: 16,
-    paddingTop: 16,
-    paddingBottom: 8,
-    backgroundColor: '#fff',
-  },
-  center: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: 32 },
-  emptyTitle: { fontSize: 17, fontWeight: '700', color: '#94a3b8', marginTop: 16 },
-  emptySubtitle: { fontSize: 13, color: '#cbd5e1', textAlign: 'center', marginTop: 8, lineHeight: 20 },
-
-  card: {
-    backgroundColor: '#fff',
-    borderRadius: 16,
-    padding: 16,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.06,
-    shadowRadius: 8,
-    elevation: 2,
-    borderWidth: 1,
-    borderColor: '#f1f5f9',
-  },
-  cardHeader: { flexDirection: 'row', alignItems: 'flex-start', gap: 8, marginBottom: 12 },
-  cardHeaderLeft: { flex: 1 },
-  cardGame: {
-    fontSize: 11,
-    fontWeight: '700',
-    color: '#E8601A',
-    textTransform: 'uppercase',
-    letterSpacing: 0.8,
-    marginBottom: 4,
-  },
-  cardName: { fontSize: 16, fontWeight: '800', color: '#1e293b', lineHeight: 22 },
-  bookmarkBtn: {
-    width: 34,
-    height: 34,
-    borderRadius: 17,
-    backgroundColor: '#FFF0E6',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  cardFooter: { flexDirection: 'row', alignItems: 'center', gap: 10, flexWrap: 'wrap' },
-  statusBadge: { borderRadius: 20, paddingHorizontal: 10, paddingVertical: 4 },
-  statusText: { fontSize: 11, fontWeight: '700' },
-  metaRow: { flexDirection: 'row', alignItems: 'center', gap: 3 },
-  metaText: { fontSize: 12, color: '#94a3b8', maxWidth: 100 },
-  entryFee: { marginLeft: 'auto' as any, fontSize: 13, fontWeight: '800', color: '#1e293b' },
-});

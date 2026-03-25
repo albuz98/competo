@@ -4,7 +4,6 @@ import {
   Text,
   FlatList,
   TouchableOpacity,
-  StyleSheet,
   RefreshControl,
   ActivityIndicator,
 } from 'react-native';
@@ -14,6 +13,7 @@ import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import type { RootStackParamList, Tournament } from '../types';
 import { fetchTournaments } from '../api/tournaments';
 import { useAuth } from '../context/AuthContext';
+import { styles } from '../styles/TournamentListScreen.styles';
 
 const STATUS_COLORS: Record<string, string> = {
   upcoming: '#3b82f6',
@@ -158,54 +158,3 @@ export default function TournamentListScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  container: { flex: 1 },
-  list: { padding: 16, paddingBottom: 32 },
-  center: { flex: 1, justifyContent: 'center', alignItems: 'center', padding: 24, minHeight: 300 },
-  card: {
-    backgroundColor: '#fff',
-    borderRadius: 14,
-    padding: 16,
-    marginBottom: 12,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.07,
-    shadowRadius: 6,
-    elevation: 3,
-  },
-  cardHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 6,
-  },
-  gameName: {
-    fontSize: 11,
-    color: '#6b7280',
-    fontWeight: '600',
-    textTransform: 'uppercase',
-    letterSpacing: 0.5,
-    flex: 1,
-    marginRight: 8,
-  },
-  statusBadge: { borderRadius: 10, paddingHorizontal: 8, paddingVertical: 3 },
-  statusText: { fontSize: 10, color: '#fff', fontWeight: '700', letterSpacing: 0.5 },
-  tournamentName: { fontSize: 16, fontWeight: '700', color: '#1e293b', marginBottom: 14 },
-  cardDetails: { flexDirection: 'row', justifyContent: 'space-between' },
-  detail: { alignItems: 'center', flex: 1 },
-  detailLabel: { fontSize: 10, color: '#94a3b8', marginBottom: 3, textTransform: 'uppercase' },
-  detailValue: { fontSize: 13, fontWeight: '600', color: '#334155' },
-  prizeText: { color: '#f59e0b' },
-  loadingText: { marginTop: 12, color: '#6b7280', fontSize: 14 },
-  errorText: { color: '#ef4444', textAlign: 'center', marginBottom: 16, fontSize: 14 },
-  retryBtn: {
-    backgroundColor: '#4f46e5',
-    borderRadius: 10,
-    paddingHorizontal: 24,
-    paddingVertical: 10,
-  },
-  retryBtnText: { color: '#fff', fontWeight: '600' },
-  emptyText: { color: '#6b7280', fontSize: 14 },
-  headerBtn: { marginRight: 4, paddingVertical: 4, paddingHorizontal: 2 },
-  headerBtnText: { color: '#fff', fontWeight: '600', fontSize: 14 },
-});
