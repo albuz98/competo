@@ -10,27 +10,28 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { LinearGradient } from "expo-linear-gradient";
+import { Ionicons } from "@expo/vector-icons";
 import { styles } from "./AuthLayout.styles";
+import { colors } from "../../theme/colors";
 
 type Props = {
   children: React.ReactNode;
-  onBack?: () => void;
+  onClose?: () => void;
 };
 
-export default function AuthLayout({ children, onBack }: Props) {
+export default function AuthLayout({ children, onClose }: Props) {
   return (
     <View style={styles.root}>
       <StatusBar barStyle="light-content" backgroundColor="#000" />
       <SafeAreaView style={styles.safeArea}>
         <View style={styles.topArea}>
-          {onBack && (
+          {onClose && (
             <TouchableOpacity
-              onPress={onBack}
-              style={styles.backBtn}
+              onPress={onClose}
+              style={styles.closeBtn}
               activeOpacity={0.7}
             >
-              <Text style={styles.backArrow}>←</Text>
-              <Text style={styles.backText}>Back</Text>
+              <Ionicons name="close" size={26} color="#fff" />
             </TouchableOpacity>
           )}
         </View>
@@ -39,7 +40,7 @@ export default function AuthLayout({ children, onBack }: Props) {
           behavior={Platform.OS === "ios" ? "padding" : "height"}
         >
           <LinearGradient
-            colors={["#E8601A", "#F5A020"]}
+            colors={[colors.primaryGradientEnd, colors.primary]}
             start={{ x: 0, y: 0 }}
             end={{ x: 0, y: 1 }}
             style={styles.card}

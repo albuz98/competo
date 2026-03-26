@@ -1761,9 +1761,9 @@
   dependencies:
     csstype "^3.2.2"
 
-"@types/react@~19.1.10":
+"@types/react@~19.1.0":
   version "19.1.17"
-  resolved "https://registry.npmjs.org/@types/react/-/react-19.1.17.tgz"
+  resolved "https://registry.yarnpkg.com/@types/react/-/react-19.1.17.tgz#8be0b9c546cede389b930a98eb3fad1897f209c3"
   integrity sha512-Qec1E3mhALmaspIrhWt9jkQMNdw6bReVu64mjvhbhq2NFPftLPVr+l1SZgmw/66WwBNpDh7ao5AT6gF5v41PFA==
   dependencies:
     csstype "^3.0.2"
@@ -4757,7 +4757,7 @@ react-refresh@^0.14.0, react-refresh@^0.14.2:
 
 react@19.1.0:
   version "19.1.0"
-  resolved "https://registry.npmjs.org/react/-/react-19.1.0.tgz"
+  resolved "https://registry.yarnpkg.com/react/-/react-19.1.0.tgz#926864b6c48da7627f004795d6cce50e90793b75"
   integrity sha512-FS+XFBNvn3GTAWq26joslQgWNoFu08F4kl0J4CgdNKADkdSGXQyTCnKteIAJy96Br6YbpEU1LSzV5dYtjMkMDg==
 
 react@^19.2.4:

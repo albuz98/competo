@@ -1,10 +1,5 @@
 import React, { useState, useLayoutEffect } from "react";
-import {
-  Text,
-  TextInput,
-  TouchableOpacity,
-  ActivityIndicator,
-} from "react-native";
+import { Text, View } from "react-native";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import type { RootStackParamList } from "../../types";
 import { useAuth } from "../../context/AuthContext";
@@ -12,6 +7,9 @@ import CompetoLogo from "../../components/CompetoLogo/CompetoLogo";
 import AuthErrorBox from "../../components/AuthErrorBox/AuthErrorBox";
 import AuthLayout from "../../components/AuthLayout/AuthLayout";
 import { styles } from "./Login.styles";
+import Button from "../../components/Button/Button";
+import InputBox from "../../components/InputBox/InputBox";
+import { ButtonEnum } from "../../types/components";
 
 type Props = NativeStackScreenProps<RootStackParamList, "Login">;
 
@@ -43,68 +41,61 @@ export default function Login({ navigation, route }: Props) {
   };
 
   return (
-    <AuthLayout
-      onBack={navigation.canGoBack() ? () => navigation.goBack() : undefined}
-    >
-      <Text style={styles.cardTitle}>Login</Text>
-      <Text style={styles.cardSubtitle}>Sign in to continue.</Text>
+    <AuthLayout onClose={() => navigation.replace("ChoseAccess")}>
+      <Text style={styles.cardTitle}>Accedi</Text>
 
       {error && <AuthErrorBox message={error} />}
 
+      <Button
+        text={"Continua con Google"}
+        variant={ButtonEnum.THIRD}
+        handleBtn={() => {}}
+      />
+
+      <View style={styles.divider}>
+        <View style={styles.dividerLine} />
+        <Text style={styles.dividerText}>o</Text>
+        <View style={styles.dividerLine} />
+      </View>
+
       <Text style={styles.label}>EMAIL</Text>
-      <TextInput
-        style={styles.input}
+      <InputBox
         value={email}
-        onChangeText={setEmail}
+        setValue={setEmail}
         placeholder="hello@gmail.com"
         keyboardType="email-address"
-        autoCapitalize="none"
         autoComplete="email"
-        placeholderTextColor="rgba(255,255,255,0.5)"
         returnKeyType="next"
       />
 
       <Text style={styles.label}>PASSWORD</Text>
-      <TextInput
-        style={styles.input}
+      <InputBox
         value={password}
-        onChangeText={setPassword}
+        setValue={setPassword}
         placeholder="••••••"
-        secureTextEntry
-        placeholderTextColor="rgba(255,255,255,0.5)"
         returnKeyType="done"
         onSubmitEditing={handleLogin}
+        secureTextEntry
       />
 
-      <TouchableOpacity
-        style={[
-          styles.signInBtn,
-          (!isValid || loading) && styles.signInBtnDisabled,
-        ]}
-        onPress={handleLogin}
-        disabled={!isValid || loading}
-        activeOpacity={0.85}
-      >
-        {loading ? (
-          <ActivityIndicator color="#E8601A" />
-        ) : (
-          <Text style={styles.signInBtnText}>Accedi</Text>
-        )}
-      </TouchableOpacity>
+      <Button
+        text={"Accedi"}
+        handleBtn={handleLogin}
+        isDisabled={!isValid || loading}
+        loading={loading}
+      />
 
-      <TouchableOpacity
-        style={styles.linkBtn}
-        onPress={() => navigation.navigate("ForgotPassword")}
-      >
-        <Text style={styles.linkText}>Forgot Password?</Text>
-      </TouchableOpacity>
+      <Button
+        text={"Forgot Password?"}
+        handleBtn={() => navigation.navigate("ForgotPassword")}
+        isLink
+      />
 
-      <TouchableOpacity
-        onPress={() => navigation.replace("Register")}
-        style={styles.linkBtn}
-      >
-        <Text style={styles.linkText}>Signup!</Text>
-      </TouchableOpacity>
+      <Button
+        text={"Signup!"}
+        handleBtn={() => navigation.replace("Register")}
+        isLink
+      />
 
       <CompetoLogo />
     </AuthLayout>

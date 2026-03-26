@@ -206,7 +206,6 @@ export type RootStackParamList = {
   ChoseAccess: undefined;
   Login: { redirect?: "tournament"; tournamentId?: string };
   Register: undefined;
-  Onboarding: undefined;
   MainTabs: undefined;
   TournamentDetail: { tournamentId: string; justRegistered?: boolean };
   MyTournamentDetail: { tournamentId: string };

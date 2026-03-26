@@ -15,13 +15,13 @@ import InvitePlayers from "../screens/InvitePlayers/InvitePlayers";
 import Login from "../screens/Login/Login";
 import MyTournamentDetail from "../screens/MyTournamentDetail/MyTournamentDetail";
 import Notifications from "../screens/Notifications/Notifications";
-import Onboarding from "../screens/Onboarding/Onboarding";
 import OrganizerTournamentDetail from "../screens/OrganizerTournamentDetail/OrganizerTournamentDetail";
 import Payment from "../screens/Payment/Payment";
 import PlayerProfile from "../screens/PlayerProfile/PlayerProfile";
 import Register from "../screens/Register/Register";
 import TeamDetail from "../screens/TeamDetail/TeamDetail";
 import TeamSelect from "../screens/TeamSelect/TeamSelect";
+import ChoseAccess from "../screens/ChoseAccess/ChoseAccess";
 import TournamentDetail from "../screens/TournamentDetail/TournamentDetail";
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -62,6 +62,11 @@ export default function AppNavigator() {
         }}
       >
         <Stack.Screen
+          name="ChoseAccess"
+          component={ChoseAccess}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
           name="Login"
           component={Login}
           options={{ headerShown: false }}
@@ -69,11 +74,6 @@ export default function AppNavigator() {
         <Stack.Screen
           name="Register"
           component={Register}
-          options={{ headerShown: false }}
-        />
-        <Stack.Screen
-          name="Onboarding"
-          component={Onboarding}
           options={{ headerShown: false }}
         />
         <Stack.Screen

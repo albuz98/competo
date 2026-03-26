@@ -65,14 +65,14 @@ export default function Register({ navigation }: Props) {
         dateOfBirth,
         password,
       });
-      navigation.replace("Onboarding");
+      navigation.replace("MainTabs");
     } catch {
       // error displayed from context
     }
   };
 
   return (
-    <AuthLayout onBack={() => navigation.goBack()}>
+    <AuthLayout onClose={() => navigation.replace("ChoseAccess")}>
       <Text style={styles.cardTitle}>Crea account</Text>
 
       {error && <AuthErrorBox message={error} />}
