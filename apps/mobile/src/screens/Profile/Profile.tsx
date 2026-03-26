@@ -56,7 +56,7 @@ export default function Profile() {
 
   const handleLogout = () => {
     logout();
-    navigation.reset({ index: 0, routes: [{ name: "MainTabs" }] });
+    navigation.reset({ index: 0, routes: [{ name: "ChoseAccess" }] });
   };
 
   const handlePickAvatar = async () => {

@@ -36,7 +36,7 @@ export default function AuthLayout({ children, onClose }: Props) {
           )}
         </View>
         <KeyboardAvoidingView
-          style={styles.flex}
+          style={styles.container}
           behavior={Platform.OS === "ios" ? "padding" : "height"}
         >
           <LinearGradient

@@ -6,6 +6,6 @@ export const colors = {
   primaryGradientEnd: "#f89d00",
 
   // Semantic
-  danger: "#ef4444",
+  danger: "#d91a1a",
   success: "#10b981",
 } as const;

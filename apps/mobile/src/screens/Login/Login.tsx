@@ -10,6 +10,7 @@ import { styles } from "./Login.styles";
 import Button from "../../components/Button/Button";
 import InputBox from "../../components/InputBox/InputBox";
 import { ButtonEnum } from "../../types/components";
+import { DividerAccess } from "../../components/DividerAccess/DividerAccess";
 
 type Props = NativeStackScreenProps<RootStackParamList, "Login">;
 
@@ -52,11 +53,7 @@ export default function Login({ navigation, route }: Props) {
         handleBtn={() => {}}
       />
 
-      <View style={styles.divider}>
-        <View style={styles.dividerLine} />
-        <Text style={styles.dividerText}>o</Text>
-        <View style={styles.dividerLine} />
-      </View>
+      <DividerAccess />
 
       <Text style={styles.label}>EMAIL</Text>
       <InputBox

@@ -12,6 +12,10 @@ import CompetoLogo from "../../components/CompetoLogo/CompetoLogo";
 import AuthErrorBox from "../../components/AuthErrorBox/AuthErrorBox";
 import { styles } from "./Register.styles";
 import AuthLayout from "../../components/AuthLayout/AuthLayout";
+import Button from "../../components/Button/Button";
+import { ButtonEnum } from "../../types/components";
+import { DividerAccess } from "../../components/DividerAccess/DividerAccess";
+import InputBox from "../../components/InputBox/InputBox";
 
 type Props = NativeStackScreenProps<RootStackParamList, "Register">;
 
@@ -42,7 +46,7 @@ export default function Register({ navigation }: Props) {
 
   const isDobValid = /^\d{2}\/\d{2}\/\d{4}$/.test(dateOfBirth);
   const passwordMismatch =
-    confirmPassword.length > 0 && password !== confirmPassword;
+    confirmPassword.length > 5 && password !== confirmPassword;
 
   const isValid =
     firstName.trim().length >= 2 &&
@@ -77,117 +81,104 @@ export default function Register({ navigation }: Props) {
 
       {error && <AuthErrorBox message={error} />}
 
+      <Button
+        text={"Continua con Google"}
+        variant={ButtonEnum.THIRD}
+        handleBtn={() => {}}
+      />
+
+      <DividerAccess />
+
       <Text style={styles.label}>NOME</Text>
-      <TextInput
-        style={styles.input}
+      <InputBox
         value={firstName}
-        onChangeText={setFirstName}
+        setValue={setFirstName}
         placeholder="Mario"
         autoCapitalize="words"
-        autoCorrect={false}
-        placeholderTextColor="rgba(255,255,255,0.5)"
         returnKeyType="next"
+        autoCorrect={false}
       />
 
       <Text style={styles.label}>COGNOME</Text>
-      <TextInput
-        style={styles.input}
+      <InputBox
         value={lastName}
-        onChangeText={setLastName}
+        setValue={setLastName}
         placeholder="Rossi"
         autoCapitalize="words"
-        autoCorrect={false}
-        placeholderTextColor="rgba(255,255,255,0.5)"
         returnKeyType="next"
+        autoCorrect={false}
       />
 
       <Text style={styles.label}>USERNAME</Text>
-      <TextInput
-        style={styles.input}
+      <InputBox
         value={username}
-        onChangeText={setUsername}
+        setValue={setUsername}
         placeholder="mariorossi99"
-        autoCapitalize="none"
-        autoCorrect={false}
-        placeholderTextColor="rgba(255,255,255,0.5)"
         returnKeyType="next"
+        autoCorrect={false}
       />
 
       <Text style={styles.label}>EMAIL</Text>
-      <TextInput
-        style={styles.input}
+      <InputBox
         value={email}
-        onChangeText={setEmail}
+        setValue={setEmail}
         placeholder="hello@gmail.com"
         keyboardType="email-address"
-        autoCapitalize="none"
         autoComplete="email"
-        placeholderTextColor="rgba(255,255,255,0.5)"
         returnKeyType="next"
       />
 
       <Text style={styles.label}>DATA DI NASCITA</Text>
-      <TextInput
-        style={styles.input}
+      <InputBox
         value={dateOfBirth}
-        onChangeText={handleDateChange}
+        setValue={handleDateChange}
         placeholder="GG/MM/AAAA"
-        keyboardType="number-pad"
-        placeholderTextColor="rgba(255,255,255,0.5)"
         returnKeyType="next"
+        autoCorrect={false}
+        keyboardType="number-pad"
         maxLength={10}
       />
 
       <Text style={styles.label}>PASSWORD</Text>
-      <TextInput
-        style={styles.input}
+      <InputBox
         value={password}
-        onChangeText={setPassword}
+        setValue={setPassword}
         placeholder="Minimo 6 caratteri"
-        secureTextEntry
-        placeholderTextColor="rgba(255,255,255,0.5)"
         returnKeyType="next"
+        secureTextEntry
+        textContentType="oneTimeCode"
       />
+      {password.length < 6 && (
+        <Text style={styles.fieldError}>La password è troppo corta</Text>
+      )}
 
       <Text style={styles.label}>CONFERMA PASSWORD</Text>
-      <TextInput
-        style={[styles.input, passwordMismatch && styles.inputError]}
+      <InputBox
         value={confirmPassword}
-        onChangeText={setConfirmPassword}
+        setValue={setConfirmPassword}
         placeholder="Ripeti la password"
-        secureTextEntry
-        placeholderTextColor="rgba(255,255,255,0.5)"
         returnKeyType="done"
+        secureTextEntry
+        textContentType="oneTimeCode"
         onSubmitEditing={handleRegister}
+        isError={passwordMismatch}
       />
       {passwordMismatch && (
         <Text style={styles.fieldError}>Le password non coincidono</Text>
       )}
 
-      <TouchableOpacity
-        style={[
-          styles.signUpBtn,
-          (!isValid || loading) && styles.signUpBtnDisabled,
-        ]}
-        onPress={handleRegister}
-        disabled={!isValid || loading}
-        activeOpacity={0.85}
-      >
-        {loading ? (
-          <ActivityIndicator color="#E8601A" />
-        ) : (
-          <Text style={styles.signUpBtnText}>Registrati</Text>
-        )}
-      </TouchableOpacity>
+      <Button
+        text={"Registrati"}
+        handleBtn={handleRegister}
+        isDisabled={!isValid || loading}
+        loading={loading}
+      />
 
-      <TouchableOpacity style={styles.linkBtn}>
-        <Text
-          style={styles.linkText}
-          onPress={() => navigation.replace("Login", {})}
-        >
-          Hai già un account? Accedi
-        </Text>
-      </TouchableOpacity>
+      <Button
+        text={"Hai già un account? Accedi"}
+        handleBtn={() => navigation.navigate("Login", {})}
+        isLink
+      />
 
       <CompetoLogo />
     </AuthLayout>

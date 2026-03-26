@@ -4,14 +4,11 @@ import { colors } from "../../theme/colors";
 export const styles = StyleSheet.create({
   root: { flex: 1, backgroundColor: "#000" },
   safeArea: { flex: 1 },
-  flex: { flex: 1 },
+  container: {
+    height: 580,
+  },
   topArea: {
-    paddingHorizontal: 20,
-    paddingTop: 8,
-    paddingBottom: 100,
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
+    flex: 1,
   },
   backBtn: { flexDirection: "row", alignItems: "center", gap: 6 },
   closeBtn: {
