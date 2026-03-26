@@ -20,7 +20,6 @@ import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useAuth } from "../../context/AuthContext";
 import { useTeams } from "../../context/TeamsContext";
 import {
-  OrganizedTournamentRecord,
   RootStackParamList,
   Team,
 } from "../../types";
@@ -302,27 +301,6 @@ export default function Profile() {
           </ScrollView>
         )}
 
-        {/* ── Tornei Organizzati ─────────────────── */}
-        {user.isOrganizer &&
-          user.organizedTournaments &&
-          user.organizedTournaments.length > 0 && (
-            <>
-              <View style={styles.teamsHeader}>
-                <Text style={styles.teamsTitle}>Tornei Organizzati</Text>
-              </View>
-              {user.organizedTournaments.map((t) => (
-                <OrgTournamentCard
-                  key={t.id}
-                  record={t}
-                  onPress={() =>
-                    navigation.navigate("OrganizerTournamentDetail", {
-                      tournamentId: t.id,
-                    })
-                  }
-                />
-              ))}
-            </>
-          )}
 
         <TouchableOpacity
           style={styles.editBtn}
@@ -390,56 +368,3 @@ function Row({
   );
 }
 
-function OrgTournamentCard({
-  record,
-  onPress,
-}: {
-  record: OrganizedTournamentRecord;
-  onPress: () => void;
-}) {
-  const dateStr = new Date(record.date).toLocaleDateString("it-IT", {
-    day: "2-digit",
-    month: "short",
-    year: "numeric",
-  });
-  return (
-    <TouchableOpacity
-      style={pStyles.orgCard}
-      onPress={onPress}
-      activeOpacity={0.85}
-    >
-      <View style={pStyles.orgCardLeft} />
-      <View style={{ flex: 1 }}>
-        <View
-          style={{
-            flexDirection: "row",
-            alignItems: "center",
-            justifyContent: "space-between",
-            marginBottom: 4,
-          }}
-        >
-          <Text style={pStyles.orgCardName} numberOfLines={1}>
-            {record.name}
-          </Text>
-          <View style={pStyles.orgSportBadge}>
-            <Text style={pStyles.orgSportText}>{record.sport}</Text>
-          </View>
-        </View>
-        <View style={pStyles.orgCardRow}>
-          <Ionicons name="location-outline" size={12} color="#94a3b8" />
-          <Text style={pStyles.orgCardMeta}> {record.location}</Text>
-          <Text style={pStyles.orgCardMetaDot}> · </Text>
-          <Ionicons name="calendar-outline" size={12} color="#94a3b8" />
-          <Text style={pStyles.orgCardMeta}> {dateStr}</Text>
-        </View>
-        <View style={pStyles.orgCardStatsRow}>
-          <Ionicons name="people-outline" size={13} color="#64748b" />
-          <Text style={pStyles.orgCardStat}> {record.totalTeams} squadre</Text>
-          <Text style={pStyles.orgCardMetaDot}> · </Text>
-          <Ionicons name="cash-outline" size={13} color="#64748b" />
-          <Text style={pStyles.orgCardStat}> {record.totalPrizeMoney}</Text>
-        </View>
-      </View>
-    </TouchableOpacity>
-  );
-}

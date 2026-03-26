@@ -30,7 +30,6 @@ import { getMyTournamentsCache } from "../../api/tournaments";
 import type { MyTournament } from "../../types";
 import {
   styles,
-  hStyles,
   BIG_W,
   BIG_H,
   SMALL_W,
@@ -65,9 +64,6 @@ const CARD_GRADIENTS: [string, string][] = [
 
 // Shared cache so MyTournamentDetailScreen finds the same IDs
 const MY_ALL_TOURNAMENTS: MyTournament[] = getMyTournamentsCache();
-const MY_ORGANIZER_TOURNAMENTS = MY_ALL_TOURNAMENTS.filter(
-  (t) => t.isOrganizer,
-);
 const MY_PARTICIPANT_TOURNAMENTS = MY_ALL_TOURNAMENTS.filter(
   (t) => !t.isOrganizer,
 );
@@ -176,78 +172,6 @@ function SmallCard({
   );
 }
 
-// ─── Organizer manage card (Tornei che gestisci) ─────────────────────────────
-function OrganizerManageCard({
-  tournament,
-  onPress,
-}: {
-  tournament: MyTournament;
-  onPress: () => void;
-}) {
-  const emoji = SPORT_EMOJI[tournament.game] ?? "🏆";
-  const date = new Date(tournament.startDate).toLocaleDateString("it-IT", {
-    day: "2-digit",
-    month: "short",
-  });
-  const statusColor =
-    tournament.status === "ongoing"
-      ? "#10b981"
-      : tournament.status === "upcoming"
-        ? "#3b82f6"
-        : "#94a3b8";
-  const statusLabel =
-    tournament.status === "ongoing"
-      ? "In corso"
-      : tournament.status === "upcoming"
-        ? "In arrivo"
-        : "Concluso";
-
-  return (
-    <TouchableOpacity
-      style={hStyles.orgCard}
-      onPress={onPress}
-      activeOpacity={0.88}
-    >
-      <View style={hStyles.orgCardAccent} />
-      <View style={hStyles.orgCardEmoji}>
-        <Text style={{ fontSize: 24 }}>{emoji}</Text>
-      </View>
-      <View style={{ flex: 1 }}>
-        <Text style={hStyles.orgCardName} numberOfLines={1}>
-          {tournament.name}
-        </Text>
-        <View style={hStyles.orgCardMeta}>
-          <Ionicons name="location-sharp" size={11} color="#94a3b8" />
-          <Text style={hStyles.orgCardMetaText} numberOfLines={1}>
-            {" "}
-            {tournament.location} · {date}
-          </Text>
-        </View>
-        <View style={hStyles.orgCardBottom}>
-          <View
-            style={[
-              hStyles.statusBadge,
-              { backgroundColor: statusColor + "20" },
-            ]}
-          >
-            <View
-              style={[hStyles.statusDot, { backgroundColor: statusColor }]}
-            />
-            <Text style={[hStyles.statusText, { color: statusColor }]}>
-              {statusLabel}
-            </Text>
-          </View>
-          <Text style={hStyles.orgTeamsText}>
-            {tournament.currentParticipants}/{tournament.maxParticipants}{" "}
-            squadre
-          </Text>
-        </View>
-      </View>
-      <Ionicons name="chevron-forward" size={16} color="#cbd5e1" />
-    </TouchableOpacity>
-  );
-}
-
 // ─── Main screen ─────────────────────────────────────────────────────────────
 export default function Home() {
   const { user, location, updateLocation } = useAuth();
@@ -292,17 +216,6 @@ export default function Home() {
       });
     } else {
       navigation.navigate("MyTournamentDetail", { tournamentId: id });
-    }
-  };
-
-  const goToOrganizerTournament = (id: string) => {
-    if (!user) {
-      navigation.navigate("Login", {
-        redirect: "tournament",
-        tournamentId: id,
-      });
-    } else {
-      navigation.navigate("OrganizerTournamentDetail", { tournamentId: id });
     }
   };
 
@@ -439,22 +352,6 @@ export default function Home() {
               onChangeText={setSearch}
             />
           </View>
-
-          {/* ── Tornei che gestisci ────────────────── */}
-          {user?.isOrganizer && MY_ORGANIZER_TOURNAMENTS.length > 0 && (
-            <>
-              <Text style={styles.sectionTitle}>Tornei che gestisci</Text>
-              <View style={hStyles.orgList}>
-                {MY_ORGANIZER_TOURNAMENTS.map((t) => (
-                  <OrganizerManageCard
-                    key={t.id}
-                    tournament={t}
-                    onPress={() => goToOrganizerTournament(t.id)}
-                  />
-                ))}
-              </View>
-            </>
-          )}
 
           {/* ── I Tuoi Tornei ───────────────────────── */}
           {MY_PARTICIPANT_TOURNAMENTS.length > 0 && (
