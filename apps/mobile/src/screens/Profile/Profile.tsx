@@ -22,10 +22,9 @@ import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useAuth } from "../../context/AuthContext";
 import { useTeams } from "../../context/TeamsContext";
-import { RootStackParamList, Team } from "../../types";
+import { RootStackParamList } from "../../types";
 import { pStyles, styles } from "./Profile.styles";
 import { colors } from "../../theme/colors";
-import LinkButton from "../../components/LinkButton/LinkButton";
 import { Avatar } from "../../components/Avatar/Avatar";
 import InputBox from "../../components/InputBox/InputBox";
 import Button from "../../components/Button/Button";
@@ -179,7 +178,8 @@ export default function Profile() {
         <View style={styles.header}>
           <Text style={styles.headerText}>Profilo</Text>
           {edit ? (
-            <LinkButton
+            <Button
+              variant={ButtonEnum.LINK}
               text="FATTO"
               handleBtn={handleSave}
               color={colors.primary}
@@ -187,7 +187,8 @@ export default function Profile() {
               isBold
             />
           ) : (
-            <LinkButton
+            <Button
+              variant={ButtonEnum.LINK}
               handleBtn={handleLogout}
               text={
                 <Ionicons
@@ -439,14 +440,27 @@ export default function Profile() {
                   showsHorizontalScrollIndicator={false}
                   contentContainerStyle={styles.teamsScroll}
                 >
-                  {teams.slice(0, 5).map((t) => (
-                    <TeamMiniCard
-                      key={t.id}
-                      team={t}
+                  {teams.slice(0, 5).map((team) => (
+                    <TouchableOpacity
+                      style={styles.teamMiniCard}
                       onPress={() =>
-                        navigation.navigate("TeamDetail", { teamId: t.id })
+                        navigation.navigate("TeamDetail", { teamId: team.id })
                       }
-                    />
+                      activeOpacity={0.85}
+                    >
+                      <LinearGradient
+                        colors={["#E8601A", "#F5A020"]}
+                        style={styles.teamMiniAvatar}
+                      >
+                        <Text style={styles.teamMiniAvatarText}>
+                          {team.name.slice(0, 2).toUpperCase()}
+                        </Text>
+                      </LinearGradient>
+                      <Text style={styles.teamMiniName} numberOfLines={2}>
+                        {team.name}
+                      </Text>
+                      <Text style={styles.teamMiniSport}>{team.sport}</Text>
+                    </TouchableOpacity>
                   ))}
                 </ScrollView>
               )}
@@ -455,27 +469,5 @@ export default function Profile() {
         </ScrollView>
       </SafeAreaView>
     </KeyboardAvoidingView>
-  );
-}
-
-function TeamMiniCard({ team, onPress }: { team: Team; onPress: () => void }) {
-  const initials = team.name.slice(0, 2).toUpperCase();
-  return (
-    <TouchableOpacity
-      style={styles.teamMiniCard}
-      onPress={onPress}
-      activeOpacity={0.85}
-    >
-      <LinearGradient
-        colors={["#E8601A", "#F5A020"]}
-        style={styles.teamMiniAvatar}
-      >
-        <Text style={styles.teamMiniAvatarText}>{initials}</Text>
-      </LinearGradient>
-      <Text style={styles.teamMiniName} numberOfLines={2}>
-        {team.name}
-      </Text>
-      <Text style={styles.teamMiniSport}>{team.sport}</Text>
-    </TouchableOpacity>
   );
 }

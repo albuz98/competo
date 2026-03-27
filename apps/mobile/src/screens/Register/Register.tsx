@@ -11,7 +11,6 @@ import Button from "../../components/Button/Button";
 import { ButtonEnum } from "../../types/components";
 import { DividerAccess } from "../../components/DividerAccess/DividerAccess";
 import InputBox from "../../components/InputBox/InputBox";
-import LinkButton from "../../components/LinkButton/LinkButton";
 
 type Props = NativeStackScreenProps<RootStackParamList, "Register">;
 
@@ -170,7 +169,8 @@ export default function Register({ navigation }: Props) {
         loading={loading}
       />
 
-      <LinkButton
+      <Button
+        variant={ButtonEnum.LINK}
         text="Hai già un account? Accedi"
         handleBtn={() => navigation.navigate("Login", {})}
       />

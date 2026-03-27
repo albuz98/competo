@@ -11,7 +11,6 @@ import Button from "../../components/Button/Button";
 import InputBox from "../../components/InputBox/InputBox";
 import { ButtonEnum } from "../../types/components";
 import { DividerAccess } from "../../components/DividerAccess/DividerAccess";
-import LinkButton from "../../components/LinkButton/LinkButton";
 
 type Props = NativeStackScreenProps<RootStackParamList, "Login">;
 
@@ -83,12 +82,14 @@ export default function Login({ navigation, route }: Props) {
         loading={loading}
       />
 
-      <LinkButton
+      <Button
+        variant={ButtonEnum.LINK}
         text={"Forgot Password?"}
         handleBtn={() => navigation.navigate("ForgotPassword")}
       />
 
-      <LinkButton
+      <Button
+        variant={ButtonEnum.LINK}
         text={"Signup!"}
         handleBtn={() => navigation.replace("Register")}
       />

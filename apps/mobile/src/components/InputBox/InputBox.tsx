@@ -22,7 +22,27 @@ type CommonProps = {
   onSubmitEditing?: (e: TextInputSubmitEditingEvent) => void;
   autoCapitalize?: "none" | "sentences" | "words" | "characters";
   autoCorrect?: boolean;
-  textContentType?: "none" | "oneTimeCode" | "password" | "newPassword" | "username" | "emailAddress" | "name" | "givenName" | "familyName" | "telephoneNumber" | "addressCity" | "addressState" | "addressCityAndState" | "sublocality" | "countryName" | "postalCode" | "streetAddressLine1" | "streetAddressLine2" | "creditCardNumber" | "creditCardSecurityCode";
+  textContentType?:
+    | "none"
+    | "oneTimeCode"
+    | "password"
+    | "newPassword"
+    | "username"
+    | "emailAddress"
+    | "name"
+    | "givenName"
+    | "familyName"
+    | "telephoneNumber"
+    | "addressCity"
+    | "addressState"
+    | "addressCityAndState"
+    | "sublocality"
+    | "countryName"
+    | "postalCode"
+    | "streetAddressLine1"
+    | "streetAddressLine2"
+    | "creditCardNumber"
+    | "creditCardSecurityCode";
 };
 
 type AuthProps = CommonProps & {
@@ -45,14 +65,32 @@ export default function InputBox(props: InputBoxProps) {
   const [hidden, setHidden] = useState(true);
 
   if (props.variant === "row") {
-    const { label, value, onChangeText, secureTextEntry, isLast, error, placeholder, keyboardType, autoCapitalize, autoCorrect, maxLength, textContentType, returnKeyType, onSubmitEditing } = props;
+    const {
+      label,
+      value,
+      onChangeText,
+      secureTextEntry,
+      isLast,
+      error,
+      placeholder,
+      keyboardType,
+      autoCapitalize,
+      autoCorrect,
+      maxLength,
+      textContentType,
+      returnKeyType,
+      onSubmitEditing,
+    } = props;
     return (
       <View style={[styles.row, isLast && !error && styles.rowLast]}>
         <View style={{ flex: 1 }}>
           <Text style={styles.rowLabel}>{label}</Text>
           <View style={styles.rowInputRow}>
             <TextInput
-              style={[styles.rowInput, error ? styles.rowInputError : undefined]}
+              style={[
+                styles.rowInput,
+                error ? styles.rowInputError : undefined,
+              ]}
               value={value}
               onChangeText={onChangeText}
               placeholder={placeholder}
@@ -67,8 +105,15 @@ export default function InputBox(props: InputBoxProps) {
               onSubmitEditing={onSubmitEditing}
             />
             {secureTextEntry && (
-              <TouchableOpacity onPress={() => setHidden((h) => !h)} activeOpacity={0.7}>
-                <Ionicons name={hidden ? "eye-outline" : "eye-off-outline"} size={18} color="#94a3b8" />
+              <TouchableOpacity
+                onPress={() => setHidden((h) => !h)}
+                activeOpacity={0.7}
+              >
+                <Ionicons
+                  name={hidden ? "eye-outline" : "eye-off-outline"}
+                  size={18}
+                  color="#94a3b8"
+                />
               </TouchableOpacity>
             )}
           </View>
@@ -78,11 +123,29 @@ export default function InputBox(props: InputBoxProps) {
     );
   }
 
-  const { value, onChangeText, placeholder, keyboardType, autoComplete, returnKeyType, onSubmitEditing, secureTextEntry, autoCapitalize = "none", autoCorrect = true, maxLength, isError, textContentType } = props;
+  const {
+    value,
+    onChangeText,
+    placeholder,
+    keyboardType,
+    autoComplete,
+    returnKeyType,
+    onSubmitEditing,
+    secureTextEntry,
+    autoCapitalize = "none",
+    autoCorrect = true,
+    maxLength,
+    isError,
+    textContentType,
+  } = props;
   return (
     <View style={styles.wrapper}>
       <TextInput
-        style={[styles.input, isError && styles.inputError, secureTextEntry && styles.inputWithEye]}
+        style={[
+          styles.input,
+          isError && styles.inputError,
+          secureTextEntry && styles.inputWithEye,
+        ]}
         value={value}
         onChangeText={onChangeText}
         placeholder={placeholder}
@@ -98,8 +161,16 @@ export default function InputBox(props: InputBoxProps) {
         textContentType={textContentType}
       />
       {secureTextEntry && (
-        <TouchableOpacity style={styles.eyeBtn} onPress={() => setHidden((h) => !h)} activeOpacity={0.7}>
-          <Ionicons name={hidden ? "eye-outline" : "eye-off-outline"} size={20} color="rgba(255,255,255,0.6)" />
+        <TouchableOpacity
+          style={styles.eyeBtn}
+          onPress={() => setHidden((h) => !h)}
+          activeOpacity={0.7}
+        >
+          <Ionicons
+            name={hidden ? "eye-outline" : "eye-off-outline"}
+            size={20}
+            color="rgba(255,255,255,0.6)"
+          />
         </TouchableOpacity>
       )}
     </View>
