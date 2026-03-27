@@ -1,12 +1,14 @@
-import React, { useRef, useCallback } from "react";
+import React, { useRef, useCallback, useState, useEffect } from "react";
 import { useFocusEffect } from "@react-navigation/native";
 import {
   View,
   Text,
   TouchableOpacity,
-  Image,
   Alert,
   ScrollView,
+  KeyboardAvoidingView,
+  Platform,
+  ActivityIndicator,
 } from "react-native";
 import {
   SafeAreaView,
@@ -15,22 +17,47 @@ import {
 import { LinearGradient } from "expo-linear-gradient";
 import { Ionicons } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
+import * as Location from "expo-location";
 import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useAuth } from "../../context/AuthContext";
 import { useTeams } from "../../context/TeamsContext";
-import {
-  RootStackParamList,
-  Team,
-} from "../../types";
+import { RootStackParamList, Team } from "../../types";
 import { pStyles, styles } from "./Profile.styles";
+import { colors } from "../../theme/colors";
+import LinkButton from "../../components/LinkButton/LinkButton";
+import { Avatar } from "../../components/Avatar/Avatar";
+import InputBox from "../../components/InputBox/InputBox";
+import Button from "../../components/Button/Button";
+import { ButtonEnum } from "../../types/components";
+import { styles as tabStyles } from "../../navigation/MainTabNavigator/MainTabNavigator.styles";
 
 export default function Profile() {
-  const { user, location, logout, updateProfile } = useAuth();
+  const { user, logout, updateProfile } = useAuth();
   const { teams, refreshTeams } = useTeams();
+  const [edit, setEdit] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [form, setForm] = useState({
+    firstName: "",
+    lastName: "",
+    username: "",
+    location: "",
+    dateOfBirth: "",
+    password: "",
+    confirmPassword: "",
+  });
   const navigation =
     useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const insets = useSafeAreaInsets();
+
+  useEffect(() => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (navigation as any).setOptions({
+      tabBarStyle: edit
+        ? { display: "none" }
+        : [tabStyles.tabBar, { bottom: insets.bottom + 8 }],
+    });
+  }, [edit]);
 
   const scrollRef = useRef<ScrollView>(null);
   const savedScrollY = useRef(0);
@@ -48,10 +75,67 @@ export default function Profile() {
     }, [user?.id]),
   );
 
-  const initial =
-    user?.firstName?.[0]?.toUpperCase() ??
-    user?.username?.[0]?.toUpperCase() ??
-    "U";
+  const handleStartEdit = () => {
+    setForm({
+      firstName: user?.firstName ?? "",
+      lastName: user?.lastName ?? "",
+      username: user?.username ?? "",
+      location: user?.location ?? "",
+      dateOfBirth: user?.dateOfBirth ?? "",
+      password: user?.password ?? "",
+      confirmPassword: "",
+    });
+    setEdit(true);
+  };
+
+  const handleSave = async () => {
+    const passwordChanged = form.password !== (user?.password ?? "");
+    if (passwordChanged && form.password.length < 6) {
+      Alert.alert(
+        "Password troppo corta",
+        "La password deve essere almeno 6 caratteri.",
+      );
+      return;
+    }
+    if (passwordChanged && form.password !== form.confirmPassword) {
+      Alert.alert(
+        "Password non coincidono",
+        "Le password inserite non corrispondono.",
+      );
+      return;
+    }
+
+    const hasChanges =
+      form.firstName !== (user?.firstName ?? "") ||
+      form.lastName !== (user?.lastName ?? "") ||
+      form.username !== (user?.username ?? "") ||
+      form.location !== (user?.location ?? "") ||
+      form.dateOfBirth !== (user?.dateOfBirth ?? "") ||
+      (passwordChanged && form.password.length >= 6);
+
+    if (hasChanges) {
+      if (form.location && form.location !== (user?.location ?? "")) {
+        const results = await Location.geocodeAsync(form.location);
+        if (results.length === 0) {
+          Alert.alert(
+            "Posizione non valida",
+            "Inserisci una città o un indirizzo esistente.",
+          );
+          return;
+        }
+      }
+      setSaving(true);
+      await updateProfile({
+        firstName: form.firstName,
+        lastName: form.lastName,
+        username: form.username,
+        location: form.location,
+        ...(form.password ? { password: form.password } : {}),
+      });
+      setSaving(false);
+    }
+    setEdit(false);
+  };
 
   const handleLogout = () => {
     logout();
@@ -74,253 +158,303 @@ export default function Profile() {
       quality: 0.8,
     });
     if (!result.canceled) {
-      await updateProfile({ avatarUri: result.assets[0].uri });
+      await updateProfile({ avatarUrl: result.assets[0].uri });
     }
   };
 
   if (!user) {
     return (
       <SafeAreaView style={styles.root} edges={["top"]}>
-        <Text style={styles.header}>Profilo</Text>
-        <View style={styles.guestBox}>
-          <Ionicons name="person-circle-outline" size={72} color="#e2e8f0" />
-          <Text style={styles.guestTitle}>Non sei connesso</Text>
-          <Text style={styles.guestSub}>Accedi per vedere il tuo profilo</Text>
-          <TouchableOpacity
-            style={styles.loginBtn}
-            onPress={() => navigation.navigate("Login", {})}
-            activeOpacity={0.85}
-          >
-            <Text style={styles.loginBtnText}>Accedi</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() => navigation.navigate("Register")}
-            style={{ marginTop: 12 }}
-          >
-            <Text style={styles.registerLink}>Crea un account</Text>
-          </TouchableOpacity>
-        </View>
+        <Text style={styles.header}>Errore nella generazione del profilo</Text>
       </SafeAreaView>
     );
   }
 
-  const fullName =
-    user.firstName && user.lastName
-      ? `${user.firstName} ${user.lastName}`
-      : user.username;
-
   return (
-    <SafeAreaView style={styles.root} edges={["top"]}>
-      <Text style={styles.header}>Profilo</Text>
-      <ScrollView
-        ref={scrollRef}
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={[
-          styles.scroll,
-          { paddingBottom: insets.bottom + 90 },
-        ]}
-        scrollEventThrottle={16}
-        onScroll={(e) => {
-          savedScrollY.current = e.nativeEvent.contentOffset.y;
-        }}
-      >
-        <View style={styles.card}>
-          {/* Avatar + pencil */}
-          <View style={styles.avatarWrapper}>
-            <TouchableOpacity onPress={handlePickAvatar} activeOpacity={0.85}>
-              {user.avatarUri ? (
-                <Image
-                  source={{ uri: user.avatarUri }}
-                  style={styles.avatarImg}
+    <KeyboardAvoidingView
+      style={{ flex: 1 }}
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+    >
+      <SafeAreaView style={styles.root} edges={["top"]}>
+        <View style={styles.header}>
+          <Text style={styles.headerText}>Profilo</Text>
+          {edit ? (
+            <LinkButton
+              text="FATTO"
+              handleBtn={handleSave}
+              color={colors.primary}
+              fontSize={16}
+              isBold
+            />
+          ) : (
+            <LinkButton
+              handleBtn={handleLogout}
+              text={
+                <Ionicons
+                  name="log-out-outline"
+                  size={20}
+                  color={colors.primary}
                 />
-              ) : (
-                <LinearGradient
-                  colors={["#E8601A", "#F5A020"]}
-                  style={styles.avatar}
+              }
+            />
+          )}
+        </View>
+        <ScrollView
+          ref={scrollRef}
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={[
+            styles.scroll,
+            { paddingBottom: insets.bottom + 90 },
+          ]}
+          keyboardShouldPersistTaps="handled"
+          scrollEventThrottle={16}
+          onScroll={(e) => {
+            savedScrollY.current = e.nativeEvent.contentOffset.y;
+          }}
+        >
+          <View style={[styles.card, edit && styles.cardEdit]}>
+            {/* Avatar + pencil */}
+            <View style={styles.avatarWrapper}>
+              <Avatar user={user} />
+              {edit && (
+                <TouchableOpacity
+                  style={styles.pencilBtn}
+                  onPress={handlePickAvatar}
+                  activeOpacity={0.85}
                 >
-                  <Text style={styles.avatarText}>{initial}</Text>
-                </LinearGradient>
+                  <Ionicons name="pencil" size={13} color="#fff" />
+                </TouchableOpacity>
               )}
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.pencilBtn}
-              onPress={handlePickAvatar}
-              activeOpacity={0.85}
-            >
-              <Ionicons name="pencil" size={13} color="#fff" />
-            </TouchableOpacity>
+            </View>
+            {!edit && (
+              <View style={{ flex: 1 }}>
+                <View style={{ marginTop: 5 }}>
+                  <Text style={styles.username}>{user.username}</Text>
+                  <Text style={styles.email}>{user.location}</Text>
+                </View>
+                <Button
+                  variant={ButtonEnum.EDIT}
+                  handleBtn={handleStartEdit}
+                  text={
+                    <>
+                      <Ionicons
+                        name="create-outline"
+                        size={20}
+                        color={colors.primary}
+                      />
+                      <Text style={styles.editBtnText}>Modifica</Text>
+                    </>
+                  }
+                />
+              </View>
+            )}
+            {edit && (
+              <View style={styles.cardEditFields}>
+                <InputBox
+                  variant="row"
+                  label="Nome"
+                  value={form.firstName}
+                  onChangeText={(v) => setForm((f) => ({ ...f, firstName: v }))}
+                />
+                <InputBox
+                  variant="row"
+                  label="Cognome"
+                  value={form.lastName}
+                  onChangeText={(v) => setForm((f) => ({ ...f, lastName: v }))}
+                />
+                <InputBox
+                  variant="row"
+                  label="Username"
+                  value={form.username}
+                  onChangeText={(v) => setForm((f) => ({ ...f, username: v }))}
+                />
+                <InputBox
+                  variant="row"
+                  label="Data di nascita"
+                  value={form.dateOfBirth}
+                  keyboardType="number-pad"
+                  onChangeText={(v) =>
+                    setForm((f) => ({ ...f, dateOfBirth: v }))
+                  }
+                />
+                <InputBox
+                  variant="row"
+                  label="Posizione"
+                  value={form.location}
+                  onChangeText={(v) => setForm((f) => ({ ...f, location: v }))}
+                />
+                <InputBox
+                  variant="row"
+                  label="Nuova password"
+                  value={form.password}
+                  onChangeText={(v) => setForm((f) => ({ ...f, password: v }))}
+                  secureTextEntry
+                  isLast={form.password === (user?.password ?? "")}
+                  error={
+                    form.password !== (user?.password ?? "") &&
+                    form.password.length < 6
+                      ? "La password è troppo corta"
+                      : undefined
+                  }
+                />
+                {form.password !== (user?.password ?? "") && (
+                  <InputBox
+                    variant="row"
+                    label="Conferma password"
+                    value={form.confirmPassword}
+                    onChangeText={(v) =>
+                      setForm((f) => ({ ...f, confirmPassword: v }))
+                    }
+                    secureTextEntry
+                    isLast
+                    error={
+                      form.confirmPassword.length > 0 &&
+                      form.password !== form.confirmPassword
+                        ? "Le password non coincidono"
+                        : undefined
+                    }
+                  />
+                )}
+              </View>
+            )}
+            {saving && (
+              <View style={styles.cardSavingOverlay}>
+                <ActivityIndicator size="large" color="#fff" />
+              </View>
+            )}
           </View>
-          <Text style={styles.username}>{fullName}</Text>
-          <Text style={styles.email}>{user.email}</Text>
-        </View>
 
-        <View style={styles.section}>
-          <Row
-            icon="person-outline"
-            label="Nome"
-            value={user.firstName ?? "–"}
-          />
-          <Row
-            icon="people-outline"
-            label="Cognome"
-            value={user.lastName ?? "–"}
-          />
-          <Row icon="at-outline" label="Username" value={user.username} />
-          <Row icon="mail-outline" label="Email" value={user.email} />
-          <Row icon="lock-closed-outline" label="Password" value="••••••••" />
-          <Row
-            icon="calendar-outline"
-            label="Data di nascita"
-            value={user.dateOfBirth ?? "–"}
-          />
-          <Row
-            icon="location-outline"
-            label="Posizione"
-            value={user.location ?? location ?? "–"}
-            isLast
-          />
-        </View>
-
-        {/* ── Statistiche Partite ────────────────── */}
-        {user.matchStats && (
-          <>
-            <View style={styles.teamsHeader}>
-              <Text style={styles.teamsTitle}>Statistiche Partite</Text>
-            </View>
-            <View style={pStyles.statsCard}>
-              <View style={pStyles.statsRow}>
-                <View style={pStyles.statBubble}>
-                  <Text style={[pStyles.statNum, { color: "#10b981" }]}>
-                    {user.matchStats.wins}
-                  </Text>
-                  <Text style={pStyles.statLabel}>Vittorie</Text>
-                </View>
-                <View style={pStyles.statDivider} />
-                <View style={pStyles.statBubble}>
-                  <Text style={[pStyles.statNum, { color: "#64748b" }]}>
-                    {user.matchStats.draws}
-                  </Text>
-                  <Text style={pStyles.statLabel}>Pareggi</Text>
-                </View>
-                <View style={pStyles.statDivider} />
-                <View style={pStyles.statBubble}>
-                  <Text style={[pStyles.statNum, { color: "#ef4444" }]}>
-                    {user.matchStats.losses}
-                  </Text>
-                  <Text style={pStyles.statLabel}>Sconfitte</Text>
+          {/* ── Statistiche Partite ────────────────── */}
+          {user.matchStats && !edit && (
+            <>
+              <View style={styles.teamsHeader}>
+                <Text style={styles.teamsTitle}>Statistiche Partite</Text>
+              </View>
+              <View style={pStyles.statsCard}>
+                <View style={pStyles.statsCardInner}>
+                  <View style={pStyles.statsRow}>
+                    <View style={pStyles.statBubble}>
+                      <Text style={[pStyles.statNum, { color: "#10b981" }]}>
+                        {user.matchStats.wins}
+                      </Text>
+                      <Text style={pStyles.statLabel}>Vittorie</Text>
+                    </View>
+                    <View style={pStyles.statDivider} />
+                    <View style={pStyles.statBubble}>
+                      <Text style={[pStyles.statNum, { color: "#64748b" }]}>
+                        {user.matchStats.draws}
+                      </Text>
+                      <Text style={pStyles.statLabel}>Pareggi</Text>
+                    </View>
+                    <View style={pStyles.statDivider} />
+                    <View style={pStyles.statBubble}>
+                      <Text style={[pStyles.statNum, { color: "#ef4444" }]}>
+                        {user.matchStats.losses}
+                      </Text>
+                      <Text style={pStyles.statLabel}>Sconfitte</Text>
+                    </View>
+                  </View>
+                  <View style={pStyles.statsTourneyRow}>
+                    <View style={pStyles.statTourney}>
+                      <Ionicons
+                        name="trophy-outline"
+                        size={18}
+                        color="#E8601A"
+                      />
+                      <Text style={pStyles.statTourneyNum}>
+                        {user.matchStats.tournamentsWon}
+                      </Text>
+                      <Text style={pStyles.statTourneyLabel}>Tornei vinti</Text>
+                    </View>
+                    <View style={pStyles.statTourneyDivider} />
+                    <View style={pStyles.statTourney}>
+                      <Ionicons
+                        name="medal-outline"
+                        size={18}
+                        color="#64748b"
+                      />
+                      <Text style={pStyles.statTourneyNum}>
+                        {user.matchStats.tournamentsPlayed}
+                      </Text>
+                      <Text style={pStyles.statTourneyLabel}>
+                        Tornei giocati
+                      </Text>
+                    </View>
+                    <View style={pStyles.statTourneyDivider} />
+                    <View style={pStyles.statTourney}>
+                      <Ionicons
+                        name="football-outline"
+                        size={18}
+                        color="#64748b"
+                      />
+                      <Text style={pStyles.statTourneyNum}>
+                        {user.matchStats.matchesPlayed}
+                      </Text>
+                      <Text style={pStyles.statTourneyLabel}>
+                        Partite totali
+                      </Text>
+                    </View>
+                  </View>
                 </View>
               </View>
-              <View style={pStyles.statsTourneyRow}>
-                <View style={pStyles.statTourney}>
-                  <Ionicons name="trophy-outline" size={18} color="#E8601A" />
-                  <Text style={pStyles.statTourneyNum}>
-                    {user.matchStats.tournamentsWon}
-                  </Text>
-                  <Text style={pStyles.statTourneyLabel}>Tornei vinti</Text>
-                </View>
-                <View style={pStyles.statTourneyDivider} />
-                <View style={pStyles.statTourney}>
-                  <Ionicons name="medal-outline" size={18} color="#64748b" />
-                  <Text style={pStyles.statTourneyNum}>
-                    {user.matchStats.tournamentsPlayed}
-                  </Text>
-                  <Text style={pStyles.statTourneyLabel}>Tornei giocati</Text>
-                </View>
-                <View style={pStyles.statTourneyDivider} />
-                <View style={pStyles.statTourney}>
-                  <Ionicons name="football-outline" size={18} color="#64748b" />
-                  <Text style={pStyles.statTourneyNum}>
-                    {user.matchStats.matchesPlayed}
-                  </Text>
-                  <Text style={pStyles.statTourneyLabel}>Partite totali</Text>
-                </View>
+            </>
+          )}
+
+          {/* ── Le mie squadre ─────────────────────── */}
+          {!edit && (
+            <>
+              <View style={styles.teamsHeader}>
+                <Text style={styles.teamsTitle}>Le mie squadre</Text>
+                <TouchableOpacity
+                  onPress={() => navigation.navigate("Teams")}
+                  activeOpacity={0.8}
+                >
+                  <Text style={styles.teamsViewAll}>Vedi tutte</Text>
+                </TouchableOpacity>
               </View>
-            </View>
-          </>
-        )}
 
-        {/* ── Le mie squadre ─────────────────────── */}
-        <View style={styles.teamsHeader}>
-          <Text style={styles.teamsTitle}>Le mie squadre</Text>
-          <TouchableOpacity
-            onPress={() => navigation.navigate("Teams")}
-            activeOpacity={0.8}
-          >
-            <Text style={styles.teamsViewAll}>Vedi tutte</Text>
-          </TouchableOpacity>
-        </View>
-
-        {teams.length === 0 ? (
-          <TouchableOpacity
-            style={styles.createTeamCard}
-            onPress={() => navigation.navigate("CreateTeam")}
-            activeOpacity={0.85}
-          >
-            <LinearGradient
-              colors={["#E8601A", "#F5A020"]}
-              style={styles.createTeamIcon}
-            >
-              <Ionicons name="add" size={22} color="#fff" />
-            </LinearGradient>
-            <View style={{ flex: 1 }}>
-              <Text style={styles.createTeamTitle}>Crea una squadra</Text>
-              <Text style={styles.createTeamSub}>
-                Invita amici e partecipa ai tornei insieme
-              </Text>
-            </View>
-            <Ionicons name="chevron-forward" size={18} color="#cbd5e1" />
-          </TouchableOpacity>
-        ) : (
-          <ScrollView
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            contentContainerStyle={styles.teamsScroll}
-          >
-            {teams.slice(0, 5).map((t) => (
-              <TeamMiniCard
-                key={t.id}
-                team={t}
-                onPress={() =>
-                  navigation.navigate("TeamDetail", { teamId: t.id })
-                }
-              />
-            ))}
-            <TouchableOpacity
-              style={styles.addTeamBtn}
-              onPress={() => navigation.navigate("CreateTeam")}
-              activeOpacity={0.8}
-            >
-              <LinearGradient
-                colors={["#E8601A", "#F5A020"]}
-                style={styles.addTeamBtnGrad}
-              >
-                <Ionicons name="add" size={20} color="#fff" />
-              </LinearGradient>
-              <Text style={styles.addTeamBtnText}>Nuova</Text>
-            </TouchableOpacity>
-          </ScrollView>
-        )}
-
-
-        <TouchableOpacity
-          style={styles.editBtn}
-          onPress={() => navigation.navigate("EditProfile")}
-          activeOpacity={0.85}
-        >
-          <Ionicons name="create-outline" size={20} color="#E8601A" />
-          <Text style={styles.editBtnText}>Modifica profilo</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          style={styles.logoutBtn}
-          onPress={handleLogout}
-          activeOpacity={0.8}
-        >
-          <Ionicons name="log-out-outline" size={20} color="#ef4444" />
-          <Text style={styles.logoutText}>Logout</Text>
-        </TouchableOpacity>
-      </ScrollView>
-    </SafeAreaView>
+              {teams.length === 0 ? (
+                <TouchableOpacity
+                  style={styles.createTeamCard}
+                  onPress={() => navigation.navigate("CreateTeam")}
+                  activeOpacity={0.85}
+                >
+                  <LinearGradient
+                    colors={["#E8601A", "#F5A020"]}
+                    style={styles.createTeamIcon}
+                  >
+                    <Ionicons name="add" size={22} color="#fff" />
+                  </LinearGradient>
+                  <View style={{ flex: 1 }}>
+                    <Text style={styles.createTeamTitle}>Crea una squadra</Text>
+                    <Text style={styles.createTeamSub}>
+                      Invita amici e partecipa ai tornei insieme
+                    </Text>
+                  </View>
+                  <Ionicons name="chevron-forward" size={18} color="#cbd5e1" />
+                </TouchableOpacity>
+              ) : (
+                <ScrollView
+                  horizontal
+                  showsHorizontalScrollIndicator={false}
+                  contentContainerStyle={styles.teamsScroll}
+                >
+                  {teams.slice(0, 5).map((t) => (
+                    <TeamMiniCard
+                      key={t.id}
+                      team={t}
+                      onPress={() =>
+                        navigation.navigate("TeamDetail", { teamId: t.id })
+                      }
+                    />
+                  ))}
+                </ScrollView>
+              )}
+            </>
+          )}
+        </ScrollView>
+      </SafeAreaView>
+    </KeyboardAvoidingView>
   );
 }
 
@@ -345,26 +479,3 @@ function TeamMiniCard({ team, onPress }: { team: Team; onPress: () => void }) {
     </TouchableOpacity>
   );
 }
-
-function Row({
-  icon,
-  label,
-  value,
-  isLast,
-}: {
-  icon: any;
-  label: string;
-  value: string;
-  isLast?: boolean;
-}) {
-  return (
-    <View style={[styles.row, isLast && styles.rowLast]}>
-      <Ionicons name={icon} size={20} color="#94a3b8" style={{ width: 28 }} />
-      <View style={{ flex: 1 }}>
-        <Text style={styles.rowLabel}>{label}</Text>
-        <Text style={styles.rowValue}>{value}</Text>
-      </View>
-    </View>
-  );
-}
-

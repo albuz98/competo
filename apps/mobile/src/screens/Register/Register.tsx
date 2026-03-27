@@ -1,10 +1,5 @@
 import React, { useState, useLayoutEffect } from "react";
-import {
-  Text,
-  TextInput,
-  TouchableOpacity,
-  ActivityIndicator,
-} from "react-native";
+import { Text } from "react-native";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import type { RootStackParamList } from "../../types";
 import { useAuth } from "../../context/AuthContext";
@@ -16,6 +11,7 @@ import Button from "../../components/Button/Button";
 import { ButtonEnum } from "../../types/components";
 import { DividerAccess } from "../../components/DividerAccess/DividerAccess";
 import InputBox from "../../components/InputBox/InputBox";
+import LinkButton from "../../components/LinkButton/LinkButton";
 
 type Props = NativeStackScreenProps<RootStackParamList, "Register">;
 
@@ -92,7 +88,7 @@ export default function Register({ navigation }: Props) {
       <Text style={styles.label}>NOME</Text>
       <InputBox
         value={firstName}
-        setValue={setFirstName}
+        onChangeText={setFirstName}
         placeholder="Mario"
         autoCapitalize="words"
         returnKeyType="next"
@@ -102,7 +98,7 @@ export default function Register({ navigation }: Props) {
       <Text style={styles.label}>COGNOME</Text>
       <InputBox
         value={lastName}
-        setValue={setLastName}
+        onChangeText={setLastName}
         placeholder="Rossi"
         autoCapitalize="words"
         returnKeyType="next"
@@ -112,7 +108,7 @@ export default function Register({ navigation }: Props) {
       <Text style={styles.label}>USERNAME</Text>
       <InputBox
         value={username}
-        setValue={setUsername}
+        onChangeText={setUsername}
         placeholder="mariorossi99"
         returnKeyType="next"
         autoCorrect={false}
@@ -121,7 +117,7 @@ export default function Register({ navigation }: Props) {
       <Text style={styles.label}>EMAIL</Text>
       <InputBox
         value={email}
-        setValue={setEmail}
+        onChangeText={setEmail}
         placeholder="hello@gmail.com"
         keyboardType="email-address"
         autoComplete="email"
@@ -131,7 +127,7 @@ export default function Register({ navigation }: Props) {
       <Text style={styles.label}>DATA DI NASCITA</Text>
       <InputBox
         value={dateOfBirth}
-        setValue={handleDateChange}
+        onChangeText={handleDateChange}
         placeholder="GG/MM/AAAA"
         returnKeyType="next"
         autoCorrect={false}
@@ -142,7 +138,7 @@ export default function Register({ navigation }: Props) {
       <Text style={styles.label}>PASSWORD</Text>
       <InputBox
         value={password}
-        setValue={setPassword}
+        onChangeText={setPassword}
         placeholder="Minimo 6 caratteri"
         returnKeyType="next"
         secureTextEntry
@@ -155,7 +151,7 @@ export default function Register({ navigation }: Props) {
       <Text style={styles.label}>CONFERMA PASSWORD</Text>
       <InputBox
         value={confirmPassword}
-        setValue={setConfirmPassword}
+        onChangeText={setConfirmPassword}
         placeholder="Ripeti la password"
         returnKeyType="done"
         secureTextEntry
@@ -174,10 +170,9 @@ export default function Register({ navigation }: Props) {
         loading={loading}
       />
 
-      <Button
-        text={"Hai già un account? Accedi"}
+      <LinkButton
+        text="Hai già un account? Accedi"
         handleBtn={() => navigation.navigate("Login", {})}
-        isLink
       />
 
       <CompetoLogo />

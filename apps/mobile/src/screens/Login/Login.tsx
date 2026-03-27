@@ -11,6 +11,7 @@ import Button from "../../components/Button/Button";
 import InputBox from "../../components/InputBox/InputBox";
 import { ButtonEnum } from "../../types/components";
 import { DividerAccess } from "../../components/DividerAccess/DividerAccess";
+import LinkButton from "../../components/LinkButton/LinkButton";
 
 type Props = NativeStackScreenProps<RootStackParamList, "Login">;
 
@@ -58,7 +59,7 @@ export default function Login({ navigation, route }: Props) {
       <Text style={styles.label}>EMAIL</Text>
       <InputBox
         value={email}
-        setValue={setEmail}
+        onChangeText={setEmail}
         placeholder="hello@gmail.com"
         keyboardType="email-address"
         autoComplete="email"
@@ -68,7 +69,7 @@ export default function Login({ navigation, route }: Props) {
       <Text style={styles.label}>PASSWORD</Text>
       <InputBox
         value={password}
-        setValue={setPassword}
+        onChangeText={setPassword}
         placeholder="••••••"
         returnKeyType="done"
         onSubmitEditing={handleLogin}
@@ -82,16 +83,14 @@ export default function Login({ navigation, route }: Props) {
         loading={loading}
       />
 
-      <Button
+      <LinkButton
         text={"Forgot Password?"}
         handleBtn={() => navigation.navigate("ForgotPassword")}
-        isLink
       />
 
-      <Button
+      <LinkButton
         text={"Signup!"}
         handleBtn={() => navigation.replace("Register")}
-        isLink
       />
 
       <CompetoLogo />

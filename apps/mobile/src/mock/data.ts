@@ -1,4 +1,4 @@
-import { faker } from '@faker-js/faker';
+import { faker } from "@faker-js/faker";
 import type {
   Tournament,
   User,
@@ -18,37 +18,54 @@ import type {
   TournamentPlayer,
   TournamentRegisteredTeam,
   OrganizerTournamentDetail,
-} from '../types';
+} from "../types";
 
 export const GAMES = [
-  'Calcio',
-  'Basket',
-  'Pallavolo',
-  'Tennis',
-  'Padel',
-  'Rugby',
-  'Ping Pong',
-  'Calcio a 5',
-  'Beach Volley',
-  'Badminton',
+  "Calcio",
+  "Basket",
+  "Pallavolo",
+  "Tennis",
+  "Padel",
+  "Rugby",
+  "Ping Pong",
+  "Calcio a 5",
+  "Beach Volley",
+  "Badminton",
 ];
 
-const STATUSES = ['upcoming', 'ongoing', 'completed'] as const;
+const STATUSES = ["upcoming", "ongoing", "completed"] as const;
 
-const ADJECTIVES = ['Pro', 'Open', 'Elite', 'Champion', 'Masters', 'Grand', 'Ultimate', 'Premier'];
-const NOUNS = ['Cup', 'League', 'Series', 'Championship', 'Invitational', 'Tournament', 'Challenge'];
+const ADJECTIVES = [
+  "Pro",
+  "Open",
+  "Elite",
+  "Champion",
+  "Masters",
+  "Grand",
+  "Ultimate",
+  "Premier",
+];
+const NOUNS = [
+  "Cup",
+  "League",
+  "Series",
+  "Championship",
+  "Invitational",
+  "Tournament",
+  "Challenge",
+];
 
 export function generateTournament(id?: string): Tournament {
   const status = faker.helpers.arrayElement(STATUSES);
   const maxParticipants = faker.helpers.arrayElement([8, 16, 32, 64, 128]);
 
   const currentParticipants =
-    status === 'upcoming'
+    status === "upcoming"
       ? faker.number.int({ min: 0, max: maxParticipants - 1 })
       : maxParticipants;
 
   const startDate =
-    status === 'upcoming'
+    status === "upcoming"
       ? faker.date.soon({ days: 60 }).toISOString()
       : faker.date.recent({ days: 30 }).toISOString();
 
@@ -69,14 +86,13 @@ export function generateTournament(id?: string): Tournament {
     description: faker.lorem.paragraph(3),
     status,
     location: faker.helpers.arrayElement([
-      'Online',
+      "Online",
       `${faker.location.city()}, ${faker.location.country()}`,
     ]),
-    entryFee: faker.helpers.arrayElement(['Free', '$10', '$25', '$50', '$100']),
+    entryFee: faker.helpers.arrayElement(["Free", "$10", "$25", "$50", "$100"]),
     organizer: faker.company.name(),
-    rules: Array.from(
-      { length: faker.number.int({ min: 3, max: 6 }) },
-      () => faker.lorem.sentence(),
+    rules: Array.from({ length: faker.number.int({ min: 3, max: 6 }) }, () =>
+      faker.lorem.sentence(),
     ),
     isRegistered: false,
   };
@@ -90,16 +106,17 @@ export function generateTournaments(count = 12): Tournament[] {
 // Edit these fields directly to control what fetchProfile / login / register
 // return when isMocking = true.
 export const mockProfile: User = {
-  id: 'mock-user-001',
-  firstName: 'Mario',
-  lastName: 'Rossi',
-  username: 'mario.rossi',
-  email: 'mario.rossi@example.com',
-  token: 'mock-token-abc123',
-  dateOfBirth: '1990-05-15',
-  location: 'Milano, Italia',
-  avatarUri: undefined,
+  id: "mock-user-001",
+  firstName: "Mario",
+  lastName: "Rossi",
+  username: "mario.rossi",
+  email: "mario.rossi@example.com",
+  token: "mock-token-abc123",
+  dateOfBirth: "1990-05-15",
+  location: "Milano, Italia",
+  avatarUrl: undefined,
   isOrganizer: true,
+  password: "ciccio",
   matchStats: {
     matchesPlayed: 47,
     wins: 28,
@@ -110,31 +127,31 @@ export const mockProfile: User = {
   },
   organizedTournaments: [
     {
-      id: 'org-t-001',
-      name: 'Pro Cup 2025',
-      sport: 'Calcio',
-      date: '2025-09-14T10:00:00.000Z',
-      location: 'Milano, Italia',
+      id: "org-t-001",
+      name: "Pro Cup 2025",
+      sport: "Calcio",
+      date: "2025-09-14T10:00:00.000Z",
+      location: "Milano, Italia",
       totalTeams: 16,
-      totalPrizeMoney: '$800',
+      totalPrizeMoney: "$800",
     },
     {
-      id: 'org-t-002',
-      name: 'Elite League 2025',
-      sport: 'Basket',
-      date: '2025-11-20T10:00:00.000Z',
-      location: 'Roma, Italia',
+      id: "org-t-002",
+      name: "Elite League 2025",
+      sport: "Basket",
+      date: "2025-11-20T10:00:00.000Z",
+      location: "Roma, Italia",
       totalTeams: 8,
-      totalPrizeMoney: '$400',
+      totalPrizeMoney: "$400",
     },
     {
-      id: 'org-t-003',
-      name: 'Grand Tournament 2024',
-      sport: 'Padel',
-      date: '2024-06-05T10:00:00.000Z',
-      location: 'Torino, Italia',
+      id: "org-t-003",
+      name: "Grand Tournament 2024",
+      sport: "Padel",
+      date: "2024-06-05T10:00:00.000Z",
+      location: "Torino, Italia",
       totalTeams: 32,
-      totalPrizeMoney: '$3,200',
+      totalPrizeMoney: "$3,200",
     },
   ],
 };
@@ -145,21 +162,42 @@ export function generateUser(overrides?: Partial<User>): User {
     firstName: faker.person.firstName(),
     lastName: faker.person.lastName(),
     username: faker.internet.username(),
+    password: faker.internet.password(),
     email: faker.internet.email(),
     token: faker.string.alphanumeric(64),
-    dateOfBirth: faker.date.birthdate({ min: 18, max: 60, mode: 'age' }).toISOString().slice(0, 10),
+    dateOfBirth: faker.date
+      .birthdate({ min: 18, max: 60, mode: "age" })
+      .toISOString()
+      .slice(0, 10),
     ...overrides,
   };
 }
 
 export function generateMatchStats(): MatchStats {
   const tournamentsPlayed = faker.number.int({ min: 3, max: 20 });
-  const tournamentsWon = faker.number.int({ min: 0, max: Math.floor(tournamentsPlayed / 2) });
-  const matchesPlayed = tournamentsPlayed * faker.number.int({ min: 3, max: 8 });
-  const wins = faker.number.int({ min: Math.floor(matchesPlayed * 0.2), max: Math.floor(matchesPlayed * 0.6) });
-  const draws = faker.number.int({ min: 0, max: Math.floor(matchesPlayed * 0.2) });
+  const tournamentsWon = faker.number.int({
+    min: 0,
+    max: Math.floor(tournamentsPlayed / 2),
+  });
+  const matchesPlayed =
+    tournamentsPlayed * faker.number.int({ min: 3, max: 8 });
+  const wins = faker.number.int({
+    min: Math.floor(matchesPlayed * 0.2),
+    max: Math.floor(matchesPlayed * 0.6),
+  });
+  const draws = faker.number.int({
+    min: 0,
+    max: Math.floor(matchesPlayed * 0.2),
+  });
   const losses = matchesPlayed - wins - draws;
-  return { matchesPlayed, wins, losses, draws, tournamentsPlayed, tournamentsWon };
+  return {
+    matchesPlayed,
+    wins,
+    losses,
+    draws,
+    tournamentsPlayed,
+    tournamentsWon,
+  };
 }
 
 export function generateOrganizedTournamentRecord(): OrganizedTournamentRecord {
@@ -170,7 +208,10 @@ export function generateOrganizedTournamentRecord(): OrganizedTournamentRecord {
     name: `${faker.helpers.arrayElement(ADJECTIVES)} ${faker.helpers.arrayElement(NOUNS)} ${faker.date.recent({ days: 365 }).getFullYear()}`,
     sport: faker.helpers.arrayElement(GAMES),
     date: faker.date.recent({ days: 365 }).toISOString(),
-    location: faker.helpers.arrayElement([`${faker.location.city()}, Italia`, 'Online']),
+    location: faker.helpers.arrayElement([
+      `${faker.location.city()}, Italia`,
+      "Online",
+    ]),
     totalTeams,
     totalPrizeMoney: `$${(totalTeams * entryFee).toLocaleString()}`,
   };
@@ -185,49 +226,70 @@ export function generatePlayerStats(): PlayerStats {
   };
 }
 
-export function generateTournamentPlayer(role: TeamRole = 'calciatore'): TournamentPlayer {
+export function generateTournamentPlayer(
+  role: TeamRole = "calciatore",
+): TournamentPlayer {
   return {
     id: faker.string.uuid(),
     firstName: faker.person.firstName(),
     lastName: faker.person.lastName(),
     username: faker.internet.username(),
-    dateOfBirth: faker.date.birthdate({ min: 16, max: 40, mode: 'age' }).toISOString().slice(0, 10),
+    dateOfBirth: faker.date
+      .birthdate({ min: 16, max: 40, mode: "age" })
+      .toISOString()
+      .slice(0, 10),
     role,
     stats: generatePlayerStats(),
   };
 }
 
-export function generateTournamentRegisteredTeam(status: TeamRegistrationStatus = 'pending_approval'): TournamentRegisteredTeam {
+export function generateTournamentRegisteredTeam(
+  status: TeamRegistrationStatus = "pending_approval",
+): TournamentRegisteredTeam {
   const playerCount = faker.number.int({ min: 5, max: 11 });
-  const extraRoles: TeamRole[] = Array(Math.max(0, playerCount - 3)).fill('calciatore');
-  const roles: TeamRole[] = ['representative', 'portiere', 'allenatore', ...extraRoles];
+  const extraRoles: TeamRole[] = Array(Math.max(0, playerCount - 3)).fill(
+    "calciatore",
+  );
+  const roles: TeamRole[] = [
+    "representative",
+    "portiere",
+    "allenatore",
+    ...extraRoles,
+  ];
   const players = roles.map((r) => generateTournamentPlayer(r));
   return {
     id: faker.string.uuid(),
-    name: `${faker.location.city()} ${faker.helpers.arrayElement(['FC', 'SC', 'United', 'Tigers', 'Eagles'])}`,
+    name: `${faker.location.city()} ${faker.helpers.arrayElement(["FC", "SC", "United", "Tigers", "Eagles"])}`,
     players,
     status,
     registeredAt: faker.date.recent({ days: 14 }).toISOString(),
-    paymentDeadline: status === 'accepted'
-      ? new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString()
-      : undefined,
+    paymentDeadline:
+      status === "accepted"
+        ? new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString()
+        : undefined,
   };
 }
 
-export function generateOrganizerTournamentDetail(base: MyTournament, allPaid = false): OrganizerTournamentDetail {
+export function generateOrganizerTournamentDetail(
+  base: MyTournament,
+  allPaid = false,
+): OrganizerTournamentDetail {
   const MAX_TEAMS = 4;
   const registeredTeams: TournamentRegisteredTeam[] = allPaid
-    ? Array.from({ length: MAX_TEAMS }, () => generateTournamentRegisteredTeam('paid'))
+    ? Array.from({ length: MAX_TEAMS }, () =>
+        generateTournamentRegisteredTeam("paid"),
+      )
     : [
-        generateTournamentRegisteredTeam('paid'),
-        generateTournamentRegisteredTeam('paid'),
-        generateTournamentRegisteredTeam('accepted'),
-        generateTournamentRegisteredTeam('pending_approval'),
+        generateTournamentRegisteredTeam("paid"),
+        generateTournamentRegisteredTeam("paid"),
+        generateTournamentRegisteredTeam("accepted"),
+        generateTournamentRegisteredTeam("pending_approval"),
       ];
   return {
     ...base,
     maxParticipants: MAX_TEAMS,
-    currentParticipants: registeredTeams.filter((t) => t.status !== 'rejected').length,
+    currentParticipants: registeredTeams.filter((t) => t.status !== "rejected")
+      .length,
     registeredTeams,
   };
 }
@@ -238,10 +300,13 @@ function makeTournamentTeam(name: string, isMyTeam: boolean): TournamentTeam {
   return { id: faker.string.uuid(), name, isMyTeam };
 }
 
-function makeTournamentTeams(count: number, myTeamIndex: number): TournamentTeam[] {
+function makeTournamentTeams(
+  count: number,
+  myTeamIndex: number,
+): TournamentTeam[] {
   return Array.from({ length: count }, (_, i) =>
     makeTournamentTeam(
-      `${faker.location.city()} ${faker.helpers.arrayElement(['FC', 'SC', 'United', 'Atletico', 'Tigers'])}`,
+      `${faker.location.city()} ${faker.helpers.arrayElement(["FC", "SC", "United", "Atletico", "Tigers"])}`,
       i === myTeamIndex,
     ),
   );
@@ -250,15 +315,17 @@ function makeTournamentTeams(count: number, myTeamIndex: number): TournamentTeam
 function makeTournamentMatch(
   homeTeam: TournamentTeam,
   awayTeam: TournamentTeam,
-  status: 'scheduled' | 'live' | 'finished',
+  status: "scheduled" | "live" | "finished",
   round?: string,
 ): TournamentMatch {
   return {
     id: faker.string.uuid(),
     homeTeam,
     awayTeam,
-    homeScore: status !== 'scheduled' ? faker.number.int({ min: 0, max: 3 }) : null,
-    awayScore: status !== 'scheduled' ? faker.number.int({ min: 0, max: 3 }) : null,
+    homeScore:
+      status !== "scheduled" ? faker.number.int({ min: 0, max: 3 }) : null,
+    awayScore:
+      status !== "scheduled" ? faker.number.int({ min: 0, max: 3 }) : null,
     status,
     round,
   };
@@ -271,7 +338,10 @@ function generateGroupStructure(): TournamentStructure {
   const groups: TournamentGroup[] = [];
 
   for (let g = 0; g < numGroups; g++) {
-    const myTeamIndex = g === myGroupIndex ? faker.number.int({ min: 0, max: teamsPerGroup - 1 }) : -1;
+    const myTeamIndex =
+      g === myGroupIndex
+        ? faker.number.int({ min: 0, max: teamsPerGroup - 1 })
+        : -1;
     const teams = makeTournamentTeams(teamsPerGroup, myTeamIndex);
     const matches: TournamentMatch[] = [];
     let matchIdx = 0;
@@ -279,12 +349,19 @@ function generateGroupStructure(): TournamentStructure {
     // Round-robin: C(4,2) = 6 matches
     for (let i = 0; i < teams.length; i++) {
       for (let j = i + 1; j < teams.length; j++) {
-        let status: 'scheduled' | 'live' | 'finished';
-        if (matchIdx < 3) status = 'finished';
-        else if (matchIdx === 3) status = 'live';
-        else status = 'scheduled';
+        let status: "scheduled" | "live" | "finished";
+        if (matchIdx < 3) status = "finished";
+        else if (matchIdx === 3) status = "live";
+        else status = "scheduled";
         const giornata = Math.floor(matchIdx / 2) + 1;
-        matches.push(makeTournamentMatch(teams[i], teams[j], status, `Giornata ${giornata}`));
+        matches.push(
+          makeTournamentMatch(
+            teams[i],
+            teams[j],
+            status,
+            `Giornata ${giornata}`,
+          ),
+        );
         matchIdx++;
       }
     }
@@ -297,7 +374,7 @@ function generateGroupStructure(): TournamentStructure {
     });
   }
 
-  return { kind: 'groups', groups, userGroupId: groups[myGroupIndex].id };
+  return { kind: "groups", groups, userGroupId: groups[myGroupIndex].id };
 }
 
 function generateKnockoutStructure(): TournamentStructure {
@@ -305,34 +382,39 @@ function generateKnockoutStructure(): TournamentStructure {
 
   const qfMatches: TournamentMatch[] = [];
   for (let i = 0; i < 4; i++) {
-    const status: 'finished' | 'live' | 'scheduled' =
-      i < 2 ? 'finished' : i === 2 ? 'live' : 'scheduled';
-    qfMatches.push(makeTournamentMatch(qfTeams[i * 2], qfTeams[i * 2 + 1], status));
+    const status: "finished" | "live" | "scheduled" =
+      i < 2 ? "finished" : i === 2 ? "live" : "scheduled";
+    qfMatches.push(
+      makeTournamentMatch(qfTeams[i * 2], qfTeams[i * 2 + 1], status),
+    );
   }
 
   const sfTeams: TournamentTeam[] = [
-    { id: faker.string.uuid(), name: 'Vincitore QF-1', isMyTeam: true },
-    { id: faker.string.uuid(), name: 'Vincitore QF-2', isMyTeam: false },
-    { id: faker.string.uuid(), name: 'Vincitore QF-3', isMyTeam: false },
-    { id: faker.string.uuid(), name: 'Vincitore QF-4', isMyTeam: false },
+    { id: faker.string.uuid(), name: "Vincitore QF-1", isMyTeam: true },
+    { id: faker.string.uuid(), name: "Vincitore QF-2", isMyTeam: false },
+    { id: faker.string.uuid(), name: "Vincitore QF-3", isMyTeam: false },
+    { id: faker.string.uuid(), name: "Vincitore QF-4", isMyTeam: false },
   ];
   const sfMatches: TournamentMatch[] = [
-    makeTournamentMatch(sfTeams[0], sfTeams[1], 'scheduled'),
-    makeTournamentMatch(sfTeams[2], sfTeams[3], 'scheduled'),
+    makeTournamentMatch(sfTeams[0], sfTeams[1], "scheduled"),
+    makeTournamentMatch(sfTeams[2], sfTeams[3], "scheduled"),
   ];
 
   const finTeams: TournamentTeam[] = [
-    { id: faker.string.uuid(), name: 'Vincitore SF-1', isMyTeam: false },
-    { id: faker.string.uuid(), name: 'Vincitore SF-2', isMyTeam: false },
+    { id: faker.string.uuid(), name: "Vincitore SF-1", isMyTeam: false },
+    { id: faker.string.uuid(), name: "Vincitore SF-2", isMyTeam: false },
   ];
 
   return {
-    kind: 'knockout',
+    kind: "knockout",
     bracket: {
       rounds: [
-        { name: 'Quarti di Finale', matches: qfMatches },
-        { name: 'Semifinali', matches: sfMatches },
-        { name: 'Finale', matches: [makeTournamentMatch(finTeams[0], finTeams[1], 'scheduled')] },
+        { name: "Quarti di Finale", matches: qfMatches },
+        { name: "Semifinali", matches: sfMatches },
+        {
+          name: "Finale",
+          matches: [makeTournamentMatch(finTeams[0], finTeams[1], "scheduled")],
+        },
       ],
     },
   };
@@ -343,10 +425,12 @@ export function generateMyTournament(id?: string, index = -1): MyTournament {
   const isOrganizer = index === 0 || index === 1;
   const isGenerated = index >= 2 || index === -1;
   const structure: TournamentStructure =
-    Math.random() < 0.7 ? generateGroupStructure() : generateKnockoutStructure();
+    Math.random() < 0.7
+      ? generateGroupStructure()
+      : generateKnockoutStructure();
   return {
     ...base,
-    status: 'ongoing',
+    status: "ongoing",
     isRegistered: true,
     structure,
     isOrganizer,
@@ -355,12 +439,14 @@ export function generateMyTournament(id?: string, index = -1): MyTournament {
 }
 
 export function generateMyTournaments(count = 5): MyTournament[] {
-  return Array.from({ length: count }, (_, i) => generateMyTournament(undefined, i));
+  return Array.from({ length: count }, (_, i) =>
+    generateMyTournament(undefined, i),
+  );
 }
 
 // ─── Team generators ──────────────────────────────────────────────────────────
 
-export function generateTeamMember(role: TeamRole = 'calciatore'): TeamMember {
+export function generateTeamMember(role: TeamRole = "calciatore"): TeamMember {
   return {
     id: faker.string.uuid(),
     firstName: faker.person.firstName(),
@@ -373,20 +459,22 @@ export function generateTeamMember(role: TeamRole = 'calciatore'): TeamMember {
 export function generateTeam(id?: string): Team {
   const memberCount = faker.number.int({ min: 2, max: 8 });
   const members: TeamMember[] = [
-    generateTeamMember('representative'),
-    ...Array.from({ length: memberCount - 1 }, () => generateTeamMember('calciatore')),
+    generateTeamMember("representative"),
+    ...Array.from({ length: memberCount - 1 }, () =>
+      generateTeamMember("calciatore"),
+    ),
   ];
   // Randomly assign special roles to at most 1 portiere and 1 allenatore
-  const nonReps = members.filter(m => m.role !== 'representative');
+  const nonReps = members.filter((m) => m.role !== "representative");
   if (nonReps.length > 0) {
-    nonReps[0].role = 'portiere';
+    nonReps[0].role = "portiere";
   }
   if (nonReps.length > 1) {
-    nonReps[1].role = 'allenatore';
+    nonReps[1].role = "allenatore";
   }
   return {
     id: id ?? faker.string.uuid(),
-    name: `${faker.location.city()} ${faker.helpers.arrayElement(['FC', 'SC', 'United', 'Tigers', 'Eagles'])}`,
+    name: `${faker.location.city()} ${faker.helpers.arrayElement(["FC", "SC", "United", "Tigers", "Eagles"])}`,
     sport: faker.helpers.arrayElement(GAMES),
     members,
     createdAt: faker.date.recent({ days: 180 }).toISOString(),

@@ -9,7 +9,6 @@ import TeamsScreen from "../screens/Teams/Teams";
 import MainTabNavigator from "./MainTabNavigator/MainTabNavigator";
 import { useAuth } from "../context/AuthContext";
 import CreateTeam from "../screens/CreateTeam/CreateTeam";
-import EditProfile from "../screens/EditProfile/EditProfile";
 import ForgotPassword from "../screens/ForgotPassword/ForgotPassword";
 import InvitePlayers from "../screens/InvitePlayers/InvitePlayers";
 import Login from "../screens/Login/Login";
@@ -94,11 +93,6 @@ export default function AppNavigator() {
         <Stack.Screen
           name="ForgotPassword"
           component={ForgotPassword}
-          options={{ headerShown: false }}
-        />
-        <Stack.Screen
-          name="EditProfile"
-          component={EditProfile}
           options={{ headerShown: false }}
         />
         <Stack.Screen

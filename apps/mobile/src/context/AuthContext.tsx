@@ -1,9 +1,20 @@
-import React, { createContext, useContext, useState, useEffect, type ReactNode } from 'react';
-import * as SecureStore from 'expo-secure-store';
-import type { User, LoginCredentials, RegisterCredentials } from '../types';
-import { login as apiLogin, register as apiRegister, updateProfile as apiUpdateProfile, fetchProfile } from '../api/auth';
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  type ReactNode,
+} from "react";
+import * as SecureStore from "expo-secure-store";
+import type { User, LoginCredentials, RegisterCredentials } from "../types";
+import {
+  login as apiLogin,
+  register as apiRegister,
+  updateProfile as apiUpdateProfile,
+  fetchProfile,
+} from "../api/auth";
 
-const TOKEN_KEY = 'authToken';
+const TOKEN_KEY = "authToken";
 
 interface AuthContextType {
   user: User | null;
@@ -16,7 +27,14 @@ interface AuthContextType {
   logout: () => void;
   clearError: () => void;
   updateLocation: (location: string) => void;
-  updateProfile: (data: { firstName?: string; lastName?: string; username?: string; location?: string; password?: string; avatarUri?: string }) => Promise<void>;
+  updateProfile: (data: {
+    firstName?: string;
+    lastName?: string;
+    username?: string;
+    location?: string;
+    password?: string;
+    avatarUrl?: string;
+  }) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | null>(null);
@@ -53,7 +71,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       await SecureStore.setItemAsync(TOKEN_KEY, userData.token);
       setUser(userData);
     } catch (e) {
-      const msg = e instanceof Error ? e.message : 'Login failed';
+      const msg = e instanceof Error ? e.message : "Login failed";
       setError(msg);
       throw e;
     } finally {
@@ -69,7 +87,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       await SecureStore.setItemAsync(TOKEN_KEY, userData.token);
       setUser(userData);
     } catch (e) {
-      const msg = e instanceof Error ? e.message : 'Registration failed';
+      const msg = e instanceof Error ? e.message : "Registration failed";
       setError(msg);
       throw e;
     } finally {
@@ -87,7 +105,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setUser((prev) => (prev ? { ...prev, location: loc } : prev));
   };
 
-  const updateProfile = async (data: { firstName?: string; lastName?: string; username?: string; location?: string; password?: string; avatarUri?: string }) => {
+  const updateProfile = async (data: {
+    firstName?: string;
+    lastName?: string;
+    username?: string;
+    location?: string;
+    password?: string;
+    avatarUrl?: string;
+  }) => {
     setLoading(true);
     setError(null);
     try {
@@ -95,7 +120,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setUser(updated);
       if (data.location !== undefined) setLocation(data.location || undefined);
     } catch (e) {
-      const msg = e instanceof Error ? e.message : 'Update failed';
+      const msg = e instanceof Error ? e.message : "Update failed";
       setError(msg);
       throw e;
     } finally {
@@ -104,7 +129,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   return (
-    <AuthContext.Provider value={{ user, location, loading, bootstrapping, error, login, register, logout, clearError, updateLocation, updateProfile }}>
+    <AuthContext.Provider
+      value={{
+        user,
+        location,
+        loading,
+        bootstrapping,
+        error,
+        login,
+        register,
+        logout,
+        clearError,
+        updateLocation,
+        updateProfile,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );
@@ -112,6 +151,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
 export function useAuth() {
   const ctx = useContext(AuthContext);
-  if (!ctx) throw new Error('useAuth must be used within AuthProvider');
+  if (!ctx) throw new Error("useAuth must be used within AuthProvider");
   return ctx;
 }

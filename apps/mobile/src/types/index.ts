@@ -110,7 +110,7 @@ export interface TeamMember {
   firstName: string;
   lastName: string;
   username: string;
-  avatarUri?: string;
+  avatarUrl?: string;
   role: TeamRole;
 }
 
@@ -127,7 +127,7 @@ export interface AppUser {
   firstName: string;
   lastName: string;
   username: string;
-  avatarUri?: string;
+  avatarUrl?: string;
 }
 
 // ─── Tournament player & registration types ──────────────────────────────────
@@ -150,7 +150,7 @@ export interface TournamentPlayer {
   firstName: string;
   lastName: string;
   username: string;
-  avatarUri?: string;
+  avatarUrl?: string;
   dateOfBirth?: string;
   role: TeamRole;
   stats: PlayerStats;
@@ -180,10 +180,11 @@ export interface User {
   token: string;
   dateOfBirth?: string;
   location?: string;
-  avatarUri?: string;
+  avatarUrl?: string;
   isOrganizer?: boolean;
   matchStats?: MatchStats;
   organizedTournaments?: OrganizedTournamentRecord[];
+  password: string;
 }
 
 export interface LoginCredentials {
@@ -222,7 +223,6 @@ export type RootStackParamList = {
     tournamentName: string;
   };
   ForgotPassword: undefined;
-  EditProfile: undefined;
   Notifiche: undefined;
   Teams: undefined;
   CreateTeam: undefined;

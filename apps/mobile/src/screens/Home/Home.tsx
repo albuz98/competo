@@ -28,12 +28,8 @@ import { useNotifications } from "../../context/NotificationsContext";
 import { generateTournaments } from "../../mock/data";
 import { getMyTournamentsCache } from "../../api/tournaments";
 import type { MyTournament } from "../../types";
-import {
-  styles,
-  BIG_W,
-  BIG_H,
-  SMALL_W,
-} from "../../screens/Home/Home.styles";
+import { styles, BIG_W, BIG_H, SMALL_W } from "../../screens/Home/Home.styles";
+import { Avatar } from "../../components/Avatar/Avatar";
 
 type HomeNavProp = CompositeNavigationProp<
   BottomTabNavigationProp<MainTabParamList, "Home">,
@@ -185,9 +181,6 @@ export default function Home() {
     user?.firstName?.[0]?.toUpperCase() ??
     user?.username?.[0]?.toUpperCase() ??
     "U";
-  const displayName = user?.firstName
-    ? `${user.firstName} ${user.lastName ?? ""}`.trim()
-    : (user?.username ?? "Utente");
 
   const saveLocation = () => {
     if (locationInput.trim()) {
@@ -229,18 +222,9 @@ export default function Home() {
         >
           {/* ── Header ──────────────────────────────── */}
           <View style={styles.header}>
-            {user?.avatarUri ? (
-              <Image source={{ uri: user.avatarUri }} style={styles.avatar} />
-            ) : (
-              <LinearGradient
-                colors={["#E8601A", "#F5A020"]}
-                style={styles.avatar}
-              >
-                <Text style={styles.avatarText}>{initial}</Text>
-              </LinearGradient>
-            )}
+            <Avatar user={user} />
             <View style={styles.greetingBlock}>
-              <Text style={styles.greetingText}>{displayName}</Text>
+              <Text style={styles.greetingText}>{user?.username}</Text>
               <TouchableOpacity
                 style={styles.locationRow}
                 onPress={() => {
