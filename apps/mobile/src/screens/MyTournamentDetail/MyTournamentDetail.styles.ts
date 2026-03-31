@@ -43,32 +43,13 @@ export const tds = StyleSheet.create({
     marginLeft: 38,
     marginTop: 6,
   },
-  statusDot: { width: 6, height: 6, borderRadius: 3, backgroundColor: "#10b981" },
+  statusDot: {
+    width: 6,
+    height: 6,
+    borderRadius: 3,
+    backgroundColor: "#10b981",
+  },
   statusText: { color: "#fff", fontSize: 12, fontWeight: "600" },
-
-  // Tab bar
-  tabBar: {
-    flexDirection: "row",
-    backgroundColor: "#fff",
-    marginHorizontal: 16,
-    marginTop: 16,
-    borderRadius: 12,
-    padding: 4,
-    elevation: 1,
-    shadowColor: "#000",
-    shadowOpacity: 0.04,
-    shadowRadius: 4,
-    shadowOffset: { width: 0, height: 1 },
-  },
-  tabBtn: {
-    flex: 1,
-    paddingVertical: 8,
-    borderRadius: 10,
-    alignItems: "center",
-  },
-  tabBtnActive: { backgroundColor: colors.primary },
-  tabLabel: { fontSize: 13, fontWeight: "600", color: "#64748b" },
-  tabLabelActive: { color: "#fff" },
 
   // Group / match cards
   scroll: { paddingHorizontal: 16, paddingBottom: 40, paddingTop: 16 },
@@ -108,7 +89,12 @@ export const tds = StyleSheet.create({
     color: "#1e293b",
   },
   matchScoreLive: { color: colors.primary },
-  matchRound: { fontSize: 11, color: "#94a3b8", marginTop: 2, textAlign: "center" },
+  matchRound: {
+    fontSize: 11,
+    color: "#94a3b8",
+    marginTop: 2,
+    textAlign: "center",
+  },
   liveTag: {
     backgroundColor: colors.primary,
     borderRadius: 4,
@@ -151,7 +137,12 @@ export const tds = StyleSheet.create({
   },
   standingsTeam: { flex: 1, fontSize: 13, color: "#1e293b", fontWeight: "600" },
   standingsTeamMy: { color: colors.primary },
-  standingsCell: { width: 28, fontSize: 12, color: "#64748b", textAlign: "center" },
+  standingsCell: {
+    width: 28,
+    fontSize: 12,
+    color: "#64748b",
+    textAlign: "center",
+  },
   standingsPts: {
     width: 28,
     fontSize: 13,
@@ -206,7 +197,12 @@ export const tds = StyleSheet.create({
     borderBottomColor: "#f1f5f9",
   },
   bracketTeamRowLast: { borderBottomWidth: 0 },
-  bracketTeamName: { flex: 1, fontSize: 11, color: "#1e293b", fontWeight: "500" },
+  bracketTeamName: {
+    flex: 1,
+    fontSize: 11,
+    color: "#1e293b",
+    fontWeight: "500",
+  },
   bracketTeamNameMy: { color: colors.primary, fontWeight: "700" },
   bracketScore: {
     fontSize: 13,

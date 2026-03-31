@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, FlatList, TouchableOpacity } from "react-native";
+import { View, Text, FlatList } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
@@ -10,8 +10,11 @@ import {
 } from "../../context/NotificationsContext";
 import { RootStackParamList } from "../../types";
 import { styles } from "./Notifications.styles";
-import { ButtonEnum } from "../../types/components";
-import { ButtonLink } from "../../components/Button/Button";
+import {
+  ButtonBack,
+  ButtonGeneric,
+  ButtonLink,
+} from "../../components/Button/Button";
 
 function formatDate(iso: string) {
   const d = new Date(iso);
@@ -30,10 +33,9 @@ function NotifItem({
   onPress: () => void;
 }) {
   return (
-    <TouchableOpacity
+    <ButtonGeneric
+      handleBtn={onPress}
       style={[styles.item, !item.read && styles.itemUnread]}
-      onPress={onPress}
-      activeOpacity={0.75}
     >
       <View style={styles.itemLeft}>
         <View style={[styles.dot, item.read && styles.dotRead]} />
@@ -50,7 +52,7 @@ function NotifItem({
         </Text>
         <Text style={styles.itemDate}>{formatDate(item.timestamp)}</Text>
       </View>
-    </TouchableOpacity>
+    </ButtonGeneric>
   );
 }
 
@@ -63,19 +65,15 @@ export default function Notifications() {
   return (
     <SafeAreaView style={styles.root} edges={["top"]}>
       <View style={styles.headerRow}>
-        <TouchableOpacity
-          onPress={() => navigation.goBack()}
-          activeOpacity={0.7}
-          style={styles.backBtn}
-        >
-          <Ionicons name="chevron-back" size={26} color="#1e293b" />
-        </TouchableOpacity>
+        <ButtonBack handleBtn={() => navigation.goBack()} isArrowBack={false} />
         <Text style={styles.header}>Notifiche</Text>
         {unreadCount > 0 && (
           <ButtonLink
             text="Segna tutte come lette"
             handleBtn={markAllAsRead}
             isColored
+            isBold
+            style={{ marginTop: 10 }}
           />
         )}
       </View>

@@ -390,3 +390,34 @@ export function ButtonBack({ handleBtn, isArrowBack = true }: ButtonBackProps) {
     </TouchableOpacity>
   );
 }
+
+// ─── ButtonSelectable ───────────────────────────────────────────────────────────
+
+interface ButtonSelectableProps {
+  handleBtn: () => Promise<void> | void;
+  isSelected?: boolean;
+  text: string;
+}
+
+export function ButtonSelectable({
+  handleBtn,
+  isSelected = false,
+  text,
+}: ButtonSelectableProps) {
+  return (
+    <TouchableOpacity
+      onPress={handleBtn}
+      style={[styles.btnSelected, isSelected && styles.btnSelectedActive]}
+      activeOpacity={0.85}
+    >
+      <Text
+        style={[
+          styles.btnSelectedText,
+          isSelected && styles.btnSelectedTextActive,
+        ]}
+      >
+        {text}
+      </Text>
+    </TouchableOpacity>
+  );
+}

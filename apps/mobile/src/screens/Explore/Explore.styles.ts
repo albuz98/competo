@@ -208,18 +208,6 @@ export const styles = StyleSheet.create({
   },
   modalInput: { flex: 1, fontSize: 15, color: "#1e293b" },
   radiusRow: { flexDirection: "row", gap: 10, marginBottom: 28 },
-  radiusBtn: {
-    flex: 1,
-    borderRadius: 12,
-    paddingVertical: 12,
-    alignItems: "center",
-    borderWidth: 1.5,
-    borderColor: "#e2e8f0",
-    backgroundColor: "#f8fafc",
-  },
-  radiusBtnActive: { borderColor: "#E8601A", backgroundColor: "#FFF0E6" },
-  radiusBtnText: { fontSize: 13, fontWeight: "700", color: "#64748b" },
-  radiusBtnTextActive: { color: "#E8601A" },
   applyBtn: {
     backgroundColor: "#E8601A",
     borderRadius: 50,

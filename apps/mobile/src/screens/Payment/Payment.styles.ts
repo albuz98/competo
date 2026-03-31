@@ -1,4 +1,5 @@
 import { StyleSheet } from "react-native";
+import { colors } from "../../theme/colors";
 
 export const styles = StyleSheet.create({
   root: { flex: 1, backgroundColor: "#000" },
@@ -159,5 +160,14 @@ export const styles = StyleSheet.create({
     letterSpacing: 2,
     fontWeight: "600",
     marginTop: 2,
+  },
+
+  closeBtn: {
+    position: "absolute",
+    right: 24,
+    top: 16,
+    backgroundColor: colors.primaryGradientMidOpacized,
+    paddingTop: 5,
+    paddingBottom: 5,
   },
 });

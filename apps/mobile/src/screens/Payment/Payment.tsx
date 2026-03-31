@@ -3,7 +3,6 @@ import {
   View,
   Text,
   TextInput,
-  TouchableOpacity,
   KeyboardAvoidingView,
   Platform,
   ScrollView,
@@ -21,7 +20,11 @@ import { RootStackParamList } from "../../types";
 import { useAuth } from "../../context/AuthContext";
 import { signUpForTournament } from "../../api/tournaments";
 import { styles } from "./Payment.styles";
-import { ButtonFullColored } from "../../components/Button/Button";
+import {
+  ButtonBack,
+  ButtonFullColored,
+  ButtonIcon,
+} from "../../components/Button/Button";
 import { colorGradient } from "../../theme/colors";
 
 type Props = NativeStackScreenProps<RootStackParamList, "Payment">;
@@ -93,14 +96,11 @@ export default function PaymentScreen({ navigation, route }: Props) {
       <StatusBar barStyle="light-content" backgroundColor="#000" />
       <SafeAreaView style={styles.safeArea}>
         <View style={styles.topArea}>
-          <TouchableOpacity
-            onPress={() => navigation.goBack()}
-            style={styles.backBtn}
-            activeOpacity={0.7}
-          >
-            <Text style={styles.backArrow}>←</Text>
-            <Text style={styles.backText}>Back</Text>
-          </TouchableOpacity>
+          <ButtonIcon
+            handleBtn={() => navigation.goBack()}
+            icon={<Ionicons name="close" size={26} color="#fff" />}
+            style={styles.closeBtn}
+          />
         </View>
 
         <KeyboardAvoidingView

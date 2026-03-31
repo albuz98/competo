@@ -1,4 +1,5 @@
 import { StyleSheet } from "react-native";
+import { colors } from "../../theme/colors";
 
 export const styles = StyleSheet.create({
   btnFullColored: {
@@ -52,4 +53,23 @@ export const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
+  btnSelected: {
+    flex: 1,
+    borderRadius: 12,
+    paddingVertical: 12,
+    alignItems: "center",
+    borderWidth: 1.5,
+    borderColor: colors.disabled,
+    backgroundColor: colors.disabledBg,
+  },
+  btnSelectedActive: {
+    borderColor: colors.primaryGradientMid,
+    backgroundColor: colors.primarySelectedBg,
+  },
+  btnSelectedText: {
+    fontSize: 13,
+    fontWeight: "700",
+    color: colors.placeholder,
+  },
+  btnSelectedTextActive: { color: colors.primaryGradientMid },
 });

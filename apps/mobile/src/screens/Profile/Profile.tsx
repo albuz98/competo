@@ -221,13 +221,11 @@ export default function Profile() {
             <View style={styles.avatarWrapper}>
               <Avatar user={user} />
               {edit && (
-                <TouchableOpacity
+                <ButtonIcon
+                  icon={<Ionicons name="pencil" size={13} color="#fff" />}
                   style={styles.pencilBtn}
-                  onPress={handlePickAvatar}
-                  activeOpacity={0.85}
-                >
-                  <Ionicons name="pencil" size={13} color="#fff" />
-                </TouchableOpacity>
+                  handleBtn={handlePickAvatar}
+                />
               )}
             </View>
             {!edit && (

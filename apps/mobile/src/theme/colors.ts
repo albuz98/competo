@@ -4,7 +4,9 @@ export const colors = {
   primaryGradientMid: "#f2691a",
   primaryGradientMidOpacized: "#f2691abd",
   primaryGradientEnd: "#f89d00",
+  primarySelectedBg: "#FFF0E6",
   disabled: "#e2e8f0",
+  disabledBg: "#f8fafc",
   placeholder: "#64748b",
 
   // Semantic

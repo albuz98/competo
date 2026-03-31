@@ -1,11 +1,5 @@
 import React, { useEffect, useState } from "react";
-import {
-  View,
-  Text,
-  ScrollView,
-  TouchableOpacity,
-  ActivityIndicator,
-} from "react-native";
+import { View, Text, ScrollView, ActivityIndicator } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { LinearGradient } from "expo-linear-gradient";
 import { Ionicons } from "@expo/vector-icons";
@@ -33,6 +27,7 @@ import {
   LINE_COLOR,
 } from "./MyTournamentDetail.styles";
 import { ButtonBack, ButtonFullColored } from "../../components/Button/Button";
+import { TabBar } from "../../components/TabBar/TabBar";
 
 type Props = NativeStackScreenProps<RootStackParamList, "MyTournamentDetail">;
 
@@ -314,31 +309,15 @@ function GroupsView({
 
   return (
     <>
-      <View style={tds.tabBar}>
-        <TouchableOpacity
-          style={[tds.tabBtn, activeTab === "gironi" && tds.tabBtnActive]}
-          onPress={() => setActiveTab("gironi")}
-        >
-          <Text
-            style={[tds.tabLabel, activeTab === "gironi" && tds.tabLabelActive]}
-          >
-            Gironi
-          </Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={[tds.tabBtn, activeTab === "classifica" && tds.tabBtnActive]}
-          onPress={() => setActiveTab("classifica")}
-        >
-          <Text
-            style={[
-              tds.tabLabel,
-              activeTab === "classifica" && tds.tabLabelActive,
-            ]}
-          >
-            Classifica
-          </Text>
-        </TouchableOpacity>
-      </View>
+      <TabBar
+        value={activeTab}
+        onChange={setActiveTab}
+        tabs={[
+          { key: "gironi", label: "Gironi" },
+          { key: "classifica", label: "Classifica" },
+        ]}
+        style={{ marginTop: 15, marginHorizontal: 20 }}
+      />
 
       <ScrollView
         contentContainerStyle={tds.scroll}

@@ -13,7 +13,7 @@ import { colors } from "../../theme/colors";
 interface TabItem<T extends string> {
   key: T;
   label: string;
-  icon: ComponentProps<typeof Ionicons>["name"];
+  icon?: ComponentProps<typeof Ionicons>["name"];
 }
 
 interface TabBarProps<T extends string> {
@@ -40,11 +40,13 @@ export function TabBar<T extends string>({
             onPress={() => onChange(tab.key)}
             activeOpacity={0.7}
           >
-            <Ionicons
-              name={tab.icon}
-              size={15}
-              color={isActive ? colors.primary : colors.placeholder}
-            />
+            {tab.icon && (
+              <Ionicons
+                name={tab.icon}
+                size={15}
+                color={isActive ? colors.primary : colors.placeholder}
+              />
+            )}
             <Text
               style={[tbStyles.tabText, isActive && tbStyles.tabTextActive]}
             >

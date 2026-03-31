@@ -2,7 +2,6 @@ import React, { useEffect, useRef, useState } from "react";
 import {
   View,
   Text,
-  TouchableOpacity,
   ActivityIndicator,
   Modal,
   TextInput,
@@ -22,12 +21,12 @@ import { useAuth } from "../../context/AuthContext";
 import { generateTournaments } from "../../mock/data";
 import type { Tournament, RootStackParamList } from "../../types";
 import { styles } from "./Explore.styles";
-import { ButtonEnum } from "../../types/components";
 import {
   ButtonBorderColored,
   ButtonFullColored,
   ButtonGeneric,
   ButtonIcon,
+  ButtonSelectable,
 } from "../../components/Button/Button";
 
 const DEFAULT = { lat: 45.4642, lng: 9.19 }; // Milan fallback
@@ -443,24 +442,12 @@ export default function Explore() {
             <Text style={styles.modalLabel}>RAGGIO DI RICERCA</Text>
             <View style={styles.radiusRow}>
               {RADIUS_OPTIONS.map((r) => (
-                <TouchableOpacity
+                <ButtonSelectable
                   key={r}
-                  style={[
-                    styles.radiusBtn,
-                    modalRadius === r && styles.radiusBtnActive,
-                  ]}
-                  onPress={() => setModalRadius(r)}
-                  activeOpacity={0.8}
-                >
-                  <Text
-                    style={[
-                      styles.radiusBtnText,
-                      modalRadius === r && styles.radiusBtnTextActive,
-                    ]}
-                  >
-                    {r} km
-                  </Text>
-                </TouchableOpacity>
+                  handleBtn={() => setModalRadius(r)}
+                  text={`${r} km`}
+                  isSelected={modalRadius === r}
+                />
               ))}
             </View>
 
