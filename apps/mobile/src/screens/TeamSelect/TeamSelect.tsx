@@ -3,7 +3,6 @@ import {
   View,
   Text,
   ScrollView,
-  TouchableOpacity,
   StatusBar,
   ActivityIndicator,
 } from "react-native";
@@ -17,7 +16,11 @@ import { Ionicons } from "@expo/vector-icons";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import type { RootStackParamList, Team } from "../../types";
 import { useTeams } from "../../context/TeamsContext";
-import { ButtonFullColored } from "../../components/Button/Button";
+import {
+  ButtonFullColored,
+  ButtonGeneric,
+  ButtonIcon,
+} from "../../components/Button/Button";
 import { colorGradient } from "../../theme/colors";
 
 type Props = NativeStackScreenProps<RootStackParamList, "TeamSelect">;
@@ -41,10 +44,9 @@ function TeamCard({
 }) {
   const initials = team.name.slice(0, 2).toUpperCase();
   return (
-    <TouchableOpacity
+    <ButtonGeneric
       style={[ts.teamCard, selected && ts.teamCardSelected]}
-      onPress={onPress}
-      activeOpacity={0.85}
+      handleBtn={onPress}
     >
       <LinearGradient colors={colorGradient} style={ts.teamAvatar}>
         <Text style={ts.teamAvatarText}>{initials}</Text>
@@ -58,7 +60,7 @@ function TeamCard({
         </Text>
       </View>
       <RadioCircle selected={selected} />
-    </TouchableOpacity>
+    </ButtonGeneric>
   );
 }
 
@@ -89,13 +91,11 @@ export default function TeamSelect({ route, navigation }: Props) {
       <SafeAreaView style={{ flex: 1 }} edges={["top"]}>
         {/* Header */}
         <View style={ts.header}>
-          <TouchableOpacity
-            onPress={() => navigation.goBack()}
+          <ButtonIcon
+            handleBtn={() => navigation.goBack()}
             style={ts.closeBtn}
-            activeOpacity={0.7}
-          >
-            <Ionicons name="close" size={22} color="#1e293b" />
-          </TouchableOpacity>
+            icon={<Ionicons name="close" size={22} color="#1e293b" />}
+          />
           <Text style={ts.headerTitle}>Scegli la tua squadra</Text>
           <View style={{ width: 36 }} />
         </View>

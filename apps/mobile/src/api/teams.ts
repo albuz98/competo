@@ -1,4 +1,5 @@
 import { isMocking, apiFetch } from './config';
+import { faker } from '@faker-js/faker';
 import { generateTeams, generateTeamMember, generateAppUsers } from '../mock/data';
 import type { Team, AppUser, PendingInvite, TeamRole } from '../types';
 
@@ -65,7 +66,6 @@ export async function createTeam(
       }
     }
     await new Promise((r) => setTimeout(r, 400));
-    const { faker } = await import('@faker-js/faker');
     const rep = representative
       ? { ...representative, role: 'representative' as const }
       : generateTeamMember('representative');

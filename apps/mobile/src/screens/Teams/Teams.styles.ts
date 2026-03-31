@@ -26,11 +26,10 @@ export const tss = StyleSheet.create({
     color: "#1e293b",
     paddingLeft: 4,
   },
-  addBtn: {},
-  addBtnGrad: {
+  addBtn: {
     width: 36,
     height: 36,
-    borderRadius: 12,
+    borderRadius: 50,
     alignItems: "center",
     justifyContent: "center",
   },

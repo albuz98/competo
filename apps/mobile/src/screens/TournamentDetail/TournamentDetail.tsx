@@ -3,7 +3,6 @@ import {
   View,
   Text,
   ScrollView,
-  TouchableOpacity,
   ActivityIndicator,
   StatusBar,
 } from "react-native";
@@ -20,7 +19,11 @@ import { useAuth } from "../../context/AuthContext";
 import { useFavorites } from "../../context/FavoritesContext";
 import { useNotifications } from "../../context/NotificationsContext";
 import { styles } from "./TournamentDetail.styles";
-import { ButtonBack, ButtonFullColored } from "../../components/Button/Button";
+import {
+  ButtonBack,
+  ButtonFullColored,
+  ButtonIcon,
+} from "../../components/Button/Button";
 import { colorGradient } from "../../theme/colors";
 
 type Props = NativeStackScreenProps<RootStackParamList, "TournamentDetail">;
@@ -214,17 +217,17 @@ export default function TournamentDetail({ route, navigation }: Props) {
                 </View>
                 {!tournament.isRegistered &&
                   tournament.status !== "completed" && (
-                    <TouchableOpacity
-                      onPress={toggleFavorite}
+                    <ButtonIcon
+                      handleBtn={toggleFavorite}
                       style={styles.bookmarkBtn}
-                      activeOpacity={0.7}
-                    >
-                      <Ionicons
-                        name={favorited ? "bookmark" : "bookmark-outline"}
-                        size={20}
-                        color="#fff"
-                      />
-                    </TouchableOpacity>
+                      icon={
+                        <Ionicons
+                          name={favorited ? "bookmark" : "bookmark-outline"}
+                          size={20}
+                          color="#fff"
+                        />
+                      }
+                    />
                   )}
               </View>
             </View>

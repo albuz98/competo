@@ -7,7 +7,7 @@ import {
   Insets,
 } from "react-native";
 import { styles } from "./Button.styles";
-import { colors } from "../../theme/colors";
+import { colorGradient, colors } from "../../theme/colors";
 import { big, medium, sizesEnum, small } from "../../theme/dimension";
 import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
@@ -351,14 +351,7 @@ export function ButtonGradient({
 }: ButtonGradientProps) {
   return (
     <TouchableOpacity onPress={handleBtn} activeOpacity={0.85}>
-      <LinearGradient
-        colors={[
-          colors.primary,
-          colors.primaryGradientMid,
-          colors.primaryGradientEnd,
-        ]}
-        style={style}
-      >
+      <LinearGradient colors={colorGradient} style={style}>
         {loading ? <ActivityIndicator color={loaderColor} /> : <>{children}</>}
       </LinearGradient>
     </TouchableOpacity>

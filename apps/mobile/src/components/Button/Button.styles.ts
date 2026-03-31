@@ -6,7 +6,7 @@ export const styles = StyleSheet.create({
     borderRadius: 15,
     alignItems: "center",
     marginTop: 8,
-    marginBottom: 20,
+    marginBottom: 8,
     elevation: 4,
   },
   btnBorderColored: {

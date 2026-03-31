@@ -1,14 +1,9 @@
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  StyleProp,
-  ViewStyle,
-} from "react-native";
+import { View, Text, StyleProp, ViewStyle } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { ComponentProps } from "react";
 import { tbStyles } from "./TabBar.styles";
 import { colors } from "../../theme/colors";
+import { ButtonGeneric } from "../Button/Button";
 
 interface TabItem<T extends string> {
   key: T;
@@ -34,11 +29,10 @@ export function TabBar<T extends string>({
       {tabs.map((tab) => {
         const isActive = tab.key === value;
         return (
-          <TouchableOpacity
+          <ButtonGeneric
             key={tab.key}
             style={[tbStyles.tab, isActive && tbStyles.tabActive]}
-            onPress={() => onChange(tab.key)}
-            activeOpacity={0.7}
+            handleBtn={() => onChange(tab.key)}
           >
             {tab.icon && (
               <Ionicons
@@ -52,7 +46,7 @@ export function TabBar<T extends string>({
             >
               {tab.label}
             </Text>
-          </TouchableOpacity>
+          </ButtonGeneric>
         );
       })}
     </View>

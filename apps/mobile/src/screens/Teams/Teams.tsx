@@ -3,7 +3,6 @@ import {
   View,
   Text,
   ScrollView,
-  TouchableOpacity,
   StatusBar,
   ActivityIndicator,
   Alert,
@@ -21,6 +20,9 @@ import { useTeams } from "../../context/TeamsContext";
 import {
   ButtonAccept,
   ButtonFullColored,
+  ButtonGeneric,
+  ButtonGradient,
+  ButtonIcon,
   ButtonReject,
 } from "../../components/Button/Button";
 import { colorGradient } from "../../theme/colors";
@@ -31,11 +33,7 @@ function TeamCard({ team, onPress }: { team: Team; onPress: () => void }) {
   const initials = team.name.slice(0, 2).toUpperCase();
   const representative = team.members.find((m) => m.role === "representative");
   return (
-    <TouchableOpacity
-      style={tss.teamCard}
-      onPress={onPress}
-      activeOpacity={0.85}
-    >
+    <ButtonGeneric style={tss.teamCard} handleBtn={onPress}>
       <LinearGradient colors={colorGradient} style={tss.teamAvatar}>
         <Text style={tss.teamAvatarText}>{initials}</Text>
       </LinearGradient>
@@ -53,7 +51,7 @@ function TeamCard({ team, onPress }: { team: Team; onPress: () => void }) {
         )}
       </View>
       <Ionicons name="chevron-forward" size={18} color="#cbd5e1" />
-    </TouchableOpacity>
+    </ButtonGeneric>
   );
 }
 
@@ -123,23 +121,18 @@ export default function TeamsScreen({ navigation }: Props) {
       <SafeAreaView style={{ flex: 1 }} edges={["top"]}>
         {/* Header */}
         <View style={tss.header}>
-          <TouchableOpacity
-            onPress={() => navigation.goBack()}
+          <ButtonIcon
+            handleBtn={() => navigation.goBack()}
             style={tss.backBtn}
-            activeOpacity={0.7}
-          >
-            <Ionicons name="chevron-back" size={24} color="#1e293b" />
-          </TouchableOpacity>
+            icon={<Ionicons name="chevron-back" size={24} color="#1e293b" />}
+          />
           <Text style={tss.headerTitle}>Le mie squadre</Text>
-          <TouchableOpacity
+          <ButtonGradient
             style={tss.addBtn}
-            onPress={() => navigation.navigate("CreateTeam")}
-            activeOpacity={0.8}
+            handleBtn={() => navigation.navigate("CreateTeam")}
           >
-            <LinearGradient colors={colorGradient} style={tss.addBtnGrad}>
-              <Ionicons name="add" size={20} color="#fff" />
-            </LinearGradient>
-          </TouchableOpacity>
+            <Ionicons name="add" size={20} color="#fff" />
+          </ButtonGradient>
         </View>
 
         {loading ? (

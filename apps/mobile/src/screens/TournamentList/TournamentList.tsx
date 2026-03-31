@@ -3,7 +3,6 @@ import {
   View,
   Text,
   FlatList,
-  TouchableOpacity,
   RefreshControl,
   ActivityIndicator,
 } from "react-native";
@@ -14,8 +13,10 @@ import type { RootStackParamList, Tournament } from "../../types";
 import { fetchTournaments } from "../../api/tournaments";
 import { useAuth } from "../../context/AuthContext";
 import { styles } from "./TournamentList.styles";
-import Button from "../../components/Button/Button";
-import { ButtonEnum } from "../../types/components";
+import {
+  ButtonFullColored,
+  ButtonGeneric,
+} from "../../components/Button/Button";
 
 const STATUS_COLORS: Record<string, string> = {
   upcoming: "#3b82f6",
@@ -39,7 +40,7 @@ function TournamentCard({
   const spotsLeft = tournament.maxParticipants - tournament.currentParticipants;
 
   return (
-    <TouchableOpacity style={styles.card} onPress={onPress} activeOpacity={0.7}>
+    <ButtonGeneric style={styles.card} handleBtn={onPress}>
       <View style={styles.cardHeader}>
         <Text style={styles.gameName}>{tournament.game}</Text>
         <View
@@ -84,7 +85,7 @@ function TournamentCard({
           <Text style={styles.detailValue}>{tournament.entryFee}</Text>
         </View>
       </View>
-    </TouchableOpacity>
+    </ButtonGeneric>
   );
 }
 
@@ -138,12 +139,12 @@ export default function TournamentListScreen() {
     return (
       <View style={styles.center}>
         <Text style={styles.errorText}>{error}</Text>
-        <Button
-          variant={ButtonEnum.EDIT}
-          style={styles.retryBtn}
-          textStyle={styles.retryBtnText}
+        <ButtonFullColored
           text="Retry"
-          handleBtn={() => { setLoading(true); load(); }}
+          handleBtn={() => {
+            setLoading(true);
+            load();
+          }}
         />
       </View>
     );

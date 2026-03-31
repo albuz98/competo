@@ -1,12 +1,5 @@
 import React, { useState } from "react";
-import {
-  View,
-  Text,
-  ScrollView,
-  TouchableOpacity,
-  StatusBar,
-  Modal,
-} from "react-native";
+import { View, Text, ScrollView, StatusBar, Modal } from "react-native";
 import { tds } from "./TeamDetail.styles";
 import {
   SafeAreaView,
@@ -18,8 +11,15 @@ import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import type { RootStackParamList, TeamMember, TeamRole } from "../../types";
 import { useTeams } from "../../context/TeamsContext";
 import { useAuth } from "../../context/AuthContext";
-import { colorGradient } from "../../theme/colors";
-import { ButtonBack, ButtonLink } from "../../components/Button/Button";
+import { colorGradient, colors } from "../../theme/colors";
+import {
+  ButtonBack,
+  ButtonBorderColored,
+  ButtonFullColored,
+  ButtonGeneric,
+  ButtonIcon,
+  ButtonLink,
+} from "../../components/Button/Button";
 
 type Props = NativeStackScreenProps<RootStackParamList, "TeamDetail">;
 
@@ -81,16 +81,13 @@ function MemberRow({
           <Text style={tds.memberUsername}>@{member.username}</Text>
           {!isRep &&
             (currentUserIsRep ? (
-              <TouchableOpacity
-                onPress={onChangeRole}
-                style={tds.rolePill}
-                activeOpacity={0.7}
-              >
-                <Text style={tds.rolePillText}>
-                  {ROLE_LABEL[member.role] ?? member.role}
-                </Text>
-                <Ionicons name="chevron-down" size={10} color="#64748b" />
-              </TouchableOpacity>
+              <ButtonBorderColored
+                handleBtn={onChangeRole}
+                iconRight={
+                  <Ionicons name="chevron-down" size={10} color="#64748b" />
+                }
+                text={ROLE_LABEL[member.role] ?? member.role}
+              />
             ) : (
               <View style={tds.rolePillStatic}>
                 <Text style={tds.rolePillText}>
@@ -101,13 +98,16 @@ function MemberRow({
         </View>
       </View>
       {currentUserIsRep && !isRep ? (
-        <TouchableOpacity
-          onPress={onRemove}
-          activeOpacity={0.7}
-          hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
-        >
-          <Ionicons name="person-remove-outline" size={18} color="#ef4444" />
-        </TouchableOpacity>
+        <ButtonIcon
+          handleBtn={onRemove}
+          icon={
+            <Ionicons
+              name="person-remove-outline"
+              size={18}
+              color={colors.primary}
+            />
+          }
+        />
       ) : null}
     </View>
   );
@@ -237,16 +237,18 @@ export default function TeamDetail({ route, navigation }: Props) {
 
         {/* Invite button — only visible to the representative */}
         {isRep && (
-          <TouchableOpacity
-            style={tds.inviteBtn}
-            onPress={() =>
-              navigation.navigate("InvitePlayers", { teamId: team.id })
-            }
-            activeOpacity={0.85}
-          >
-            <Ionicons name="person-add-outline" size={20} color="#E8601A" />
-            <Text style={tds.inviteBtnText}>Invita giocatori</Text>
-          </TouchableOpacity>
+          <View style={{ paddingHorizontal: 15, paddingTop: 10 }}>
+            <ButtonFullColored
+              text="Invita giocatori"
+              iconLeft={
+                <Ionicons name="person-add-outline" size={20} color="#fff" />
+              }
+              handleBtn={() =>
+                navigation.navigate("InvitePlayers", { teamId: team.id })
+              }
+              isColored
+            />
+          </View>
         )}
       </ScrollView>
 
@@ -325,18 +327,17 @@ export default function TeamDetail({ route, navigation }: Props) {
                       m.role === role && m.id !== roleTarget?.id,
                   );
                 return (
-                  <TouchableOpacity
+                  <ButtonGeneric
                     key={role}
                     style={[
                       tds.roleOption,
                       isCurrent && tds.roleOptionCurrent,
                       isOccupied && tds.roleOptionDisabled,
                     ]}
-                    onPress={() => {
+                    handleBtn={() => {
                       if (!isOccupied && roleTarget)
                         handleChangeRole(roleTarget.id, role);
                     }}
-                    activeOpacity={isOccupied ? 1 : 0.7}
                   >
                     <Text
                       style={[
@@ -351,7 +352,7 @@ export default function TeamDetail({ route, navigation }: Props) {
                     {isCurrent && (
                       <Ionicons name="checkmark" size={18} color="#E8601A" />
                     )}
-                  </TouchableOpacity>
+                  </ButtonGeneric>
                 );
               },
             )}

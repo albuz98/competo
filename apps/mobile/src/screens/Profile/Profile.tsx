@@ -3,7 +3,6 @@ import { useFocusEffect } from "@react-navigation/native";
 import {
   View,
   Text,
-  TouchableOpacity,
   Alert,
   ScrollView,
   KeyboardAvoidingView,
@@ -30,6 +29,7 @@ import InputBox from "../../components/InputBox/InputBox";
 import { styles as tabStyles } from "../../navigation/MainTabNavigator/MainTabNavigator.styles";
 import {
   ButtonBorderColored,
+  ButtonGeneric,
   ButtonIcon,
   ButtonLink,
 } from "../../components/Button/Button";
@@ -423,10 +423,9 @@ export default function Profile() {
               </View>
 
               {teams.length === 0 ? (
-                <TouchableOpacity
+                <ButtonGeneric
                   style={styles.createTeamCard}
-                  onPress={() => navigation.navigate("CreateTeam")}
-                  activeOpacity={0.85}
+                  handleBtn={() => navigation.navigate("CreateTeam")}
                 >
                   <LinearGradient
                     colors={colorGradient}
@@ -441,7 +440,7 @@ export default function Profile() {
                     </Text>
                   </View>
                   <Ionicons name="chevron-forward" size={18} color="#cbd5e1" />
-                </TouchableOpacity>
+                </ButtonGeneric>
               ) : (
                 <ScrollView
                   horizontal
@@ -449,12 +448,11 @@ export default function Profile() {
                   contentContainerStyle={styles.teamsScroll}
                 >
                   {teams.slice(0, 5).map((team) => (
-                    <TouchableOpacity
+                    <ButtonGeneric
                       style={styles.teamMiniCard}
-                      onPress={() =>
+                      handleBtn={() =>
                         navigation.navigate("TeamDetail", { teamId: team.id })
                       }
-                      activeOpacity={0.85}
                     >
                       <LinearGradient
                         colors={colorGradient}
@@ -468,7 +466,7 @@ export default function Profile() {
                         {team.name}
                       </Text>
                       <Text style={styles.teamMiniSport}>{team.sport}</Text>
-                    </TouchableOpacity>
+                    </ButtonGeneric>
                   ))}
                 </ScrollView>
               )}
