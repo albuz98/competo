@@ -10,18 +10,14 @@ export const styles = StyleSheet.create({
   topArea: {
     flex: 1,
   },
-  backBtn: { flexDirection: "row", alignItems: "center", gap: 6 },
   closeBtn: {
-    padding: 4,
-    justifyContent: "flex-end",
-    right: 30,
-    top: 20,
     position: "absolute",
+    right: 24,
+    top: 16,
     backgroundColor: colors.primaryGradientMidOpacized,
-    borderRadius: 50,
+    paddingTop: 5,
+    paddingBottom: 5,
   },
-  backArrow: { color: "#fff", fontSize: 20, lineHeight: 24 },
-  backText: { color: "#fff", fontSize: 15, fontWeight: "500" },
   card: {
     flex: 1,
     borderTopLeftRadius: 32,

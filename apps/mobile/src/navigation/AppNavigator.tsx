@@ -14,7 +14,6 @@ import InvitePlayers from "../screens/InvitePlayers/InvitePlayers";
 import Login from "../screens/Login/Login";
 import MyTournamentDetail from "../screens/MyTournamentDetail/MyTournamentDetail";
 import Notifications from "../screens/Notifications/Notifications";
-import OrganizerTournamentDetail from "../screens/OrganizerTournamentDetail/OrganizerTournamentDetail";
 import Payment from "../screens/Payment/Payment";
 import PlayerProfile from "../screens/PlayerProfile/PlayerProfile";
 import Register from "../screens/Register/Register";
@@ -68,12 +67,18 @@ export default function AppNavigator() {
         <Stack.Screen
           name="Login"
           component={Login}
-          options={{ headerShown: false }}
+          options={{
+            headerShown: false,
+            contentStyle: { backgroundColor: "#000" },
+          }}
         />
         <Stack.Screen
           name="Register"
           component={Register}
-          options={{ headerShown: false }}
+          options={{
+            headerShown: false,
+            contentStyle: { backgroundColor: "#000" },
+          }}
         />
         <Stack.Screen
           name="MainTabs"
@@ -93,7 +98,10 @@ export default function AppNavigator() {
         <Stack.Screen
           name="ForgotPassword"
           component={ForgotPassword}
-          options={{ headerShown: false }}
+          options={{
+            headerShown: false,
+            contentStyle: { backgroundColor: "#000" },
+          }}
         />
         <Stack.Screen
           name="Notifiche"
@@ -128,11 +136,6 @@ export default function AppNavigator() {
         <Stack.Screen
           name="InvitePlayers"
           component={InvitePlayers}
-          options={{ headerShown: false }}
-        />
-        <Stack.Screen
-          name="OrganizerTournamentDetail"
-          component={OrganizerTournamentDetail}
           options={{ headerShown: false }}
         />
         <Stack.Screen

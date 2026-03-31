@@ -14,6 +14,8 @@ import type { RootStackParamList, Tournament } from "../../types";
 import { fetchTournaments } from "../../api/tournaments";
 import { useAuth } from "../../context/AuthContext";
 import { styles } from "./TournamentList.styles";
+import Button from "../../components/Button/Button";
+import { ButtonEnum } from "../../types/components";
 
 const STATUS_COLORS: Record<string, string> = {
   upcoming: "#3b82f6",
@@ -136,15 +138,13 @@ export default function TournamentListScreen() {
     return (
       <View style={styles.center}>
         <Text style={styles.errorText}>{error}</Text>
-        <TouchableOpacity
+        <Button
+          variant={ButtonEnum.EDIT}
           style={styles.retryBtn}
-          onPress={() => {
-            setLoading(true);
-            load();
-          }}
-        >
-          <Text style={styles.retryBtnText}>Retry</Text>
-        </TouchableOpacity>
+          textStyle={styles.retryBtnText}
+          text="Retry"
+          handleBtn={() => { setLoading(true); load(); }}
+        />
       </View>
     );
   }

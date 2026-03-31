@@ -18,6 +18,12 @@ import { Ionicons } from "@expo/vector-icons";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import type { RootStackParamList, Team, PendingInvite } from "../../types";
 import { useTeams } from "../../context/TeamsContext";
+import {
+  ButtonAccept,
+  ButtonFullColored,
+  ButtonReject,
+} from "../../components/Button/Button";
+import { colorGradient } from "../../theme/colors";
 
 type Props = NativeStackScreenProps<RootStackParamList, "Teams">;
 
@@ -30,7 +36,7 @@ function TeamCard({ team, onPress }: { team: Team; onPress: () => void }) {
       onPress={onPress}
       activeOpacity={0.85}
     >
-      <LinearGradient colors={["#E8601A", "#F5A020"]} style={tss.teamAvatar}>
+      <LinearGradient colors={colorGradient} style={tss.teamAvatar}>
         <Text style={tss.teamAvatarText}>{initials}</Text>
       </LinearGradient>
       <View style={{ flex: 1 }}>
@@ -71,10 +77,7 @@ function InviteCard({
           marginBottom: 10,
         }}
       >
-        <LinearGradient
-          colors={["#E8601A", "#F5A020"]}
-          style={tss.inviteCardAvatar}
-        >
+        <LinearGradient colors={colorGradient} style={tss.inviteCardAvatar}>
           <Text style={tss.inviteCardAvatarText}>{initials}</Text>
         </LinearGradient>
         <View style={tss.inviteCardInfo}>
@@ -86,20 +89,8 @@ function InviteCard({
         </View>
       </View>
       <View style={tss.inviteCardActions}>
-        <TouchableOpacity
-          style={tss.inviteAcceptBtn}
-          onPress={onAccept}
-          activeOpacity={0.85}
-        >
-          <Text style={tss.inviteAcceptText}>Accetta</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={tss.inviteRejectBtn}
-          onPress={onReject}
-          activeOpacity={0.85}
-        >
-          <Text style={tss.inviteRejectText}>Rifiuta</Text>
-        </TouchableOpacity>
+        <ButtonAccept text="Accetta" handleBtn={onAccept} />
+        <ButtonReject text="Rifiuta" handleBtn={onReject} />
       </View>
     </View>
   );
@@ -145,10 +136,7 @@ export default function TeamsScreen({ navigation }: Props) {
             onPress={() => navigation.navigate("CreateTeam")}
             activeOpacity={0.8}
           >
-            <LinearGradient
-              colors={["#E8601A", "#F5A020"]}
-              style={tss.addBtnGrad}
-            >
+            <LinearGradient colors={colorGradient} style={tss.addBtnGrad}>
               <Ionicons name="add" size={20} color="#fff" />
             </LinearGradient>
           </TouchableOpacity>
@@ -191,13 +179,10 @@ export default function TeamsScreen({ navigation }: Props) {
                   Crea la tua prima squadra e invita i tuoi amici a giocare
                   insieme.
                 </Text>
-                <TouchableOpacity
-                  style={tss.createBtn}
-                  onPress={() => navigation.navigate("CreateTeam")}
-                  activeOpacity={0.85}
-                >
-                  <Text style={tss.createBtnText}>Crea squadra</Text>
-                </TouchableOpacity>
+                <ButtonFullColored
+                  text="Crea squadra"
+                  handleBtn={() => navigation.navigate("CreateTeam")}
+                />
               </View>
             ) : (
               teams.map((t) => (

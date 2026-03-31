@@ -1,7 +1,7 @@
 import React from "react";
 import { User } from "../../types";
 import { LinearGradient } from "expo-linear-gradient";
-import { colors } from "../../theme/colors";
+import { colorGradient } from "../../theme/colors";
 import { Text, Image } from "react-native";
 import { styles } from "./Avatar.styles";
 
@@ -18,11 +18,7 @@ export function Avatar({ user }: AvatarProps) {
         <Image source={{ uri: user.avatarUrl }} style={styles.avatarImg} />
       ) : (
         <LinearGradient
-          colors={[
-            colors.primary,
-            colors.primaryGradientMid,
-            colors.primaryGradientEnd,
-          ]}
+          colors={colorGradient}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 0 }}
           style={styles.avatar}

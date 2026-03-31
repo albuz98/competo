@@ -5,11 +5,12 @@ import {
   Text,
   TextInput,
   TextInputSubmitEditingEvent,
-  TouchableOpacity,
   View,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { styles } from "./InputBox.styles";
+import { ButtonIcon } from "../Button/Button";
+import { ButtonEnum } from "../../types/components";
 
 type CommonProps = {
   value: string;
@@ -105,16 +106,16 @@ export default function InputBox(props: InputBoxProps) {
               onSubmitEditing={onSubmitEditing}
             />
             {secureTextEntry && (
-              <TouchableOpacity
-                onPress={() => setHidden((h) => !h)}
-                activeOpacity={0.7}
-              >
-                <Ionicons
-                  name={hidden ? "eye-outline" : "eye-off-outline"}
-                  size={18}
-                  color="#94a3b8"
-                />
-              </TouchableOpacity>
+              <ButtonIcon
+                handleBtn={() => setHidden((h) => !h)}
+                icon={
+                  <Ionicons
+                    name={hidden ? "eye-outline" : "eye-off-outline"}
+                    size={18}
+                    color="#94a3b8"
+                  />
+                }
+              />
             )}
           </View>
           {error && <Text style={styles.rowError}>{error}</Text>}
@@ -161,17 +162,17 @@ export default function InputBox(props: InputBoxProps) {
         textContentType={textContentType}
       />
       {secureTextEntry && (
-        <TouchableOpacity
+        <ButtonIcon
           style={styles.eyeBtn}
-          onPress={() => setHidden((h) => !h)}
-          activeOpacity={0.7}
-        >
-          <Ionicons
-            name={hidden ? "eye-outline" : "eye-off-outline"}
-            size={20}
-            color="rgba(255,255,255,0.6)"
-          />
-        </TouchableOpacity>
+          handleBtn={() => setHidden((h) => !h)}
+          icon={
+            <Ionicons
+              name={hidden ? "eye-outline" : "eye-off-outline"}
+              size={20}
+              color="rgba(255,255,255,0.6)"
+            />
+          }
+        />
       )}
     </View>
   );

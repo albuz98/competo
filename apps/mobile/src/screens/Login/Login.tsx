@@ -1,5 +1,5 @@
 import React, { useState, useLayoutEffect } from "react";
-import { Text, View } from "react-native";
+import { Text } from "react-native";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import type { RootStackParamList } from "../../types";
 import { useAuth } from "../../context/AuthContext";
@@ -7,10 +7,14 @@ import CompetoLogo from "../../components/CompetoLogo/CompetoLogo";
 import AuthErrorBox from "../../components/AuthErrorBox/AuthErrorBox";
 import AuthLayout from "../../components/AuthLayout/AuthLayout";
 import { styles } from "./Login.styles";
-import Button from "../../components/Button/Button";
 import InputBox from "../../components/InputBox/InputBox";
 import { ButtonEnum } from "../../types/components";
 import { DividerAccess } from "../../components/DividerAccess/DividerAccess";
+import {
+  ButtonBorderColored,
+  ButtonFullColored,
+  ButtonLink,
+} from "../../components/Button/Button";
 
 type Props = NativeStackScreenProps<RootStackParamList, "Login">;
 
@@ -47,11 +51,7 @@ export default function Login({ navigation, route }: Props) {
 
       {error && <AuthErrorBox message={error} />}
 
-      <Button
-        text={"Continua con Google"}
-        variant={ButtonEnum.THIRD}
-        handleBtn={() => {}}
-      />
+      <ButtonBorderColored text={"Continua con Google"} handleBtn={() => {}} />
 
       <DividerAccess />
 
@@ -75,21 +75,19 @@ export default function Login({ navigation, route }: Props) {
         secureTextEntry
       />
 
-      <Button
+      <ButtonFullColored
         text={"Accedi"}
         handleBtn={handleLogin}
         isDisabled={!isValid || loading}
         loading={loading}
       />
 
-      <Button
-        variant={ButtonEnum.LINK}
+      <ButtonLink
         text={"Forgot Password?"}
         handleBtn={() => navigation.navigate("ForgotPassword")}
       />
 
-      <Button
-        variant={ButtonEnum.LINK}
+      <ButtonLink
         text={"Signup!"}
         handleBtn={() => navigation.replace("Register")}
       />

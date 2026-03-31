@@ -1,11 +1,5 @@
 import React, { useState } from "react";
-import {
-  View,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  ActivityIndicator,
-} from "react-native";
+import { View, Text, TextInput } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../../types";
@@ -14,6 +8,8 @@ import { styles } from "./ForgotPassword.styles";
 import AuthLayout from "../../components/AuthLayout/AuthLayout";
 import AuthErrorBox from "../../components/AuthErrorBox/AuthErrorBox";
 import CompetoLogo from "../../components/CompetoLogo/CompetoLogo";
+import { ButtonEnum } from "../../types/components";
+import { ButtonFullColored, ButtonLink } from "../../components/Button/Button";
 
 type Props = NativeStackScreenProps<RootStackParamList, "ForgotPassword">;
 
@@ -40,13 +36,14 @@ export default function ForgotPassword({ navigation }: Props) {
   };
 
   return (
-    <AuthLayout onBack={() => navigation.goBack()}>
+    <AuthLayout onClose={() => navigation.goBack()}>
       {sent ? (
         <View style={styles.successContainer}>
           <Ionicons
             name="mail-outline"
             size={64}
             color="rgba(255,255,255,0.9)"
+            style={{ alignSelf: "center" }}
           />
           <Text style={styles.cardTitle}>Email inviata!</Text>
           <Text style={styles.successText}>
@@ -56,13 +53,10 @@ export default function ForgotPassword({ navigation }: Props) {
           <Text style={styles.successHint}>
             Controlla la tua casella di posta e la cartella spam.
           </Text>
-          <TouchableOpacity
-            style={styles.backToLoginBtn}
-            onPress={() => navigation.navigate("Login", {})}
-            activeOpacity={0.85}
-          >
-            <Text style={styles.backToLoginText}>Torna al login</Text>
-          </TouchableOpacity>
+          <ButtonFullColored
+            text="Torna al login"
+            handleBtn={() => navigation.navigate("Login", {})}
+          />
         </View>
       ) : (
         <>
@@ -88,28 +82,17 @@ export default function ForgotPassword({ navigation }: Props) {
             onSubmitEditing={handleSend}
           />
 
-          <TouchableOpacity
-            style={[
-              styles.sendBtn,
-              (!isValid || loading) && styles.sendBtnDisabled,
-            ]}
-            onPress={handleSend}
-            disabled={!isValid || loading}
-            activeOpacity={0.85}
-          >
-            {loading ? (
-              <ActivityIndicator color="#E8601A" />
-            ) : (
-              <Text style={styles.sendBtnText}>Invia link di reset</Text>
-            )}
-          </TouchableOpacity>
+          <ButtonFullColored
+            text="Invia link di reset"
+            handleBtn={handleSend}
+            isDisabled={!isValid || loading}
+            loading={loading}
+          />
 
-          <TouchableOpacity
-            style={styles.linkBtn}
-            onPress={() => navigation.goBack()}
-          >
-            <Text style={styles.linkText}>Torna al login</Text>
-          </TouchableOpacity>
+          <ButtonLink
+            text="Torna al login"
+            handleBtn={() => navigation.goBack()}
+          />
         </>
       )}
 

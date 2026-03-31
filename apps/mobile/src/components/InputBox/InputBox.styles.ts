@@ -23,9 +23,8 @@ export const styles = StyleSheet.create({
   eyeBtn: {
     position: "absolute",
     right: 14,
-    top: 0,
+    top: 4,
     bottom: 0,
-    justifyContent: "center",
   },
 
   // row variant

@@ -3,13 +3,11 @@ import {
   View,
   Text,
   ScrollView,
-  TouchableOpacity,
   TextInput,
   StatusBar,
   Modal,
   KeyboardAvoidingView,
   Platform,
-  Image,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { LinearGradient } from "expo-linear-gradient";
@@ -30,6 +28,15 @@ import { getMyTournamentsCache } from "../../api/tournaments";
 import type { MyTournament } from "../../types";
 import { styles, BIG_W, BIG_H, SMALL_W } from "../../screens/Home/Home.styles";
 import { Avatar } from "../../components/Avatar/Avatar";
+import {
+  ButtonBorderColored,
+  ButtonFullColored,
+  ButtonGeneric,
+  ButtonGradient,
+  ButtonLink,
+} from "../../components/Button/Button";
+import { sizesEnum } from "../../theme/dimension";
+import { colorGradient, colors } from "../../theme/colors";
 
 type HomeNavProp = CompositeNavigationProp<
   BottomTabNavigationProp<MainTabParamList, "Home">,
@@ -83,10 +90,9 @@ function BigCard({
   });
 
   return (
-    <TouchableOpacity
+    <ButtonGeneric
       style={[styles.bigCard, { width: BIG_W, height: BIG_H }]}
-      onPress={onPress}
-      activeOpacity={0.9}
+      handleBtn={onPress}
     >
       <LinearGradient colors={colors} style={styles.bigCardGradient}>
         <View style={styles.bigCardDecor} />
@@ -103,7 +109,7 @@ function BigCard({
           </View>
         </View>
       </LinearGradient>
-    </TouchableOpacity>
+    </ButtonGeneric>
   );
 }
 
@@ -156,13 +162,12 @@ function SmallCard({
           <Ionicons name="trophy-outline" size={10} color="#94a3b8" />
           <Text style={styles.smallCardMeta}> {tournament.prizePool}</Text>
         </View>
-        <TouchableOpacity
-          style={styles.vediAltroBtn}
-          onPress={onPress}
-          activeOpacity={0.8}
-        >
-          <Text style={styles.vediAltroText}>VEDI ALTRO</Text>
-        </TouchableOpacity>
+        <ButtonFullColored
+          text="VEDI ALTRO"
+          handleBtn={onPress}
+          size={sizesEnum.small}
+          isColored
+        />
       </View>
     </View>
   );
@@ -176,11 +181,6 @@ export default function Home() {
   const [search, setSearch] = useState("");
   const [locationModal, setLocationModal] = useState(false);
   const [locationInput, setLocationInput] = useState("");
-
-  const initial =
-    user?.firstName?.[0]?.toUpperCase() ??
-    user?.username?.[0]?.toUpperCase() ??
-    "U";
 
   const saveLocation = () => {
     if (locationInput.trim()) {
@@ -225,40 +225,32 @@ export default function Home() {
             <Avatar user={user} />
             <View style={styles.greetingBlock}>
               <Text style={styles.greetingText}>{user?.username}</Text>
-              <TouchableOpacity
-                style={styles.locationRow}
-                onPress={() => {
+              <ButtonLink
+                text={location ?? "Inserisci posizione"}
+                handleBtn={() => {
                   if (location) {
                     navigation.navigate("Esplora");
                   } else {
                     setLocationModal(true);
                   }
                 }}
-                activeOpacity={0.7}
-              >
-                <Ionicons name="location-sharp" size={12} color="#E8601A" />
-                <Text
-                  style={[
-                    styles.locationText,
-                    !location && styles.locationPlaceholder,
-                  ]}
-                >
-                  {location ?? "Inserisci posizione"}
-                </Text>
-              </TouchableOpacity>
+                icon={
+                  <Ionicons name="location-sharp" size={12} color="#E8601A" />
+                }
+                style={styles.locationRow}
+                color={
+                  location ? colors.placeholder : colors.primaryGradientMid
+                }
+                isColored
+              />
             </View>
-            <TouchableOpacity
-              activeOpacity={0.8}
-              onPress={() => navigation.navigate("Notifiche")}
+            <ButtonGradient
+              handleBtn={() => navigation.navigate("Notifiche")}
+              style={styles.notifBtn}
             >
-              <LinearGradient
-                colors={["#E8601A", "#F5A020"]}
-                style={styles.notifBtn}
-              >
-                <Ionicons name="notifications" size={20} color="#fff" />
-                {unreadCount > 0 && <View style={styles.notifBadge} />}
-              </LinearGradient>
-            </TouchableOpacity>
+              <Ionicons name="notifications" size={20} color="#fff" />
+              {unreadCount > 0 && <View style={styles.notifBadge} />}
+            </ButtonGradient>
           </View>
 
           {/* ── Location Modal ───────────────────────── */}
@@ -296,25 +288,19 @@ export default function Home() {
                   />
                 </View>
                 <View style={styles.modalBtns}>
-                  <TouchableOpacity
-                    style={styles.modalCancelBtn}
-                    onPress={() => {
+                  <ButtonBorderColored
+                    text="Annulla"
+                    handleBtn={() => {
                       setLocationModal(false);
                       setLocationInput("");
                     }}
-                  >
-                    <Text style={styles.modalCancelText}>Annulla</Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity
-                    style={[
-                      styles.modalSaveBtn,
-                      !locationInput.trim() && styles.modalSaveBtnDisabled,
-                    ]}
-                    onPress={saveLocation}
-                    disabled={!locationInput.trim()}
-                  >
-                    <Text style={styles.modalSaveText}>Salva</Text>
-                  </TouchableOpacity>
+                  />
+                  <ButtonFullColored
+                    text="Salva"
+                    handleBtn={saveLocation}
+                    isDisabled={!locationInput.trim()}
+                    isColored
+                  />
                 </View>
               </View>
             </KeyboardAvoidingView>
@@ -323,7 +309,7 @@ export default function Home() {
           {/* ── Search ──────────────────────────────── */}
           <View style={styles.searchBar}>
             <LinearGradient
-              colors={["#E8601A", "#F5A020"]}
+              colors={colorGradient}
               style={styles.searchIconWrap}
             >
               <Ionicons name="search" size={16} color="#fff" />

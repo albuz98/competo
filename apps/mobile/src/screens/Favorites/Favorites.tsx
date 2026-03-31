@@ -1,11 +1,5 @@
 import React from "react";
-import {
-  View,
-  Text,
-  FlatList,
-  TouchableOpacity,
-  StatusBar,
-} from "react-native";
+import { View, Text, FlatList, StatusBar } from "react-native";
 import { pf } from "./Favorites.styles";
 import {
   SafeAreaView,
@@ -16,6 +10,7 @@ import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import type { RootStackParamList, Tournament } from "../../types";
 import { useFavorites } from "../../context/FavoritesContext";
+import { ButtonGeneric, ButtonIcon } from "../../components/Button/Button";
 
 type Nav = NativeStackNavigationProp<RootStackParamList>;
 
@@ -40,7 +35,7 @@ function TournamentCard({
   onRemove: () => void;
 }) {
   return (
-    <TouchableOpacity style={pf.card} onPress={onPress} activeOpacity={0.85}>
+    <ButtonGeneric style={pf.card} handleBtn={onPress}>
       <View style={pf.cardHeader}>
         <View style={pf.cardHeaderLeft}>
           <Text style={pf.cardGame}>{item.game}</Text>
@@ -48,14 +43,11 @@ function TournamentCard({
             {item.name}
           </Text>
         </View>
-        <TouchableOpacity
+        <ButtonIcon
+          handleBtn={onRemove}
           style={pf.bookmarkBtn}
-          onPress={onRemove}
-          activeOpacity={0.7}
-          hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
-        >
-          <Ionicons name="bookmark" size={20} color="#E8601A" />
-        </TouchableOpacity>
+          icon={<Ionicons name="bookmark" size={20} color="#E8601A" />}
+        />
       </View>
       <View style={pf.cardFooter}>
         <View
@@ -82,7 +74,7 @@ function TournamentCard({
         </View>
         <Text style={pf.entryFee}>{item.entryFee}</Text>
       </View>
-    </TouchableOpacity>
+    </ButtonGeneric>
   );
 }
 

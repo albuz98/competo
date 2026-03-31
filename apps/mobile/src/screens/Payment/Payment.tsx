@@ -4,7 +4,6 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
-  ActivityIndicator,
   KeyboardAvoidingView,
   Platform,
   ScrollView,
@@ -22,6 +21,8 @@ import { RootStackParamList } from "../../types";
 import { useAuth } from "../../context/AuthContext";
 import { signUpForTournament } from "../../api/tournaments";
 import { styles } from "./Payment.styles";
+import { ButtonFullColored } from "../../components/Button/Button";
+import { colorGradient } from "../../theme/colors";
 
 type Props = NativeStackScreenProps<RootStackParamList, "Payment">;
 
@@ -107,7 +108,7 @@ export default function PaymentScreen({ navigation, route }: Props) {
           behavior={Platform.OS === "ios" ? "padding" : "height"}
         >
           <LinearGradient
-            colors={["#E8601A", "#F5A020"]}
+            colors={colorGradient}
             start={{ x: 0, y: 0 }}
             end={{ x: 0, y: 1 }}
             style={styles.card}
@@ -195,21 +196,12 @@ export default function PaymentScreen({ navigation, route }: Props) {
                 </View>
               </View>
 
-              <TouchableOpacity
-                style={[
-                  styles.payBtn,
-                  (!isCardValid || loading) && styles.payBtnDisabled,
-                ]}
-                onPress={handlePay}
-                disabled={!isCardValid || loading}
-                activeOpacity={0.85}
-              >
-                {loading ? (
-                  <ActivityIndicator color="#E8601A" />
-                ) : (
-                  <Text style={styles.payBtnText}>{`Paga  ${entryFee}`}</Text>
-                )}
-              </TouchableOpacity>
+              <ButtonFullColored
+                text={`Paga  ${entryFee}`}
+                handleBtn={handlePay}
+                isDisabled={!isCardValid || loading}
+                loading={loading}
+              />
 
               <View style={styles.secureRow}>
                 <Ionicons

@@ -3,10 +3,8 @@ import {
   View,
   Text,
   TextInput,
-  TouchableOpacity,
   StatusBar,
   ScrollView,
-  ActivityIndicator,
   KeyboardAvoidingView,
   Platform,
 } from "react-native";
@@ -18,8 +16,16 @@ import { Ionicons } from "@expo/vector-icons";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../../types";
 import { useTeams } from "../../context/TeamsContext";
+import { ButtonEnum } from "../../types/components";
 import { cs } from "./CreateTeam.styles";
 import { GAMES } from "../../mock/data";
+import {
+  ButtonBorderColored,
+  ButtonFullColored,
+  ButtonIcon,
+} from "../../components/Button/Button";
+import { sizesEnum } from "../../theme/dimension";
+import { colors } from "../../theme/colors";
 
 type Props = NativeStackScreenProps<RootStackParamList, "CreateTeam">;
 
@@ -58,13 +64,11 @@ export default function CreateTeam({ navigation }: Props) {
         >
           {/* Header */}
           <View style={cs.header}>
-            <TouchableOpacity
-              onPress={() => navigation.goBack()}
+            <ButtonIcon
+              handleBtn={() => navigation.goBack()}
+              icon={<Ionicons name="chevron-back" size={24} color="#1e293b" />}
               style={cs.backBtn}
-              activeOpacity={0.7}
-            >
-              <Ionicons name="chevron-back" size={24} color="#1e293b" />
-            </TouchableOpacity>
+            />
             <Text style={cs.headerTitle}>Crea squadra</Text>
             <View style={{ width: 36 }} />
           </View>
@@ -125,21 +129,14 @@ export default function CreateTeam({ navigation }: Props) {
               contentContainerStyle={cs.sportsList}
             >
               {GAMES.map((g) => (
-                <TouchableOpacity
+                <ButtonBorderColored
                   key={g}
-                  style={[cs.sportPill, sport === g && cs.sportPillActive]}
-                  onPress={() => setSport(g)}
-                  activeOpacity={0.8}
-                >
-                  <Text
-                    style={[
-                      cs.sportPillText,
-                      sport === g && cs.sportPillTextActive,
-                    ]}
-                  >
-                    {g}
-                  </Text>
-                </TouchableOpacity>
+                  handleBtn={() => setSport(g)}
+                  text={g}
+                  isColored
+                  size={sizesEnum.medium}
+                  isActive={sport === g}
+                />
               ))}
             </ScrollView>
 
@@ -163,24 +160,23 @@ export default function CreateTeam({ navigation }: Props) {
             </View>
 
             {/* CTA */}
-            <TouchableOpacity
-              style={[
-                cs.createBtn,
-                (!isValid || loading) && cs.createBtnDisabled,
-              ]}
-              onPress={handleCreate}
-              disabled={!isValid || loading}
-              activeOpacity={0.85}
-            >
-              {loading ? (
-                <ActivityIndicator color="#fff" />
-              ) : (
-                <>
-                  <Ionicons name="people" size={18} color="#fff" />
-                  <Text style={cs.createBtnText}>Crea squadra</Text>
-                </>
-              )}
-            </TouchableOpacity>
+            <ButtonFullColored
+              text="Crea squadra"
+              iconLeft={
+                <Ionicons
+                  name="people"
+                  size={18}
+                  color={
+                    !(!isValid || loading) ? "#fff" : colors.primaryGradientMid
+                  }
+                />
+              }
+              handleBtn={handleCreate}
+              isDisabled={!isValid || loading}
+              loading={loading}
+              loaderColor="#fff"
+              isColored
+            />
           </ScrollView>
         </KeyboardAvoidingView>
       </SafeAreaView>

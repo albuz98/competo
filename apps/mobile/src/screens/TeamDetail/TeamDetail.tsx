@@ -18,6 +18,8 @@ import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import type { RootStackParamList, TeamMember, TeamRole } from "../../types";
 import { useTeams } from "../../context/TeamsContext";
 import { useAuth } from "../../context/AuthContext";
+import { colorGradient } from "../../theme/colors";
+import { ButtonBack, ButtonLink } from "../../components/Button/Button";
 
 type Props = NativeStackScreenProps<RootStackParamList, "TeamDetail">;
 
@@ -45,10 +47,7 @@ function MemberRow({
     <View style={[tds.memberRow, isRep && tds.memberRowRep]}>
       <View style={[tds.memberAvatar, isRep && tds.memberAvatarRep]}>
         {isRep ? (
-          <LinearGradient
-            colors={["#E8601A", "#F5A020"]}
-            style={tds.memberAvatarInner}
-          >
+          <LinearGradient colors={colorGradient} style={tds.memberAvatarInner}>
             <Text style={tds.memberAvatarText}>{initials.toUpperCase()}</Text>
           </LinearGradient>
         ) : (
@@ -171,16 +170,10 @@ export default function TeamDetail({ route, navigation }: Props) {
         showsVerticalScrollIndicator={false}
       >
         {/* Header gradient */}
-        <LinearGradient colors={["#E8601A", "#F5A020"]} style={tds.header}>
+        <LinearGradient colors={colorGradient} style={tds.header}>
           <SafeAreaView edges={["top"]}>
             <View style={tds.headerTop}>
-              <TouchableOpacity
-                onPress={() => navigation.goBack()}
-                style={tds.backBtn}
-                activeOpacity={0.7}
-              >
-                <Ionicons name="arrow-back" size={22} color="#fff" />
-              </TouchableOpacity>
+              <ButtonBack handleBtn={() => navigation.goBack()} />
             </View>
             <View style={tds.headerBody}>
               <View style={tds.teamAvatarLarge}>
@@ -287,25 +280,21 @@ export default function TeamDetail({ route, navigation }: Props) {
               Questa azione non può essere annullata.
             </Text>
             <View style={tds.modalActions}>
-              <TouchableOpacity
+              <ButtonLink
                 style={tds.modalCancelBtn}
-                onPress={() => setConfirmTarget(null)}
-                activeOpacity={0.8}
-              >
-                <Text style={tds.modalCancelText}>Annulla</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
+                text="Annulla"
+                handleBtn={() => setConfirmTarget(null)}
+              />
+              <ButtonLink
                 style={tds.modalRemoveBtn}
-                onPress={() => {
+                text="Rimuovi"
+                handleBtn={() => {
                   if (confirmTarget) {
                     handleRemoveMember(confirmTarget.id);
                     setConfirmTarget(null);
                   }
                 }}
-                activeOpacity={0.8}
-              >
-                <Text style={tds.modalRemoveText}>Rimuovi</Text>
-              </TouchableOpacity>
+              />
             </View>
           </View>
         </View>
@@ -366,13 +355,11 @@ export default function TeamDetail({ route, navigation }: Props) {
                 );
               },
             )}
-            <TouchableOpacity
+            <ButtonLink
               style={[tds.modalCancelBtn, { marginTop: 8, width: "100%" }]}
-              onPress={() => setRoleTarget(null)}
-              activeOpacity={0.8}
-            >
-              <Text style={tds.modalCancelText}>Annulla</Text>
-            </TouchableOpacity>
+              text="Annulla"
+              handleBtn={() => setRoleTarget(null)}
+            />
           </View>
         </View>
       </Modal>

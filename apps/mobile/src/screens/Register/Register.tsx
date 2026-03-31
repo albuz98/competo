@@ -7,10 +7,14 @@ import CompetoLogo from "../../components/CompetoLogo/CompetoLogo";
 import AuthErrorBox from "../../components/AuthErrorBox/AuthErrorBox";
 import { styles } from "./Register.styles";
 import AuthLayout from "../../components/AuthLayout/AuthLayout";
-import Button from "../../components/Button/Button";
 import { ButtonEnum } from "../../types/components";
 import { DividerAccess } from "../../components/DividerAccess/DividerAccess";
 import InputBox from "../../components/InputBox/InputBox";
+import {
+  ButtonBorderColored,
+  ButtonFullColored,
+  ButtonLink,
+} from "../../components/Button/Button";
 
 type Props = NativeStackScreenProps<RootStackParamList, "Register">;
 
@@ -76,11 +80,7 @@ export default function Register({ navigation }: Props) {
 
       {error && <AuthErrorBox message={error} />}
 
-      <Button
-        text={"Continua con Google"}
-        variant={ButtonEnum.THIRD}
-        handleBtn={() => {}}
-      />
+      <ButtonBorderColored text={"Continua con Google"} handleBtn={() => {}} />
 
       <DividerAccess />
 
@@ -162,15 +162,14 @@ export default function Register({ navigation }: Props) {
         <Text style={styles.fieldError}>Le password non coincidono</Text>
       )}
 
-      <Button
+      <ButtonFullColored
         text={"Registrati"}
         handleBtn={handleRegister}
         isDisabled={!isValid || loading}
         loading={loading}
       />
 
-      <Button
-        variant={ButtonEnum.LINK}
+      <ButtonLink
         text="Hai già un account? Accedi"
         handleBtn={() => navigation.navigate("Login", {})}
       />

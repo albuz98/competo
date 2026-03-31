@@ -22,6 +22,13 @@ import { useAuth } from "../../context/AuthContext";
 import { generateTournaments } from "../../mock/data";
 import type { Tournament, RootStackParamList } from "../../types";
 import { styles } from "./Explore.styles";
+import { ButtonEnum } from "../../types/components";
+import {
+  ButtonBorderColored,
+  ButtonFullColored,
+  ButtonGeneric,
+  ButtonIcon,
+} from "../../components/Button/Button";
 
 const DEFAULT = { lat: 45.4642, lng: 9.19 }; // Milan fallback
 const RADIUS_OPTIONS = [5, 10, 20, 50];
@@ -295,13 +302,11 @@ export default function Explore() {
       {/* Tournament bottom card */}
       {selectedTournament && (
         <View style={[styles.tournamentCard, { bottom: insets.bottom + 90 }]}>
-          <TouchableOpacity
+          <ButtonIcon
+            handleBtn={() => setSelectedTournament(null)}
+            icon={<Ionicons name="close" size={18} color="#94a3b8" />}
             style={styles.tournamentCardDismiss}
-            onPress={() => setSelectedTournament(null)}
-            hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
-          >
-            <Ionicons name="close" size={18} color="#94a3b8" />
-          </TouchableOpacity>
+          />
           <Text style={styles.tournamentCardName} numberOfLines={2}>
             {selectedTournament.name}
           </Text>
@@ -322,27 +327,24 @@ export default function Explore() {
               {selectedTournament.maxParticipants}
             </Text>
           </View>
-          <TouchableOpacity
-            style={styles.tournamentCardBtn}
-            onPress={() => {
+          <ButtonFullColored
+            text="Vedi dettagli"
+            iconRight={<Ionicons name="arrow-forward" size={15} color="#fff" />}
+            handleBtn={() => {
               setSelectedTournament(null);
               navigation.navigate("TournamentDetail", {
                 tournamentId: selectedTournament.id,
               });
             }}
-            activeOpacity={0.85}
-          >
-            <Text style={styles.tournamentCardBtnText}>Vedi dettagli</Text>
-            <Ionicons name="arrow-forward" size={15} color="#fff" />
-          </TouchableOpacity>
+            isColored
+          />
         </View>
       )}
 
       {/* Top badge — tappable to edit */}
-      <TouchableOpacity
+      <ButtonGeneric
+        handleBtn={openEdit}
         style={[styles.badge, { top: insets.top + 12 }]}
-        onPress={openEdit}
-        activeOpacity={0.85}
       >
         {geoLoading ? (
           <ActivityIndicator
@@ -359,7 +361,7 @@ export default function Explore() {
         <View style={styles.badgeDivider} />
         <Text style={styles.badgeRadius}>{exploraRadius} km</Text>
         <Ionicons name="chevron-down" size={13} color="#94a3b8" />
-      </TouchableOpacity>
+      </ButtonGeneric>
 
       {/* City-not-found toast */}
       <Animated.View
@@ -387,13 +389,11 @@ export default function Explore() {
       </Animated.View>
 
       {/* Recenter button */}
-      <TouchableOpacity
+      <ButtonIcon
+        handleBtn={handleRecenter}
+        icon={<Ionicons name="locate" size={22} color="#E8601A" />}
         style={[styles.recenterBtn, { bottom: insets.bottom + 90 }]}
-        onPress={handleRecenter}
-        activeOpacity={0.85}
-      >
-        <Ionicons name="locate" size={22} color="#E8601A" />
-      </TouchableOpacity>
+      />
 
       {/* Edit modal */}
       <Modal
@@ -406,11 +406,7 @@ export default function Explore() {
           style={styles.modalOverlay}
           behavior={Platform.OS === "ios" ? "padding" : "height"}
         >
-          <TouchableOpacity
-            style={styles.modalDismiss}
-            onPress={dismissModal}
-            activeOpacity={1}
-          />
+          <ButtonGeneric style={styles.modalDismiss} handleBtn={dismissModal} />
           <Animated.View
             style={[styles.modalCard, { transform: [{ translateY: panY }] }]}
           >
@@ -435,9 +431,12 @@ export default function Explore() {
                 returnKeyType="done"
               />
               {modalLoc.length > 0 && (
-                <TouchableOpacity onPress={() => setModalLoc("")}>
-                  <Ionicons name="close-circle" size={18} color="#cbd5e1" />
-                </TouchableOpacity>
+                <ButtonIcon
+                  icon={
+                    <Ionicons name="close-circle" size={18} color="#cbd5e1" />
+                  }
+                  handleBtn={() => setModalLoc("")}
+                />
               )}
             </View>
 
@@ -465,13 +464,11 @@ export default function Explore() {
               ))}
             </View>
 
-            <TouchableOpacity
-              style={styles.applyBtn}
-              onPress={applyEdit}
-              activeOpacity={0.85}
-            >
-              <Text style={styles.applyBtnText}>Applica</Text>
-            </TouchableOpacity>
+            <ButtonBorderColored
+              text="Applica"
+              handleBtn={applyEdit}
+              isColored
+            />
           </Animated.View>
         </KeyboardAvoidingView>
       </Modal>

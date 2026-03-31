@@ -24,12 +24,16 @@ import { useAuth } from "../../context/AuthContext";
 import { useTeams } from "../../context/TeamsContext";
 import { RootStackParamList } from "../../types";
 import { pStyles, styles } from "./Profile.styles";
-import { colors } from "../../theme/colors";
+import { colorGradient, colors } from "../../theme/colors";
 import { Avatar } from "../../components/Avatar/Avatar";
 import InputBox from "../../components/InputBox/InputBox";
-import Button from "../../components/Button/Button";
-import { ButtonEnum } from "../../types/components";
 import { styles as tabStyles } from "../../navigation/MainTabNavigator/MainTabNavigator.styles";
+import {
+  ButtonBorderColored,
+  ButtonIcon,
+  ButtonLink,
+} from "../../components/Button/Button";
+import { sizesEnum } from "../../theme/dimension";
 
 export default function Profile() {
   const { user, logout, updateProfile } = useAuth();
@@ -178,19 +182,18 @@ export default function Profile() {
         <View style={styles.header}>
           <Text style={styles.headerText}>Profilo</Text>
           {edit ? (
-            <Button
-              variant={ButtonEnum.LINK}
+            <ButtonLink
               text="FATTO"
               handleBtn={handleSave}
               color={colors.primary}
               fontSize={16}
               isBold
+              isColored
             />
           ) : (
-            <Button
-              variant={ButtonEnum.LINK}
+            <ButtonIcon
               handleBtn={handleLogout}
-              text={
+              icon={
                 <Ionicons
                   name="log-out-outline"
                   size={20}
@@ -228,23 +231,29 @@ export default function Profile() {
               )}
             </View>
             {!edit && (
-              <View style={{ flex: 1 }}>
+              <View
+                style={{
+                  flex: 1,
+                  justifyContent: "space-between",
+                  display: "flex",
+                  flexDirection: "row",
+                }}
+              >
                 <View style={{ marginTop: 5 }}>
                   <Text style={styles.username}>{user.username}</Text>
                   <Text style={styles.email}>{user.location}</Text>
                 </View>
-                <Button
-                  variant={ButtonEnum.EDIT}
+                <ButtonBorderColored
+                  isColored
                   handleBtn={handleStartEdit}
-                  text={
-                    <>
-                      <Ionicons
-                        name="create-outline"
-                        size={20}
-                        color={colors.primary}
-                      />
-                      <Text style={styles.editBtnText}>Modifica</Text>
-                    </>
+                  size={sizesEnum.medium}
+                  text="Modifica"
+                  iconLeft={
+                    <Ionicons
+                      name="create-outline"
+                      size={20}
+                      color={colors.primary}
+                    />
                   }
                 />
               </View>
@@ -406,12 +415,13 @@ export default function Profile() {
             <>
               <View style={styles.teamsHeader}>
                 <Text style={styles.teamsTitle}>Le mie squadre</Text>
-                <TouchableOpacity
-                  onPress={() => navigation.navigate("Teams")}
-                  activeOpacity={0.8}
-                >
-                  <Text style={styles.teamsViewAll}>Vedi tutte</Text>
-                </TouchableOpacity>
+                <ButtonLink
+                  text="Vedi tutte"
+                  handleBtn={() => navigation.navigate("Teams")}
+                  color={styles.teamsViewAll.color as string}
+                  isColored
+                  isBold
+                />
               </View>
 
               {teams.length === 0 ? (
@@ -421,7 +431,7 @@ export default function Profile() {
                   activeOpacity={0.85}
                 >
                   <LinearGradient
-                    colors={["#E8601A", "#F5A020"]}
+                    colors={colorGradient}
                     style={styles.createTeamIcon}
                   >
                     <Ionicons name="add" size={22} color="#fff" />
@@ -449,7 +459,7 @@ export default function Profile() {
                       activeOpacity={0.85}
                     >
                       <LinearGradient
-                        colors={["#E8601A", "#F5A020"]}
+                        colors={colorGradient}
                         style={styles.teamMiniAvatar}
                       >
                         <Text style={styles.teamMiniAvatarText}>

@@ -17,6 +17,8 @@ import { Ionicons } from "@expo/vector-icons";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import type { RootStackParamList, Team } from "../../types";
 import { useTeams } from "../../context/TeamsContext";
+import { ButtonFullColored } from "../../components/Button/Button";
+import { colorGradient } from "../../theme/colors";
 
 type Props = NativeStackScreenProps<RootStackParamList, "TeamSelect">;
 
@@ -44,7 +46,7 @@ function TeamCard({
       onPress={onPress}
       activeOpacity={0.85}
     >
-      <LinearGradient colors={["#E8601A", "#F5A020"]} style={ts.teamAvatar}>
+      <LinearGradient colors={colorGradient} style={ts.teamAvatar}>
         <Text style={ts.teamAvatarText}>{initials}</Text>
       </LinearGradient>
       <View style={{ flex: 1 }}>
@@ -117,13 +119,10 @@ export default function TeamSelect({ route, navigation }: Props) {
               <Text style={ts.emptySubText}>
                 Devi appartenere a una squadra per iscriverti al torneo.
               </Text>
-              <TouchableOpacity
-                style={ts.createTeamBtn}
-                onPress={() => navigation.navigate("CreateTeam")}
-                activeOpacity={0.85}
-              >
-                <Text style={ts.createTeamBtnText}>Crea una squadra</Text>
-              </TouchableOpacity>
+              <ButtonFullColored
+                text="Crea una squadra"
+                handleBtn={() => navigation.navigate("CreateTeam")}
+              />
             </View>
           ) : (
             teams.map((team) => (
@@ -139,21 +138,21 @@ export default function TeamSelect({ route, navigation }: Props) {
 
         {/* Bottom bar */}
         <View style={[ts.bottomBar, { paddingBottom: insets.bottom + 12 }]}>
-          <TouchableOpacity
-            style={[ts.ctaBtn, !selectedId && ts.ctaBtnDisabled]}
-            onPress={handleContinue}
-            activeOpacity={0.85}
-            disabled={!selectedId}
-          >
-            <Text style={ts.ctaBtnText}>
-              {selectedTeam
+          <ButtonFullColored
+            iconRight={
+              selectedTeam && (
+                <Ionicons name="arrow-forward" size={16} color="#fff" />
+              )
+            }
+            text={
+              selectedTeam
                 ? `Continua con ${selectedTeam.name}`
-                : "Seleziona una squadra"}
-            </Text>
-            {selectedTeam && (
-              <Ionicons name="arrow-forward" size={16} color="#fff" />
-            )}
-          </TouchableOpacity>
+                : "Seleziona una squadra"
+            }
+            handleBtn={handleContinue}
+            isDisabled={!selectedId}
+            isColored
+          />
         </View>
       </SafeAreaView>
     </View>

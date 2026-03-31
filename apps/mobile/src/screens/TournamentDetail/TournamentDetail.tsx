@@ -20,6 +20,8 @@ import { useAuth } from "../../context/AuthContext";
 import { useFavorites } from "../../context/FavoritesContext";
 import { useNotifications } from "../../context/NotificationsContext";
 import { styles } from "./TournamentDetail.styles";
+import { ButtonBack, ButtonFullColored } from "../../components/Button/Button";
+import { colorGradient } from "../../theme/colors";
 
 type Props = NativeStackScreenProps<RootStackParamList, "TournamentDetail">;
 
@@ -139,7 +141,7 @@ export default function TournamentDetail({ route, navigation }: Props) {
 
   if (loading) {
     return (
-      <LinearGradient colors={["#E8601A", "#F5A020"]} style={styles.center}>
+      <LinearGradient colors={colorGradient} style={styles.center}>
         <ActivityIndicator size="large" color="#fff" />
       </LinearGradient>
     );
@@ -175,6 +177,13 @@ export default function TournamentDetail({ route, navigation }: Props) {
   const canSignUp =
     !tournament.isRegistered && !isFull && !isCompleted && !!user;
 
+  const btnText = (): string => {
+    if (tournament?.isRegistered) return "Iscritto";
+    if (isFull) return "Terminato";
+    if (isCompleted) return "Al completo";
+    return "Iscriviti";
+  };
+
   return (
     <View style={styles.root}>
       <StatusBar barStyle="light-content" />
@@ -185,17 +194,11 @@ export default function TournamentDetail({ route, navigation }: Props) {
         showsVerticalScrollIndicator={false}
       >
         {/* ── Orange gradient header ──────────────────── */}
-        <LinearGradient colors={["#E8601A", "#F5A020"]} style={styles.header}>
+        <LinearGradient colors={colorGradient} style={styles.header}>
           <SafeAreaView edges={["top"]}>
             {/* Back + Status */}
             <View style={styles.headerTop}>
-              <TouchableOpacity
-                onPress={() => navigation.goBack()}
-                style={styles.backBtn}
-                activeOpacity={0.7}
-              >
-                <Ionicons name="arrow-back" size={22} color="#fff" />
-              </TouchableOpacity>
+              <ButtonBack handleBtn={() => navigation.goBack()} />
               <View
                 style={{ flexDirection: "row", alignItems: "center", gap: 8 }}
               >
@@ -312,35 +315,18 @@ export default function TournamentDetail({ route, navigation }: Props) {
       </ScrollView>
 
       {/* ── Fixed bottom bar ───────────────────────── */}
-      <View style={[styles.bottomBar, { paddingBottom: insets.bottom + 14 }]}>
+      <View style={[styles.bottomBar, { paddingBottom: insets.bottom }]}>
         <View style={styles.costBlock}>
           <Text style={styles.costLabel}>Quota iscrizione</Text>
           <Text style={styles.costValue}>{tournament.entryFee}</Text>
         </View>
 
-        {tournament.isRegistered ? (
-          <View style={styles.registeredBtn}>
-            <Ionicons name="checkmark-circle" size={18} color="#16a34a" />
-            <Text style={styles.registeredBtnText}>Iscritto</Text>
-          </View>
-        ) : isCompleted ? (
-          <View style={[styles.actionBtn, styles.actionBtnDisabled]}>
-            <Text style={styles.actionBtnText}>Terminato</Text>
-          </View>
-        ) : isFull ? (
-          <View style={[styles.actionBtn, styles.actionBtnDisabled]}>
-            <Text style={styles.actionBtnText}>Al completo</Text>
-          </View>
-        ) : (
-          <TouchableOpacity
-            style={[styles.actionBtn, !canSignUp && styles.actionBtnDisabled]}
-            onPress={handleGoToPayment}
-            disabled={!canSignUp}
-            activeOpacity={0.85}
-          >
-            <Text style={styles.actionBtnText}>Iscriviti</Text>
-          </TouchableOpacity>
-        )}
+        <ButtonFullColored
+          text={btnText()}
+          handleBtn={handleGoToPayment}
+          isDisabled={!canSignUp}
+          isColored
+        />
       </View>
     </View>
   );

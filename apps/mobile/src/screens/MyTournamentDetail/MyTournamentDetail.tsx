@@ -1,636 +1,554 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
   ScrollView,
   TouchableOpacity,
   ActivityIndicator,
-  StatusBar,
-  Animated,
 } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { LinearGradient } from "expo-linear-gradient";
 import { Ionicons } from "@expo/vector-icons";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
-import {
-  MyTournament,
+import type {
   RootStackParamList,
-  TournamentBracket,
-  TournamentGroup,
-  TournamentMatch,
+  MyTournament,
   TournamentStructure,
+  TournamentMatch,
+  TournamentGroup,
+  TournamentBracket,
   TournamentTeam,
 } from "../../types";
+import { fetchMyTournament, activateTournament } from "../../api/tournaments";
 import { useAuth } from "../../context/AuthContext";
-import { activateTournament, fetchMyTournament } from "../../api/tournaments";
+import { colors, colorGradient } from "../../theme/colors";
 import {
-  bStyles,
+  tds,
   CARD_H,
   CARD_W,
   COL_GAP,
-  LABEL_H,
-  LINE_COLOR,
-  LINE_W,
-  s,
   SLOT_H,
+  LABEL_H,
+  LINE_W,
+  LINE_COLOR,
 } from "./MyTournamentDetail.styles";
+import { ButtonBack, ButtonFullColored } from "../../components/Button/Button";
 
 type Props = NativeStackScreenProps<RootStackParamList, "MyTournamentDetail">;
-type Tab = "gironi" | "classifica";
 
-// ─── Live pulsing dot ────────────────────────────────────────────────────────
+// ─── Live simulation ──────────────────────────────────────────────────────────
 
-function LiveDot() {
-  const anim = useRef(new Animated.Value(1)).current;
-  useEffect(() => {
-    Animated.loop(
-      Animated.sequence([
-        Animated.timing(anim, {
-          toValue: 0.15,
-          duration: 500,
-          useNativeDriver: true,
+function simulateLiveUpdate(
+  structure: TournamentStructure,
+): TournamentStructure {
+  if (structure.kind === "groups") {
+    return {
+      ...structure,
+      groups: structure.groups.map((g) => ({
+        ...g,
+        matches: g.matches.map((m) => {
+          if (m.status !== "live" || Math.random() >= 0.4) return m;
+          const side = Math.random() < 0.5 ? "home" : "away";
+          return {
+            ...m,
+            homeScore: side === "home" ? (m.homeScore ?? 0) + 1 : m.homeScore,
+            awayScore: side === "away" ? (m.awayScore ?? 0) + 1 : m.awayScore,
+          };
         }),
-        Animated.timing(anim, {
-          toValue: 1,
-          duration: 500,
-          useNativeDriver: true,
-        }),
-      ]),
-    ).start();
-  }, []);
-  return <Animated.View style={[s.liveDot, { opacity: anim }]} />;
+      })),
+    };
+  }
+  if (structure.kind === "knockout") {
+    return {
+      kind: "knockout",
+      bracket: {
+        rounds: structure.bracket.rounds.map((r) => ({
+          ...r,
+          matches: r.matches.map((m) => {
+            if (m.status !== "live" || Math.random() >= 0.4) return m;
+            const side = Math.random() < 0.5 ? "home" : "away";
+            return {
+              ...m,
+              homeScore: side === "home" ? (m.homeScore ?? 0) + 1 : m.homeScore,
+              awayScore: side === "away" ? (m.awayScore ?? 0) + 1 : m.awayScore,
+            };
+          }),
+        })),
+      },
+    };
+  }
+  return structure;
 }
 
-// ─── Match row ───────────────────────────────────────────────────────────────
+// ─── Standings computation ────────────────────────────────────────────────────
 
-function MatchRow({ match }: { match: TournamentMatch }) {
-  const isLive = match.status === "live";
-  const isScheduled = match.status === "scheduled";
-  const myMatch = match.homeTeam.isMyTeam || match.awayTeam.isMyTeam;
-
-  return (
-    <View style={[s.matchRow, myMatch && s.matchRowHighlight]}>
-      <Text
-        style={[s.matchTeam, match.homeTeam.isMyTeam && s.matchMyTeam]}
-        numberOfLines={1}
-      >
-        {match.homeTeam.name}
-      </Text>
-      <View style={s.matchScoreWrap}>
-        {isLive && <LiveDot />}
-        <Text
-          style={[
-            s.matchScore,
-            isLive && s.matchScoreLive,
-            isScheduled && s.matchScoreScheduled,
-          ]}
-        >
-          {match.homeScore !== null ? match.homeScore : "–"} :{" "}
-          {match.awayScore !== null ? match.awayScore : "–"}
-        </Text>
-      </View>
-      <Text
-        style={[
-          s.matchTeam,
-          s.matchTeamRight,
-          match.awayTeam.isMyTeam && s.matchMyTeam,
-        ]}
-        numberOfLines={1}
-      >
-        {match.awayTeam.name}
-      </Text>
-    </View>
-  );
-}
-
-// ─── Group card ──────────────────────────────────────────────────────────────
-
-function GroupCard({
-  group,
-  isMyGroup,
-}: {
-  group: TournamentGroup;
-  isMyGroup: boolean;
-}) {
-  return (
-    <View style={[s.groupCard, isMyGroup && s.groupCardMine]}>
-      <View style={s.groupHeader}>
-        <Text style={s.groupName}>{group.name}</Text>
-        {isMyGroup && (
-          <View style={s.myGroupBadge}>
-            <Text style={s.myGroupBadgeText}>Il tuo girone</Text>
-          </View>
-        )}
-      </View>
-      {group.matches.map((m) => (
-        <MatchRow key={m.id} match={m} />
-      ))}
-    </View>
-  );
-}
-
-// ─── Standings ───────────────────────────────────────────────────────────────
-
-interface Standing {
+interface StandingRow {
   team: TournamentTeam;
-  w: number;
-  d: number;
-  l: number;
+  played: number;
+  won: number;
+  drawn: number;
+  lost: number;
+  gf: number;
+  ga: number;
   pts: number;
 }
 
-function computeStandings(group: TournamentGroup): Standing[] {
-  const map = new Map<string, Standing>();
+function computeStandings(group: TournamentGroup): StandingRow[] {
+  const map = new Map<string, StandingRow>();
   group.teams.forEach((t) =>
-    map.set(t.id, { team: t, w: 0, d: 0, l: 0, pts: 0 }),
+    map.set(t.id, {
+      team: t,
+      played: 0,
+      won: 0,
+      drawn: 0,
+      lost: 0,
+      gf: 0,
+      ga: 0,
+      pts: 0,
+    }),
   );
   group.matches.forEach((m) => {
-    if (m.status !== "finished" || m.homeScore === null || m.awayScore === null)
+    if (
+      m.status === "scheduled" ||
+      m.homeScore === null ||
+      m.awayScore === null
+    )
       return;
     const home = map.get(m.homeTeam.id);
     const away = map.get(m.awayTeam.id);
     if (!home || !away) return;
+    home.played++;
+    away.played++;
+    home.gf += m.homeScore;
+    home.ga += m.awayScore;
+    away.gf += m.awayScore;
+    away.ga += m.homeScore;
     if (m.homeScore > m.awayScore) {
-      home.w++;
+      home.won++;
       home.pts += 3;
-      away.l++;
+      away.lost++;
     } else if (m.homeScore < m.awayScore) {
-      away.w++;
+      away.won++;
       away.pts += 3;
-      home.l++;
+      home.lost++;
     } else {
-      home.d++;
+      home.drawn++;
       home.pts++;
-      away.d++;
+      away.drawn++;
       away.pts++;
     }
   });
-  return Array.from(map.values()).sort((a, b) => b.pts - a.pts);
+  return Array.from(map.values()).sort((a, b) => {
+    if (b.pts !== a.pts) return b.pts - a.pts;
+    const gd = b.gf - b.ga - (a.gf - a.ga);
+    if (gd !== 0) return gd;
+    return b.gf - a.gf;
+  });
 }
 
-function StandingsTable({ group }: { group: TournamentGroup }) {
-  const standings = computeStandings(group);
-  return (
-    <View style={s.standingsCard}>
-      <Text style={s.standingsGroupName}>{group.name}</Text>
-      <View style={s.standingsHeader}>
-        <Text style={[s.sCell, s.sCellPos]}>#</Text>
-        <Text style={[s.sCell, s.sCellName]}>Squadra</Text>
-        <Text style={s.sCell}>V</Text>
-        <Text style={s.sCell}>P</Text>
-        <Text style={s.sCell}>S</Text>
-        <Text style={[s.sCell, s.sCellPts]}>Pt</Text>
-      </View>
-      {standings.map((st, i) => (
-        <View
-          key={st.team.id}
-          style={[s.standingsRow, st.team.isMyTeam && s.standingsRowMine]}
-        >
-          <Text style={[s.sCell, s.sCellPos]}>{i + 1}</Text>
-          <Text style={[s.sCell, s.sCellName]} numberOfLines={1}>
-            {st.team.name}
-          </Text>
-          <Text style={s.sCell}>{st.w}</Text>
-          <Text style={s.sCell}>{st.d}</Text>
-          <Text style={s.sCell}>{st.l}</Text>
-          <Text style={[s.sCell, s.sCellPts]}>{st.pts}</Text>
-        </View>
-      ))}
-    </View>
-  );
-}
-
-// ─── Knockout bracket ────────────────────────────────────────────────────────
-
-const getMatchCenterY = (roundIdx: number, matchIdx: number) => {
-  const slotSize = SLOT_H * Math.pow(2, roundIdx);
-  return LABEL_H + matchIdx * slotSize + slotSize / 2;
-};
-const getMatchTop = (roundIdx: number, matchIdx: number) =>
-  getMatchCenterY(roundIdx, matchIdx) - CARD_H / 2;
-const getColLeft = (roundIdx: number) => roundIdx * (CARD_W + COL_GAP);
+// ─── BracketMatchCard ─────────────────────────────────────────────────────────
 
 function BracketMatchCard({ match }: { match: TournamentMatch }) {
   const isLive = match.status === "live";
-  const isFinished = match.status === "finished";
-  const homeWins =
-    isFinished &&
-    match.homeScore !== null &&
-    match.awayScore !== null &&
-    match.homeScore > match.awayScore!;
-  const awayWins =
-    isFinished &&
-    match.homeScore !== null &&
-    match.awayScore !== null &&
-    match.awayScore! > match.homeScore!;
-
   return (
-    <View style={[bStyles.matchCard, isLive && bStyles.matchCardLive]}>
-      <View style={bStyles.teamRow}>
-        <View
-          style={[
-            bStyles.teamDot,
-            match.homeTeam.isMyTeam && bStyles.teamDotMine,
-          ]}
-        />
+    <View style={[tds.bracketMatchCard, isLive && tds.bracketMatchCardLive]}>
+      <View style={tds.bracketTeamRow}>
         <Text
           style={[
-            bStyles.teamName,
-            match.homeTeam.isMyTeam && bStyles.teamNameMine,
-            homeWins && bStyles.teamNameWinner,
+            tds.bracketTeamName,
+            match.homeTeam.isMyTeam && tds.bracketTeamNameMy,
           ]}
           numberOfLines={1}
         >
           {match.homeTeam.name}
         </Text>
-        <Text style={[bStyles.score, homeWins && bStyles.scoreWinner]}>
-          {match.homeScore ?? "–"}
-        </Text>
+        <Text style={tds.bracketScore}>{match.homeScore ?? "–"}</Text>
       </View>
-      <View style={bStyles.matchDivider} />
-      <View style={bStyles.teamRow}>
-        <View
-          style={[
-            bStyles.teamDot,
-            match.awayTeam.isMyTeam && bStyles.teamDotMine,
-          ]}
-        />
+      <View style={[tds.bracketTeamRow, tds.bracketTeamRowLast]}>
         <Text
           style={[
-            bStyles.teamName,
-            match.awayTeam.isMyTeam && bStyles.teamNameMine,
-            awayWins && bStyles.teamNameWinner,
+            tds.bracketTeamName,
+            match.awayTeam.isMyTeam && tds.bracketTeamNameMy,
           ]}
           numberOfLines={1}
         >
           {match.awayTeam.name}
         </Text>
-        <Text style={[bStyles.score, awayWins && bStyles.scoreWinner]}>
-          {match.awayScore ?? "–"}
-        </Text>
+        <Text style={tds.bracketScore}>{match.awayScore ?? "–"}</Text>
       </View>
-      {isLive && (
-        <View style={bStyles.livePill}>
-          <Text style={bStyles.livePillText}>● LIVE</Text>
-        </View>
-      )}
     </View>
   );
 }
 
-function KnockoutBracket({ bracket }: { bracket: TournamentBracket }) {
-  const { rounds } = bracket;
-  const numRounds = rounds.length;
-  const totalSlots = rounds[0]?.matches.length ?? 0;
-  const bracketH = LABEL_H + totalSlots * SLOT_H;
-  const bracketW = numRounds * CARD_W + (numRounds - 1) * COL_GAP;
+// ─── KnockoutView ─────────────────────────────────────────────────────────────
 
-  const connectorLines: React.ReactNode[] = [];
-  for (let r = 0; r < numRounds - 1; r++) {
-    const matchCount = rounds[r].matches.length;
-    for (let p = 0; p < Math.floor(matchCount / 2); p++) {
-      const y1 = getMatchCenterY(r, 2 * p);
-      const y2 = getMatchCenterY(r, 2 * p + 1);
-      const yRes = getMatchCenterY(r + 1, p);
-      const xExit = getColLeft(r) + CARD_W;
-      const xJunction = xExit + COL_GAP / 2;
-      connectorLines.push(
-        <View
-          key={`c-${r}-${p}-1`}
-          style={{
-            position: "absolute",
-            top: y1 - LINE_W / 2,
-            left: xExit,
-            width: COL_GAP / 2,
-            height: LINE_W,
-            backgroundColor: LINE_COLOR,
-          }}
-        />,
-        <View
-          key={`c-${r}-${p}-2`}
-          style={{
-            position: "absolute",
-            top: y2 - LINE_W / 2,
-            left: xExit,
-            width: COL_GAP / 2,
-            height: LINE_W,
-            backgroundColor: LINE_COLOR,
-          }}
-        />,
-        <View
-          key={`c-${r}-${p}-3`}
-          style={{
-            position: "absolute",
-            top: y1,
-            left: xJunction - LINE_W / 2,
-            width: LINE_W,
-            height: y2 - y1,
-            backgroundColor: LINE_COLOR,
-          }}
-        />,
-        <View
-          key={`c-${r}-${p}-4`}
-          style={{
-            position: "absolute",
-            top: yRes - LINE_W / 2,
-            left: xJunction,
-            width: COL_GAP / 2,
-            height: LINE_W,
-            backgroundColor: LINE_COLOR,
-          }}
-        />,
-      );
-    }
+function KnockoutView({ bracket }: { bracket: TournamentBracket }) {
+  const { rounds } = bracket;
+  const firstRoundCount = rounds[0]?.matches.length ?? 0;
+  const totalH = LABEL_H + firstRoundCount * SLOT_H;
+  const totalW = rounds.length * CARD_W + (rounds.length - 1) * COL_GAP + 32;
+
+  function matchTop(roundIdx: number, matchIdx: number): number {
+    const span = Math.pow(2, roundIdx);
+    return LABEL_H + matchIdx * span * SLOT_H + ((span - 1) / 2) * SLOT_H;
   }
 
   return (
-    <View style={s.card}>
-      <Text style={s.cardTitle}>Tabellone</Text>
-      <ScrollView
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        contentContainerStyle={{ paddingVertical: 8, paddingHorizontal: 4 }}
-      >
-        <View
-          style={{ width: bracketW, height: bracketH, position: "relative" }}
-        >
-          {rounds.map((round, r) => (
-            <Text
-              key={`label-${r}`}
-              style={[
-                bStyles.roundLabel,
-                { left: getColLeft(r), width: CARD_W },
-              ]}
-            >
-              {round.name}
-            </Text>
-          ))}
-          {connectorLines}
-          {rounds.map((round, r) => (
-            <React.Fragment key={`round-${r}`}>
-              {round.matches.map((match, m) => (
+    <ScrollView
+      horizontal
+      showsHorizontalScrollIndicator={false}
+      contentContainerStyle={{
+        paddingHorizontal: 16,
+        paddingBottom: 40,
+        paddingTop: 16,
+      }}
+    >
+      <View style={{ width: totalW, height: totalH }}>
+        {rounds.map((round, rIdx) => {
+          const x = rIdx * (CARD_W + COL_GAP);
+          return (
+            <React.Fragment key={rIdx}>
+              {/* Round label */}
+              <View
+                style={{
+                  position: "absolute",
+                  left: x,
+                  top: 0,
+                  width: CARD_W,
+                  height: LABEL_H,
+                  justifyContent: "center",
+                }}
+              >
+                <Text style={tds.bracketColLabelText}>{round.name}</Text>
+              </View>
+
+              {/* Match cards */}
+              {round.matches.map((match, mIdx) => (
                 <View
                   key={match.id}
                   style={{
                     position: "absolute",
-                    left: getColLeft(r),
-                    top: getMatchTop(r, m),
-                    width: CARD_W,
+                    left: x,
+                    top: matchTop(rIdx, mIdx),
                   }}
                 >
                   <BracketMatchCard match={match} />
                 </View>
               ))}
+
+              {/* Connector lines to next round */}
+              {rIdx < rounds.length - 1 &&
+                round.matches.map((_, mIdx) => {
+                  if (mIdx % 2 !== 0) return null;
+                  const partnerIdx = mIdx + 1;
+                  if (partnerIdx >= round.matches.length) return null;
+                  const y1 = matchTop(rIdx, mIdx) + CARD_H / 2;
+                  const y2 = matchTop(rIdx, partnerIdx) + CARD_H / 2;
+                  const yMid = (y1 + y2) / 2;
+                  const lineX = x + CARD_W;
+                  return (
+                    <React.Fragment key={`conn-${rIdx}-${mIdx}`}>
+                      {/* Horizontal: top match → midpoint */}
+                      <View
+                        style={{
+                          position: "absolute",
+                          left: lineX,
+                          top: y1 - LINE_W / 2,
+                          width: COL_GAP / 2,
+                          height: LINE_W,
+                          backgroundColor: LINE_COLOR,
+                        }}
+                      />
+                      {/* Horizontal: bottom match → midpoint */}
+                      <View
+                        style={{
+                          position: "absolute",
+                          left: lineX,
+                          top: y2 - LINE_W / 2,
+                          width: COL_GAP / 2,
+                          height: LINE_W,
+                          backgroundColor: LINE_COLOR,
+                        }}
+                      />
+                      {/* Vertical connector */}
+                      <View
+                        style={{
+                          position: "absolute",
+                          left: lineX + COL_GAP / 2 - LINE_W / 2,
+                          top: y1,
+                          width: LINE_W,
+                          height: y2 - y1,
+                          backgroundColor: LINE_COLOR,
+                        }}
+                      />
+                      {/* Horizontal: midpoint → next round */}
+                      <View
+                        style={{
+                          position: "absolute",
+                          left: lineX + COL_GAP / 2,
+                          top: yMid - LINE_W / 2,
+                          width: COL_GAP / 2,
+                          height: LINE_W,
+                          backgroundColor: LINE_COLOR,
+                        }}
+                      />
+                    </React.Fragment>
+                  );
+                })}
             </React.Fragment>
-          ))}
-        </View>
-      </ScrollView>
-    </View>
+          );
+        })}
+      </View>
+    </ScrollView>
   );
 }
 
-// ─── Live score simulation ────────────────────────────────────────────────────
+// ─── GroupsView ───────────────────────────────────────────────────────────────
 
-function simulateLiveUpdate(
-  structure: TournamentStructure,
-): TournamentStructure {
-  if (Math.random() > 0.4) return structure;
-  const scoringTeam = Math.random() < 0.5 ? "home" : "away";
+function GroupsView({
+  structure,
+}: {
+  structure: TournamentStructure & { kind: "groups" };
+}) {
+  const [activeTab, setActiveTab] = useState<"gironi" | "classifica">("gironi");
 
-  if (structure.kind === "groups") {
-    const groups = structure.groups.map((g) => ({
-      ...g,
-      matches: g.matches.map((m) => {
-        if (m.status !== "live") return m;
-        return {
-          ...m,
-          homeScore:
-            scoringTeam === "home" ? (m.homeScore ?? 0) + 1 : m.homeScore,
-          awayScore:
-            scoringTeam === "away" ? (m.awayScore ?? 0) + 1 : m.awayScore,
-        };
-      }),
-    }));
-    return { ...structure, groups };
-  } else {
-    const rounds = structure.bracket.rounds.map((r) => ({
-      ...r,
-      matches: r.matches.map((m) => {
-        if (m.status !== "live") return m;
-        return {
-          ...m,
-          homeScore:
-            scoringTeam === "home" ? (m.homeScore ?? 0) + 1 : m.homeScore,
-          awayScore:
-            scoringTeam === "away" ? (m.awayScore ?? 0) + 1 : m.awayScore,
-        };
-      }),
-    }));
-    return { kind: "knockout", bracket: { rounds } };
-  }
+  return (
+    <>
+      <View style={tds.tabBar}>
+        <TouchableOpacity
+          style={[tds.tabBtn, activeTab === "gironi" && tds.tabBtnActive]}
+          onPress={() => setActiveTab("gironi")}
+        >
+          <Text
+            style={[tds.tabLabel, activeTab === "gironi" && tds.tabLabelActive]}
+          >
+            Gironi
+          </Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={[tds.tabBtn, activeTab === "classifica" && tds.tabBtnActive]}
+          onPress={() => setActiveTab("classifica")}
+        >
+          <Text
+            style={[
+              tds.tabLabel,
+              activeTab === "classifica" && tds.tabLabelActive,
+            ]}
+          >
+            Classifica
+          </Text>
+        </TouchableOpacity>
+      </View>
+
+      <ScrollView
+        contentContainerStyle={tds.scroll}
+        showsVerticalScrollIndicator={false}
+      >
+        {activeTab === "gironi"
+          ? structure.groups.map((group) => (
+              <View key={group.id} style={tds.groupCard}>
+                <Text style={tds.groupTitle}>{group.name}</Text>
+                {group.matches.map((match) => (
+                  <View key={match.id} style={tds.matchRow}>
+                    <Text
+                      style={[
+                        tds.matchTeam,
+                        match.homeTeam.isMyTeam && tds.matchTeamMy,
+                      ]}
+                      numberOfLines={1}
+                    >
+                      {match.homeTeam.name}
+                    </Text>
+                    <View style={{ alignItems: "center" }}>
+                      <Text
+                        style={[
+                          tds.matchScore,
+                          match.status === "live" && tds.matchScoreLive,
+                        ]}
+                      >
+                        {match.status === "scheduled"
+                          ? "–"
+                          : `${match.homeScore} – ${match.awayScore}`}
+                      </Text>
+                      {match.status === "live" && (
+                        <View style={tds.liveTag}>
+                          <Text style={tds.liveTagText}>LIVE</Text>
+                        </View>
+                      )}
+                      {match.round && (
+                        <Text style={tds.matchRound}>{match.round}</Text>
+                      )}
+                    </View>
+                    <Text
+                      style={[
+                        tds.matchTeam,
+                        tds.matchTeamRight,
+                        match.awayTeam.isMyTeam && tds.matchTeamMy,
+                      ]}
+                      numberOfLines={1}
+                    >
+                      {match.awayTeam.name}
+                    </Text>
+                  </View>
+                ))}
+              </View>
+            ))
+          : structure.groups.map((group) => {
+              const rows = computeStandings(group);
+              return (
+                <View key={group.id} style={tds.groupCard}>
+                  <Text style={tds.groupTitle}>{group.name}</Text>
+                  <View style={tds.standingsHeader}>
+                    <View style={{ flex: 1 }} />
+                    {["G", "V", "P", "GF", "GA", "Pts"].map((h) => (
+                      <Text key={h} style={tds.standingsHeaderCell}>
+                        {h}
+                      </Text>
+                    ))}
+                  </View>
+                  {rows.map((row, idx) => (
+                    <View key={row.team.id} style={tds.standingsRow}>
+                      <Text style={tds.standingsPos}>{idx + 1}</Text>
+                      <Text
+                        style={[
+                          tds.standingsTeam,
+                          row.team.isMyTeam && tds.standingsTeamMy,
+                        ]}
+                        numberOfLines={1}
+                      >
+                        {row.team.name}
+                      </Text>
+                      <Text style={tds.standingsCell}>{row.played}</Text>
+                      <Text style={tds.standingsCell}>{row.won}</Text>
+                      <Text style={tds.standingsCell}>{row.drawn}</Text>
+                      <Text style={tds.standingsCell}>{row.gf}</Text>
+                      <Text style={tds.standingsCell}>{row.ga}</Text>
+                      <Text style={tds.standingsPts}>{row.pts}</Text>
+                    </View>
+                  ))}
+                </View>
+              );
+            })}
+      </ScrollView>
+    </>
+  );
 }
 
-// ─── Main screen ──────────────────────────────────────────────────────────────
+// ─── Screen ───────────────────────────────────────────────────────────────────
 
-export default function MyTournamentDetail({ route, navigation }: Props) {
+export default function MyTournamentDetailScreen({ route, navigation }: Props) {
   const { tournamentId } = route.params;
   const { user } = useAuth();
+  const insets = useSafeAreaInsets();
+
   const [tournament, setTournament] = useState<MyTournament | null>(null);
   const [structure, setStructure] = useState<TournamentStructure | null>(null);
   const [loading, setLoading] = useState(true);
-  const [tab, setTab] = useState<Tab>("gironi");
-  const [generating, setGenerating] = useState(false);
+  const [activating, setActivating] = useState(false);
+  const [isGenerated, setIsGenerated] = useState(false);
 
   useEffect(() => {
-    fetchMyTournament(tournamentId)
-      .then((t) => {
-        setTournament(t);
-        setStructure(t.structure);
-      })
-      .finally(() => setLoading(false));
+    fetchMyTournament(tournamentId).then((t) => {
+      setTournament(t);
+      setStructure(t.structure);
+      setIsGenerated(t.isGenerated !== false);
+      setLoading(false);
+    });
   }, [tournamentId]);
 
-  // Safety redirect: organizer tournaments have their own dedicated screen
   useEffect(() => {
-    if (tournament?.isOrganizer) {
-      navigation.replace("OrganizerTournamentDetail", { tournamentId });
-    }
-  }, [tournament?.isOrganizer]);
-
-  const handleGenerate = async () => {
-    if (!tournament || generating) return;
-    setGenerating(true);
-    try {
-      await activateTournament(tournament.id, user?.token ?? "");
-      setTournament((prev) => (prev ? { ...prev, isGenerated: true } : prev));
-    } finally {
-      setGenerating(false);
-    }
-  };
-
-  // Live score ticker
-  const tickerActive = structure !== null && (tournament?.isGenerated ?? true);
-  useEffect(() => {
-    if (!tickerActive) return;
-    const interval = setInterval(() => {
+    if (!isGenerated) return;
+    const id = setInterval(() => {
       setStructure((prev) => (prev ? simulateLiveUpdate(prev) : prev));
     }, 5000);
-    return () => clearInterval(interval);
-  }, [tickerActive]);
+    return () => clearInterval(id);
+  }, [isGenerated]);
 
-  if (loading) {
-    return (
-      <LinearGradient colors={["#E8601A", "#F5A020"]} style={s.center}>
-        <ActivityIndicator size="large" color="#fff" />
-      </LinearGradient>
-    );
-  }
+  const handleActivate = async () => {
+    if (!user?.token || !tournament) return;
+    setActivating(true);
+    await activateTournament(tournament.id, user.token);
+    setTournament((prev) => (prev ? { ...prev, isGenerated: true } : prev));
+    setIsGenerated(true);
+    setActivating(false);
+  };
 
-  if (!tournament || !structure) {
+  if (loading || !tournament || !structure) {
     return (
-      <View style={s.center}>
-        <Text style={{ color: "#ef4444" }}>Torneo non trovato</Text>
+      <View
+        style={{
+          flex: 1,
+          justifyContent: "center",
+          alignItems: "center",
+          backgroundColor: "#f8fafc",
+        }}
+      >
+        <ActivityIndicator size="large" color={colors.primary} />
       </View>
     );
   }
 
-  const startDate = new Date(tournament.startDate).toLocaleDateString("it-IT", {
-    day: "2-digit",
-    month: "long",
-    year: "numeric",
-  });
+  const notGenerated = !isGenerated;
+  const statusLabel =
+    tournament.status === "ongoing"
+      ? "In corso"
+      : tournament.status === "upcoming"
+        ? "In arrivo"
+        : "Terminato";
 
   return (
-    <View style={s.root}>
-      <StatusBar barStyle="light-content" />
-      <ScrollView
-        style={{ flex: 1 }}
-        contentContainerStyle={{ paddingBottom: 40 }}
-        showsVerticalScrollIndicator={false}
-      >
-        {/* ── Orange gradient header ────────────────── */}
-        <LinearGradient colors={["#E8601A", "#F5A020"]} style={s.header}>
-          <SafeAreaView edges={["top"]}>
-            <View style={s.headerTop}>
-              <TouchableOpacity
-                onPress={() => navigation.goBack()}
-                style={s.backBtn}
-                activeOpacity={0.7}
-              >
-                <Ionicons name="arrow-back" size={22} color="#fff" />
-              </TouchableOpacity>
-              <View style={s.headerBadges}>
-                <View style={[s.statusBadge, { backgroundColor: "#10b981" }]}>
-                  <Text style={s.statusText}>In corso</Text>
-                </View>
-                <View style={s.iscrittoBadge}>
-                  <Ionicons name="checkmark-circle" size={12} color="#fff" />
-                  <Text style={s.iscrittoText}>Iscritto</Text>
-                </View>
-              </View>
-            </View>
-            <View style={s.headerContent}>
-              <Text style={s.headerGame}>{tournament.game}</Text>
-              <Text style={s.headerTitle}>{tournament.name}</Text>
-              <Text style={s.headerDate}>{startDate}</Text>
-            </View>
-          </SafeAreaView>
-        </LinearGradient>
-
-        {/* ── Tab bar (groups only, if generated) ─────────────────── */}
-        {structure.kind === "groups" && tournament.isGenerated !== false && (
-          <View style={s.tabBar}>
-            <TouchableOpacity
-              style={[s.tab, tab === "gironi" && s.tabActive]}
-              onPress={() => setTab("gironi")}
-            >
-              <Text style={[s.tabText, tab === "gironi" && s.tabTextActive]}>
-                Gironi
-              </Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={[s.tab, tab === "classifica" && s.tabActive]}
-              onPress={() => setTab("classifica")}
-            >
-              <Text
-                style={[s.tabText, tab === "classifica" && s.tabTextActive]}
-              >
-                Classifica
-              </Text>
-            </TouchableOpacity>
+    <View style={tds.root}>
+      <LinearGradient colors={colorGradient} style={{ paddingTop: insets.top }}>
+        <View style={tds.header}>
+          <View style={tds.headerTop}>
+            <ButtonBack handleBtn={() => navigation.goBack()} />
+            <Text style={tds.headerTitle} numberOfLines={1}>
+              {tournament.name}
+            </Text>
           </View>
-        )}
+          <View style={tds.statusBadge}>
+            <View style={tds.statusDot} />
+            <Text style={tds.statusText}>{statusLabel}</Text>
+          </View>
+        </View>
+      </LinearGradient>
 
-        {/* ── Body ──────────────────────────────────── */}
-        <View style={s.body}>
-          {tournament.isGenerated === false ? (
-            /* Waiting state */
-            <View style={s.waitingCard}>
-              <Ionicons name="time-outline" size={48} color="#94a3b8" />
-              <Text style={s.waitingTitle}>Torneo non ancora generato</Text>
-              <Text style={s.waitingSubtitle}>
-                {tournament.isOrganizer
-                  ? "Sei l'organizzatore di questo torneo. Genera il tabellone per far iniziare la competizione."
-                  : "L'organizzatore deve ancora generare il tabellone. Torna più tardi."}
+      {notGenerated ? (
+        <View style={tds.waitingBox}>
+          {tournament.isOrganizer ? (
+            <>
+              <Ionicons
+                name="trophy-outline"
+                size={48}
+                color={colors.primary}
+              />
+              <Text style={tds.waitingTitle}>Genera il torneo</Text>
+              <Text style={tds.waitingText}>
+                Tutti i team sono pronti. Genera il bracket o i gironi per
+                iniziare.
               </Text>
-              {tournament.isOrganizer && (
-                <TouchableOpacity
-                  style={[s.generateBtn, generating && s.generateBtnDisabled]}
-                  onPress={handleGenerate}
-                  disabled={generating}
-                  activeOpacity={0.85}
-                >
-                  {generating ? (
-                    <ActivityIndicator color="#fff" />
-                  ) : (
-                    <>
-                      <Ionicons name="flash" size={18} color="#fff" />
-                      <Text style={s.generateBtnText}>Genera torneo</Text>
-                    </>
-                  )}
-                </TouchableOpacity>
-              )}
-            </View>
+              <ButtonFullColored
+                text="Genera torneo"
+                handleBtn={handleActivate}
+                loading={activating}
+                isColored
+              />
+            </>
           ) : (
             <>
-              {structure.kind === "groups" && tab === "gironi" && (
-                <>
-                  {[...structure.groups]
-                    .sort((a, b) =>
-                      a.id === structure.userGroupId
-                        ? -1
-                        : b.id === structure.userGroupId
-                          ? 1
-                          : 0,
-                    )
-                    .map((g) => (
-                      <GroupCard
-                        key={g.id}
-                        group={g}
-                        isMyGroup={g.id === structure.userGroupId}
-                      />
-                    ))}
-                </>
-              )}
-
-              {structure.kind === "groups" && tab === "classifica" && (
-                <>
-                  {structure.groups.map((g) => (
-                    <StandingsTable key={g.id} group={g} />
-                  ))}
-                </>
-              )}
-
-              {structure.kind === "knockout" && (
-                <>
-                  <Text style={s.sectionTitle}>Il tuo tabellone</Text>
-                  <KnockoutBracket bracket={structure.bracket} />
-                </>
-              )}
+              <Ionicons name="time-outline" size={48} color="#94a3b8" />
+              <Text style={tds.waitingTitle}>In attesa del bracket</Text>
+              <Text style={tds.waitingText}>
+                L'organizzatore sta preparando il torneo. Torna tra poco.
+              </Text>
             </>
           )}
         </View>
-      </ScrollView>
+      ) : structure.kind === "groups" ? (
+        <GroupsView structure={structure} />
+      ) : (
+        <KnockoutView bracket={structure.bracket} />
+      )}
     </View>
   );
 }

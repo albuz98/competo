@@ -4,4 +4,5 @@ export enum ButtonEnum {
   THIRD = "thirdy",
   LINK = "link",
   EDIT = "edit",
+  ICON = "icon",
 }

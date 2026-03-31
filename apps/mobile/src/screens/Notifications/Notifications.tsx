@@ -10,6 +10,8 @@ import {
 } from "../../context/NotificationsContext";
 import { RootStackParamList } from "../../types";
 import { styles } from "./Notifications.styles";
+import { ButtonEnum } from "../../types/components";
+import { ButtonLink } from "../../components/Button/Button";
 
 function formatDate(iso: string) {
   const d = new Date(iso);
@@ -70,9 +72,11 @@ export default function Notifications() {
         </TouchableOpacity>
         <Text style={styles.header}>Notifiche</Text>
         {unreadCount > 0 && (
-          <TouchableOpacity onPress={markAllAsRead} activeOpacity={0.7}>
-            <Text style={styles.readAll}>Segna tutte come lette</Text>
-          </TouchableOpacity>
+          <ButtonLink
+            text="Segna tutte come lette"
+            handleBtn={markAllAsRead}
+            isColored
+          />
         )}
       </View>
 

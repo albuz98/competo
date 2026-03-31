@@ -1,17 +1,13 @@
 import React from "react";
-import {
-  View,
-  Text,
-  ScrollView,
-  TouchableOpacity,
-  StatusBar,
-} from "react-native";
+import { View, Text, ScrollView, StatusBar } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { LinearGradient } from "expo-linear-gradient";
 import { Ionicons } from "@expo/vector-icons";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { RootStackParamList, TournamentPlayer } from "../../types";
 import { pp } from "./PlayerProfile.styles";
+import { colorGradient } from "../../theme/colors";
+import { ButtonBack } from "../../components/Button/Button";
 
 type Props = NativeStackScreenProps<RootStackParamList, "PlayerProfile">;
 
@@ -73,15 +69,9 @@ export default function PlayerProfileScreen({ route, navigation }: Props) {
       <StatusBar barStyle="light-content" />
 
       {/* ── Gradient header ── */}
-      <LinearGradient colors={["#E8601A", "#F5A020"]} style={pp.header}>
+      <LinearGradient colors={colorGradient} style={pp.header}>
         <SafeAreaView edges={["top"]}>
-          <TouchableOpacity
-            onPress={() => navigation.goBack()}
-            style={pp.backBtn}
-            activeOpacity={0.7}
-          >
-            <Ionicons name="arrow-back" size={22} color="#fff" />
-          </TouchableOpacity>
+          <ButtonBack handleBtn={() => navigation.goBack()} />
           <View style={pp.avatarCircle}>
             <Text style={pp.avatarInitials}>{initial}</Text>
           </View>

@@ -3,7 +3,6 @@ import {
   View,
   Text,
   TextInput,
-  TouchableOpacity,
   StatusBar,
   FlatList,
   ActivityIndicator,
@@ -24,6 +23,13 @@ import { useNotifications } from "../../context/NotificationsContext";
 import { AppUser, RootStackParamList } from "../../types";
 import { ip } from "./InvitePlayers.styles";
 import { searchUsers } from "../../api/teams";
+import {
+  ButtonBack,
+  ButtonFullColored,
+  ButtonIcon,
+} from "../../components/Button/Button";
+import { sizesEnum } from "../../theme/dimension";
+import { TabBar } from "../../components/TabBar/TabBar";
 
 type Props = NativeStackScreenProps<RootStackParamList, "InvitePlayers">;
 type Tab = "cerca" | "condividi";
@@ -61,13 +67,12 @@ function UserRow({
           <Text style={ip.invitedBadgeText}>In attesa</Text>
         </View>
       ) : (
-        <TouchableOpacity
-          style={ip.inviteBtn}
-          onPress={onInvite}
-          activeOpacity={0.8}
-        >
-          <Text style={ip.inviteBtnText}>Invita</Text>
-        </TouchableOpacity>
+        <ButtonFullColored
+          text="Invita"
+          handleBtn={onInvite}
+          isColored
+          size={sizesEnum.small}
+        />
       )}
     </View>
   );
@@ -161,13 +166,11 @@ export default function InvitePlayers({ route, navigation }: Props) {
         <StatusBar barStyle="dark-content" backgroundColor="#fff" />
         <SafeAreaView style={{ flex: 1 }} edges={["top"]}>
           <View style={ip.header}>
-            <TouchableOpacity
-              onPress={() => navigation.goBack()}
+            <ButtonIcon
+              handleBtn={() => navigation.goBack()}
               style={ip.backBtn}
-              activeOpacity={0.7}
-            >
-              <Ionicons name="chevron-back" size={24} color="#1e293b" />
-            </TouchableOpacity>
+              icon={<Ionicons name="chevron-back" size={24} color="#1e293b" />}
+            />
             <Text style={ip.headerTitle}>Invita giocatori</Text>
             <View style={{ width: 36 }} />
           </View>
@@ -203,47 +206,28 @@ export default function InvitePlayers({ route, navigation }: Props) {
       <SafeAreaView style={{ flex: 1 }} edges={["top"]}>
         {/* Header */}
         <View style={ip.header}>
-          <TouchableOpacity
-            onPress={() => navigation.goBack()}
-            style={ip.backBtn}
-            activeOpacity={0.7}
-          >
-            <Ionicons name="chevron-back" size={24} color="#1e293b" />
-          </TouchableOpacity>
+          <ButtonBack
+            handleBtn={() => navigation.goBack()}
+            isArrowBack={false}
+          />
           <Text style={ip.headerTitle}>Invita giocatori</Text>
           <View style={{ width: 36 }} />
         </View>
         {team && <Text style={ip.teamName}>{team.name}</Text>}
 
         {/* Tab bar */}
-        <View style={ip.tabBar}>
-          <TouchableOpacity
-            style={[ip.tab, tab === "cerca" && ip.tabActive]}
-            onPress={() => setTab("cerca")}
-          >
-            <Ionicons
-              name="search"
-              size={15}
-              color={tab === "cerca" ? "#E8601A" : "#94a3b8"}
-            />
-            <Text style={[ip.tabText, tab === "cerca" && ip.tabTextActive]}>
-              Cerca
-            </Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={[ip.tab, tab === "condividi" && ip.tabActive]}
-            onPress={() => setTab("condividi")}
-          >
-            <Ionicons
-              name="share-social"
-              size={15}
-              color={tab === "condividi" ? "#E8601A" : "#94a3b8"}
-            />
-            <Text style={[ip.tabText, tab === "condividi" && ip.tabTextActive]}>
-              Condividi link
-            </Text>
-          </TouchableOpacity>
-        </View>
+        <TabBar
+          value={tab}
+          onChange={setTab}
+          tabs={[
+            { key: "cerca", label: "Cerca", icon: "search" },
+            {
+              key: "condividi",
+              label: "Condividi link",
+              icon: "share-social",
+            },
+          ]}
+        />
 
         {tab === "cerca" ? (
           <>
@@ -265,9 +249,12 @@ export default function InvitePlayers({ route, navigation }: Props) {
                 returnKeyType="search"
               />
               {query.length > 0 && (
-                <TouchableOpacity onPress={() => setQuery("")}>
-                  <Ionicons name="close-circle" size={18} color="#cbd5e1" />
-                </TouchableOpacity>
+                <ButtonIcon
+                  handleBtn={() => setQuery("")}
+                  icon={
+                    <Ionicons name="close-circle" size={18} color="#cbd5e1" />
+                  }
+                />
               )}
             </View>
 
@@ -324,28 +311,31 @@ export default function InvitePlayers({ route, navigation }: Props) {
               </Text>
             </View>
 
-            <TouchableOpacity
-              style={ip.shareBtn}
-              onPress={handleShare}
-              activeOpacity={0.85}
-            >
-              <Ionicons name="share-social-outline" size={20} color="#fff" />
-              <Text style={ip.shareBtnText}>Condividi</Text>
-            </TouchableOpacity>
+            <ButtonFullColored
+              iconRight={
+                <Ionicons name="share-social-outline" size={20} color="#fff" />
+              }
+              text="Condividi"
+              handleBtn={handleShare}
+              isColored
+            />
 
             <View style={ip.socialRow}>
               {(
                 ["logo-whatsapp", "logo-instagram", "mail-outline"] as const
-              ).map((icon) => (
-                <TouchableOpacity
-                  key={icon}
-                  style={ip.socialBtn}
-                  onPress={handleShare}
-                  activeOpacity={0.8}
-                >
+              ).map((icon) => {
+                const theIcon = (
                   <Ionicons name={icon} size={22} color="#64748b" />
-                </TouchableOpacity>
-              ))}
+                );
+                return (
+                  <ButtonIcon
+                    key={icon}
+                    style={ip.socialBtn}
+                    handleBtn={handleShare}
+                    icon={theIcon}
+                  />
+                );
+              })}
             </View>
           </View>
         )}
