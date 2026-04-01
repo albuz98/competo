@@ -103,17 +103,6 @@ export const styles = StyleSheet.create({
     marginBottom: 6,
     marginTop: 4,
   },
-  input: {
-    backgroundColor: colors.opacized,
-    borderRadius: 12,
-    paddingHorizontal: 16,
-    paddingVertical: 14,
-    fontSize: 15,
-    color: colors.white,
-    marginBottom: 16,
-    borderWidth: 1,
-    borderColor: colors.grayOpacized,
-  },
   splitRow: { flexDirection: "row", gap: 12 },
   half: { flex: 1 },
   secureRow: {

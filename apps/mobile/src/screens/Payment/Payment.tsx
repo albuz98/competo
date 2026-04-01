@@ -2,7 +2,6 @@ import React, { useState, useLayoutEffect } from "react";
 import {
   View,
   Text,
-  TextInput,
   KeyboardAvoidingView,
   Platform,
   ScrollView,
@@ -20,11 +19,8 @@ import { RootStackParamList } from "../../types";
 import { useAuth } from "../../context/AuthContext";
 import { signUpForTournament } from "../../api/tournaments";
 import { styles } from "./Payment.styles";
-import {
-  ButtonBack,
-  ButtonFullColored,
-  ButtonIcon,
-} from "../../components/Button/Button";
+import { ButtonFullColored, ButtonIcon } from "../../components/Button/Button";
+import InputBox from "../../components/InputBox/InputBox";
 import { colorGradient, colors } from "../../theme/colors";
 
 type Props = NativeStackScreenProps<RootStackParamList, "Payment">;
@@ -152,52 +148,44 @@ export default function PaymentScreen({ navigation, route }: Props) {
               )}
 
               <Text style={styles.label}>NOME SULLA CARTA</Text>
-              <TextInput
-                style={styles.input}
+              <InputBox
                 value={name}
                 onChangeText={setName}
                 placeholder="Mario Rossi"
                 autoCapitalize="words"
-                placeholderTextColor={colors.grayOpacized}
                 returnKeyType="next"
               />
 
               <Text style={styles.label}>NUMERO CARTA</Text>
-              <TextInput
-                style={styles.input}
+              <InputBox
                 value={cardNumber}
-                onChangeText={(t) => setCardNumber(formatCardNumber(t))}
+                onChangeText={(t: string) => setCardNumber(formatCardNumber(t))}
                 placeholder="1234 5678 9012 3456"
                 keyboardType="numeric"
-                placeholderTextColor={colors.grayOpacized}
                 returnKeyType="next"
               />
 
               <View style={styles.splitRow}>
                 <View style={styles.half}>
                   <Text style={styles.label}>SCADENZA</Text>
-                  <TextInput
-                    style={styles.input}
+                  <InputBox
                     value={expiry}
-                    onChangeText={(t) => setExpiry(formatExpiry(t))}
+                    onChangeText={(t: string) => setExpiry(formatExpiry(t))}
                     placeholder="MM/AA"
                     keyboardType="numeric"
-                    placeholderTextColor={colors.grayOpacized}
                     returnKeyType="next"
                   />
                 </View>
                 <View style={styles.half}>
                   <Text style={styles.label}>CVV</Text>
-                  <TextInput
-                    style={styles.input}
+                  <InputBox
                     value={cvv}
-                    onChangeText={(t) =>
+                    onChangeText={(t: string) =>
                       setCvv(t.replace(/\D/g, "").slice(0, 4))
                     }
                     placeholder="123"
                     keyboardType="numeric"
                     secureTextEntry
-                    placeholderTextColor={colors.grayOpacized}
                     returnKeyType="done"
                     onSubmitEditing={handlePay}
                   />

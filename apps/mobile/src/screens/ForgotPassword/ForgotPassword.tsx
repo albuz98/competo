@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, Text, TextInput } from "react-native";
+import { View, Text } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../../types";
@@ -8,9 +8,9 @@ import { styles } from "./ForgotPassword.styles";
 import AuthLayout from "../../components/AuthLayout/AuthLayout";
 import AuthErrorBox from "../../components/AuthErrorBox/AuthErrorBox";
 import CompetoLogo from "../../components/CompetoLogo/CompetoLogo";
-import { ButtonEnum } from "../../types/components";
 import { ButtonFullColored, ButtonLink } from "../../components/Button/Button";
 import { colors } from "../../theme/colors";
+import InputBox from "../../components/InputBox/InputBox";
 
 type Props = NativeStackScreenProps<RootStackParamList, "ForgotPassword">;
 
@@ -70,15 +70,13 @@ export default function ForgotPassword({ navigation }: Props) {
           {error && <AuthErrorBox message={error} />}
 
           <Text style={styles.label}>EMAIL</Text>
-          <TextInput
-            style={styles.input}
+          <InputBox
             value={email}
             onChangeText={setEmail}
             placeholder="hello@gmail.com"
             keyboardType="email-address"
             autoCapitalize="none"
             autoComplete="email"
-            placeholderTextColor={colors.grayOpacized}
             returnKeyType="done"
             onSubmitEditing={handleSend}
           />

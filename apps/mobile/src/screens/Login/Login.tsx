@@ -8,7 +8,6 @@ import AuthErrorBox from "../../components/AuthErrorBox/AuthErrorBox";
 import AuthLayout from "../../components/AuthLayout/AuthLayout";
 import { styles } from "./Login.styles";
 import InputBox from "../../components/InputBox/InputBox";
-import { ButtonEnum } from "../../types/components";
 import { DividerAccess } from "../../components/DividerAccess/DividerAccess";
 import {
   ButtonBorderColored,
