@@ -141,21 +141,6 @@ export const styles = StyleSheet.create({
     borderRadius: 1.5,
     backgroundColor: colors.grayDark,
   },
-  tournamentCardBtn: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    gap: 6,
-    backgroundColor: colors.primaryGradientMid,
-    borderRadius: 50,
-    paddingVertical: 12,
-  },
-  tournamentCardBtnText: {
-    color: colors.white,
-    fontSize: 14,
-    fontWeight: "800",
-  },
-
   toast: {
     position: "absolute",
     alignSelf: "center",
@@ -226,11 +211,4 @@ export const styles = StyleSheet.create({
   },
   modalInput: { flex: 1, fontSize: 15, color: colors.dark },
   radiusRow: { flexDirection: "row", gap: 10, marginBottom: 28 },
-  applyBtn: {
-    backgroundColor: colors.primaryGradientMid,
-    borderRadius: 50,
-    paddingVertical: 16,
-    alignItems: "center",
-  },
-  applyBtnText: { color: colors.white, fontSize: 16, fontWeight: "800" },
 });

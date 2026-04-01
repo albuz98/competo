@@ -46,9 +46,9 @@ export const ip = StyleSheet.create({
     borderWidth: 1.5,
     borderColor: colors.gray,
     paddingHorizontal: 14,
-    paddingVertical: 12,
+    height: 48,
   },
-  searchInput: { flex: 1, fontSize: 14, color: colors.dark },
+  searchInput: { flex: 1, fontSize: 14, color: colors.dark, height: 48 },
 
   userRow: {
     flexDirection: "row",

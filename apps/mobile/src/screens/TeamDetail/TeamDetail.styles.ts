@@ -11,14 +11,6 @@ export const tds = StyleSheet.create({
     paddingTop: 8,
     paddingBottom: 8,
   },
-  backBtn: {
-    width: 38,
-    height: 38,
-    borderRadius: 19,
-    backgroundColor: colors.opacized,
-    alignItems: "center",
-    justifyContent: "center",
-  },
   headerBody: { alignItems: "center", paddingBottom: 8 },
   teamAvatarLarge: {
     width: 72,
@@ -113,8 +105,6 @@ export const tds = StyleSheet.create({
     fontWeight: "700",
   },
   memberUsername: { fontSize: 12, color: colors.placeholder, marginTop: 1 },
-  memberRole: { fontSize: 11, color: colors.disabledBg, fontWeight: "600" },
-
   rolePillStatic: {
     backgroundColor: colors.gray,
     borderRadius: 20,
@@ -173,25 +163,6 @@ export const tds = StyleSheet.create({
     paddingVertical: 4,
   },
   pendingBadgeText: { fontSize: 11, color: colors.brown, fontWeight: "700" },
-
-  inviteBtn: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    gap: 8,
-    backgroundColor: colors.white,
-    borderRadius: 14,
-    paddingVertical: 16,
-    marginHorizontal: 16,
-    marginTop: 12,
-    borderWidth: 1.5,
-    borderColor: colors.primarySelectedBg,
-  },
-  inviteBtnText: {
-    color: colors.primaryGradientMid,
-    fontSize: 15,
-    fontWeight: "700",
-  },
 
   modalOverlay: {
     flex: 1,
@@ -263,21 +234,11 @@ export const tds = StyleSheet.create({
     paddingVertical: 14,
     alignItems: "center",
   },
-  modalCancelText: {
-    fontSize: 15,
-    fontWeight: "700",
-    color: colors.placeholder,
-  },
   modalRemoveBtn: {
     flex: 1,
     backgroundColor: colors.danger,
     borderRadius: 50,
     paddingVertical: 14,
     alignItems: "center",
-  },
-  modalRemoveText: {
-    fontSize: 15,
-    fontWeight: "700",
-    color: colors.white,
   },
 });

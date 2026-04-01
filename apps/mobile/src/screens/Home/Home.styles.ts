@@ -19,14 +19,6 @@ export const styles = StyleSheet.create({
     paddingBottom: 16,
     gap: 12,
   },
-  avatar: {
-    width: 52,
-    height: 52,
-    borderRadius: 26,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  avatarText: { color: colors.white, fontSize: 20, fontWeight: "800" },
   greetingBlock: { flex: 1, display: "flex", flexDirection: "column" },
   greetingText: { fontSize: 18, fontWeight: "800", color: colors.dark },
   locationRow: {
@@ -184,18 +176,4 @@ export const styles = StyleSheet.create({
   },
   smallCardRow: { flexDirection: "row", alignItems: "center", marginBottom: 2 },
   smallCardMeta: { fontSize: 10, color: colors.placeholder, flex: 1 },
-  vediAltroBtn: {
-    backgroundColor: colors.primaryGradientMid,
-    borderRadius: 20,
-    paddingVertical: 5,
-    paddingHorizontal: 10,
-    alignSelf: "flex-start",
-    marginTop: 8,
-  },
-  vediAltroText: {
-    color: colors.white,
-    fontSize: 9,
-    fontWeight: "800",
-    letterSpacing: 0.5,
-  },
 });

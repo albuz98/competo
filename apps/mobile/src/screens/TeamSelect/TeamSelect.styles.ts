@@ -113,15 +113,6 @@ export const ts = StyleSheet.create({
     lineHeight: 20,
   },
 
-  createTeamBtn: {
-    marginTop: 4,
-    backgroundColor: colors.primaryGradientMid,
-    borderRadius: 50,
-    paddingVertical: 13,
-    paddingHorizontal: 28,
-  },
-  createTeamBtnText: { color: colors.white, fontSize: 14, fontWeight: "800" },
-
   bottomBar: {
     backgroundColor: colors.white,
     paddingHorizontal: 20,

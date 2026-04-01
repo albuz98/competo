@@ -25,23 +25,6 @@ export const styles = StyleSheet.create({
     marginBottom: 6,
     marginTop: 4,
   },
-  sendBtn: {
-    backgroundColor: colors.white,
-    borderRadius: 50,
-    paddingVertical: 16,
-    alignItems: "center",
-    marginTop: 8,
-    marginBottom: 20,
-    elevation: 4,
-  },
-  sendBtnDisabled: { opacity: 0.6 },
-  sendBtnText: {
-    color: colors.primaryGradientMid,
-    fontSize: 16,
-    fontWeight: "800",
-  },
-  linkBtn: { alignItems: "center", marginBottom: 8 },
-  linkText: { color: colors.grayOpacized, fontSize: 14 },
   successContainer: { paddingTop: 16 },
   successText: {
     color: colors.grayOpacized,

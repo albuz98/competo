@@ -40,18 +40,6 @@ export const cs = StyleSheet.create({
   inputHint: { fontSize: 11, color: '#cbd5e1', marginTop: 5 },
 
   sportsList: { gap: 8, paddingVertical: 4 },
-  sportPill: {
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    borderRadius: 20,
-    backgroundColor: '#fff',
-    borderWidth: 1.5,
-    borderColor: '#e2e8f0',
-  },
-  sportPillActive: { backgroundColor: '#E8601A', borderColor: '#E8601A' },
-  sportPillText: { fontSize: 13, fontWeight: '600', color: '#64748b' },
-  sportPillTextActive: { color: '#fff' },
-
   errorBox: {
     backgroundColor: '#fef2f2',
     borderRadius: 12,
@@ -73,16 +61,4 @@ export const cs = StyleSheet.create({
   },
   infoText: { flex: 1, fontSize: 12, color: '#78350f', lineHeight: 18 },
 
-  createBtn: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 8,
-    backgroundColor: '#E8601A',
-    borderRadius: 50,
-    paddingVertical: 16,
-    marginTop: 24,
-  },
-  createBtnDisabled: { opacity: 0.5 },
-  createBtnText: { color: '#fff', fontSize: 16, fontWeight: '800' },
 });

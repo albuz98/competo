@@ -11,7 +11,6 @@ export const styles = StyleSheet.create({
     paddingBottom: 10,
     gap: 4,
   },
-  backBtn: { marginRight: 4, padding: 2 },
   header: { fontSize: 22, fontWeight: "800", color: colors.dark, flex: 1 },
   list: { paddingHorizontal: 16, paddingBottom: 100 },
   separator: { height: 8 },

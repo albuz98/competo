@@ -9,9 +9,6 @@ export const SNAP = CARD_WIDTH + CARD_GAP;
 export const SIDE_PADDING = (SCREEN_WIDTH - CARD_WIDTH) / 2;
 
 export const styles = StyleSheet.create({
-  root: { flex: 1 },
-  safeArea: { flex: 1 },
-
   carouselWrapper: {
     height: CARD_HEIGHT + 40,
     overflow: "hidden",
@@ -68,11 +65,5 @@ export const styles = StyleSheet.create({
     fontWeight: "800",
     textAlign: "center",
     lineHeight: 34,
-  },
-  subtitle: {
-    color: colors.grayOpacized,
-    fontSize: 14,
-    textAlign: "center",
-    lineHeight: 21,
   },
 });

@@ -16,14 +16,6 @@ export const styles = StyleSheet.create({
     paddingTop: 8,
     paddingBottom: 16,
   },
-  backBtn: {
-    width: 38,
-    height: 38,
-    borderRadius: 19,
-    backgroundColor: colors.opacized,
-    alignItems: "center",
-    justifyContent: "center",
-  },
   bookmarkBtn: {
     width: 38,
     height: 38,

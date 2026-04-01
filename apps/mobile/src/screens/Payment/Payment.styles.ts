@@ -7,9 +7,6 @@ export const styles = StyleSheet.create({
   flex: { flex: 1 },
 
   topArea: { paddingHorizontal: 20, paddingTop: 8, paddingBottom: 100 },
-  backBtn: { flexDirection: "row", alignItems: "center", gap: 6 },
-  backArrow: { color: colors.white, fontSize: 20, lineHeight: 24 },
-  backText: { color: colors.white, fontSize: 15, fontWeight: "500" },
 
   card: {
     flex: 1,
@@ -61,31 +58,6 @@ export const styles = StyleSheet.create({
     fontWeight: "800",
     fontSize: 16,
   },
-
-  methodRow: {
-    flexDirection: "row",
-    backgroundColor: colors.opacized,
-    borderRadius: 16,
-    padding: 4,
-    marginBottom: 20,
-    gap: 4,
-  },
-  methodBtn: {
-    flex: 1,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    gap: 6,
-    paddingVertical: 10,
-    borderRadius: 12,
-  },
-  methodBtnActive: { backgroundColor: colors.white },
-  methodBtnText: {
-    fontSize: 14,
-    fontWeight: "700",
-    color: colors.grayOpacized,
-  },
-  methodBtnTextActive: { color: colors.primaryGradientMid },
 
   errorBox: {
     backgroundColor: colors.opacized,

@@ -85,15 +85,6 @@ export const tss = StyleSheet.create({
     marginTop: 8,
     lineHeight: 20,
   },
-  createBtn: {
-    marginTop: 24,
-    backgroundColor: colors.primaryGradientMid,
-    borderRadius: 50,
-    paddingVertical: 14,
-    paddingHorizontal: 40,
-  },
-  createBtnText: { color: colors.white, fontSize: 15, fontWeight: "800" },
-
   invitesSection: {
     backgroundColor: colors.white,
     borderRadius: 16,

@@ -40,14 +40,5 @@ export const styles = StyleSheet.create({
   prizeText: { color: '#f59e0b' },
   loadingText: { marginTop: 12, color: '#6b7280', fontSize: 14 },
   errorText: { color: '#ef4444', textAlign: 'center', marginBottom: 16, fontSize: 14 },
-  retryBtn: {
-    backgroundColor: '#4f46e5',
-    borderRadius: 10,
-    paddingHorizontal: 24,
-    paddingVertical: 10,
-  },
-  retryBtnText: { color: '#fff', fontWeight: '600' },
   emptyText: { color: '#6b7280', fontSize: 14 },
-  headerBtn: { marginRight: 4, paddingVertical: 4, paddingHorizontal: 2 },
-  headerBtnText: { color: '#fff', fontWeight: '600', fontSize: 14 },
 });

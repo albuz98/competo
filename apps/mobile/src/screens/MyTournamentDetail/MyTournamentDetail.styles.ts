@@ -24,7 +24,6 @@ export const tds = StyleSheet.create({
     gap: 12,
     marginBottom: 4,
   },
-  backBtn: { padding: 4 },
   headerTitle: {
     color: colors.white,
     fontSize: 20,
