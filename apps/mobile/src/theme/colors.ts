@@ -18,6 +18,7 @@ export const colors = {
   gray: "#f1f5f9",
   grayOpacized: "rgba(255,255,255,0.7)",
   dark: "#1e293b",
+  darkOpacized: "rgba(255,255,255,0.07)",
   blue: "#4f46e5",
   grayDark: "#94a3b8",
   purple: "#8b5cf6",

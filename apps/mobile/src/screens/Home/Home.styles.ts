@@ -127,7 +127,7 @@ export const styles = StyleSheet.create({
     width: 150,
     height: 150,
     borderRadius: 75,
-    backgroundColor: "rgba(255,255,255,0.07)",
+    backgroundColor: colors.darkOpacized,
   },
   bigCardEmoji: {
     position: "absolute",
@@ -137,7 +137,7 @@ export const styles = StyleSheet.create({
     marginTop: -40,
   },
   bigCardOverlay: {
-    backgroundColor: "rgba(255,255,255,0.95)",
+    backgroundColor: colors.grayOpacized,
     borderRadius: 12,
     margin: 10,
     padding: 10,

@@ -158,7 +158,7 @@ export default function PaymentScreen({ navigation, route }: Props) {
                 onChangeText={setName}
                 placeholder="Mario Rossi"
                 autoCapitalize="words"
-                placeholderTextColor="rgba(255,255,255,0.5)"
+                placeholderTextColor={colors.grayOpacized}
                 returnKeyType="next"
               />
 
@@ -169,7 +169,7 @@ export default function PaymentScreen({ navigation, route }: Props) {
                 onChangeText={(t) => setCardNumber(formatCardNumber(t))}
                 placeholder="1234 5678 9012 3456"
                 keyboardType="numeric"
-                placeholderTextColor="rgba(255,255,255,0.5)"
+                placeholderTextColor={colors.grayOpacized}
                 returnKeyType="next"
               />
 
@@ -182,7 +182,7 @@ export default function PaymentScreen({ navigation, route }: Props) {
                     onChangeText={(t) => setExpiry(formatExpiry(t))}
                     placeholder="MM/AA"
                     keyboardType="numeric"
-                    placeholderTextColor="rgba(255,255,255,0.5)"
+                    placeholderTextColor={colors.grayOpacized}
                     returnKeyType="next"
                   />
                 </View>
@@ -197,7 +197,7 @@ export default function PaymentScreen({ navigation, route }: Props) {
                     placeholder="123"
                     keyboardType="numeric"
                     secureTextEntry
-                    placeholderTextColor="rgba(255,255,255,0.5)"
+                    placeholderTextColor={colors.grayOpacized}
                     returnKeyType="done"
                     onSubmitEditing={handlePay}
                   />
@@ -215,7 +215,7 @@ export default function PaymentScreen({ navigation, route }: Props) {
                 <Ionicons
                   name="lock-closed"
                   size={12}
-                  color="rgba(255,255,255,0.6)"
+                  color={colors.grayOpacized}
                 />
                 <Text style={styles.secureText}>
                   Pagamento sicuro e crittografato

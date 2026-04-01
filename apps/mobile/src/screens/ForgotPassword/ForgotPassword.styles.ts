@@ -11,14 +11,14 @@ export const styles = StyleSheet.create({
     marginTop: 8,
   },
   cardSubtitle: {
-    color: "rgba(255,255,255,0.85)",
+    color: colors.grayOpacized,
     fontSize: 14,
     textAlign: "center",
     marginBottom: 24,
     lineHeight: 20,
   },
   label: {
-    color: "rgba(255,255,255,0.9)",
+    color: colors.grayOpacized,
     fontSize: 11,
     fontWeight: "700",
     letterSpacing: 1,
@@ -26,7 +26,7 @@ export const styles = StyleSheet.create({
     marginTop: 4,
   },
   input: {
-    backgroundColor: "rgba(0,0,0,0.18)",
+    backgroundColor: colors.opacized,
     borderRadius: 12,
     paddingHorizontal: 16,
     paddingVertical: 14,
@@ -34,7 +34,7 @@ export const styles = StyleSheet.create({
     color: colors.white,
     marginBottom: 16,
     borderWidth: 1,
-    borderColor: "rgba(255,255,255,0.15)",
+    borderColor: colors.grayOpacized,
   },
   sendBtn: {
     backgroundColor: colors.white,
@@ -52,10 +52,10 @@ export const styles = StyleSheet.create({
     fontWeight: "800",
   },
   linkBtn: { alignItems: "center", marginBottom: 8 },
-  linkText: { color: "rgba(255,255,255,0.85)", fontSize: 14 },
+  linkText: { color: colors.grayOpacized, fontSize: 14 },
   successContainer: { paddingTop: 16 },
   successText: {
-    color: "rgba(255,255,255,0.9)",
+    color: colors.grayOpacized,
     fontSize: 15,
     textAlign: "center",
     marginTop: 20,
@@ -63,7 +63,7 @@ export const styles = StyleSheet.create({
   },
   successEmail: { fontWeight: "800", color: colors.white },
   successHint: {
-    color: "rgba(255,255,255,0.7)",
+    color: colors.grayOpacized,
     fontSize: 13,
     textAlign: "center",
     marginTop: 10,

@@ -10,6 +10,7 @@ import AuthErrorBox from "../../components/AuthErrorBox/AuthErrorBox";
 import CompetoLogo from "../../components/CompetoLogo/CompetoLogo";
 import { ButtonEnum } from "../../types/components";
 import { ButtonFullColored, ButtonLink } from "../../components/Button/Button";
+import { colors } from "../../theme/colors";
 
 type Props = NativeStackScreenProps<RootStackParamList, "ForgotPassword">;
 
@@ -42,7 +43,7 @@ export default function ForgotPassword({ navigation }: Props) {
           <Ionicons
             name="mail-outline"
             size={64}
-            color="rgba(255,255,255,0.9)"
+            color={colors.grayOpacized}
             style={{ alignSelf: "center" }}
           />
           <Text style={styles.cardTitle}>Email inviata!</Text>
@@ -77,7 +78,7 @@ export default function ForgotPassword({ navigation }: Props) {
             keyboardType="email-address"
             autoCapitalize="none"
             autoComplete="email"
-            placeholderTextColor="rgba(255,255,255,0.5)"
+            placeholderTextColor={colors.grayOpacized}
             returnKeyType="done"
             onSubmitEditing={handleSend}
           />

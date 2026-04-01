@@ -27,7 +27,7 @@ export const styles = StyleSheet.create({
     marginBottom: 6,
   },
   cardSubtitle: {
-    color: "rgba(255,255,255,0.85)",
+    color: colors.grayOpacized,
     fontSize: 14,
     textAlign: "center",
     marginBottom: 12,
@@ -37,7 +37,7 @@ export const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: 5,
-    backgroundColor: "rgba(255,255,255,0.2)",
+    backgroundColor: colors.opacized,
     alignSelf: "center",
     borderRadius: 20,
     paddingHorizontal: 12,
@@ -64,7 +64,7 @@ export const styles = StyleSheet.create({
 
   methodRow: {
     flexDirection: "row",
-    backgroundColor: "rgba(0,0,0,0.2)",
+    backgroundColor: colors.opacized,
     borderRadius: 16,
     padding: 4,
     marginBottom: 20,
@@ -83,7 +83,7 @@ export const styles = StyleSheet.create({
   methodBtnText: {
     fontSize: 14,
     fontWeight: "700",
-    color: "rgba(255,255,255,0.75)",
+    color: colors.grayOpacized,
   },
   methodBtnTextActive: { color: colors.primaryGradientMid },
 
@@ -96,7 +96,7 @@ export const styles = StyleSheet.create({
   errorText: { color: colors.white, fontSize: 13, textAlign: "center" },
 
   label: {
-    color: "rgba(255,255,255,0.9)",
+    color: colors.grayOpacized,
     fontSize: 11,
     fontWeight: "700",
     letterSpacing: 1,
@@ -104,7 +104,7 @@ export const styles = StyleSheet.create({
     marginTop: 4,
   },
   input: {
-    backgroundColor: "rgba(0,0,0,0.18)",
+    backgroundColor: colors.opacized,
     borderRadius: 12,
     paddingHorizontal: 16,
     paddingVertical: 14,
@@ -112,7 +112,7 @@ export const styles = StyleSheet.create({
     color: colors.white,
     marginBottom: 16,
     borderWidth: 1,
-    borderColor: "rgba(255,255,255,0.15)",
+    borderColor: colors.grayOpacized,
   },
   splitRow: { flexDirection: "row", gap: 12 },
   half: { flex: 1 },
@@ -123,7 +123,7 @@ export const styles = StyleSheet.create({
     gap: 5,
     marginBottom: 20,
   },
-  secureText: { color: "rgba(255,255,255,0.6)", fontSize: 12 },
+  secureText: { color: colors.grayOpacized, fontSize: 12 },
 
   logoArea: { alignItems: "center", marginTop: 8 },
   logoText: {
@@ -134,7 +134,7 @@ export const styles = StyleSheet.create({
     fontStyle: "italic",
   },
   logoTagline: {
-    color: "rgba(255,255,255,0.7)",
+    color: colors.grayOpacized,
     fontSize: 9,
     letterSpacing: 2,
     fontWeight: "600",

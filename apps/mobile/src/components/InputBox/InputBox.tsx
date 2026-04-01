@@ -10,7 +10,6 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 import { styles } from "./InputBox.styles";
 import { ButtonIcon } from "../Button/Button";
-import { ButtonEnum } from "../../types/components";
 import { colors } from "../../theme/colors";
 
 type CommonProps = {
@@ -154,7 +153,7 @@ export default function InputBox(props: InputBoxProps) {
         keyboardType={keyboardType}
         autoCapitalize={autoCapitalize}
         autoComplete={autoComplete}
-        placeholderTextColor="rgba(255,255,255,0.5)"
+        placeholderTextColor={colors.grayOpacized}
         returnKeyType={returnKeyType}
         onSubmitEditing={onSubmitEditing}
         secureTextEntry={secureTextEntry && hidden}
@@ -170,7 +169,7 @@ export default function InputBox(props: InputBoxProps) {
             <Ionicons
               name={hidden ? "eye-outline" : "eye-off-outline"}
               size={20}
-              color="rgba(255,255,255,0.6)"
+              color={colors.grayOpacized}
             />
           }
         />

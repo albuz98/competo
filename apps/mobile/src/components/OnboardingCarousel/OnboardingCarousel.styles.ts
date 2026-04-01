@@ -70,7 +70,7 @@ export const styles = StyleSheet.create({
     lineHeight: 34,
   },
   subtitle: {
-    color: "rgba(255,255,255,0.85)",
+    color: colors.grayOpacized,
     fontSize: 14,
     textAlign: "center",
     lineHeight: 21,

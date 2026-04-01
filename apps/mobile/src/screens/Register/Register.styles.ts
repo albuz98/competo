@@ -10,7 +10,7 @@ export const styles = StyleSheet.create({
     marginBottom: 20,
   },
   label: {
-    color: "rgba(255,255,255,0.9)",
+    color: colors.grayOpacized,
     fontSize: 11,
     fontWeight: "700",
     letterSpacing: 1,
