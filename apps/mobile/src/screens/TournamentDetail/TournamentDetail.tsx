@@ -34,9 +34,9 @@ const STATUS_LABEL: Record<string, string> = {
   completed: "Terminato",
 };
 const STATUS_COLOR: Record<string, string> = {
-  upcoming: "#3b82f6",
-  ongoing: "#10b981",
-  completed: "#6b7280",
+  upcoming: colors.blue,
+  ongoing: colors.success,
+  completed: colors.placeholder,
 };
 
 function SectionCard({
@@ -150,7 +150,7 @@ export default function TournamentDetail({ route, navigation }: Props) {
   if (loading) {
     return (
       <LinearGradient colors={colorGradient} style={styles.center}>
-        <ActivityIndicator size="large" color="#fff" />
+        <ActivityIndicator size="large" color={colors.white} />
       </LinearGradient>
     );
   }
@@ -229,7 +229,7 @@ export default function TournamentDetail({ route, navigation }: Props) {
                         <Ionicons
                           name={favorited ? "bookmark" : "bookmark-outline"}
                           size={20}
-                          color="#fff"
+                          color={colors.white}
                         />
                       }
                     />
@@ -246,17 +246,29 @@ export default function TournamentDetail({ route, navigation }: Props) {
             {/* Stats chips */}
             <View style={styles.chipsRow}>
               <View style={styles.chip}>
-                <Ionicons name="trophy-outline" size={13} color="#fff" />
+                <Ionicons
+                  name="trophy-outline"
+                  size={13}
+                  color={colors.white}
+                />
                 <Text style={styles.chipText}>{tournament.prizePool}</Text>
               </View>
               <View style={styles.chip}>
-                <Ionicons name="people-outline" size={13} color="#fff" />
+                <Ionicons
+                  name="people-outline"
+                  size={13}
+                  color={colors.white}
+                />
                 <Text style={styles.chipText}>
                   {tournament.currentParticipants}/{tournament.maxParticipants}
                 </Text>
               </View>
               <View style={styles.chip}>
-                <Ionicons name="location-outline" size={13} color="#fff" />
+                <Ionicons
+                  name="location-outline"
+                  size={13}
+                  color={colors.white}
+                />
                 <Text style={styles.chipText} numberOfLines={1}>
                   {tournament.location}
                 </Text>

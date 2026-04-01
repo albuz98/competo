@@ -2,10 +2,10 @@ import { StyleSheet } from "react-native";
 import { colors } from "../../theme/colors";
 
 export const styles = StyleSheet.create({
-  root: { flex: 1, backgroundColor: "#f8fafc" },
+  root: { flex: 1, backgroundColor: colors.gray },
   scroll: { flex: 1 },
   center: { flex: 1, justifyContent: "center", alignItems: "center" },
-  errorText: { color: "#ef4444", fontSize: 14 },
+  errorText: { color: colors.danger, fontSize: 14 },
 
   header: { paddingBottom: 28 },
   headerTop: {
@@ -38,7 +38,7 @@ export const styles = StyleSheet.create({
     paddingVertical: 5,
   },
   statusText: {
-    color: "#fff",
+    color: colors.white,
     fontSize: 11,
     fontWeight: "700",
     letterSpacing: 0.5,
@@ -53,7 +53,7 @@ export const styles = StyleSheet.create({
     marginBottom: 6,
   },
   headerTitle: {
-    color: "#fff",
+    color: colors.white,
     fontSize: 24,
     fontWeight: "800",
     lineHeight: 30,
@@ -73,14 +73,14 @@ export const styles = StyleSheet.create({
     paddingHorizontal: 12,
     paddingVertical: 6,
   },
-  chipText: { color: "#fff", fontSize: 12, fontWeight: "600" },
+  chipText: { color: colors.white, fontSize: 12, fontWeight: "600" },
 
   body: { padding: 16, gap: 12 },
   card: {
-    backgroundColor: "#fff",
+    backgroundColor: colors.white,
     borderRadius: 16,
     padding: 16,
-    shadowColor: "#000",
+    shadowColor: colors.black,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.06,
     shadowRadius: 8,
@@ -89,7 +89,7 @@ export const styles = StyleSheet.create({
   cardTitle: {
     fontSize: 12,
     fontWeight: "700",
-    color: "#94a3b8",
+    color: colors.placeholder,
     textTransform: "uppercase",
     letterSpacing: 0.8,
     marginBottom: 12,
@@ -99,20 +99,20 @@ export const styles = StyleSheet.create({
     alignItems: "center",
     paddingVertical: 8,
     borderBottomWidth: 1,
-    borderBottomColor: "#f8fafc",
+    borderBottomColor: colors.gray,
   },
-  rowLabel: { flex: 1, fontSize: 13, color: "#64748b", marginLeft: 2 },
+  rowLabel: { flex: 1, fontSize: 13, color: colors.placeholder, marginLeft: 2 },
   rowValue: {
     fontSize: 13,
     fontWeight: "600",
-    color: "#1e293b",
+    color: colors.dark,
     maxWidth: "55%" as any,
     textAlign: "right",
   },
 
   progressBg: {
     height: 8,
-    backgroundColor: "#f1f5f9",
+    backgroundColor: colors.gray,
     borderRadius: 4,
     overflow: "hidden",
     marginBottom: 8,
@@ -123,9 +123,9 @@ export const styles = StyleSheet.create({
     borderRadius: 4,
   },
   progressLabels: { flexDirection: "row", justifyContent: "space-between" },
-  progressText: { fontSize: 12, color: "#64748b" },
+  progressText: { fontSize: 12, color: colors.placeholder },
 
-  description: { fontSize: 14, color: "#475569", lineHeight: 22 },
+  description: { fontSize: 14, color: colors.placeholder, lineHeight: 22 },
 
   ruleItem: {
     flexDirection: "row",
@@ -137,7 +137,7 @@ export const styles = StyleSheet.create({
     width: 22,
     height: 22,
     borderRadius: 11,
-    backgroundColor: "#FFF0E6",
+    backgroundColor: colors.primarySelectedBg,
     alignItems: "center",
     justifyContent: "center",
     marginTop: 1,
@@ -147,7 +147,12 @@ export const styles = StyleSheet.create({
     fontWeight: "800",
     color: colors.primaryGradientMid,
   },
-  ruleText: { flex: 1, fontSize: 14, color: "#475569", lineHeight: 20 },
+  ruleText: {
+    flex: 1,
+    fontSize: 14,
+    color: colors.placeholder,
+    lineHeight: 20,
+  },
   bottomBar: {
     position: "absolute",
     bottom: 0,
@@ -156,10 +161,10 @@ export const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    backgroundColor: "#fff",
+    backgroundColor: colors.white,
     paddingHorizontal: 20,
     paddingTop: 10,
-    shadowColor: "#000",
+    shadowColor: colors.black,
     shadowOffset: { width: 0, height: -4 },
     shadowOpacity: 0.08,
     shadowRadius: 12,
@@ -169,7 +174,7 @@ export const styles = StyleSheet.create({
   costBlock: {},
   costLabel: {
     fontSize: 11,
-    color: "#94a3b8",
+    color: colors.placeholder,
     fontWeight: "600",
     textTransform: "uppercase",
     letterSpacing: 0.5,
@@ -177,7 +182,7 @@ export const styles = StyleSheet.create({
   costValue: {
     fontSize: 22,
     fontWeight: "800",
-    color: "#1e293b",
+    color: colors.dark,
     marginTop: 2,
   },
 });

@@ -87,14 +87,14 @@ export default function TeamSelect({ route, navigation }: Props) {
 
   return (
     <View style={ts.root}>
-      <StatusBar barStyle="dark-content" backgroundColor="#fff" />
+      <StatusBar barStyle="dark-content" backgroundColor={colors.white} />
       <SafeAreaView style={{ flex: 1 }} edges={["top"]}>
         {/* Header */}
         <View style={ts.header}>
           <ButtonIcon
             handleBtn={() => navigation.goBack()}
             style={ts.closeBtn}
-            icon={<Ionicons name="close" size={22} color="#1e293b" />}
+            icon={<Ionicons name="close" size={22} color={colors.dark} />}
           />
           <Text style={ts.headerTitle}>Scegli la tua squadra</Text>
           <View style={{ width: 36 }} />
@@ -117,7 +117,11 @@ export default function TeamSelect({ route, navigation }: Props) {
             />
           ) : teams.length === 0 ? (
             <View style={ts.emptyBox}>
-              <Ionicons name="people-outline" size={48} color="#e2e8f0" />
+              <Ionicons
+                name="people-outline"
+                size={48}
+                color={colors.grayDark}
+              />
               <Text style={ts.emptyText}>Nessuna squadra</Text>
               <Text style={ts.emptySubText}>
                 Devi appartenere a una squadra per iscriverti al torneo.
@@ -144,7 +148,7 @@ export default function TeamSelect({ route, navigation }: Props) {
           <ButtonFullColored
             iconRight={
               selectedTeam && (
-                <Ionicons name="arrow-forward" size={16} color="#fff" />
+                <Ionicons name="arrow-forward" size={16} color={colors.white} />
               )
             }
             text={

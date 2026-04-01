@@ -80,7 +80,7 @@ export const tds = StyleSheet.create({
   },
   matchTeam: { flex: 2, fontSize: 13, color: colors.dark, fontWeight: "500" },
   matchTeamRight: { textAlign: "right" },
-  matchTeamMy: { color: colors.primary, fontWeight: "700" },
+  matchTeamMy: { color: colors.primaryGradientMid, fontWeight: "700" },
   matchScore: {
     flex: 1,
     textAlign: "center",
@@ -88,7 +88,7 @@ export const tds = StyleSheet.create({
     fontWeight: "800",
     color: colors.dark,
   },
-  matchScoreLive: { color: colors.primary },
+  matchScoreLive: { color: colors.primaryGradientMid },
   matchRound: {
     fontSize: 11,
     color: colors.placeholder,
@@ -96,7 +96,7 @@ export const tds = StyleSheet.create({
     textAlign: "center",
   },
   liveTag: {
-    backgroundColor: colors.primary,
+    backgroundColor: colors.primaryGradientMid,
     borderRadius: 4,
     paddingHorizontal: 5,
     paddingVertical: 1,
@@ -141,7 +141,7 @@ export const tds = StyleSheet.create({
     color: colors.dark,
     fontWeight: "600",
   },
-  standingsTeamMy: { color: colors.primary },
+  standingsTeamMy: { color: colors.primaryGradientMid },
   standingsCell: {
     width: 28,
     fontSize: 12,
@@ -192,7 +192,7 @@ export const tds = StyleSheet.create({
     shadowRadius: 4,
     shadowOffset: { width: 0, height: 1 },
   },
-  bracketMatchCardLive: { borderLeftColor: colors.primary },
+  bracketMatchCardLive: { borderLeftColor: colors.primaryGradientMid },
   bracketTeamRow: {
     flex: 1,
     flexDirection: "row",
@@ -208,7 +208,7 @@ export const tds = StyleSheet.create({
     color: colors.dark,
     fontWeight: "500",
   },
-  bracketTeamNameMy: { color: colors.primary, fontWeight: "700" },
+  bracketTeamNameMy: { color: colors.primaryGradientMid, fontWeight: "700" },
   bracketScore: {
     fontSize: 13,
     fontWeight: "800",

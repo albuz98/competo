@@ -2,22 +2,22 @@ import { StyleSheet } from "react-native";
 import { colors } from "../../theme/colors";
 
 export const ts = StyleSheet.create({
-  root: { flex: 1, backgroundColor: "#f8fafc" },
+  root: { flex: 1, backgroundColor: colors.gray },
 
   header: {
     flexDirection: "row",
     alignItems: "center",
     paddingHorizontal: 16,
     paddingVertical: 14,
-    backgroundColor: "#fff",
+    backgroundColor: colors.white,
     borderBottomWidth: 1,
-    borderBottomColor: "#f1f5f9",
+    borderBottomColor: colors.gray,
   },
   closeBtn: {
     width: 36,
     height: 36,
     borderRadius: 18,
-    backgroundColor: "#f1f5f9",
+    backgroundColor: colors.gray,
     alignItems: "center",
     justifyContent: "center",
   },
@@ -25,31 +25,31 @@ export const ts = StyleSheet.create({
     flex: 1,
     fontSize: 16,
     fontWeight: "800",
-    color: "#1e293b",
+    color: colors.dark,
     textAlign: "center",
   },
 
   subtitle: {
     fontSize: 13,
-    color: "#64748b",
+    color: colors.placeholder,
     textAlign: "center",
     paddingHorizontal: 32,
     paddingVertical: 10,
-    backgroundColor: "#fff",
+    backgroundColor: colors.white,
     borderBottomWidth: 1,
-    borderBottomColor: "#f1f5f9",
+    borderBottomColor: colors.gray,
   },
 
   scrollContent: { padding: 16, gap: 10 },
 
   teamCard: {
-    backgroundColor: "#fff",
+    backgroundColor: colors.white,
     borderRadius: 16,
     padding: 14,
     flexDirection: "row",
     alignItems: "center",
     gap: 12,
-    shadowColor: "#000",
+    shadowColor: colors.black,
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.05,
     shadowRadius: 4,
@@ -59,7 +59,7 @@ export const ts = StyleSheet.create({
   },
   teamCardSelected: {
     borderColor: colors.primaryGradientMid,
-    backgroundColor: "#FFFBF8",
+    backgroundColor: colors.gray,
   },
 
   teamAvatar: {
@@ -69,17 +69,17 @@ export const ts = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  teamAvatarText: { color: "#fff", fontSize: 16, fontWeight: "800" },
+  teamAvatarText: { color: colors.white, fontSize: 16, fontWeight: "800" },
 
-  teamName: { fontSize: 14, fontWeight: "700", color: "#1e293b" },
-  teamMeta: { fontSize: 12, color: "#64748b", marginTop: 2 },
+  teamName: { fontSize: 14, fontWeight: "700", color: colors.dark },
+  teamMeta: { fontSize: 12, color: colors.placeholder, marginTop: 2 },
 
   radio: {
     width: 22,
     height: 22,
     borderRadius: 11,
     borderWidth: 2,
-    borderColor: "#e2e8f0",
+    borderColor: colors.grayDark,
     alignItems: "center",
     justifyContent: "center",
   },
@@ -87,7 +87,12 @@ export const ts = StyleSheet.create({
     backgroundColor: colors.primaryGradientMid,
     borderColor: colors.primaryGradientMid,
   },
-  radioDot: { width: 8, height: 8, borderRadius: 4, backgroundColor: "#fff" },
+  radioDot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: colors.white,
+  },
 
   emptyBox: {
     alignItems: "center",
@@ -98,12 +103,12 @@ export const ts = StyleSheet.create({
   emptyText: {
     fontSize: 16,
     fontWeight: "800",
-    color: "#94a3b8",
+    color: colors.placeholder,
     textAlign: "center",
   },
   emptySubText: {
     fontSize: 13,
-    color: "#cbd5e1",
+    color: colors.grayDark,
     textAlign: "center",
     lineHeight: 20,
   },
@@ -115,15 +120,15 @@ export const ts = StyleSheet.create({
     paddingVertical: 13,
     paddingHorizontal: 28,
   },
-  createTeamBtnText: { color: "#fff", fontSize: 14, fontWeight: "800" },
+  createTeamBtnText: { color: colors.white, fontSize: 14, fontWeight: "800" },
 
   bottomBar: {
-    backgroundColor: "#fff",
+    backgroundColor: colors.white,
     paddingHorizontal: 20,
     paddingTop: 14,
     borderTopWidth: 1,
-    borderTopColor: "#f1f5f9",
-    shadowColor: "#000",
+    borderTopColor: colors.gray,
+    shadowColor: colors.black,
     shadowOffset: { width: 0, height: -4 },
     shadowOpacity: 0.07,
     shadowRadius: 12,

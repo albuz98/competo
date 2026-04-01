@@ -17,11 +17,12 @@ import {
   ButtonFullColored,
   ButtonGeneric,
 } from "../../components/Button/Button";
+import { colors } from "../../theme/colors";
 
 const STATUS_COLORS: Record<string, string> = {
-  upcoming: "#3b82f6",
-  ongoing: "#10b981",
-  completed: "#6b7280",
+  upcoming: colors.blue,
+  ongoing: colors.success,
+  completed: colors.placeholder,
 };
 
 function TournamentCard({
@@ -129,7 +130,7 @@ export default function TournamentListScreen() {
   if (loading) {
     return (
       <View style={styles.center}>
-        <ActivityIndicator size="large" color="#4f46e5" />
+        <ActivityIndicator size="large" color={colors.blue} />
         <Text style={styles.loadingText}>Loading tournaments…</Text>
       </View>
     );
@@ -166,7 +167,7 @@ export default function TournamentListScreen() {
               setRefreshing(true);
               load();
             }}
-            tintColor="#4f46e5"
+            tintColor={colors.blue}
           />
         }
         ListEmptyComponent={
