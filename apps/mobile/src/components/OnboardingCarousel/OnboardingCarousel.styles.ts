@@ -1,4 +1,5 @@
 import { StyleSheet, Dimensions } from "react-native";
+import { colors } from "../../theme/colors";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 export const CARD_WIDTH = SCREEN_WIDTH * 0.75;
@@ -53,16 +54,16 @@ export const styles = StyleSheet.create({
     width: 8,
     height: 8,
     borderRadius: 4,
-    backgroundColor: "rgba(255,255,255,0.4)",
+    backgroundColor: colors.grayOpacized,
   },
-  dotActive: { backgroundColor: "#fff", width: 22 },
+  dotActive: { backgroundColor: colors.white, width: 22 },
 
   textBlock: {
     paddingHorizontal: 28,
     zIndex: 2,
   },
   title: {
-    color: "#fff",
+    color: colors.white,
     fontSize: 26,
     fontWeight: "800",
     textAlign: "center",

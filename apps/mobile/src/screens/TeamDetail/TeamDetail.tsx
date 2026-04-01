@@ -51,8 +51,10 @@ function MemberRow({
             <Text style={tds.memberAvatarText}>{initials.toUpperCase()}</Text>
           </LinearGradient>
         ) : (
-          <View style={[tds.memberAvatarInner, { backgroundColor: "#f1f5f9" }]}>
-            <Text style={[tds.memberAvatarText, { color: "#64748b" }]}>
+          <View
+            style={[tds.memberAvatarInner, { backgroundColor: colors.gray }]}
+          >
+            <Text style={[tds.memberAvatarText, { color: colors.placeholder }]}>
               {initials.toUpperCase()}
             </Text>
           </View>
@@ -65,7 +67,11 @@ function MemberRow({
           </Text>
           {isRep && (
             <View style={tds.crownBadge}>
-              <Ionicons name="star" size={10} color="#E8601A" />
+              <Ionicons
+                name="star"
+                size={10}
+                color={colors.primaryGradientMid}
+              />
               <Text style={tds.crownText}>Cap.</Text>
             </View>
           )}
@@ -84,7 +90,11 @@ function MemberRow({
               <ButtonBorderColored
                 handleBtn={onChangeRole}
                 iconRight={
-                  <Ionicons name="chevron-down" size={10} color="#64748b" />
+                  <Ionicons
+                    name="chevron-down"
+                    size={10}
+                    color={colors.placeholder}
+                  />
                 }
                 text={ROLE_LABEL[member.role] ?? member.role}
               />
@@ -149,7 +159,7 @@ export default function TeamDetail({ route, navigation }: Props) {
     return (
       <SafeAreaView style={tds.root} edges={["top"]}>
         <View style={tds.centerBox}>
-          <Text style={{ color: "#ef4444" }}>Squadra non trovata</Text>
+          <Text style={{ color: colors.danger }}>Squadra non trovata</Text>
         </View>
       </SafeAreaView>
     );
@@ -181,7 +191,11 @@ export default function TeamDetail({ route, navigation }: Props) {
               </View>
               <Text style={tds.teamName}>{team.name}</Text>
               <View style={tds.sportChip}>
-                <Ionicons name="shield-checkmark" size={12} color="#fff" />
+                <Ionicons
+                  name="shield-checkmark"
+                  size={12}
+                  color={colors.white}
+                />
                 <Text style={tds.sportChipText}>{team.sport}</Text>
               </View>
               <Text style={tds.membersCount}>
@@ -241,7 +255,11 @@ export default function TeamDetail({ route, navigation }: Props) {
             <ButtonFullColored
               text="Invita giocatori"
               iconLeft={
-                <Ionicons name="person-add-outline" size={20} color="#fff" />
+                <Ionicons
+                  name="person-add-outline"
+                  size={20}
+                  color={colors.white}
+                />
               }
               handleBtn={() =>
                 navigation.navigate("InvitePlayers", { teamId: team.id })
@@ -350,7 +368,11 @@ export default function TeamDetail({ route, navigation }: Props) {
                       {isOccupied ? " (già presente)" : ""}
                     </Text>
                     {isCurrent && (
-                      <Ionicons name="checkmark" size={18} color="#E8601A" />
+                      <Ionicons
+                        name="checkmark"
+                        size={18}
+                        color={colors.primaryGradientMid}
+                      />
                     )}
                   </ButtonGeneric>
                 );

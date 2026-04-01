@@ -1,7 +1,8 @@
 import { StyleSheet } from "react-native";
+import { colors } from "../../theme/colors";
 
 export const tss = StyleSheet.create({
-  root: { flex: 1, backgroundColor: "#f8fafc" },
+  root: { flex: 1, backgroundColor: colors.gray },
   centerBox: { flex: 1, alignItems: "center", justifyContent: "center" },
 
   header: {
@@ -9,9 +10,9 @@ export const tss = StyleSheet.create({
     alignItems: "center",
     paddingHorizontal: 16,
     paddingVertical: 14,
-    backgroundColor: "#fff",
+    backgroundColor: colors.white,
     borderBottomWidth: 1,
-    borderBottomColor: "#f1f5f9",
+    borderBottomColor: colors.gray,
   },
   backBtn: {
     width: 36,
@@ -23,7 +24,7 @@ export const tss = StyleSheet.create({
     flex: 1,
     fontSize: 18,
     fontWeight: "800",
-    color: "#1e293b",
+    color: colors.dark,
     paddingLeft: 4,
   },
   addBtn: {
@@ -37,13 +38,13 @@ export const tss = StyleSheet.create({
   scrollContent: { padding: 16, gap: 12 },
 
   teamCard: {
-    backgroundColor: "#fff",
+    backgroundColor: colors.white,
     borderRadius: 16,
     padding: 14,
     flexDirection: "row",
     alignItems: "center",
     gap: 12,
-    shadowColor: "#000",
+    shadowColor: colors.black,
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.06,
     shadowRadius: 6,
@@ -56,10 +57,10 @@ export const tss = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  teamAvatarText: { color: "#fff", fontSize: 18, fontWeight: "800" },
-  teamName: { fontSize: 15, fontWeight: "700", color: "#1e293b" },
-  teamMeta: { fontSize: 12, color: "#64748b", marginTop: 2 },
-  teamRep: { fontSize: 11, color: "#94a3b8", marginTop: 2 },
+  teamAvatarText: { color: colors.white, fontSize: 18, fontWeight: "800" },
+  teamName: { fontSize: 15, fontWeight: "700", color: colors.dark },
+  teamMeta: { fontSize: 12, color: colors.placeholder, marginTop: 2 },
+  teamRep: { fontSize: 11, color: colors.grayDark, marginTop: 2 },
 
   emptyBox: {
     flex: 1,
@@ -71,33 +72,33 @@ export const tss = StyleSheet.create({
     width: 88,
     height: 88,
     borderRadius: 44,
-    backgroundColor: "#f8fafc",
+    backgroundColor: colors.gray,
     alignItems: "center",
     justifyContent: "center",
     marginBottom: 16,
   },
-  emptyTitle: { fontSize: 18, fontWeight: "700", color: "#94a3b8" },
+  emptyTitle: { fontSize: 18, fontWeight: "700", color: colors.grayDark },
   emptySub: {
     fontSize: 13,
-    color: "#cbd5e1",
+    color: colors.grayDark,
     textAlign: "center",
     marginTop: 8,
     lineHeight: 20,
   },
   createBtn: {
     marginTop: 24,
-    backgroundColor: "#E8601A",
+    backgroundColor: colors.primaryGradientMid,
     borderRadius: 50,
     paddingVertical: 14,
     paddingHorizontal: 40,
   },
-  createBtnText: { color: "#fff", fontSize: 15, fontWeight: "800" },
+  createBtnText: { color: colors.white, fontSize: 15, fontWeight: "800" },
 
   invitesSection: {
-    backgroundColor: "#fff",
+    backgroundColor: colors.white,
     borderRadius: 16,
     overflow: "hidden",
-    shadowColor: "#000",
+    shadowColor: colors.black,
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.06,
     shadowRadius: 6,
@@ -107,19 +108,19 @@ export const tss = StyleSheet.create({
   invitesSectionTitle: {
     fontSize: 11,
     fontWeight: "700",
-    color: "#94a3b8",
+    color: colors.grayDark,
     textTransform: "uppercase",
     letterSpacing: 0.8,
     paddingHorizontal: 16,
     paddingTop: 14,
     paddingBottom: 10,
     borderBottomWidth: 1,
-    borderBottomColor: "#f1f5f9",
+    borderBottomColor: colors.gray,
   },
   inviteCard: {
     padding: 16,
     borderBottomWidth: 1,
-    borderBottomColor: "#f8fafc",
+    borderBottomColor: colors.gray,
   },
   inviteCardAvatar: {
     width: 46,
@@ -128,10 +129,14 @@ export const tss = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  inviteCardAvatarText: { color: "#fff", fontSize: 16, fontWeight: "800" },
+  inviteCardAvatarText: {
+    color: colors.white,
+    fontSize: 16,
+    fontWeight: "800",
+  },
   inviteCardInfo: { flex: 1 },
-  inviteTeamName: { fontSize: 15, fontWeight: "700", color: "#1e293b" },
-  inviteCardFrom: { fontSize: 12, color: "#94a3b8", marginTop: 2 },
+  inviteTeamName: { fontSize: 15, fontWeight: "700", color: colors.dark },
+  inviteCardFrom: { fontSize: 12, color: colors.grayDark, marginTop: 2 },
   inviteCardActions: {
     flexDirection: "row",
     gap: 10,

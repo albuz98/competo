@@ -25,7 +25,7 @@ import {
   ButtonIcon,
   ButtonReject,
 } from "../../components/Button/Button";
-import { colorGradient } from "../../theme/colors";
+import { colorGradient, colors } from "../../theme/colors";
 
 type Props = NativeStackScreenProps<RootStackParamList, "Teams">;
 
@@ -50,7 +50,7 @@ function TeamCard({ team, onPress }: { team: Team; onPress: () => void }) {
           </Text>
         )}
       </View>
-      <Ionicons name="chevron-forward" size={18} color="#cbd5e1" />
+      <Ionicons name="chevron-forward" size={18} color={colors.grayDark} />
     </ButtonGeneric>
   );
 }
@@ -117,27 +117,29 @@ export default function TeamsScreen({ navigation }: Props) {
 
   return (
     <View style={tss.root}>
-      <StatusBar barStyle="dark-content" backgroundColor="#fff" />
+      <StatusBar barStyle="dark-content" backgroundColor={colors.white} />
       <SafeAreaView style={{ flex: 1 }} edges={["top"]}>
         {/* Header */}
         <View style={tss.header}>
           <ButtonIcon
             handleBtn={() => navigation.goBack()}
             style={tss.backBtn}
-            icon={<Ionicons name="chevron-back" size={24} color="#1e293b" />}
+            icon={
+              <Ionicons name="chevron-back" size={24} color={colors.dark} />
+            }
           />
           <Text style={tss.headerTitle}>Le mie squadre</Text>
           <ButtonGradient
             style={tss.addBtn}
             handleBtn={() => navigation.navigate("CreateTeam")}
           >
-            <Ionicons name="add" size={20} color="#fff" />
+            <Ionicons name="add" size={20} color={colors.white} />
           </ButtonGradient>
         </View>
 
         {loading ? (
           <View style={tss.centerBox}>
-            <ActivityIndicator color="#E8601A" />
+            <ActivityIndicator color={colors.primaryGradientMid} />
           </View>
         ) : (
           <ScrollView
@@ -165,7 +167,11 @@ export default function TeamsScreen({ navigation }: Props) {
             {teams.length === 0 && pendingReceivedInvites.length === 0 ? (
               <View style={tss.emptyBox}>
                 <View style={tss.emptyIcon}>
-                  <Ionicons name="people-outline" size={48} color="#e2e8f0" />
+                  <Ionicons
+                    name="people-outline"
+                    size={48}
+                    color={colors.grayDark}
+                  />
                 </View>
                 <Text style={tss.emptyTitle}>Nessuna squadra</Text>
                 <Text style={tss.emptySub}>

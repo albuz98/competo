@@ -21,7 +21,7 @@ import {
   ButtonGeneric,
   ButtonIcon,
 } from "../../components/Button/Button";
-import { colorGradient } from "../../theme/colors";
+import { colorGradient, colors } from "../../theme/colors";
 
 type Props = NativeStackScreenProps<RootStackParamList, "TeamSelect">;
 
@@ -111,7 +111,10 @@ export default function TeamSelect({ route, navigation }: Props) {
           showsVerticalScrollIndicator={false}
         >
           {loading ? (
-            <ActivityIndicator color="#E8601A" style={{ marginTop: 32 }} />
+            <ActivityIndicator
+              color={colors.primaryGradientMid}
+              style={{ marginTop: 32 }}
+            />
           ) : teams.length === 0 ? (
             <View style={ts.emptyBox}>
               <Ionicons name="people-outline" size={48} color="#e2e8f0" />

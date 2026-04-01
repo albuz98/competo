@@ -1,4 +1,5 @@
 import { StyleSheet, Dimensions } from "react-native";
+import { colors } from "../../theme/colors";
 
 const { width: SW } = Dimensions.get("window");
 export const BIG_W = SW * 0.72;
@@ -6,7 +7,7 @@ export const BIG_H = 200;
 export const SMALL_W = SW * 0.42;
 
 export const styles = StyleSheet.create({
-  root: { flex: 1, backgroundColor: "#fff" },
+  root: { flex: 1, backgroundColor: colors.white },
   safeArea: { flex: 1 },
   scroll: { paddingBottom: 100 },
 
@@ -25,9 +26,9 @@ export const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  avatarText: { color: "#fff", fontSize: 20, fontWeight: "800" },
+  avatarText: { color: colors.white, fontSize: 20, fontWeight: "800" },
   greetingBlock: { flex: 1, display: "flex", flexDirection: "column" },
-  greetingText: { fontSize: 18, fontWeight: "800", color: "#1e293b" },
+  greetingText: { fontSize: 18, fontWeight: "800", color: colors.dark },
   locationRow: {
     display: "flex",
     flexDirection: "row",
@@ -38,11 +39,11 @@ export const styles = StyleSheet.create({
 
   modalOverlay: {
     flex: 1,
-    backgroundColor: "rgba(0,0,0,0.45)",
+    backgroundColor: colors.opacized,
     justifyContent: "flex-end",
   },
   modalCard: {
-    backgroundColor: "#fff",
+    backgroundColor: colors.white,
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
     padding: 28,
@@ -51,21 +52,21 @@ export const styles = StyleSheet.create({
   modalTitle: {
     fontSize: 18,
     fontWeight: "800",
-    color: "#1e293b",
+    color: colors.dark,
     marginBottom: 6,
   },
-  modalSub: { fontSize: 13, color: "#64748b", marginBottom: 20 },
+  modalSub: { fontSize: 13, color: colors.placeholder, marginBottom: 20 },
   modalInputRow: {
     flexDirection: "row",
     alignItems: "center",
     borderWidth: 1.5,
-    borderColor: "#e2e8f0",
+    borderColor: colors.grayDark,
     borderRadius: 12,
     paddingHorizontal: 14,
     paddingVertical: 12,
     marginBottom: 20,
   },
-  modalInput: { flex: 1, fontSize: 15, color: "#1e293b" },
+  modalInput: { flex: 1, fontSize: 15, color: colors.dark },
   modalBtns: { flexDirection: "row", gap: 12 },
   notifBtn: {
     width: 44,
@@ -81,18 +82,18 @@ export const styles = StyleSheet.create({
     width: 8,
     height: 8,
     borderRadius: 4,
-    backgroundColor: "#ef4444",
+    backgroundColor: colors.danger,
     borderWidth: 1.5,
-    borderColor: "#fff",
+    borderColor: colors.white,
   },
 
   searchBar: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#fff",
+    backgroundColor: colors.white,
     borderRadius: 50,
     borderWidth: 1,
-    borderColor: "#E2E8F0",
+    borderColor: colors.grayDark,
     marginHorizontal: 16,
     paddingHorizontal: 10,
     paddingVertical: 8,
@@ -106,12 +107,12 @@ export const styles = StyleSheet.create({
     justifyContent: "center",
     marginRight: 8,
   },
-  searchInput: { flex: 1, fontSize: 14, color: "#1e293b" },
+  searchInput: { flex: 1, fontSize: 14, color: colors.dark },
 
   sectionTitle: {
     fontSize: 18,
     fontWeight: "800",
-    color: "#1e293b",
+    color: colors.dark,
     paddingHorizontal: 16,
     marginBottom: 12,
   },
@@ -144,7 +145,7 @@ export const styles = StyleSheet.create({
   bigCardName: {
     fontSize: 12,
     fontWeight: "800",
-    color: "#1e293b",
+    color: colors.dark,
     letterSpacing: 0.2,
   },
   bigCardLocation: {
@@ -153,12 +154,12 @@ export const styles = StyleSheet.create({
     marginTop: 4,
     gap: 2,
   },
-  bigCardLocationText: { fontSize: 11, color: "#64748b" },
+  bigCardLocationText: { fontSize: 11, color: colors.placeholder },
 
   smallCard: {
     borderRadius: 16,
-    backgroundColor: "#fff",
-    shadowColor: "#000",
+    backgroundColor: colors.white,
+    shadowColor: colors.black,
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.12,
     shadowRadius: 10,
@@ -178,13 +179,13 @@ export const styles = StyleSheet.create({
   smallCardName: {
     fontSize: 11,
     fontWeight: "800",
-    color: "#1e293b",
+    color: colors.dark,
     marginBottom: 4,
   },
   smallCardRow: { flexDirection: "row", alignItems: "center", marginBottom: 2 },
-  smallCardMeta: { fontSize: 10, color: "#94a3b8", flex: 1 },
+  smallCardMeta: { fontSize: 10, color: colors.placeholder, flex: 1 },
   vediAltroBtn: {
-    backgroundColor: "#E8601A",
+    backgroundColor: colors.primaryGradientMid,
     borderRadius: 20,
     paddingVertical: 5,
     paddingHorizontal: 10,
@@ -192,7 +193,7 @@ export const styles = StyleSheet.create({
     marginTop: 8,
   },
   vediAltroText: {
-    color: "#fff",
+    color: colors.white,
     fontSize: 9,
     fontWeight: "800",
     letterSpacing: 0.5,

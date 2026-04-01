@@ -82,7 +82,7 @@ function BigCard({
   index: number;
   onPress: () => void;
 }) {
-  const colors = CARD_GRADIENTS[index % CARD_GRADIENTS.length];
+  const colorsGrad = CARD_GRADIENTS[index % CARD_GRADIENTS.length];
   const emoji = SPORT_EMOJI[tournament.game] ?? "🏆";
   const date = new Date(tournament.startDate).toLocaleDateString("it-IT", {
     day: "2-digit",
@@ -94,7 +94,7 @@ function BigCard({
       style={[styles.bigCard, { width: BIG_W, height: BIG_H }]}
       handleBtn={onPress}
     >
-      <LinearGradient colors={colors} style={styles.bigCardGradient}>
+      <LinearGradient colors={colorsGrad} style={styles.bigCardGradient}>
         <View style={styles.bigCardDecor} />
         <Text style={styles.bigCardEmoji}>{emoji}</Text>
         <View style={styles.bigCardOverlay}>
@@ -102,7 +102,11 @@ function BigCard({
             {tournament.name.toUpperCase()} – {date}
           </Text>
           <View style={styles.bigCardLocation}>
-            <Ionicons name="location-sharp" size={11} color="#64748b" />
+            <Ionicons
+              name="location-sharp"
+              size={11}
+              color={colors.placeholder}
+            />
             <Text style={styles.bigCardLocationText} numberOfLines={1}>
               {tournament.location}
             </Text>
@@ -123,7 +127,7 @@ function SmallCard({
   index: number;
   onPress: () => void;
 }) {
-  const colors = CARD_GRADIENTS[(index + 2) % CARD_GRADIENTS.length];
+  const colorsGrad = CARD_GRADIENTS[(index + 2) % CARD_GRADIENTS.length];
   const emoji = SPORT_EMOJI[tournament.game] ?? "🏆";
   const date = new Date(tournament.startDate).toLocaleDateString("it-IT", {
     day: "2-digit",
@@ -132,7 +136,7 @@ function SmallCard({
 
   return (
     <View style={[styles.smallCard, { width: SMALL_W }]}>
-      <LinearGradient colors={colors} style={styles.smallCardTop}>
+      <LinearGradient colors={colorsGrad} style={styles.smallCardTop}>
         <Text style={styles.smallCardEmoji}>{emoji}</Text>
       </LinearGradient>
       <View style={styles.smallCardBody}>
@@ -140,14 +144,22 @@ function SmallCard({
           {tournament.game.toUpperCase()} – {date}
         </Text>
         <View style={styles.smallCardRow}>
-          <Ionicons name="location-sharp" size={10} color="#94a3b8" />
+          <Ionicons
+            name="location-sharp"
+            size={10}
+            color={colors.placeholder}
+          />
           <Text style={styles.smallCardMeta} numberOfLines={1}>
             {" "}
             {tournament.location}
           </Text>
         </View>
         <View style={styles.smallCardRow}>
-          <Ionicons name="people-outline" size={10} color="#94a3b8" />
+          <Ionicons
+            name="people-outline"
+            size={10}
+            color={colors.placeholder}
+          />
           <Text style={styles.smallCardMeta}>
             {" "}
             {tournament.currentParticipants}/{tournament.maxParticipants}{" "}
@@ -155,11 +167,15 @@ function SmallCard({
           </Text>
         </View>
         <View style={styles.smallCardRow}>
-          <Ionicons name="cash-outline" size={10} color="#94a3b8" />
+          <Ionicons name="cash-outline" size={10} color={colors.placeholder} />
           <Text style={styles.smallCardMeta}> {tournament.entryFee}</Text>
         </View>
         <View style={styles.smallCardRow}>
-          <Ionicons name="trophy-outline" size={10} color="#94a3b8" />
+          <Ionicons
+            name="trophy-outline"
+            size={10}
+            color={colors.placeholder}
+          />
           <Text style={styles.smallCardMeta}> {tournament.prizePool}</Text>
         </View>
         <ButtonFullColored
@@ -214,7 +230,7 @@ export default function Home() {
 
   return (
     <View style={styles.root}>
-      <StatusBar barStyle="dark-content" backgroundColor="#fff" />
+      <StatusBar barStyle="dark-content" backgroundColor={colors.white} />
       <SafeAreaView style={styles.safeArea} edges={["top"]}>
         <ScrollView
           showsVerticalScrollIndicator={false}
@@ -235,7 +251,11 @@ export default function Home() {
                   }
                 }}
                 icon={
-                  <Ionicons name="location-sharp" size={12} color="#E8601A" />
+                  <Ionicons
+                    name="location-sharp"
+                    size={12}
+                    color={colors.primaryGradientMid}
+                  />
                 }
                 style={styles.locationRow}
                 color={
@@ -248,7 +268,7 @@ export default function Home() {
               handleBtn={() => navigation.navigate("Notifiche")}
               style={styles.notifBtn}
             >
-              <Ionicons name="notifications" size={20} color="#fff" />
+              <Ionicons name="notifications" size={20} color={colors.white} />
               {unreadCount > 0 && <View style={styles.notifBadge} />}
             </ButtonGradient>
           </View>
@@ -273,13 +293,13 @@ export default function Home() {
                   <Ionicons
                     name="location-outline"
                     size={18}
-                    color="#E8601A"
+                    color={colors.primaryGradientMid}
                     style={{ marginRight: 8 }}
                   />
                   <TextInput
                     style={styles.modalInput}
                     placeholder="Es. Milano, Roma..."
-                    placeholderTextColor="#94a3b8"
+                    placeholderTextColor={colors.placeholder}
                     value={locationInput}
                     onChangeText={setLocationInput}
                     autoFocus
@@ -312,12 +332,12 @@ export default function Home() {
               colors={colorGradient}
               style={styles.searchIconWrap}
             >
-              <Ionicons name="search" size={16} color="#fff" />
+              <Ionicons name="search" size={16} color={colors.white} />
             </LinearGradient>
             <TextInput
               style={[styles.searchInput, { outline: "none" } as any]}
               placeholder="Cerca..."
-              placeholderTextColor="#9CA3AF"
+              placeholderTextColor={colors.placeholder}
               value={search}
               onChangeText={setSearch}
             />

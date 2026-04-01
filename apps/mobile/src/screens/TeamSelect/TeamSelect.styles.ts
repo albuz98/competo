@@ -1,4 +1,5 @@
 import { StyleSheet } from "react-native";
+import { colors } from "../../theme/colors";
 
 export const ts = StyleSheet.create({
   root: { flex: 1, backgroundColor: "#f8fafc" },
@@ -56,7 +57,10 @@ export const ts = StyleSheet.create({
     borderWidth: 2,
     borderColor: "transparent",
   },
-  teamCardSelected: { borderColor: "#E8601A", backgroundColor: "#FFFBF8" },
+  teamCardSelected: {
+    borderColor: colors.primaryGradientMid,
+    backgroundColor: "#FFFBF8",
+  },
 
   teamAvatar: {
     width: 46,
@@ -79,7 +83,10 @@ export const ts = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  radioSelected: { backgroundColor: "#E8601A", borderColor: "#E8601A" },
+  radioSelected: {
+    backgroundColor: colors.primaryGradientMid,
+    borderColor: colors.primaryGradientMid,
+  },
   radioDot: { width: 8, height: 8, borderRadius: 4, backgroundColor: "#fff" },
 
   emptyBox: {
@@ -103,7 +110,7 @@ export const ts = StyleSheet.create({
 
   createTeamBtn: {
     marginTop: 4,
-    backgroundColor: "#E8601A",
+    backgroundColor: colors.primaryGradientMid,
     borderRadius: 50,
     paddingVertical: 13,
     paddingHorizontal: 28,

@@ -30,6 +30,7 @@ import {
 } from "../../components/Button/Button";
 import { sizesEnum } from "../../theme/dimension";
 import { TabBar } from "../../components/TabBar/TabBar";
+import { colors } from "../../theme/colors";
 
 type Props = NativeStackScreenProps<RootStackParamList, "InvitePlayers">;
 type Tab = "cerca" | "condividi";
@@ -63,7 +64,7 @@ function UserRow({
         </View>
       ) : invited ? (
         <View style={ip.invitedBadge}>
-          <Ionicons name="checkmark" size={14} color="#10b981" />
+          <Ionicons name="checkmark" size={14} color={colors.success} />
           <Text style={ip.invitedBadgeText}>In attesa</Text>
         </View>
       ) : (
@@ -163,13 +164,15 @@ export default function InvitePlayers({ route, navigation }: Props) {
   if (!isRep) {
     return (
       <View style={ip.root}>
-        <StatusBar barStyle="dark-content" backgroundColor="#fff" />
+        <StatusBar barStyle="dark-content" backgroundColor={colors.white} />
         <SafeAreaView style={{ flex: 1 }} edges={["top"]}>
           <View style={ip.header}>
             <ButtonIcon
               handleBtn={() => navigation.goBack()}
               style={ip.backBtn}
-              icon={<Ionicons name="chevron-back" size={24} color="#1e293b" />}
+              icon={
+                <Ionicons name="chevron-back" size={24} color={colors.dark} />
+              }
             />
             <Text style={ip.headerTitle}>Invita giocatori</Text>
             <View style={{ width: 36 }} />
@@ -182,12 +185,16 @@ export default function InvitePlayers({ route, navigation }: Props) {
               padding: 32,
             }}
           >
-            <Ionicons name="lock-closed-outline" size={48} color="#e2e8f0" />
+            <Ionicons
+              name="lock-closed-outline"
+              size={48}
+              color={colors.grayDark}
+            />
             <Text
               style={{
                 fontSize: 16,
                 fontWeight: "700",
-                color: "#94a3b8",
+                color: colors.placeholder,
                 marginTop: 16,
                 textAlign: "center",
               }}
@@ -202,7 +209,7 @@ export default function InvitePlayers({ route, navigation }: Props) {
 
   return (
     <View style={ip.root}>
-      <StatusBar barStyle="dark-content" backgroundColor="#fff" />
+      <StatusBar barStyle="dark-content" backgroundColor={colors.white} />
       <SafeAreaView style={{ flex: 1 }} edges={["top"]}>
         {/* Header */}
         <View style={ip.header}>
@@ -236,7 +243,7 @@ export default function InvitePlayers({ route, navigation }: Props) {
               <Ionicons
                 name="search"
                 size={18}
-                color="#94a3b8"
+                color={colors.placeholder}
                 style={{ marginRight: 8 }}
               />
               <TextInput
@@ -244,7 +251,7 @@ export default function InvitePlayers({ route, navigation }: Props) {
                 value={query}
                 onChangeText={setQuery}
                 placeholder="Cerca per nome o username..."
-                placeholderTextColor="#94a3b8"
+                placeholderTextColor={colors.placeholder}
                 autoFocus={tab === "cerca"}
                 returnKeyType="search"
               />
@@ -252,7 +259,11 @@ export default function InvitePlayers({ route, navigation }: Props) {
                 <ButtonIcon
                   handleBtn={() => setQuery("")}
                   icon={
-                    <Ionicons name="close-circle" size={18} color="#cbd5e1" />
+                    <Ionicons
+                      name="close-circle"
+                      size={18}
+                      color={colors.grayDark}
+                    />
                   }
                 />
               )}
@@ -260,10 +271,17 @@ export default function InvitePlayers({ route, navigation }: Props) {
 
             {/* Results */}
             {searching ? (
-              <ActivityIndicator color="#E8601A" style={{ marginTop: 32 }} />
+              <ActivityIndicator
+                color={colors.primaryGradientMid}
+                style={{ marginTop: 32 }}
+              />
             ) : query.trim().length === 0 ? (
               <View style={ip.hintBox}>
-                <Ionicons name="people-outline" size={40} color="#e2e8f0" />
+                <Ionicons
+                  name="people-outline"
+                  size={40}
+                  color={colors.disabled}
+                />
                 <Text style={ip.hintText}>
                   Cerca un giocatore per nome o username per invitarlo alla tua
                   squadra.
@@ -297,7 +315,11 @@ export default function InvitePlayers({ route, navigation }: Props) {
           /* Share link tab */
           <View style={ip.shareTab}>
             <View style={ip.shareIllustration}>
-              <Ionicons name="link" size={36} color="#E8601A" />
+              <Ionicons
+                name="link"
+                size={36}
+                color={colors.primaryGradientMid}
+              />
             </View>
             <Text style={ip.shareTitle}>Condividi il link di invito</Text>
             <Text style={ip.shareSub}>
@@ -313,7 +335,11 @@ export default function InvitePlayers({ route, navigation }: Props) {
 
             <ButtonFullColored
               iconRight={
-                <Ionicons name="share-social-outline" size={20} color="#fff" />
+                <Ionicons
+                  name="share-social-outline"
+                  size={20}
+                  color={colors.white}
+                />
               }
               text="Condividi"
               handleBtn={handleShare}
@@ -325,7 +351,7 @@ export default function InvitePlayers({ route, navigation }: Props) {
                 ["logo-whatsapp", "logo-instagram", "mail-outline"] as const
               ).map((icon) => {
                 const theIcon = (
-                  <Ionicons name={icon} size={22} color="#64748b" />
+                  <Ionicons name={icon} size={22} color={colors.placeholder} />
                 );
                 return (
                   <ButtonIcon

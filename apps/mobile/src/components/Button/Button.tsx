@@ -34,16 +34,16 @@ export function ButtonFullColored({
   isDisabled,
   loading,
   isColored = false,
-  loaderColor = "#E8601A",
+  loaderColor = colors.primaryGradientMid,
   size = sizesEnum.big,
 }: ButtonFullColoredProps) {
   const colorBg = isDisabled
     ? colors.disabled
     : isColored
       ? colors.primaryGradientMid
-      : "#fff";
+      : colors.white;
   const colorText =
-    isColored && !isDisabled ? "#fff" : colors.primaryGradientMid;
+    isColored && !isDisabled ? colors.white : colors.primaryGradientMid;
 
   const dimensionBtn =
     size === sizesEnum.small
@@ -115,12 +115,13 @@ export function ButtonBorderColored({
   handleBtn,
   isDisabled,
   loading,
-  loaderColor = "#E8601A",
+  loaderColor = colors.primaryGradientMid,
   size = sizesEnum.big,
   isColored = false,
   isActive = false,
 }: ButtonBorderColoredProps) {
-  const color = isActive || !isColored ? "#fff" : colors.primaryGradientMid;
+  const color =
+    isActive || !isColored ? colors.white : colors.primaryGradientMid;
   const dimensionBtn =
     size === sizesEnum.small
       ? small.btn
@@ -194,7 +195,7 @@ export function ButtonLink({
   const styleText = color
     ? color
     : !isColored
-      ? "#fff"
+      ? colors.white
       : colors.primaryGradientMid;
 
   return (
@@ -231,7 +232,7 @@ export function ButtonIcon({
   isDisabled,
   loading,
   style,
-  loaderColor = "#E8601A",
+  loaderColor = colors.primaryGradientMid,
   hitSlop,
 }: ButtonIconProps) {
   const defaultHitSlop: Insets = { top: 8, bottom: 8, left: 8, right: 8 };
@@ -371,14 +372,14 @@ export function ButtonBack({ handleBtn, isArrowBack = true }: ButtonBackProps) {
       onPress={handleBtn}
       style={[
         styles.backBtn,
-        { backgroundColor: isArrowBack ? "rgba(0,0,0,0.15)" : "transparent" },
+        { backgroundColor: isArrowBack ? colors.opacized : colors.transparent },
       ]}
       activeOpacity={0.85}
     >
       <Ionicons
         name={isArrowBack ? "arrow-back" : "chevron-back"}
         size={isArrowBack ? 22 : 24}
-        color={isArrowBack ? "#fff" : "000"}
+        color={isArrowBack ? colors.white : colors.black}
       />
     </TouchableOpacity>
   );

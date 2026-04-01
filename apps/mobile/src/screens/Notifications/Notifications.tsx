@@ -15,6 +15,7 @@ import {
   ButtonGeneric,
   ButtonLink,
 } from "../../components/Button/Button";
+import { colors } from "../../theme/colors";
 
 function formatDate(iso: string) {
   const d = new Date(iso);
@@ -84,25 +85,29 @@ export default function Notifications() {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.list}
         ItemSeparatorComponent={() => <View style={styles.separator} />}
-        renderItem={({ item }) => (
-          <NotifItem
-            item={item}
-            onPress={() => {
-              markAsRead(item.id);
-              if (item.tournamentId) {
-                navigation.navigate("TournamentDetail", {
-                  tournamentId: item.tournamentId,
-                });
-              }
-            }}
-          />
-        )}
+        renderItem={({ item }) => {
+          return (
+            <NotifItem
+              item={item}
+              onPress={() => {
+                markAsRead(item.id);
+                if (item.tournamentId) {
+                  navigation.navigate("TournamentDetail", {
+                    tournamentId: item.tournamentId,
+                  });
+                } else if (item.teamId) {
+                  navigation.navigate("Teams");
+                }
+              }}
+            />
+          );
+        }}
         ListEmptyComponent={
           <View style={styles.empty}>
             <Ionicons
               name="notifications-off-outline"
               size={52}
-              color="#e2e8f0"
+              color={colors.grayDark}
             />
             <Text style={styles.emptyText}>Nessuna notifica</Text>
           </View>

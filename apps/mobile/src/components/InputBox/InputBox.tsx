@@ -11,6 +11,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { styles } from "./InputBox.styles";
 import { ButtonIcon } from "../Button/Button";
 import { ButtonEnum } from "../../types/components";
+import { colors } from "../../theme/colors";
 
 type CommonProps = {
   value: string;
@@ -95,7 +96,7 @@ export default function InputBox(props: InputBoxProps) {
               value={value}
               onChangeText={onChangeText}
               placeholder={placeholder}
-              placeholderTextColor="#94a3b8"
+              placeholderTextColor={colors.placeholder}
               secureTextEntry={secureTextEntry && hidden}
               textContentType={textContentType ?? "oneTimeCode"}
               keyboardType={keyboardType}
@@ -112,7 +113,7 @@ export default function InputBox(props: InputBoxProps) {
                   <Ionicons
                     name={hidden ? "eye-outline" : "eye-off-outline"}
                     size={18}
-                    color="#94a3b8"
+                    color={colors.placeholder}
                   />
                 }
               />

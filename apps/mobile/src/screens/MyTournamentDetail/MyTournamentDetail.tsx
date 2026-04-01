@@ -459,7 +459,7 @@ export default function MyTournamentDetailScreen({ route, navigation }: Props) {
           flex: 1,
           justifyContent: "center",
           alignItems: "center",
-          backgroundColor: "#f8fafc",
+          backgroundColor: colors.gray,
         }}
       >
         <ActivityIndicator size="large" color={colors.primary} />
@@ -515,7 +515,11 @@ export default function MyTournamentDetailScreen({ route, navigation }: Props) {
             </>
           ) : (
             <>
-              <Ionicons name="time-outline" size={48} color="#94a3b8" />
+              <Ionicons
+                name="time-outline"
+                size={48}
+                color={colors.placeholder}
+              />
               <Text style={tds.waitingTitle}>In attesa del bracket</Text>
               <Text style={tds.waitingText}>
                 L'organizzatore sta preparando il torneo. Torna tra poco.

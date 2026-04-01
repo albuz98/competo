@@ -24,7 +24,7 @@ import {
   ButtonFullColored,
   ButtonIcon,
 } from "../../components/Button/Button";
-import { colorGradient } from "../../theme/colors";
+import { colorGradient, colors } from "../../theme/colors";
 
 type Props = NativeStackScreenProps<RootStackParamList, "TournamentDetail">;
 
@@ -65,7 +65,12 @@ function Row({
 }) {
   return (
     <View style={styles.row}>
-      <Ionicons name={icon} size={16} color="#E8601A" style={{ width: 22 }} />
+      <Ionicons
+        name={icon}
+        size={16}
+        color={colors.primaryGradientMid}
+        style={{ width: 22 }}
+      />
       <Text style={styles.rowLabel}>{label}</Text>
       <Text style={styles.rowValue}>{value}</Text>
     </View>

@@ -229,7 +229,6 @@ export type RootStackParamList = {
   TeamDetail: { teamId: string };
   InvitePlayers: { teamId: string };
   OrganizerTournamentDetail: { tournamentId: string };
-  PlayerProfile: { playerJson: string };
 };
 
 export type MainTabParamList = {

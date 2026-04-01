@@ -1,4 +1,5 @@
 import { StyleSheet } from "react-native";
+import { colors } from "../../theme/colors";
 
 export const styles = StyleSheet.create({
   root: { flex: 1, backgroundColor: "#f8fafc" },
@@ -116,7 +117,11 @@ export const styles = StyleSheet.create({
     overflow: "hidden",
     marginBottom: 8,
   },
-  progressFill: { height: "100%", backgroundColor: "#E8601A", borderRadius: 4 },
+  progressFill: {
+    height: "100%",
+    backgroundColor: colors.primaryGradientMid,
+    borderRadius: 4,
+  },
   progressLabels: { flexDirection: "row", justifyContent: "space-between" },
   progressText: { fontSize: 12, color: "#64748b" },
 
@@ -137,7 +142,11 @@ export const styles = StyleSheet.create({
     justifyContent: "center",
     marginTop: 1,
   },
-  ruleNumberText: { fontSize: 11, fontWeight: "800", color: "#E8601A" },
+  ruleNumberText: {
+    fontSize: 11,
+    fontWeight: "800",
+    color: colors.primaryGradientMid,
+  },
   ruleText: { flex: 1, fontSize: 14, color: "#475569", lineHeight: 20 },
   bottomBar: {
     position: "absolute",

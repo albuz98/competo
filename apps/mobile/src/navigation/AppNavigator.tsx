@@ -15,12 +15,12 @@ import Login from "../screens/Login/Login";
 import MyTournamentDetail from "../screens/MyTournamentDetail/MyTournamentDetail";
 import Notifications from "../screens/Notifications/Notifications";
 import Payment from "../screens/Payment/Payment";
-import PlayerProfile from "../screens/PlayerProfile/PlayerProfile";
 import Register from "../screens/Register/Register";
 import TeamDetail from "../screens/TeamDetail/TeamDetail";
 import TeamSelect from "../screens/TeamSelect/TeamSelect";
 import ChoseAccess from "../screens/ChoseAccess/ChoseAccess";
 import TournamentDetail from "../screens/TournamentDetail/TournamentDetail";
+import { colors } from "../theme/colors";
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -39,10 +39,10 @@ export default function AppNavigator() {
           flex: 1,
           justifyContent: "center",
           alignItems: "center",
-          backgroundColor: "#f8fafc",
+          backgroundColor: colors.gray,
         }}
       >
-        <ActivityIndicator size="large" color="#E8601A" />
+        <ActivityIndicator size="large" color={colors.primaryGradientMid} />
       </View>
     );
   }
@@ -53,10 +53,10 @@ export default function AppNavigator() {
       <Stack.Navigator
         initialRouteName={user ? "MainTabs" : "ChoseAccess"}
         screenOptions={{
-          headerStyle: { backgroundColor: "#4f46e5" },
-          headerTintColor: "#fff",
+          headerStyle: { backgroundColor: colors.blue },
+          headerTintColor: colors.white,
           headerTitleStyle: { fontWeight: "bold" },
-          contentStyle: { backgroundColor: "#f8fafc" },
+          contentStyle: { backgroundColor: colors.gray },
         }}
       >
         <Stack.Screen
@@ -69,7 +69,7 @@ export default function AppNavigator() {
           component={Login}
           options={{
             headerShown: false,
-            contentStyle: { backgroundColor: "#000" },
+            contentStyle: { backgroundColor: colors.black },
           }}
         />
         <Stack.Screen
@@ -77,7 +77,7 @@ export default function AppNavigator() {
           component={Register}
           options={{
             headerShown: false,
-            contentStyle: { backgroundColor: "#000" },
+            contentStyle: { backgroundColor: colors.black },
           }}
         />
         <Stack.Screen
@@ -100,7 +100,7 @@ export default function AppNavigator() {
           component={ForgotPassword}
           options={{
             headerShown: false,
-            contentStyle: { backgroundColor: "#000" },
+            contentStyle: { backgroundColor: colors.black },
           }}
         />
         <Stack.Screen
@@ -136,11 +136,6 @@ export default function AppNavigator() {
         <Stack.Screen
           name="InvitePlayers"
           component={InvitePlayers}
-          options={{ headerShown: false }}
-        />
-        <Stack.Screen
-          name="PlayerProfile"
-          component={PlayerProfile}
           options={{ headerShown: false }}
         />
       </Stack.Navigator>

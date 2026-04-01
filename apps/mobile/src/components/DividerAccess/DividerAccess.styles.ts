@@ -1,4 +1,5 @@
 import { StyleSheet } from "react-native";
+import { colors } from "../../theme/colors";
 
 export const styles = StyleSheet.create({
   divider: {
@@ -11,10 +12,10 @@ export const styles = StyleSheet.create({
   dividerLine: {
     flex: 1,
     height: 1,
-    backgroundColor: "rgba(255,255,255,0.3)",
+    backgroundColor: colors.grayOpacized,
   },
   dividerText: {
-    color: "#fff",
+    color: colors.white,
     fontSize: 15,
     fontWeight: "600",
   },

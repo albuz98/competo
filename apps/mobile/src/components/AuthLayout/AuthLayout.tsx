@@ -9,7 +9,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { LinearGradient } from "expo-linear-gradient";
 import { Ionicons } from "@expo/vector-icons";
 import { styles } from "./AuthLayout.styles";
-import { colorGradientReverse } from "../../theme/colors";
+import { colorGradientReverse, colors } from "../../theme/colors";
 import { ButtonIcon } from "../Button/Button";
 
 type Props = {
@@ -20,13 +20,13 @@ type Props = {
 export default function AuthLayout({ children, onClose }: Props) {
   return (
     <View style={styles.root}>
-      <StatusBar barStyle="light-content" backgroundColor="#000" />
+      <StatusBar barStyle="light-content" backgroundColor={colors.black} />
       <SafeAreaView style={styles.safeArea}>
         <View style={styles.topArea}>
           {onClose && (
             <ButtonIcon
               handleBtn={onClose}
-              icon={<Ionicons name="close" size={26} color="#fff" />}
+              icon={<Ionicons name="close" size={26} color={colors.white} />}
               style={styles.closeBtn}
             />
           )}

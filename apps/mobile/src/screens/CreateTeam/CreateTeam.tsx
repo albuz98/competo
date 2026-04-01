@@ -56,7 +56,7 @@ export default function CreateTeam({ navigation }: Props) {
 
   return (
     <View style={cs.root}>
-      <StatusBar barStyle="dark-content" backgroundColor="#fff" />
+      <StatusBar barStyle="dark-content" backgroundColor={colors.white} />
       <SafeAreaView style={{ flex: 1 }} edges={["top"]}>
         <KeyboardAvoidingView
           style={{ flex: 1 }}
@@ -66,7 +66,9 @@ export default function CreateTeam({ navigation }: Props) {
           <View style={cs.header}>
             <ButtonIcon
               handleBtn={() => navigation.goBack()}
-              icon={<Ionicons name="chevron-back" size={24} color="#1e293b" />}
+              icon={
+                <Ionicons name="chevron-back" size={24} color={colors.dark} />
+              }
               style={cs.backBtn}
             />
             <Text style={cs.headerTitle}>Crea squadra</Text>
@@ -89,7 +91,7 @@ export default function CreateTeam({ navigation }: Props) {
               <Ionicons
                 name="shield-outline"
                 size={18}
-                color="#E8601A"
+                color={colors.primaryGradientMid}
                 style={{ marginRight: 10 }}
               />
               <TextInput
@@ -100,7 +102,7 @@ export default function CreateTeam({ navigation }: Props) {
                   setCreateError(null);
                 }}
                 placeholder="Es. Roma Eagles FC"
-                placeholderTextColor="#94a3b8"
+                placeholderTextColor={colors.grayDark}
                 autoFocus
                 returnKeyType="done"
                 maxLength={40}
@@ -110,7 +112,7 @@ export default function CreateTeam({ navigation }: Props) {
             {createError && (
               <Text
                 style={{
-                  color: "#ef4444",
+                  color: colors.danger,
                   fontSize: 13,
                   marginTop: -8,
                   marginBottom: 8,
@@ -151,7 +153,7 @@ export default function CreateTeam({ navigation }: Props) {
               <Ionicons
                 name="information-circle-outline"
                 size={18}
-                color="#E8601A"
+                color={colors.primaryGradientMid}
               />
               <Text style={cs.infoText}>
                 Creando la squadra diventerai automaticamente il rappresentante
@@ -167,14 +169,16 @@ export default function CreateTeam({ navigation }: Props) {
                   name="people"
                   size={18}
                   color={
-                    !(!isValid || loading) ? "#fff" : colors.primaryGradientMid
+                    !(!isValid || loading)
+                      ? colors.white
+                      : colors.primaryGradientMid
                   }
                 />
               }
               handleBtn={handleCreate}
               isDisabled={!isValid || loading}
               loading={loading}
-              loaderColor="#fff"
+              loaderColor={colors.white}
               isColored
             />
           </ScrollView>

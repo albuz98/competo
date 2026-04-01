@@ -5,13 +5,24 @@ export const colors = {
   primaryGradientMidOpacized: "#f2691abd",
   primaryGradientEnd: "#f89d00",
   primarySelectedBg: "#FFF0E6",
-  disabled: "#e2e8f0",
-  disabledBg: "#f8fafc",
   placeholder: "#64748b",
-
-  // Semantic
   danger: "#d91a1a",
   success: "#10b981",
+  successBg: "#dcfce7",
+  disabled: "#e2e8f0",
+  disabledBg: "#f8fafc",
+  opacized: "rgba(0,0,0,0.25)",
+  black: "#000",
+  white: "#fff",
+  transparent: "transparent",
+  gray: "#f1f5f9",
+  grayOpacized: "rgba(255,255,255,0.7)",
+  dark: "#1e293b",
+  blue: "#4f46e5",
+  grayDark: "#94a3b8",
+  purple: "#8b5cf6",
+  yellow: "#fef9c3",
+  brown: "#854d0e",
 } as const;
 
 export const colorGradient = [

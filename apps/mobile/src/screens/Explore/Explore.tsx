@@ -28,6 +28,7 @@ import {
   ButtonIcon,
   ButtonSelectable,
 } from "../../components/Button/Button";
+import { colors } from "../../theme/colors";
 
 const DEFAULT = { lat: 45.4642, lng: 9.19 }; // Milan fallback
 const RADIUS_OPTIONS = [5, 10, 20, 50];
@@ -234,7 +235,7 @@ export default function Explore() {
   if (geoLoading && !center) {
     return (
       <View style={styles.loadingRoot}>
-        <ActivityIndicator size="large" color="#E8601A" />
+        <ActivityIndicator size="large" color={colors.primaryGradientMid} />
         <Text style={styles.loadingText}>Caricamento mappa…</Text>
       </View>
     );
@@ -262,7 +263,7 @@ export default function Explore() {
         <Circle
           center={{ latitude: center.lat, longitude: center.lng }}
           radius={exploraRadius * 1000}
-          strokeColor="#C44E0A"
+          strokeColor={colors.danger}
           strokeWidth={2.5}
           fillColor="rgba(232,96,26,0.10)"
         />
@@ -274,7 +275,7 @@ export default function Explore() {
           zIndex={10}
         >
           <View style={styles.centerPin}>
-            <Ionicons name="location-sharp" size={20} color="#fff" />
+            <Ionicons name="location-sharp" size={20} color={colors.white} />
           </View>
         </Marker>
 
@@ -303,24 +304,38 @@ export default function Explore() {
         <View style={[styles.tournamentCard, { bottom: insets.bottom + 90 }]}>
           <ButtonIcon
             handleBtn={() => setSelectedTournament(null)}
-            icon={<Ionicons name="close" size={18} color="#94a3b8" />}
+            icon={
+              <Ionicons name="close" size={18} color={colors.placeholder} />
+            }
             style={styles.tournamentCardDismiss}
           />
           <Text style={styles.tournamentCardName} numberOfLines={2}>
             {selectedTournament.name}
           </Text>
           <View style={styles.tournamentCardRow}>
-            <Ionicons name="football-outline" size={13} color="#E8601A" />
+            <Ionicons
+              name="football-outline"
+              size={13}
+              color={colors.primaryGradientMid}
+            />
             <Text style={styles.tournamentCardGame}>
               {selectedTournament.game}
             </Text>
             <View style={styles.tournamentCardDot} />
-            <Ionicons name="cash-outline" size={13} color="#64748b" />
+            <Ionicons
+              name="cash-outline"
+              size={13}
+              color={colors.placeholder}
+            />
             <Text style={styles.tournamentCardMeta}>
               {selectedTournament.entryFee}
             </Text>
             <View style={styles.tournamentCardDot} />
-            <Ionicons name="people-outline" size={13} color="#64748b" />
+            <Ionicons
+              name="people-outline"
+              size={13}
+              color={colors.placeholder}
+            />
             <Text style={styles.tournamentCardMeta}>
               {selectedTournament.currentParticipants}/
               {selectedTournament.maxParticipants}
@@ -328,7 +343,9 @@ export default function Explore() {
           </View>
           <ButtonFullColored
             text="Vedi dettagli"
-            iconRight={<Ionicons name="arrow-forward" size={15} color="#fff" />}
+            iconRight={
+              <Ionicons name="arrow-forward" size={15} color={colors.white} />
+            }
             handleBtn={() => {
               setSelectedTournament(null);
               navigation.navigate("TournamentDetail", {
@@ -348,18 +365,22 @@ export default function Explore() {
         {geoLoading ? (
           <ActivityIndicator
             size="small"
-            color="#E8601A"
+            color={colors.primaryGradientMid}
             style={{ marginRight: 4 }}
           />
         ) : (
-          <Ionicons name="location-sharp" size={14} color="#E8601A" />
+          <Ionicons
+            name="location-sharp"
+            size={14}
+            color={colors.primaryGradientMid}
+          />
         )}
         <Text style={styles.badgeText} numberOfLines={1}>
           {exploraLocation ?? "Posizione attuale"}
         </Text>
         <View style={styles.badgeDivider} />
         <Text style={styles.badgeRadius}>{exploraRadius} km</Text>
-        <Ionicons name="chevron-down" size={13} color="#94a3b8" />
+        <Ionicons name="chevron-down" size={13} color={colors.placeholder} />
       </ButtonGeneric>
 
       {/* City-not-found toast */}
@@ -381,7 +402,7 @@ export default function Explore() {
         ]}
         pointerEvents="none"
       >
-        <Ionicons name="warning-outline" size={15} color="#fff" />
+        <Ionicons name="warning-outline" size={15} color={colors.white} />
         <Text style={styles.toastText}>
           Città non trovata. Uso posizione attuale.
         </Text>
@@ -390,7 +411,9 @@ export default function Explore() {
       {/* Recenter button */}
       <ButtonIcon
         handleBtn={handleRecenter}
-        icon={<Ionicons name="locate" size={22} color="#E8601A" />}
+        icon={
+          <Ionicons name="locate" size={22} color={colors.primaryGradientMid} />
+        }
         style={[styles.recenterBtn, { bottom: insets.bottom + 90 }]}
       />
 
@@ -418,7 +441,7 @@ export default function Explore() {
               <Ionicons
                 name="location-outline"
                 size={18}
-                color="#E8601A"
+                color={colors.primaryGradientMid}
                 style={{ marginRight: 8 }}
               />
               <TextInput
@@ -426,13 +449,17 @@ export default function Explore() {
                 value={modalLoc}
                 onChangeText={setModalLoc}
                 placeholder="Es. Milano, Napoli..."
-                placeholderTextColor="#94a3b8"
+                placeholderTextColor={colors.placeholder}
                 returnKeyType="done"
               />
               {modalLoc.length > 0 && (
                 <ButtonIcon
                   icon={
-                    <Ionicons name="close-circle" size={18} color="#cbd5e1" />
+                    <Ionicons
+                      name="close-circle"
+                      size={18}
+                      color={colors.grayDark}
+                    />
                   }
                   handleBtn={() => setModalLoc("")}
                 />

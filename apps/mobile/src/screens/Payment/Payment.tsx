@@ -25,7 +25,7 @@ import {
   ButtonFullColored,
   ButtonIcon,
 } from "../../components/Button/Button";
-import { colorGradient } from "../../theme/colors";
+import { colorGradient, colors } from "../../theme/colors";
 
 type Props = NativeStackScreenProps<RootStackParamList, "Payment">;
 
@@ -93,12 +93,12 @@ export default function PaymentScreen({ navigation, route }: Props) {
 
   return (
     <View style={styles.root}>
-      <StatusBar barStyle="light-content" backgroundColor="#000" />
+      <StatusBar barStyle="light-content" backgroundColor={colors.black} />
       <SafeAreaView style={styles.safeArea}>
         <View style={styles.topArea}>
           <ButtonIcon
             handleBtn={() => navigation.goBack()}
-            icon={<Ionicons name="close" size={26} color="#fff" />}
+            icon={<Ionicons name="close" size={26} color={colors.white} />}
             style={styles.closeBtn}
           />
         </View>
@@ -127,13 +127,21 @@ export default function PaymentScreen({ navigation, route }: Props) {
               </Text>
               {teamName && (
                 <View style={styles.teamBadge}>
-                  <Ionicons name="people-outline" size={13} color="#E8601A" />
+                  <Ionicons
+                    name="people-outline"
+                    size={13}
+                    color={colors.primaryGradientMid}
+                  />
                   <Text style={styles.teamBadgeText}>{teamName}</Text>
                 </View>
               )}
 
               <View style={styles.feeBadge}>
-                <Ionicons name="trophy-outline" size={14} color="#E8601A" />
+                <Ionicons
+                  name="trophy-outline"
+                  size={14}
+                  color={colors.primaryGradientMid}
+                />
                 <Text style={styles.feeText}>{entryFee}</Text>
               </View>
 

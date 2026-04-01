@@ -2,14 +2,14 @@ import { StyleSheet } from "react-native";
 import { colors } from "../../theme/colors";
 
 export const styles = StyleSheet.create({
-  root: { flex: 1, backgroundColor: "#000" },
+  root: { flex: 1, backgroundColor: colors.black },
   safeArea: { flex: 1 },
   flex: { flex: 1 },
 
   topArea: { paddingHorizontal: 20, paddingTop: 8, paddingBottom: 100 },
   backBtn: { flexDirection: "row", alignItems: "center", gap: 6 },
-  backArrow: { color: "#fff", fontSize: 20, lineHeight: 24 },
-  backText: { color: "#fff", fontSize: 15, fontWeight: "500" },
+  backArrow: { color: colors.white, fontSize: 20, lineHeight: 24 },
+  backText: { color: colors.white, fontSize: 15, fontWeight: "500" },
 
   card: {
     flex: 1,
@@ -20,7 +20,7 @@ export const styles = StyleSheet.create({
   cardContent: { padding: 28, flexGrow: 1 },
 
   cardTitle: {
-    color: "#fff",
+    color: colors.white,
     fontSize: 34,
     fontWeight: "800",
     textAlign: "center",
@@ -44,19 +44,23 @@ export const styles = StyleSheet.create({
     paddingVertical: 5,
     marginBottom: 8,
   },
-  teamBadgeText: { color: "#fff", fontWeight: "700", fontSize: 12 },
+  teamBadgeText: { color: colors.white, fontWeight: "700", fontSize: 12 },
   feeBadge: {
     flexDirection: "row",
     alignItems: "center",
     gap: 6,
-    backgroundColor: "#fff",
+    backgroundColor: colors.white,
     alignSelf: "center",
     borderRadius: 20,
     paddingHorizontal: 16,
     paddingVertical: 7,
     marginBottom: 20,
   },
-  feeText: { color: "#E8601A", fontWeight: "800", fontSize: 16 },
+  feeText: {
+    color: colors.primaryGradientMid,
+    fontWeight: "800",
+    fontSize: 16,
+  },
 
   methodRow: {
     flexDirection: "row",
@@ -75,46 +79,21 @@ export const styles = StyleSheet.create({
     paddingVertical: 10,
     borderRadius: 12,
   },
-  methodBtnActive: { backgroundColor: "#fff" },
+  methodBtnActive: { backgroundColor: colors.white },
   methodBtnText: {
     fontSize: 14,
     fontWeight: "700",
     color: "rgba(255,255,255,0.75)",
   },
-  methodBtnTextActive: { color: "#E8601A" },
-  paypalP: {
-    fontSize: 15,
-    fontWeight: "900",
-    color: "rgba(255,255,255,0.75)",
-    fontStyle: "italic",
-  },
-  paypalPActive: { color: "#003087" },
-
-  paypalBox: {
-    backgroundColor: "rgba(0,0,0,0.18)",
-    borderRadius: 14,
-    padding: 20,
-    alignItems: "center",
-    marginBottom: 20,
-    borderWidth: 1,
-    borderColor: "rgba(255,255,255,0.15)",
-  },
-  paypalBoxTitle: { fontSize: 28, fontWeight: "900", marginBottom: 6 },
-  paypalBlue: { color: "#009CDE" },
-  paypalDark: { color: "#003087" },
-  paypalBoxSub: {
-    color: "rgba(255,255,255,0.7)",
-    fontSize: 13,
-    textAlign: "center",
-  },
+  methodBtnTextActive: { color: colors.primaryGradientMid },
 
   errorBox: {
-    backgroundColor: "rgba(0,0,0,0.25)",
+    backgroundColor: colors.opacized,
     borderRadius: 10,
     padding: 12,
     marginBottom: 16,
   },
-  errorText: { color: "#fff", fontSize: 13, textAlign: "center" },
+  errorText: { color: colors.white, fontSize: 13, textAlign: "center" },
 
   label: {
     color: "rgba(255,255,255,0.9)",
@@ -130,7 +109,7 @@ export const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 14,
     fontSize: 15,
-    color: "#fff",
+    color: colors.white,
     marginBottom: 16,
     borderWidth: 1,
     borderColor: "rgba(255,255,255,0.15)",
@@ -148,7 +127,7 @@ export const styles = StyleSheet.create({
 
   logoArea: { alignItems: "center", marginTop: 8 },
   logoText: {
-    color: "#fff",
+    color: colors.white,
     fontSize: 26,
     fontWeight: "900",
     letterSpacing: 1,

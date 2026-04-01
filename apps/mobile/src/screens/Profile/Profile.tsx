@@ -222,7 +222,9 @@ export default function Profile() {
               <Avatar user={user} />
               {edit && (
                 <ButtonIcon
-                  icon={<Ionicons name="pencil" size={13} color="#fff" />}
+                  icon={
+                    <Ionicons name="pencil" size={13} color={colors.white} />
+                  }
                   style={styles.pencilBtn}
                   handleBtn={handlePickAvatar}
                 />
@@ -327,7 +329,7 @@ export default function Profile() {
             )}
             {saving && (
               <View style={styles.cardSavingOverlay}>
-                <ActivityIndicator size="large" color="#fff" />
+                <ActivityIndicator size="large" color={colors.white} />
               </View>
             )}
           </View>
@@ -342,21 +344,25 @@ export default function Profile() {
                 <View style={pStyles.statsCardInner}>
                   <View style={pStyles.statsRow}>
                     <View style={pStyles.statBubble}>
-                      <Text style={[pStyles.statNum, { color: "#10b981" }]}>
+                      <Text
+                        style={[pStyles.statNum, { color: colors.success }]}
+                      >
                         {user.matchStats.wins}
                       </Text>
                       <Text style={pStyles.statLabel}>Vittorie</Text>
                     </View>
                     <View style={pStyles.statDivider} />
                     <View style={pStyles.statBubble}>
-                      <Text style={[pStyles.statNum, { color: "#64748b" }]}>
+                      <Text
+                        style={[pStyles.statNum, { color: colors.placeholder }]}
+                      >
                         {user.matchStats.draws}
                       </Text>
                       <Text style={pStyles.statLabel}>Pareggi</Text>
                     </View>
                     <View style={pStyles.statDivider} />
                     <View style={pStyles.statBubble}>
-                      <Text style={[pStyles.statNum, { color: "#ef4444" }]}>
+                      <Text style={[pStyles.statNum, { color: colors.danger }]}>
                         {user.matchStats.losses}
                       </Text>
                       <Text style={pStyles.statLabel}>Sconfitte</Text>
@@ -367,7 +373,7 @@ export default function Profile() {
                       <Ionicons
                         name="trophy-outline"
                         size={18}
-                        color="#E8601A"
+                        color={colors.primaryGradientMid}
                       />
                       <Text style={pStyles.statTourneyNum}>
                         {user.matchStats.tournamentsWon}
@@ -379,7 +385,7 @@ export default function Profile() {
                       <Ionicons
                         name="medal-outline"
                         size={18}
-                        color="#64748b"
+                        color={colors.placeholder}
                       />
                       <Text style={pStyles.statTourneyNum}>
                         {user.matchStats.tournamentsPlayed}
@@ -393,7 +399,7 @@ export default function Profile() {
                       <Ionicons
                         name="football-outline"
                         size={18}
-                        color="#64748b"
+                        color={colors.placeholder}
                       />
                       <Text style={pStyles.statTourneyNum}>
                         {user.matchStats.matchesPlayed}
@@ -431,7 +437,7 @@ export default function Profile() {
                     colors={colorGradient}
                     style={styles.createTeamIcon}
                   >
-                    <Ionicons name="add" size={22} color="#fff" />
+                    <Ionicons name="add" size={22} color={colors.white} />
                   </LinearGradient>
                   <View style={{ flex: 1 }}>
                     <Text style={styles.createTeamTitle}>Crea una squadra</Text>
@@ -439,7 +445,11 @@ export default function Profile() {
                       Invita amici e partecipa ai tornei insieme
                     </Text>
                   </View>
-                  <Ionicons name="chevron-forward" size={18} color="#cbd5e1" />
+                  <Ionicons
+                    name="chevron-forward"
+                    size={18}
+                    color={colors.grayDark}
+                  />
                 </ButtonGeneric>
               ) : (
                 <ScrollView
@@ -449,6 +459,7 @@ export default function Profile() {
                 >
                   {teams.slice(0, 5).map((team) => (
                     <ButtonGeneric
+                      key={team.id}
                       style={styles.teamMiniCard}
                       handleBtn={() =>
                         navigation.navigate("TeamDetail", { teamId: team.id })

@@ -8,6 +8,7 @@ import Explore from "../../screens/Explore/Explore";
 import Home from "../../screens/Home/Home";
 import Favorites from "../../screens/Favorites/Favorites";
 import Profile from "../../screens/Profile/Profile";
+import { colors } from "../../theme/colors";
 
 const Tab = createBottomTabNavigator<MainTabParamList>();
 
@@ -27,8 +28,8 @@ export default function MainTabNavigator() {
     <Tab.Navigator
       screenOptions={({ route }) => ({
         headerShown: false,
-        tabBarActiveTintColor: "#E8601A",
-        tabBarInactiveTintColor: "#94a3b8",
+        tabBarActiveTintColor: colors.primaryGradientEnd,
+        tabBarInactiveTintColor: colors.placeholder,
         tabBarShowLabel: false,
         tabBarStyle: [styles.tabBar, { bottom: insets.bottom + 8 }],
         tabBarIcon: ({ focused, color, size }) => {

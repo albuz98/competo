@@ -1,11 +1,12 @@
 import { StyleSheet } from "react-native";
+import { colors } from "../../theme/colors";
 
 export const styles = StyleSheet.create({
   errorBox: {
-    backgroundColor: "rgba(0,0,0,0.25)",
+    backgroundColor: colors.opacized,
     borderRadius: 10,
     padding: 12,
     marginBottom: 16,
   },
-  errorText: { color: "#fff", fontSize: 13, textAlign: "center" },
+  errorText: { color: colors.white, fontSize: 13, textAlign: "center" },
 });

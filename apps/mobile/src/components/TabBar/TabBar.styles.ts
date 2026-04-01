@@ -4,7 +4,7 @@ import { colors } from "../../theme/colors";
 export const tbStyles = StyleSheet.create({
   tabBar: {
     flexDirection: "row",
-    backgroundColor: "#f1f5f9",
+    backgroundColor: colors.gray,
     borderRadius: 12,
     padding: 4,
     gap: 4,
@@ -19,8 +19,8 @@ export const tbStyles = StyleSheet.create({
     borderRadius: 9,
   },
   tabActive: {
-    backgroundColor: "#fff",
-    shadowColor: "#000",
+    backgroundColor: colors.white,
+    shadowColor: colors.black,
     shadowOpacity: 0.06,
     shadowRadius: 4,
     shadowOffset: { width: 0, height: 1 },

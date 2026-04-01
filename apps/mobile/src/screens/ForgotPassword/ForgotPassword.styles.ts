@@ -1,8 +1,9 @@
 import { StyleSheet } from "react-native";
+import { colors } from "../../theme/colors";
 
 export const styles = StyleSheet.create({
   cardTitle: {
-    color: "#fff",
+    color: colors.white,
     fontSize: 32,
     fontWeight: "800",
     textAlign: "center",
@@ -30,13 +31,13 @@ export const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 14,
     fontSize: 15,
-    color: "#fff",
+    color: colors.white,
     marginBottom: 16,
     borderWidth: 1,
     borderColor: "rgba(255,255,255,0.15)",
   },
   sendBtn: {
-    backgroundColor: "#fff",
+    backgroundColor: colors.white,
     borderRadius: 50,
     paddingVertical: 16,
     alignItems: "center",
@@ -45,7 +46,11 @@ export const styles = StyleSheet.create({
     elevation: 4,
   },
   sendBtnDisabled: { opacity: 0.6 },
-  sendBtnText: { color: "#E8601A", fontSize: 16, fontWeight: "800" },
+  sendBtnText: {
+    color: colors.primaryGradientMid,
+    fontSize: 16,
+    fontWeight: "800",
+  },
   linkBtn: { alignItems: "center", marginBottom: 8 },
   linkText: { color: "rgba(255,255,255,0.85)", fontSize: 14 },
   successContainer: { paddingTop: 16 },
@@ -56,7 +61,7 @@ export const styles = StyleSheet.create({
     marginTop: 20,
     lineHeight: 24,
   },
-  successEmail: { fontWeight: "800", color: "#fff" },
+  successEmail: { fontWeight: "800", color: colors.white },
   successHint: {
     color: "rgba(255,255,255,0.7)",
     fontSize: 13,

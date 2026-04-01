@@ -1,7 +1,8 @@
 import { StyleSheet } from "react-native";
+import { colors } from "../../theme/colors";
 
 export const styles = StyleSheet.create({
-  root: { flex: 1, backgroundColor: "#f8fafc" },
+  root: { flex: 1, backgroundColor: colors.gray },
   headerRow: {
     flexDirection: "row",
     alignItems: "center",
@@ -11,7 +12,7 @@ export const styles = StyleSheet.create({
     gap: 4,
   },
   backBtn: { marginRight: 4, padding: 2 },
-  header: { fontSize: 22, fontWeight: "800", color: "#1e293b", flex: 1 },
+  header: { fontSize: 22, fontWeight: "800", color: colors.dark, flex: 1 },
   list: { paddingHorizontal: 16, paddingBottom: 100 },
   separator: { height: 8 },
   item: {
@@ -19,39 +20,39 @@ export const styles = StyleSheet.create({
     alignItems: "flex-start",
     paddingVertical: 14,
     paddingHorizontal: 16,
-    backgroundColor: "#fff",
+    backgroundColor: colors.white,
     borderRadius: 16,
     gap: 12,
-    shadowColor: "#000",
+    shadowColor: colors.black,
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.04,
     shadowRadius: 4,
     elevation: 1,
   },
-  itemUnread: { backgroundColor: "#fff8f4" },
+  itemUnread: { backgroundColor: colors.primarySelectedBg },
   itemLeft: { paddingTop: 4 },
   dot: {
     width: 10,
     height: 10,
     borderRadius: 5,
-    backgroundColor: "#ef4444",
+    backgroundColor: colors.danger,
     marginTop: 2,
   },
-  dotRead: { backgroundColor: "#e2e8f0" },
+  dotRead: { backgroundColor: colors.grayDark },
   itemBody: { flex: 1 },
   itemTitle: {
     fontSize: 14,
     fontWeight: "600",
-    color: "#64748b",
+    color: colors.placeholder,
     marginBottom: 3,
   },
-  itemTitleUnread: { fontWeight: "800", color: "#1e293b" },
-  itemText: { fontSize: 13, color: "#64748b", lineHeight: 19 },
-  itemDate: { fontSize: 11, color: "#94a3b8", marginTop: 6 },
+  itemTitleUnread: { fontWeight: "800", color: colors.dark },
+  itemText: { fontSize: 13, color: colors.placeholder, lineHeight: 19 },
+  itemDate: { fontSize: 11, color: colors.grayDark, marginTop: 6 },
   empty: {
     alignItems: "center",
     paddingTop: 80,
     gap: 12,
   },
-  emptyText: { fontSize: 15, color: "#94a3b8", fontWeight: "500" },
+  emptyText: { fontSize: 15, color: colors.grayDark, fontWeight: "500" },
 });

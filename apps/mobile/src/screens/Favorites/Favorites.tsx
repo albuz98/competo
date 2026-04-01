@@ -11,6 +11,7 @@ import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import type { RootStackParamList, Tournament } from "../../types";
 import { useFavorites } from "../../context/FavoritesContext";
 import { ButtonGeneric, ButtonIcon } from "../../components/Button/Button";
+import { colors } from "../../theme/colors";
 
 type Nav = NativeStackNavigationProp<RootStackParamList>;
 
@@ -20,9 +21,9 @@ const STATUS_LABEL: Record<string, string> = {
   completed: "Terminato",
 };
 const STATUS_COLOR: Record<string, string> = {
-  upcoming: "#3b82f6",
-  ongoing: "#10b981",
-  completed: "#6b7280",
+  upcoming: colors.blue,
+  ongoing: colors.success,
+  completed: colors.grayDark,
 };
 
 function TournamentCard({
@@ -46,7 +47,13 @@ function TournamentCard({
         <ButtonIcon
           handleBtn={onRemove}
           style={pf.bookmarkBtn}
-          icon={<Ionicons name="bookmark" size={20} color="#E8601A" />}
+          icon={
+            <Ionicons
+              name="bookmark"
+              size={20}
+              color={colors.primaryGradientMid}
+            />
+          }
         />
       </View>
       <View style={pf.cardFooter}>
@@ -61,13 +68,21 @@ function TournamentCard({
           </Text>
         </View>
         <View style={pf.metaRow}>
-          <Ionicons name="people-outline" size={12} color="#94a3b8" />
+          <Ionicons
+            name="people-outline"
+            size={12}
+            color={colors.placeholder}
+          />
           <Text style={pf.metaText}>
             {item.currentParticipants}/{item.maxParticipants}
           </Text>
         </View>
         <View style={pf.metaRow}>
-          <Ionicons name="location-outline" size={12} color="#94a3b8" />
+          <Ionicons
+            name="location-outline"
+            size={12}
+            color={colors.placeholder}
+          />
           <Text style={pf.metaText} numberOfLines={1}>
             {item.location}
           </Text>
@@ -85,11 +100,11 @@ export default function Favorites() {
 
   return (
     <SafeAreaView style={pf.root} edges={["top"]}>
-      <StatusBar barStyle="dark-content" backgroundColor="#fff" />
+      <StatusBar barStyle="dark-content" backgroundColor={colors.white} />
       <Text style={pf.header}>Preferiti</Text>
       {favorites.length === 0 ? (
         <View style={pf.center}>
-          <Ionicons name="bookmark-outline" size={64} color="#e2e8f0" />
+          <Ionicons name="bookmark-outline" size={64} color={colors.gray} />
           <Text style={pf.emptyTitle}>Nessun preferito</Text>
           <Text style={pf.emptySubtitle}>
             Aggiungi tornei ai preferiti per trovarli facilmente

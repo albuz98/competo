@@ -2,7 +2,7 @@ import { StyleSheet } from "react-native";
 import { colors } from "../../theme/colors";
 
 export const styles = StyleSheet.create({
-  root: { flex: 1, backgroundColor: "#000" },
+  root: { flex: 1, backgroundColor: colors.black },
   safeArea: { flex: 1 },
   container: {
     height: 580,
