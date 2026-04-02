@@ -44,6 +44,7 @@ expo start --android
 | `expo-secure-store`              | Persistent auth token storage    |
 | `react-native-maps`              | Map in Esplora screen            |
 | `react-native-safe-area-context` | Safe area insets                 |
+| `@expo/vector-icons`             | Ionicons used in tab bar icons   |
 | `@faker-js/faker`                | Mock data generation             |
 
 ---
@@ -81,28 +82,27 @@ src/
 ├── components/             # Shared UI components (each in their own subdirectory)
 │   ├── AuthLayout/         # Wrapper layout for auth screens
 │   ├── AuthErrorBox/       # Inline error display for auth forms
+│   ├── Avatar/             # User avatar display component
 │   ├── Button/             # Brand button component
 │   ├── CompetoLogo/        # App logo
 │   ├── DividerAccess/      # Divider for auth screens
 │   ├── InputBox/           # Styled text input
-│   └── OnboardingCarousel/ # Onboarding slides carousel
+│   ├── OnboardingCarousel/ # Onboarding slides carousel
+│   └── TabBar/             # Custom bottom tab bar component
 └── screens/                # Each screen in its own subdirectory: Screen/Screen.tsx + Screen/Screen.styles.ts
     ├── Home/               # Feed: I Tuoi Tornei + Esplora + map
     ├── Explore/            # Tournament discovery with map
     ├── Favorites/          # Bookmarked tournaments
     ├── Profile/            # User profile + teams section
     ├── TournamentDetail/   # Tournament info + sign-up CTA
-    ├── TournamentList/     # Tournament list view
+    ├── TournamentList/     # Tournament list view (not yet wired into navigation)
     ├── MyTournamentDetail/ # Bracket/groups live viewer (registered participant)
-    ├── OrganizerTournamentDetail/ # Organizer view: registered teams + bracket management
-    ├── PlayerProfile/      # Individual player stats and profile
     ├── TeamSelect/         # Team picker modal (before payment)
     ├── Payment/            # Card payment form
     ├── Teams/              # Full teams list
     ├── CreateTeam/         # Create new team form
     ├── TeamDetail/         # Team detail + member management
     ├── InvitePlayers/      # Search users / share invite link
-    ├── EditProfile/        # Edit name, email, etc.
     ├── Login/
     ├── Register/
     ├── ChoseAccess/        # Entry screen for unauthenticated users (login / register choice)
@@ -143,15 +143,13 @@ Initial route is `ChoseAccess` when logged out, `MainTabs` when a persisted toke
 | `ForgotPassword`             | ForgotPassword                |                                                                              |
 | `TournamentDetail`           | TournamentDetail              | `tournamentId`, `justRegistered?`                                            |
 | `MyTournamentDetail`         | MyTournamentDetail            | `tournamentId`                                                               |
-| `OrganizerTournamentDetail`  | OrganizerTournamentDetail     | `tournamentId`                                                               |
-| `PlayerProfile`              | PlayerProfile                 | `playerJson: string` — JSON-serialized `TournamentPlayer`                    |
+| `OrganizerTournamentDetail`  | *(not yet implemented)*       | `tournamentId` — in `RootStackParamList` types but screen not yet created    |
 | `TeamSelect`                 | TeamSelect                    | Modal; `tournamentId`, `entryFee`, `tournamentName`                          |
 | `Payment`                    | Payment                       | `tournamentId`, `entryFee`, `tournamentName`, `teamId?`, `teamName?`         |
 | `Teams`                      | Teams                         |                                                                              |
 | `CreateTeam`                 | CreateTeam                    |                                                                              |
 | `TeamDetail`                 | TeamDetail                    | `teamId`                                                                     |
 | `InvitePlayers`              | InvitePlayers                 | `teamId`                                                                     |
-| `EditProfile`                | EditProfile                   |                                                                              |
 | `Notifiche`                  | Notifications                 |                                                                              |
 
 ### Bottom tabs (`MainTabParamList`)
@@ -228,12 +226,15 @@ return getMockTeamCache(); // ✗ aliasing
 - **Colors**: always use `src/theme/colors.ts` (`colors.primary`, `colors.danger`, etc.) instead of hardcoded hex values
   - `colors.primary`: `#e64326` · `colors.primaryGradientMid`: `#f2691a` · `colors.primaryGradientEnd`: `#f89d00`
   - `colors.danger`: `#d91a1a` · `colors.success`: `#10b981`
-- **Gradient headers**: `<LinearGradient colors={[colors.primary, colors.primaryGradientEnd]}>`
-- **Background**: `#f8fafc`
-- **Text hierarchy**: `#1e293b` (primary) · `#64748b` (secondary) · `#94a3b8` (muted)
+  - `colors.dark`: `#1e293b` · `colors.placeholder`: `#64748b` · `colors.grayDark`: `#94a3b8`
+  - `colors.blue`: `#4f46e5` · `colors.gray`: `#f1f5f9` (screen background) · `colors.black` / `colors.white`
+- **Gradient helpers**: `colorGradient` and `colorGradientReverse` arrays are exported from `colors.ts` for convenience
+- **Gradient headers**: `<LinearGradient colors={colorGradient}>` (or `[colors.primary, colors.primaryGradientEnd]`)
+- **Screen background**: `colors.gray` (`#f1f5f9`)
+- **Text hierarchy**: `colors.dark` (primary) · `colors.placeholder` (secondary) · `colors.grayDark` (muted)
 - **Style files are collocated** with their screen/component: `src/screens/Home/Home.styles.ts`, `src/components/Button/Button.styles.ts`. Never inline `StyleSheet.create` in screen files.
 - Each style file uses a named export matching the original variable (e.g. `export const tds`, `export const s`, `export const bStyles`). Dimension/layout constants used in both the stylesheet and JSX (e.g. `BIG_W`, `CARD_WIDTH`, bracket constants) are also exported from the style file.
-- `MyTournamentDetail.styles.ts` and `OrganizerTournamentDetail.styles.ts` export shared bracket layout constants: `CARD_H`, `CARD_W`, `COL_GAP`, `SLOT_H`, `LABEL_H`, `LINE_W`, `LINE_COLOR`.
+- `MyTournamentDetail.styles.ts` exports bracket layout constants: `CARD_H`, `CARD_W`, `COL_GAP`, `SLOT_H`, `LABEL_H`, `LINE_W`, `LINE_COLOR`.
 
 ---
 
@@ -277,12 +278,11 @@ return getMockTeamCache(); // ✗ aliasing
 - Invite notification payload: `{ screen: 'Teams' }` → navigates to `Teams` (shows "INVITI IN SOSPESO")
 - Tournament notification payload: `{ tournamentId }` → navigates to `TournamentDetail`
 
-### Organizer tournament view (`OrganizerTournamentDetail`)
+### Organizer tournament view (`OrganizerTournamentDetail`) — planned, not yet implemented
 
-- Shows registered teams with their `TeamRegistrationStatus` (`pending_approval` | `rejected` | `accepted` | `paid`)
-- Shows each team's players (`TournamentPlayer[]`) with per-player stats
-- Shares the same bracket/groups rendering as `MyTournamentDetail`
-- Only reachable by users with `isOrganizer: true` on the `User` object
+- Route is defined in `RootStackParamList` and referenced in mock data/types, but the screen component has not been created yet
+- Intended to show registered teams with `TeamRegistrationStatus` (`pending_approval` | `rejected` | `accepted` | `paid`), team players with stats, and the bracket/groups view
+- Will only be reachable by users with `isOrganizer: true` on the `User` object
 
 ### Genera torneo gate (`MyTournamentDetail`)
 
