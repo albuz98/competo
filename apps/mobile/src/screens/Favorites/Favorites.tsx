@@ -21,7 +21,7 @@ const STATUS_LABEL: Record<string, string> = {
   completed: "Terminato",
 };
 const STATUS_COLOR: Record<string, string> = {
-  upcoming: colors.blue,
+  upcoming: colors.purpleBlue,
   ongoing: colors.success,
   completed: colors.grayDark,
 };

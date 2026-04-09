@@ -7,20 +7,18 @@ export const styles = StyleSheet.create({
     marginBottom: 16,
   },
   input: {
-    backgroundColor: colors.opacized,
     borderRadius: 12,
     paddingHorizontal: 16,
     paddingVertical: 14,
     fontSize: 15,
-    color: colors.white,
     borderWidth: 1,
     borderColor: colors.grayOpacized,
   },
-  inputWithEye: {
-    paddingRight: 48,
+  inputWithIcon: {
+    paddingRight: 50,
   },
   inputError: { borderColor: colors.danger },
-  eyeBtn: {
+  iconBtn: {
     position: "absolute",
     right: 14,
     top: 4,
@@ -53,7 +51,7 @@ export const styles = StyleSheet.create({
   rowInput: {
     fontSize: 14,
     fontWeight: "600",
-    color: colors.opacized,
+    color: colors.black,
     borderBottomWidth: 1,
     borderBottomColor: colors.primary,
     paddingVertical: 2,

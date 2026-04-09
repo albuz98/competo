@@ -1,11 +1,12 @@
 import { isMocking, apiFetch } from "./config";
+import { mockFlags } from "./mockFlags";
 import { mockProfile } from "../mock/data";
 import type { LoginCredentials, RegisterCredentials, User } from "../types";
 
 // Reload the authenticated user from the server (e.g. on app restart with a stored token).
 // In mock mode returns the editable mockProfile object from src/mock/data.ts.
 export async function fetchProfile(token: string): Promise<User> {
-  if (isMocking) return { ...mockProfile };
+  if (isMocking && mockFlags.IS_MOCKING_FETCH_PROFILE) return { ...mockProfile };
   return apiFetch<User>("/auth/profile", {}, token);
 }
 
@@ -14,7 +15,7 @@ export async function registerPushToken(
   pushToken: string,
   token: string,
 ): Promise<void> {
-  if (isMocking) return;
+  if (isMocking && mockFlags.IS_MOCKING_REGISTER_PUSH_TOKEN) return;
   return apiFetch<void>(
     "/auth/push-token",
     {
@@ -26,7 +27,7 @@ export async function registerPushToken(
 }
 
 export async function forgotPassword(email: string): Promise<void> {
-  if (isMocking) {
+  if (isMocking && mockFlags.IS_MOCKING_FORGOT_PASSWORD) {
     await new Promise((r) => setTimeout(r, 800));
     if (!email) throw new Error("Email is required");
     return;
@@ -48,7 +49,7 @@ export async function updateProfile(
   },
   currentUser: User | null,
 ): Promise<User> {
-  if (isMocking) {
+  if (isMocking && mockFlags.IS_MOCKING_UPDATE_PROFILE) {
     await new Promise((r) => setTimeout(r, 600));
     if (!currentUser) throw new Error("Not authenticated");
     return {
@@ -67,7 +68,7 @@ export async function updateProfile(
 }
 
 export async function login(credentials: LoginCredentials): Promise<User> {
-  if (isMocking) {
+  if (isMocking && mockFlags.IS_MOCKING_LOGIN) {
     await new Promise((r) => setTimeout(r, 800));
     if (!credentials.email || !credentials.password) {
       throw new Error("Email and password are required");
@@ -84,7 +85,7 @@ export async function login(credentials: LoginCredentials): Promise<User> {
 export async function register(
   credentials: RegisterCredentials,
 ): Promise<User> {
-  if (isMocking) {
+  if (isMocking && mockFlags.IS_MOCKING_REGISTER) {
     await new Promise((r) => setTimeout(r, 800));
     if (!credentials.username || !credentials.email || !credentials.password) {
       throw new Error("All fields are required");

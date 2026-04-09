@@ -20,7 +20,7 @@ import {
 import { colors } from "../../theme/colors";
 
 const STATUS_COLORS: Record<string, string> = {
-  upcoming: colors.blue,
+  upcoming: colors.purpleBlue,
   ongoing: colors.success,
   completed: colors.placeholder,
 };
@@ -130,7 +130,7 @@ export default function TournamentListScreen() {
   if (loading) {
     return (
       <View style={styles.center}>
-        <ActivityIndicator size="large" color={colors.blue} />
+        <ActivityIndicator size="large" color={colors.purpleBlue} />
         <Text style={styles.loadingText}>Loading tournaments…</Text>
       </View>
     );
@@ -167,7 +167,7 @@ export default function TournamentListScreen() {
               setRefreshing(true);
               load();
             }}
-            tintColor={colors.blue}
+            tintColor={colors.purpleBlue}
           />
         }
         ListEmptyComponent={

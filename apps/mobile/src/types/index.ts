@@ -201,6 +201,96 @@ export interface RegisterCredentials {
   dateOfBirth: string;
 }
 
+// ─── Tournament Generator ─────────────────────────────────────────────────────
+
+export type TournamentFormat =
+  | "round-robin"
+  | "knockout"
+  | "double-elimination";
+
+export type TournamentPhaseKind = "single" | "multi";
+
+export interface GeneratorParticipant {
+  name: string;
+}
+
+export interface GeneratorConfig {
+  tournamentName?: string;
+  description?: string;
+  location?: string;
+  participants: GeneratorParticipant[];
+  phaseKind: TournamentPhaseKind;
+  format: TournamentFormat;
+  multiKnockoutFormat?: TournamentFormat; // knockout phase format when phaseKind === "multi"
+  numGroups?: number; // for multi-phase: how many groups (gironi), default 2
+  numFields: number;
+  matchDurationMinutes: number;
+  restMinutes: number;
+  travelMinutes: number;
+  startDate: string; // YYYY-MM-DD
+  startHour: number;
+  playDays: number[]; // 0=Sun..6=Sat
+  maxMatchesPerDayPerTeam: number;
+  maxMatchesPerDay?: number; // total matches per day across all fields
+  hasFinalDay: boolean;
+  finalDayDate?: string; // YYYY-MM-DD — exact date for quarters/semis/final when hasFinalDay
+  singleDay?: boolean; // if true, no end-of-day cutoff
+}
+
+export interface ScheduledMatch {
+  id: string;
+  homeTeam: string;
+  awayTeam: string;
+  field: number;
+  startTime: string; // ISO
+  endTime: string; // ISO
+  round: number;
+  phase: "main" | "groups" | "knockout" | "losers" | "final";
+  isBye: boolean;
+  roundLabel: string;
+}
+
+export interface TeamSchedule {
+  teamName: string;
+  matches: ScheduledMatch[];
+}
+
+export interface GeneratorGroup {
+  name: string;
+  teams: string[];
+}
+
+export interface StandingsEntry {
+  teamName: string;
+  played: number;
+  won: number;
+  drawn: number;
+  lost: number;
+  points: number;
+  goalsFor: number;
+  goalsAgainst: number;
+}
+
+export interface GeneratorOutput {
+  config: GeneratorConfig;
+  allMatches: ScheduledMatch[];
+  teamSchedules: TeamSchedule[];
+  standings: StandingsEntry[];
+  groups?: GeneratorGroup[];
+}
+
+export interface CreateTournamentPayload {
+  config: GeneratorConfig;
+  lat?: number;
+  lng?: number;
+}
+
+export interface TournametNumberPartecipants {
+  total: number;
+  groups: number;
+  knockout: number;
+}
+
 // ─── Navigation ───────────────────────────────────────────────────────────────
 
 export type RootStackParamList = {
@@ -229,6 +319,8 @@ export type RootStackParamList = {
   TeamDetail: { teamId: string };
   InvitePlayers: { teamId: string };
   OrganizerTournamentDetail: { tournamentId: string };
+  CreateTournamentSchedule: undefined;
+  TournamentScheduleResult: undefined;
 };
 
 export type MainTabParamList = {

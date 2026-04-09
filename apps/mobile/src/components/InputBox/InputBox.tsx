@@ -11,6 +11,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { styles } from "./InputBox.styles";
 import { ButtonIcon } from "../Button/Button";
 import { colors } from "../../theme/colors";
+import Feather from "@expo/vector-icons/Feather";
 
 type CommonProps = {
   value: string;
@@ -23,6 +24,11 @@ type CommonProps = {
   onSubmitEditing?: (e: TextInputSubmitEditingEvent) => void;
   autoCapitalize?: "none" | "sentences" | "words" | "characters";
   autoCorrect?: boolean;
+  isDark?: boolean;
+  isMultiline?: boolean;
+  deleteText?: () => void;
+  numberOfLines?: number;
+  style?: any;
   textContentType?:
     | "none"
     | "oneTimeCode"
@@ -62,7 +68,7 @@ type RowProps = CommonProps & {
 
 type InputBoxProps = AuthProps | RowProps;
 
-export default function InputBox(props: InputBoxProps) {
+export default function InputBox({ isDark = true, ...props }: InputBoxProps) {
   const [hidden, setHidden] = useState(true);
 
   if (props.variant === "row") {
@@ -138,6 +144,9 @@ export default function InputBox(props: InputBoxProps) {
     maxLength,
     isError,
     textContentType,
+    isMultiline,
+    numberOfLines,
+    deleteText,
   } = props;
   return (
     <View style={styles.wrapper}>
@@ -145,7 +154,11 @@ export default function InputBox(props: InputBoxProps) {
         style={[
           styles.input,
           isError && styles.inputError,
-          secureTextEntry && styles.inputWithEye,
+          (secureTextEntry || deleteText) && styles.inputWithIcon,
+          {
+            backgroundColor: isDark ? colors.opacized : colors.white,
+            color: isDark ? colors.white : colors.black,
+          },
         ]}
         value={value}
         onChangeText={onChangeText}
@@ -153,17 +166,19 @@ export default function InputBox(props: InputBoxProps) {
         keyboardType={keyboardType}
         autoCapitalize={autoCapitalize}
         autoComplete={autoComplete}
-        placeholderTextColor={colors.grayOpacized}
+        placeholderTextColor={isDark ? colors.grayOpacized : colors.placeholder}
         returnKeyType={returnKeyType}
         onSubmitEditing={onSubmitEditing}
         secureTextEntry={secureTextEntry && hidden}
         autoCorrect={autoCorrect}
         maxLength={maxLength}
         textContentType={textContentType}
+        multiline={isMultiline}
+        numberOfLines={numberOfLines}
       />
       {secureTextEntry && (
         <ButtonIcon
-          style={styles.eyeBtn}
+          style={styles.iconBtn}
           handleBtn={() => setHidden((h) => !h)}
           icon={
             <Ionicons
@@ -172,6 +187,13 @@ export default function InputBox(props: InputBoxProps) {
               color={colors.grayOpacized}
             />
           }
+        />
+      )}
+      {deleteText && (
+        <ButtonIcon
+          style={styles.iconBtn}
+          handleBtn={() => deleteText()}
+          icon={<Feather name="x" size={20} color={colors.placeholder} />}
         />
       )}
     </View>

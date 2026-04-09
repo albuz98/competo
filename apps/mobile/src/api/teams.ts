@@ -1,4 +1,5 @@
 import { isMocking, apiFetch } from './config';
+import { mockFlags } from './mockFlags';
 import { faker } from '@faker-js/faker';
 import { generateTeams, generateTeamMember, generateAppUsers } from '../mock/data';
 import type { Team, AppUser, PendingInvite, TeamRole } from '../types';
@@ -41,7 +42,7 @@ function getMockPendingInvites(): PendingInvite[] {
 }
 
 export async function fetchUserTeams(token: string): Promise<Team[]> {
-  if (isMocking) {
+  if (isMocking && mockFlags.IS_MOCKING_FETCH_USER_TEAMS) {
     await new Promise((r) => setTimeout(r, 400));
     return [...getMockTeamCache()]; // shallow copy — prevents cache mutations from aliasing React state
   }
@@ -54,7 +55,7 @@ export async function createTeam(
   token: string,
   representative?: { id: string; firstName: string; lastName: string; username: string },
 ): Promise<Team> {
-  if (isMocking) {
+  if (isMocking && mockFlags.IS_MOCKING_CREATE_TEAM) {
     // Duplicate name check: same representative can't have two teams with same name
     if (mockTeamCache && representative) {
       const duplicate = mockTeamCache.find(t =>
@@ -87,7 +88,7 @@ export async function inviteMember(
   appUser: AppUser,
   token: string,
 ): Promise<void> {
-  if (isMocking) {
+  if (isMocking && mockFlags.IS_MOCKING_INVITE_MEMBER) {
     // Mock path: create pending invite, do NOT add to team.members
     const team = getMockTeamCache().find((t) => t.id === teamId);
     if (!team) return;
@@ -115,7 +116,7 @@ export async function inviteMember(
 }
 
 export async function removeMember(teamId: string, memberId: string, token: string): Promise<void> {
-  if (isMocking) {
+  if (isMocking && mockFlags.IS_MOCKING_REMOVE_MEMBER) {
     await new Promise<void>((res) => setTimeout(res, 300));
     const team = getMockTeamCache().find(t => t.id === teamId);
     if (!team) throw new Error('Squadra non trovata');
@@ -129,7 +130,7 @@ export async function removeMember(teamId: string, memberId: string, token: stri
 }
 
 export async function searchUsers(query: string, token: string): Promise<AppUser[]> {
-  if (isMocking) {
+  if (isMocking && mockFlags.IS_MOCKING_SEARCH_USERS) {
     await new Promise((r) => setTimeout(r, 250));
     const all = getMockUsersCache();
     if (!query.trim()) return all.slice(0, 10);
@@ -145,7 +146,7 @@ export async function searchUsers(query: string, token: string): Promise<AppUser
 }
 
 export async function getPendingInvites(userId: string, token: string): Promise<PendingInvite[]> {
-  if (isMocking) {
+  if (isMocking && mockFlags.IS_MOCKING_GET_PENDING_INVITES) {
     await new Promise((r) => setTimeout(r, 300));
     return getMockPendingInvites().filter(
       i => i.toUserId === userId || i.toUserId === '__current__'
@@ -159,7 +160,7 @@ export async function acceptInvite(
   currentUser: { id: string; firstName: string; lastName: string; username: string },
   token: string,
 ): Promise<void> {
-  if (isMocking) {
+  if (isMocking && mockFlags.IS_MOCKING_ACCEPT_INVITE) {
     await new Promise((r) => setTimeout(r, 400));
     const invites = getMockPendingInvites();
     const invite = invites.find(i => i.id === inviteId);
@@ -188,7 +189,7 @@ export async function acceptInvite(
 }
 
 export async function rejectInvite(inviteId: string, token: string): Promise<void> {
-  if (isMocking) {
+  if (isMocking && mockFlags.IS_MOCKING_REJECT_INVITE) {
     await new Promise((r) => setTimeout(r, 300));
     pendingInviteCache = getMockPendingInvites().filter(i => i.id !== inviteId);
     return;
@@ -197,7 +198,7 @@ export async function rejectInvite(inviteId: string, token: string): Promise<voi
 }
 
 export async function getSentInvites(teamId: string, token: string): Promise<PendingInvite[]> {
-  if (isMocking) {
+  if (isMocking && mockFlags.IS_MOCKING_GET_SENT_INVITES) {
     await new Promise((r) => setTimeout(r, 200));
     return getMockPendingInvites().filter(i => i.teamId === teamId && i.toUserId !== '__current__');
   }
@@ -210,7 +211,7 @@ export async function updateMemberRole(
   newRole: TeamRole,
   token: string,
 ): Promise<void> {
-  if (isMocking) {
+  if (isMocking && mockFlags.IS_MOCKING_UPDATE_MEMBER_ROLE) {
     await new Promise((r) => setTimeout(r, 300));
     const team = getMockTeamCache().find(t => t.id === teamId);
     if (!team) throw new Error('Squadra non trovata');

@@ -414,6 +414,46 @@ export default function Profile() {
             </>
           )}
 
+          {/* ── Genera Calendario Torneo ────────────── */}
+          {!edit && (
+            <>
+              <View style={styles.teamsHeader}>
+                <Text style={styles.teamsTitle}>Organizzazione</Text>
+              </View>
+              <ButtonGeneric
+                style={styles.createTeamCard}
+                handleBtn={() =>
+                  navigation.navigate("CreateTournamentSchedule")
+                }
+              >
+                <LinearGradient
+                  colors={colorGradient}
+                  style={styles.createTeamIcon}
+                >
+                  <Ionicons
+                    name="calendar-outline"
+                    size={22}
+                    color={colors.white}
+                  />
+                </LinearGradient>
+                <View style={{ flex: 1 }}>
+                  <Text style={styles.createTeamTitle}>
+                    Genera Calendario Torneo
+                  </Text>
+                  <Text style={styles.createTeamSub}>
+                    Crea tabelloni e calendari automatici per gironi,
+                    eliminatorie e sistemi svizzeri
+                  </Text>
+                </View>
+                <Ionicons
+                  name="chevron-forward"
+                  size={18}
+                  color={colors.grayDark}
+                />
+              </ButtonGeneric>
+            </>
+          )}
+
           {/* ── Le mie squadre ─────────────────────── */}
           {!edit && (
             <>

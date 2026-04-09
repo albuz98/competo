@@ -1,6 +1,8 @@
 import { isMocking, apiFetch } from './config';
+import { mockFlags } from './mockFlags';
 import { generateTournaments, generateTournament, generateMyTournaments, generateMyTournament, generateOrganizerTournamentDetail } from '../mock/data';
-import type { Tournament, MyTournament, OrganizerTournamentDetail } from '../types';
+import { generateTournament as generateTournamentOutput } from '../utils/tournamentGenerator';
+import type { Tournament, MyTournament, OrganizerTournamentDetail, CreateTournamentPayload, GeneratorOutput } from '../types';
 
 // Persistent mock store so data stays consistent across navigation
 let mockCache: Tournament[] | null = null;
@@ -12,6 +14,16 @@ function getMockCache(): Tournament[] {
   return mockCache;
 }
 
+// Mock store for tournaments created via the wizard (holds the full structure).
+let mockCreatedTournamentCache: GeneratorOutput[] | null = null;
+
+function getMockCreatedTournamentCache(): GeneratorOutput[] {
+  if (!mockCreatedTournamentCache) {
+    mockCreatedTournamentCache = [];
+  }
+  return mockCreatedTournamentCache;
+}
+
 export function addToMockCache(tournament: Tournament) {
   getMockCache().push(tournament);
 }
@@ -21,7 +33,7 @@ export function getMockTournamentIds(): string[] {
 }
 
 export async function fetchTournaments(): Promise<Tournament[]> {
-  if (isMocking) {
+  if (isMocking && mockFlags.IS_MOCKING_FETCH_TOURNAMENTS) {
     await new Promise((r) => setTimeout(r, 700));
     return getMockCache();
   }
@@ -30,7 +42,7 @@ export async function fetchTournaments(): Promise<Tournament[]> {
 }
 
 export async function fetchTournament(id: string): Promise<Tournament> {
-  if (isMocking) {
+  if (isMocking && mockFlags.IS_MOCKING_FETCH_TOURNAMENT) {
     await new Promise((r) => setTimeout(r, 400));
     const found = getMockCache().find((t) => t.id === id);
     return found ?? generateTournament(id);
@@ -51,7 +63,7 @@ export function getMyTournamentsCache(): MyTournament[] {
 }
 
 export async function fetchMyTournaments(): Promise<MyTournament[]> {
-  if (isMocking) {
+  if (isMocking && mockFlags.IS_MOCKING_FETCH_MY_TOURNAMENTS) {
     await new Promise((r) => setTimeout(r, 500));
     return getMyTournamentsCache();
   }
@@ -59,7 +71,7 @@ export async function fetchMyTournaments(): Promise<MyTournament[]> {
 }
 
 export async function fetchMyTournament(id: string): Promise<MyTournament> {
-  if (isMocking) {
+  if (isMocking && mockFlags.IS_MOCKING_FETCH_MY_TOURNAMENT) {
     await new Promise((r) => setTimeout(r, 300));
     const found = getMyTournamentsCache().find((t) => t.id === id);
     return found ?? generateMyTournament(id);
@@ -72,7 +84,7 @@ export async function signUpForTournament(
   token: string,
   teamId?: string,
 ): Promise<void> {
-  if (isMocking) {
+  if (isMocking && mockFlags.IS_MOCKING_SIGN_UP_FOR_TOURNAMENT) {
     await new Promise((r) => setTimeout(r, 600));
     const cache = getMockCache();
     const idx = cache.findIndex((t) => t.id === tournamentId);
@@ -102,7 +114,7 @@ export async function fetchNearbyTournaments(
   radiusKm = 50,
   token?: string,
 ): Promise<Tournament[]> {
-  if (isMocking) {
+  if (isMocking && mockFlags.IS_MOCKING_FETCH_NEARBY_TOURNAMENTS) {
     await new Promise((r) => setTimeout(r, 400));
     return [...getMockCache()];
   }
@@ -114,8 +126,25 @@ export async function fetchNearbyTournaments(
   return apiFetch<Tournament[]>(`/tournaments/nearby?${params}`, {}, token);
 }
 
+export async function createTournament(
+  payload: CreateTournamentPayload,
+  token?: string,
+): Promise<GeneratorOutput> {
+  if (isMocking && mockFlags.IS_MOCKING_CREATE_TOURNAMENT) {
+    await new Promise((r) => setTimeout(r, 800));
+    const output = generateTournamentOutput(payload.config);
+    getMockCreatedTournamentCache().push(output);
+    return output;
+  }
+  return apiFetch<GeneratorOutput>(
+    '/tournaments',
+    { method: 'POST', body: JSON.stringify(payload) },
+    token,
+  );
+}
+
 export async function activateTournament(tournamentId: string, token: string): Promise<void> {
-  if (isMocking) {
+  if (isMocking && mockFlags.IS_MOCKING_ACTIVATE_TOURNAMENT) {
     await new Promise((r) => setTimeout(r, 600));
     const t = getMyTournamentsCache().find((t) => t.id === tournamentId);
     if (t) t.isGenerated = true;
@@ -141,7 +170,7 @@ function getOrganizerCache(): Map<string, OrganizerTournamentDetail> {
 }
 
 export async function fetchOrganizerTournament(id: string): Promise<OrganizerTournamentDetail> {
-  if (isMocking) {
+  if (isMocking && mockFlags.IS_MOCKING_FETCH_ORGANIZER_TOURNAMENT) {
     await new Promise((r) => setTimeout(r, 300));
     const cached = getOrganizerCache().get(id);
     if (cached) return { ...cached, registeredTeams: [...cached.registeredTeams] };
@@ -154,7 +183,7 @@ export async function fetchOrganizerTournament(id: string): Promise<OrganizerTou
 }
 
 export async function approveTeam(tournamentId: string, teamId: string): Promise<void> {
-  if (isMocking) {
+  if (isMocking && mockFlags.IS_MOCKING_APPROVE_TEAM) {
     await new Promise((r) => setTimeout(r, 400));
     const t = getOrganizerCache().get(tournamentId);
     const team = t?.registeredTeams.find((r) => r.id === teamId);
@@ -168,7 +197,7 @@ export async function approveTeam(tournamentId: string, teamId: string): Promise
 }
 
 export async function rejectTeam(tournamentId: string, teamId: string): Promise<void> {
-  if (isMocking) {
+  if (isMocking && mockFlags.IS_MOCKING_REJECT_TEAM_FROM_TOURNAMENT) {
     await new Promise((r) => setTimeout(r, 400));
     const t = getOrganizerCache().get(tournamentId);
     const team = t?.registeredTeams.find((r) => r.id === teamId);
@@ -179,7 +208,7 @@ export async function rejectTeam(tournamentId: string, teamId: string): Promise<
 }
 
 export async function removeTeam(tournamentId: string, teamId: string): Promise<void> {
-  if (isMocking) {
+  if (isMocking && mockFlags.IS_MOCKING_REMOVE_TEAM_FROM_TOURNAMENT) {
     await new Promise((r) => setTimeout(r, 400));
     const t = getOrganizerCache().get(tournamentId);
     if (t) t.registeredTeams = t.registeredTeams.filter((r) => r.id !== teamId);

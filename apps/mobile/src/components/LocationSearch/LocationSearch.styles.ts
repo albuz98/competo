@@ -1,0 +1,108 @@
+import { StyleSheet } from "react-native";
+import { colors } from "../../theme/colors";
+
+export const ls = StyleSheet.create({
+  container: {
+    gap: 8,
+  },
+  inputRow: {
+    backgroundColor: colors.white,
+    borderRadius: 12,
+    paddingHorizontal: 14,
+    paddingVertical: 12,
+    borderWidth: 1,
+    borderColor: colors.disabled,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+  },
+  input: {
+    flex: 1,
+    fontSize: 15,
+    color: colors.dark,
+  },
+  suggestionItem: {
+    backgroundColor: colors.white,
+    borderRadius: 10,
+    paddingHorizontal: 14,
+    paddingVertical: 12,
+    borderWidth: 1,
+    borderColor: colors.disabled,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 10,
+    marginBottom: 6,
+  },
+  suggestionItemSelected: {
+    borderColor: colors.primary,
+    backgroundColor: colors.primarySelectedBg,
+  },
+  suggestionText: {
+    flex: 1,
+    fontSize: 13,
+    color: colors.dark,
+  },
+  mapPreview: {
+    width: "100%",
+    height: 180,
+    borderRadius: 12,
+    overflow: "hidden",
+    marginTop: 4,
+  },
+  selectedAddressBox: {
+    backgroundColor: colors.primarySelectedBg,
+    borderRadius: 12,
+    padding: 14,
+    borderWidth: 1,
+    borderColor: colors.primary,
+  },
+  selectedAddressText: {
+    fontSize: 13,
+    color: colors.dark,
+    fontWeight: "600",
+    lineHeight: 18,
+  },
+  btnRow: {
+    flexDirection: "row",
+    gap: 10,
+    marginTop: 4,
+  },
+  btnChange: {
+    flex: 1,
+    paddingVertical: 13,
+    borderRadius: 12,
+    borderWidth: 1.5,
+    borderColor: colors.disabled,
+    alignItems: "center",
+  },
+  btnChangeText: {
+    fontSize: 14,
+    fontWeight: "700",
+    color: colors.placeholder,
+  },
+  btnConfirm: {
+    flex: 1,
+    borderRadius: 12,
+    overflow: "hidden",
+  },
+  btnConfirmInner: {
+    paddingVertical: 15,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  btnConfirmText: {
+    fontSize: 14,
+    fontWeight: "700",
+    color: colors.white,
+  },
+  loadingRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+    padding: 12,
+  },
+  loadingText: {
+    fontSize: 13,
+    color: colors.placeholder,
+  },
+});

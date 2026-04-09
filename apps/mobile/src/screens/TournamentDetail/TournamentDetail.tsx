@@ -5,6 +5,10 @@ import {
   ScrollView,
   ActivityIndicator,
   StatusBar,
+  TouchableOpacity,
+  Modal,
+  Linking,
+  Platform,
 } from "react-native";
 import {
   SafeAreaView,
@@ -34,7 +38,7 @@ const STATUS_LABEL: Record<string, string> = {
   completed: "Terminato",
 };
 const STATUS_COLOR: Record<string, string> = {
-  upcoming: colors.blue,
+  upcoming: colors.purpleBlue,
   ongoing: colors.success,
   completed: colors.placeholder,
 };
@@ -77,6 +81,31 @@ function Row({
   );
 }
 
+function LocationRow({
+  icon,
+  label,
+  value,
+  onPress,
+}: {
+  icon: any;
+  label: string;
+  value: string;
+  onPress: () => void;
+}) {
+  return (
+    <TouchableOpacity style={styles.row} onPress={onPress} activeOpacity={0.7}>
+      <Ionicons
+        name={icon}
+        size={16}
+        color={colors.primaryGradientMid}
+        style={{ width: 22 }}
+      />
+      <Text style={styles.rowLabel}>{label}</Text>
+      <Text style={styles.rowValueLink}>{value}</Text>
+    </TouchableOpacity>
+  );
+}
+
 export default function TournamentDetail({ route, navigation }: Props) {
   const { tournamentId, justRegistered } = route.params;
   const { user } = useAuth();
@@ -87,6 +116,7 @@ export default function TournamentDetail({ route, navigation }: Props) {
   const [tournament, setTournament] = useState<Tournament | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [showMapsModal, setShowMapsModal] = useState(false);
 
   const favorited = tournament ? isFavorite(tournament.id) : false;
   const toggleFavorite = () => {
@@ -137,6 +167,28 @@ export default function TournamentDetail({ route, navigation }: Props) {
       );
     }
   }, [justRegistered]);
+
+  const openMaps = () => {
+    setShowMapsModal(false);
+    const query = encodeURIComponent(tournament!.location);
+    const url =
+      tournament?.lat && tournament?.lng
+        ? Platform.select({
+            ios: `maps://maps.apple.com/?ll=${tournament.lat},${tournament.lng}&q=${query}`,
+            android: `geo:${tournament.lat},${tournament.lng}?q=${query}`,
+          })
+        : Platform.select({
+            ios: `maps://maps.apple.com/?q=${query}`,
+            android: `geo:0,0?q=${query}`,
+          });
+    if (url) {
+      Linking.openURL(url).catch(() =>
+        Linking.openURL(
+          `https://www.google.com/maps/search/?api=1&query=${query}`,
+        ),
+      );
+    }
+  };
 
   const handleGoToPayment = () => {
     if (!tournament) return;
@@ -286,10 +338,11 @@ export default function TournamentDetail({ route, navigation }: Props) {
               label="Organizzatore"
               value={tournament.organizer}
             />
-            <Row
+            <LocationRow
               icon="location-outline"
               label="Sede"
               value={tournament.location}
+              onPress={() => setShowMapsModal(true)}
             />
             <Row icon="calendar-outline" label="Inizio" value={startDate} />
             <Row icon="flag-outline" label="Fine" value={endDate} />
@@ -348,6 +401,37 @@ export default function TournamentDetail({ route, navigation }: Props) {
           isColored
         />
       </View>
+
+      <Modal
+        visible={showMapsModal}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setShowMapsModal(false)}
+      >
+        <TouchableOpacity
+          style={styles.modalOverlay}
+          activeOpacity={1}
+          onPress={() => setShowMapsModal(false)}
+        >
+          <TouchableOpacity activeOpacity={1} style={styles.modalCard}>
+            <Text style={styles.modalTitle}>Apri in Maps</Text>
+            <Text style={styles.modalBody}>
+              Vuoi aprire Maps per vedere la posizione del torneo?
+            </Text>
+            <View style={styles.modalBtns}>
+              <TouchableOpacity
+                style={styles.modalBtnCancel}
+                onPress={() => setShowMapsModal(false)}
+              >
+                <Text style={styles.modalBtnCancelText}>Annulla</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.modalBtnOpen} onPress={openMaps}>
+                <Text style={styles.modalBtnOpenText}>Apri Maps</Text>
+              </TouchableOpacity>
+            </View>
+          </TouchableOpacity>
+        </TouchableOpacity>
+      </Modal>
     </View>
   );
 }

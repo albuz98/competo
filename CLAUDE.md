@@ -33,19 +33,19 @@ expo start --android
 
 ### Key dependencies
 
-| Package                          | Purpose                          |
-| -------------------------------- | -------------------------------- |
-| `@react-navigation/native-stack` | Stack navigation                 |
-| `@react-navigation/bottom-tabs`  | Tab bar                          |
-| `expo-linear-gradient`           | Orange gradient headers          |
-| `expo-notifications`             | Push notifications               |
-| `expo-image-picker`              | Avatar selection                 |
-| `expo-location`                  | User geolocation                 |
-| `expo-secure-store`              | Persistent auth token storage    |
-| `react-native-maps`              | Map in Esplora screen            |
-| `react-native-safe-area-context` | Safe area insets                 |
-| `@expo/vector-icons`             | Ionicons used in tab bar icons   |
-| `@faker-js/faker`                | Mock data generation             |
+| Package                          | Purpose                        |
+| -------------------------------- | ------------------------------ |
+| `@react-navigation/native-stack` | Stack navigation               |
+| `@react-navigation/bottom-tabs`  | Tab bar                        |
+| `expo-linear-gradient`           | Orange gradient headers        |
+| `expo-notifications`             | Push notifications             |
+| `expo-image-picker`              | Avatar selection               |
+| `expo-location`                  | User geolocation               |
+| `expo-secure-store`              | Persistent auth token storage  |
+| `react-native-maps`              | Map in Esplora screen          |
+| `react-native-safe-area-context` | Safe area insets               |
+| `@expo/vector-icons`             | Ionicons used in tab bar icons |
+| `@faker-js/faker`                | Mock data generation           |
 
 ---
 
@@ -134,23 +134,23 @@ src/
 
 Initial route is `ChoseAccess` when logged out, `MainTabs` when a persisted token exists (resolved during `bootstrapping`).
 
-| Route                        | Screen                        | Notes                                                                        |
-| ---------------------------- | ----------------------------- | ---------------------------------------------------------------------------- |
-| `ChoseAccess`                | ChoseAccess                   | Entry screen for unauthenticated users                                       |
-| `MainTabs`                   | MainTabNavigator              | Initial route when authenticated                                             |
-| `Login`                      | Login                         | `redirect?: "tournament"`, `tournamentId?` — redirects after login           |
-| `Register`                   | Register                      |                                                                              |
-| `ForgotPassword`             | ForgotPassword                |                                                                              |
-| `TournamentDetail`           | TournamentDetail              | `tournamentId`, `justRegistered?`                                            |
-| `MyTournamentDetail`         | MyTournamentDetail            | `tournamentId`                                                               |
-| `OrganizerTournamentDetail`  | *(not yet implemented)*       | `tournamentId` — in `RootStackParamList` types but screen not yet created    |
-| `TeamSelect`                 | TeamSelect                    | Modal; `tournamentId`, `entryFee`, `tournamentName`                          |
-| `Payment`                    | Payment                       | `tournamentId`, `entryFee`, `tournamentName`, `teamId?`, `teamName?`         |
-| `Teams`                      | Teams                         |                                                                              |
-| `CreateTeam`                 | CreateTeam                    |                                                                              |
-| `TeamDetail`                 | TeamDetail                    | `teamId`                                                                     |
-| `InvitePlayers`              | InvitePlayers                 | `teamId`                                                                     |
-| `Notifiche`                  | Notifications                 |                                                                              |
+| Route                       | Screen                  | Notes                                                                     |
+| --------------------------- | ----------------------- | ------------------------------------------------------------------------- |
+| `ChoseAccess`               | ChoseAccess             | Entry screen for unauthenticated users                                    |
+| `MainTabs`                  | MainTabNavigator        | Initial route when authenticated                                          |
+| `Login`                     | Login                   | `redirect?: "tournament"`, `tournamentId?` — redirects after login        |
+| `Register`                  | Register                |                                                                           |
+| `ForgotPassword`            | ForgotPassword          |                                                                           |
+| `TournamentDetail`          | TournamentDetail        | `tournamentId`, `justRegistered?`                                         |
+| `MyTournamentDetail`        | MyTournamentDetail      | `tournamentId`                                                            |
+| `OrganizerTournamentDetail` | _(not yet implemented)_ | `tournamentId` — in `RootStackParamList` types but screen not yet created |
+| `TeamSelect`                | TeamSelect              | Modal; `tournamentId`, `entryFee`, `tournamentName`                       |
+| `Payment`                   | Payment                 | `tournamentId`, `entryFee`, `tournamentName`, `teamId?`, `teamName?`      |
+| `Teams`                     | Teams                   |                                                                           |
+| `CreateTeam`                | CreateTeam              |                                                                           |
+| `TeamDetail`                | TeamDetail              | `teamId`                                                                  |
+| `InvitePlayers`             | InvitePlayers           | `teamId`                                                                  |
+| `Notifiche`                 | Notifications           |                                                                           |
 
 ### Bottom tabs (`MainTabParamList`)
 
@@ -227,7 +227,7 @@ return getMockTeamCache(); // ✗ aliasing
   - `colors.primary`: `#e64326` · `colors.primaryGradientMid`: `#f2691a` · `colors.primaryGradientEnd`: `#f89d00`
   - `colors.danger`: `#d91a1a` · `colors.success`: `#10b981`
   - `colors.dark`: `#1e293b` · `colors.placeholder`: `#64748b` · `colors.grayDark`: `#94a3b8`
-  - `colors.blue`: `#4f46e5` · `colors.gray`: `#f1f5f9` (screen background) · `colors.black` / `colors.white`
+  - `colors.purpleBlue`: `#4f46e5` · `colors.gray`: `#f1f5f9` (screen background) · `colors.black` / `colors.white`
 - **Gradient helpers**: `colorGradient` and `colorGradientReverse` arrays are exported from `colors.ts` for convenience
 - **Gradient headers**: `<LinearGradient colors={colorGradient}>` (or `[colors.primary, colors.primaryGradientEnd]`)
 - **Screen background**: `colors.gray` (`#f1f5f9`)

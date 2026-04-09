@@ -106,6 +106,7 @@ interface ButtonBorderColoredProps {
   size?: sizesEnum;
   isColored?: boolean;
   isActive?: boolean;
+  fullColor?: string;
 }
 
 export function ButtonBorderColored({
@@ -119,9 +120,9 @@ export function ButtonBorderColored({
   size = sizesEnum.big,
   isColored = false,
   isActive = false,
+  fullColor = colors.primaryGradientMid,
 }: ButtonBorderColoredProps) {
-  const color =
-    isActive || !isColored ? colors.white : colors.primaryGradientMid;
+  const color = isActive || !isColored ? colors.white : fullColor;
   const dimensionBtn =
     size === sizesEnum.small
       ? small.btn
@@ -317,6 +318,7 @@ interface ButtonGenericProps {
   loading?: boolean;
   loaderColor?: string;
   style?: StyleProp<ViewStyle>;
+  disabled?: boolean;
 }
 
 export function ButtonGeneric({
@@ -325,9 +327,15 @@ export function ButtonGeneric({
   loading,
   loaderColor,
   style,
+  disabled,
 }: ButtonGenericProps) {
   return (
-    <TouchableOpacity onPress={handleBtn} activeOpacity={0.85} style={style}>
+    <TouchableOpacity
+      onPress={handleBtn}
+      activeOpacity={0.85}
+      style={style}
+      disabled={disabled}
+    >
       {loading ? <ActivityIndicator color={loaderColor} /> : <>{children}</>}
     </TouchableOpacity>
   );
@@ -341,6 +349,8 @@ interface ButtonGradientProps {
   loading?: boolean;
   loaderColor?: string;
   style?: StyleProp<ViewStyle>;
+  isDisabled?: boolean;
+  isFullWidth?: boolean;
 }
 
 export function ButtonGradient({
@@ -349,9 +359,16 @@ export function ButtonGradient({
   loading,
   loaderColor,
   style,
+  isDisabled,
+  isFullWidth,
 }: ButtonGradientProps) {
   return (
-    <TouchableOpacity onPress={handleBtn} activeOpacity={0.85}>
+    <TouchableOpacity
+      onPress={handleBtn}
+      activeOpacity={0.85}
+      disabled={isDisabled}
+      style={{ flex: isFullWidth ? 1 : 0 }}
+    >
       <LinearGradient colors={colorGradient} style={style}>
         {loading ? <ActivityIndicator color={loaderColor} /> : <>{children}</>}
       </LinearGradient>

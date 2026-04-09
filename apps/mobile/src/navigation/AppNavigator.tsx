@@ -9,6 +9,8 @@ import TeamsScreen from "../screens/Teams/Teams";
 import MainTabNavigator from "./MainTabNavigator/MainTabNavigator";
 import { useAuth } from "../context/AuthContext";
 import CreateTeam from "../screens/CreateTeam/CreateTeam";
+import CreateTournamentSchedule from "../screens/CreateTournamentSchedule/CreateTournamentSchedule";
+import TournamentScheduleResult from "../screens/TournamentScheduleResult/TournamentScheduleResult";
 import ForgotPassword from "../screens/ForgotPassword/ForgotPassword";
 import InvitePlayers from "../screens/InvitePlayers/InvitePlayers";
 import Login from "../screens/Login/Login";
@@ -53,7 +55,7 @@ export default function AppNavigator() {
       <Stack.Navigator
         initialRouteName={user ? "MainTabs" : "ChoseAccess"}
         screenOptions={{
-          headerStyle: { backgroundColor: colors.blue },
+          headerStyle: { backgroundColor: colors.purpleBlue },
           headerTintColor: colors.white,
           headerTitleStyle: { fontWeight: "bold" },
           contentStyle: { backgroundColor: colors.gray },
@@ -136,6 +138,16 @@ export default function AppNavigator() {
         <Stack.Screen
           name="InvitePlayers"
           component={InvitePlayers}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="CreateTournamentSchedule"
+          component={CreateTournamentSchedule}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="TournamentScheduleResult"
+          component={TournamentScheduleResult}
           options={{ headerShown: false }}
         />
       </Stack.Navigator>
