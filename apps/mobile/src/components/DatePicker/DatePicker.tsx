@@ -1,6 +1,5 @@
 import React, { useRef, useState, useEffect } from "react";
 import {
-  TouchableOpacity,
   View,
   Text,
   Modal,
@@ -12,7 +11,7 @@ import {
 import { dp } from "./DatePicker.styled";
 import { MONTHS } from "../../constants/generals";
 import { ITEM_H, PICKER_H } from "./constants";
-import { ButtonFullColored, ButtonGeneric } from "../Button/Button";
+import { ButtonGeneric } from "../Button/Button";
 
 const SHEET_H = PICKER_H + 24 + 52 + 32; // columns + header + paddingBottom
 
