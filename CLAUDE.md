@@ -29,6 +29,10 @@ cd apps/mobile
 expo start          # interactive menu
 expo start --ios    # iOS simulator
 expo start --android
+
+# From repo root (workspace scripts):
+npm run mobile      # same as expo start in apps/mobile
+npm run web         # starts the web app (apps/web)
 ```
 
 ### Key dependencies
@@ -305,6 +309,25 @@ cd apps/mobile
 npx tsc --noEmit
 ```
 
+`tsconfig.json` extends `expo/tsconfig.base` with `strict: true`, `noUnusedLocals: true`, `noUnusedParameters: true`. Do not introduce unused variables or parameters — the type checker will reject them.
+
 **Known pre-existing error** (not introduced by this project's code):
 
 - `src/hooks/useNotificationSetup.ios.ts`: `TS2322` — newer `expo-notifications` SDK requires `shouldShowBanner` and `shouldShowList` on `NotificationBehavior`. This is an upstream type mismatch; ignore it.
+
+---
+
+## Linting, formatting, and tests
+
+- **No linter or formatter** is configured for the mobile app. Do not attempt to run eslint or prettier.
+- **No test framework** is set up. There are no test files in the project.
+- The web app (`apps/web`) has an ESLint config but is WIP and not the focus of active development.
+
+---
+
+## Environment
+
+- **Node**: `>=20` (enforced in root `package.json` engines)
+- `app.config.js` supports two env vars:
+  - `MOCKING` — set to `"false"` to use the real API (default: `true`)
+  - `API_URL` — override the API base URL (default: `https://api.competo.example.com`)
