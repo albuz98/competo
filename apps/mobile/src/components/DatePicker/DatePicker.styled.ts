@@ -1,13 +1,14 @@
 import { StyleSheet } from "react-native";
 import { colors } from "../../theme/colors";
-import { ITEM_H } from "./DatePicker";
-
-const VISIBLE_ITEMS = 5;
-const PICKER_H = ITEM_H * VISIBLE_ITEMS;
+import { ITEM_H, PICKER_H } from "./constants";
 
 export const dp = StyleSheet.create({
-  backdrop: {
+  overlay: {
     flex: 1,
+    justifyContent: "flex-end",
+  },
+  backdrop: {
+    ...StyleSheet.absoluteFillObject,
     backgroundColor: "rgba(0,0,0,0.4)",
   },
   sheet: {
@@ -45,6 +46,7 @@ export const dp = StyleSheet.create({
     flexDirection: "row",
     paddingHorizontal: 8,
     paddingTop: 8,
+    height: PICKER_H + 24,
   },
   column: {
     flex: 1,
@@ -60,7 +62,9 @@ export const dp = StyleSheet.create({
   },
   list: {
     height: PICKER_H,
+    maxHeight: PICKER_H,
     width: "100%",
+    flexGrow: 0,
   },
   listContent: {
     paddingVertical: (PICKER_H - ITEM_H) / 2,

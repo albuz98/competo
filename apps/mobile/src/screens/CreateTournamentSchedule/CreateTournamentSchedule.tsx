@@ -84,7 +84,7 @@ export default function CreateTournamentSchedule({ navigation }: Props) {
   const [playDays, setPlayDays] = useState<number[]>([6]);
   const [maxMatchesPerDay, setMaxMatchesPerDay] = useState(2);
   const [hasFinalDay, setHasFinalDay] = useState(false);
-  const [finalDayDate, setFinalDayDate] = useState("");
+  const [finalDayDate, setFinalDayDate] = useState(todayISO());
   const [activeDateField, setActiveDateField] = useState<
     "startDate" | "finalDayDate" | null
   >(null);

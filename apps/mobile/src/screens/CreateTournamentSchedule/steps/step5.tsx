@@ -1,16 +1,5 @@
-import React, { useRef, useState, useEffect } from "react";
-import {
-  TouchableOpacity,
-  View,
-  Text,
-  Alert,
-  Switch,
-  Modal,
-  FlatList,
-  StyleSheet,
-  Pressable,
-  ListRenderItem,
-} from "react-native";
+import React from "react";
+import { TouchableOpacity, View, Text, Alert, Switch } from "react-native";
 import { DAY_LABELS } from "../../../constants/formatTournament";
 import { estimateTotalMatches } from "../../../functions/tournamet";
 import {
@@ -22,403 +11,12 @@ import { s } from "../CreateTournamentSchedule.styles";
 import { Ionicons } from "@expo/vector-icons";
 import { colors } from "../../../theme/colors";
 import { Stepper } from "../../../components/Stepper/Stepper";
-import { ButtonGeneric } from "../../../components/Button/Button";
-
-// ── Date picker constants ────────────────────────────────────────────────────
-
-const ITEM_H = 48;
-const VISIBLE_ITEMS = 5;
-const PICKER_H = ITEM_H * VISIBLE_ITEMS;
-
-const MONTHS = [
-  "Gen",
-  "Feb",
-  "Mar",
-  "Apr",
-  "Mag",
-  "Giu",
-  "Lug",
-  "Ago",
-  "Set",
-  "Ott",
-  "Nov",
-  "Dic",
-];
-
-function daysInMonth(year: number, month: number): number {
-  return new Date(year, month + 1, 0).getDate();
-}
-
-function parseISO(iso: string): { year: number; month: number; day: number } {
-  const today = new Date();
-  if (/^\d{4}-\d{2}-\d{2}$/.test(iso)) {
-    const [y, m, d] = iso.split("-").map(Number);
-    return { year: y, month: m - 1, day: d };
-  }
-  return {
-    year: today.getFullYear(),
-    month: today.getMonth(),
-    day: today.getDate(),
-  };
-}
-
-function toISO(year: number, month: number, day: number): string {
-  return `${year}-${String(month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
-}
-
-// ── DatePickerModal ──────────────────────────────────────────────────────────
-
-interface DatePickerModalProps {
-  visible: boolean;
-  currentValue: string; // YYYY-MM-DD or ""
-  minDate: string; // YYYY-MM-DD
-  onConfirm: (iso: string) => void;
-  onCancel: () => void;
-}
-
-function DatePickerModal({
-  visible,
-  currentValue,
-  minDate,
-  onConfirm,
-  onCancel,
-}: DatePickerModalProps) {
-  const today = new Date();
-  const minParsed = parseISO(minDate);
-
-  const START_YEAR = Math.max(today.getFullYear(), minParsed.year);
-  const END_YEAR = START_YEAR + 5;
-
-  const years: number[] = Array.from(
-    { length: END_YEAR - START_YEAR + 1 },
-    (_, i) => START_YEAR + i,
-  );
-
-  const initial = parseISO(currentValue || minDate);
-  const clampedInitialYear = Math.min(
-    Math.max(initial.year, START_YEAR),
-    END_YEAR,
-  );
-
-  const [selYear, setSelYear] = useState(clampedInitialYear);
-  const [selMonth, setSelMonth] = useState(initial.month);
-  const [selDay, setSelDay] = useState(initial.day);
-
-  const yearRef = useRef<FlatList>(null);
-  const monthRef = useRef<FlatList>(null);
-  const dayRef = useRef<FlatList>(null);
-
-  const numDays = daysInMonth(selYear, selMonth);
-  const days: number[] = Array.from({ length: numDays }, (_, i) => i + 1);
-
-  // Clamp day when month/year changes
-  useEffect(() => {
-    const max = daysInMonth(selYear, selMonth);
-    if (selDay > max) setSelDay(max);
-  }, [selYear, selMonth]);
-
-  // Reset selection and scroll when modal opens
-  useEffect(() => {
-    if (!visible) return;
-    const next = parseISO(currentValue || minDate);
-    const clampedYear = Math.min(Math.max(next.year, START_YEAR), END_YEAR);
-    setSelYear(clampedYear);
-    setSelMonth(next.month);
-    setSelDay(next.day);
-
-    const yearIdx = years.indexOf(clampedYear);
-    const monthIdx = next.month;
-    const dayIdx = next.day - 1;
-
-    // Defer scrolls so FlatList has rendered
-    setTimeout(() => {
-      yearRef.current?.scrollToIndex({
-        index: Math.max(yearIdx, 0),
-        animated: false,
-      });
-      monthRef.current?.scrollToIndex({
-        index: Math.max(monthIdx, 0),
-        animated: false,
-      });
-      dayRef.current?.scrollToIndex({
-        index: Math.max(dayIdx, 0),
-        animated: false,
-      });
-    }, 50);
-  }, [visible]);
-
-  function renderYearItem({ item }: { item: number }) {
-    const selected = item === selYear;
-    return (
-      <TouchableOpacity
-        style={[dp.item, selected && dp.itemSelected]}
-        onPress={() => {
-          setSelYear(item);
-          const idx = years.indexOf(item);
-          yearRef.current?.scrollToIndex({ index: idx, animated: true });
-        }}
-        activeOpacity={0.7}
-      >
-        <Text style={[dp.itemText, selected && dp.itemTextSelected]}>
-          {item}
-        </Text>
-      </TouchableOpacity>
-    );
-  }
-
-  function renderMonthItem({ item, index }: { item: string; index: number }) {
-    const selected = index === selMonth;
-    return (
-      <TouchableOpacity
-        style={[dp.item, selected && dp.itemSelected]}
-        onPress={() => {
-          setSelMonth(index);
-          monthRef.current?.scrollToIndex({ index, animated: true });
-        }}
-        activeOpacity={0.7}
-      >
-        <Text style={[dp.itemText, selected && dp.itemTextSelected]}>
-          {item}
-        </Text>
-      </TouchableOpacity>
-    );
-  }
-
-  function renderDayItem({ item }: { item: number }) {
-    const selected = item === selDay;
-    return (
-      <TouchableOpacity
-        style={[dp.item, selected && dp.itemSelected]}
-        onPress={() => {
-          setSelDay(item);
-          dayRef.current?.scrollToIndex({ index: item - 1, animated: true });
-        }}
-        activeOpacity={0.7}
-      >
-        <Text style={[dp.itemText, selected && dp.itemTextSelected]}>
-          {String(item).padStart(2, "0")}
-        </Text>
-      </TouchableOpacity>
-    );
-  }
-
-  const getItemLayout = (_: any, index: number) => ({
-    length: ITEM_H,
-    offset: ITEM_H * index,
-    index,
-  });
-
-  return (
-    <Modal
-      visible={visible}
-      transparent
-      animationType="slide"
-      onRequestClose={onCancel}
-    >
-      <Pressable style={dp.backdrop} onPress={onCancel} />
-
-      <View style={dp.sheet}>
-        {/* Header */}
-        <View style={dp.header}>
-          <TouchableOpacity onPress={onCancel} style={dp.headerBtn}>
-            <Text style={dp.cancelText}>Annulla</Text>
-          </TouchableOpacity>
-          <Text style={dp.headerTitle}>Seleziona data</Text>
-          <TouchableOpacity
-            onPress={() => onConfirm(toISO(selYear, selMonth, selDay))}
-            style={dp.headerBtn}
-          >
-            <Text style={dp.confirmText}>Conferma</Text>
-          </TouchableOpacity>
-        </View>
-
-        {/* Columns */}
-        <View style={dp.columns}>
-          {/* Year */}
-          <View style={dp.column}>
-            <Text style={dp.colLabel}>Anno</Text>
-            <FlatList
-              ref={yearRef}
-              data={years}
-              keyExtractor={(item) => String(item)}
-              renderItem={renderYearItem as ListRenderItem<number>}
-              getItemLayout={getItemLayout}
-              showsVerticalScrollIndicator={false}
-              style={dp.list}
-              contentContainerStyle={dp.listContent}
-              onScrollToIndexFailed={() => {}}
-            />
-          </View>
-
-          {/* Month */}
-          <View style={dp.column}>
-            <Text style={dp.colLabel}>Mese</Text>
-            <FlatList
-              ref={monthRef}
-              data={MONTHS}
-              keyExtractor={(_, i) => String(i)}
-              renderItem={renderMonthItem as ListRenderItem<string>}
-              getItemLayout={getItemLayout}
-              showsVerticalScrollIndicator={false}
-              style={dp.list}
-              contentContainerStyle={dp.listContent}
-              onScrollToIndexFailed={() => {}}
-            />
-          </View>
-
-          {/* Day */}
-          <View style={dp.column}>
-            <Text style={dp.colLabel}>Giorno</Text>
-            <FlatList
-              ref={dayRef}
-              data={days}
-              keyExtractor={(item) => String(item)}
-              renderItem={renderDayItem as ListRenderItem<number>}
-              getItemLayout={getItemLayout}
-              showsVerticalScrollIndicator={false}
-              style={dp.list}
-              contentContainerStyle={dp.listContent}
-              onScrollToIndexFailed={() => {}}
-            />
-          </View>
-        </View>
-      </View>
-    </Modal>
-  );
-}
-
-// Picker-local styles
-const dp = StyleSheet.create({
-  backdrop: {
-    flex: 1,
-    backgroundColor: "rgba(0,0,0,0.4)",
-  },
-  sheet: {
-    backgroundColor: colors.white,
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
-    paddingBottom: 32,
-  },
-  header: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    paddingHorizontal: 16,
-    paddingVertical: 14,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.disabled,
-  },
-  headerBtn: { paddingHorizontal: 4, paddingVertical: 4 },
-  headerTitle: {
-    fontSize: 16,
-    fontWeight: "700",
-    color: colors.dark,
-  },
-  cancelText: {
-    fontSize: 15,
-    color: colors.placeholder,
-    fontWeight: "600",
-  },
-  confirmText: {
-    fontSize: 15,
-    color: colors.primary,
-    fontWeight: "700",
-  },
-  columns: {
-    flexDirection: "row",
-    paddingHorizontal: 8,
-    paddingTop: 8,
-  },
-  column: {
-    flex: 1,
-    alignItems: "center",
-  },
-  colLabel: {
-    fontSize: 11,
-    fontWeight: "700",
-    color: colors.grayDark,
-    textTransform: "uppercase",
-    letterSpacing: 0.6,
-    marginBottom: 4,
-  },
-  list: {
-    height: PICKER_H,
-    width: "100%",
-  },
-  listContent: {
-    paddingVertical: (PICKER_H - ITEM_H) / 2,
-  },
-  item: {
-    height: ITEM_H,
-    alignItems: "center",
-    justifyContent: "center",
-    borderRadius: 10,
-    marginHorizontal: 4,
-  },
-  itemSelected: {
-    backgroundColor: colors.primarySelectedBg,
-  },
-  itemText: {
-    fontSize: 16,
-    color: colors.placeholder,
-    fontWeight: "500",
-  },
-  itemTextSelected: {
-    color: colors.primary,
-    fontWeight: "800",
-    fontSize: 18,
-  },
-});
-
-// ── DateTrigger (shared UI for both date fields) ─────────────────────────────
-
-interface DateTriggerProps {
-  value: string;
-  placeholder: string;
-  onPress: () => void;
-}
-
-function DateTrigger({ value, placeholder, onPress }: DateTriggerProps) {
-  const hasValue = /^\d{4}-\d{2}-\d{2}$/.test(value);
-  return (
-    <TouchableOpacity onPress={onPress} activeOpacity={0.7} style={dt.trigger}>
-      <Ionicons
-        name="calendar-outline"
-        size={16}
-        color={hasValue ? colors.dark : colors.placeholder}
-        style={{ marginRight: 6 }}
-      />
-      <Text style={[dt.text, !hasValue && dt.placeholder]}>
-        {hasValue ? value : placeholder}
-      </Text>
-    </TouchableOpacity>
-  );
-}
-
-const dt = StyleSheet.create({
-  trigger: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: colors.primarySelectedBg,
-    borderRadius: 10,
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    borderWidth: 1,
-    borderColor: colors.primary,
-    minWidth: 130,
-  },
-  text: {
-    fontSize: 14,
-    fontWeight: "700",
-    color: colors.dark,
-  },
-  placeholder: {
-    color: colors.placeholder,
-    fontWeight: "500",
-  },
-});
-
-// ── renderStep5 ──────────────────────────────────────────────────────────────
+import {
+  ButtonBorderColored,
+  ButtonGeneric,
+} from "../../../components/Button/Button";
+import { DatePickerModal } from "../../../components/DatePicker/DatePicker";
+import { sizesEnum } from "../../../theme/dimension";
 
 interface renderStep5Props {
   isSingleDay: boolean;
@@ -690,10 +288,19 @@ export function renderStep5({
       <Text style={s.sectionLabel}>Data di inizio</Text>
       <View style={s.numberInputRow}>
         <Text style={s.fieldLabel}>Data di inizio</Text>
-        <DateTrigger
-          value={startDate}
-          placeholder="Seleziona data"
-          onPress={() => setActiveDateField("startDate")}
+        <ButtonBorderColored
+          text={startDate}
+          handleBtn={() => setActiveDateField("startDate")}
+          iconLeft={
+            <Ionicons
+              name="calendar-outline"
+              size={16}
+              color={colors.primary}
+              style={{ marginRight: 6 }}
+            />
+          }
+          isColored
+          size={sizesEnum.medium}
         />
       </View>
 
@@ -842,10 +449,19 @@ export function renderStep5({
               <Text style={s.sectionLabel}>Data Final Day</Text>
               <View style={s.numberInputRow}>
                 <Text style={s.fieldLabel}>Giorno Final Day</Text>
-                <DateTrigger
-                  value={finalDayDate}
-                  placeholder="Seleziona data"
-                  onPress={() => setActiveDateField("finalDayDate")}
+                <ButtonBorderColored
+                  text={finalDayDate}
+                  handleBtn={() => setActiveDateField("finalDayDate")}
+                  iconLeft={
+                    <Ionicons
+                      name="calendar-outline"
+                      size={16}
+                      color={colors.primary}
+                      style={{ marginRight: 6 }}
+                    />
+                  }
+                  isColored
+                  size={sizesEnum.medium}
                 />
               </View>
               <View
