@@ -85,6 +85,9 @@ export default function CreateTournamentSchedule({ navigation }: Props) {
   const [maxMatchesPerDay, setMaxMatchesPerDay] = useState(2);
   const [hasFinalDay, setHasFinalDay] = useState(false);
   const [finalDayDate, setFinalDayDate] = useState("");
+  const [activeDateField, setActiveDateField] = useState<
+    "startDate" | "finalDayDate" | null
+  >(null);
 
   // Derived: max play days allowed based on total matches and matches per day
   const matchInfoDerived: TournametNumberPartecipants = estimateTotalMatches(
@@ -397,6 +400,8 @@ export default function CreateTournamentSchedule({ navigation }: Props) {
               matchDuration,
               restMinutes,
               travelMinutes,
+              activeDateField,
+              setActiveDateField,
             })}
         </ScrollView>
 

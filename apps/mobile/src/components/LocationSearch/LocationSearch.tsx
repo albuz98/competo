@@ -1,11 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import {
-  ActivityIndicator,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { ActivityIndicator, Text, TouchableOpacity, View } from "react-native";
 import MapView, { Marker } from "react-native-maps";
 import { LinearGradient } from "expo-linear-gradient";
 import { Ionicons } from "@expo/vector-icons";
@@ -13,76 +7,13 @@ import { isMocking } from "../../api/config";
 import { colors, colorGradient } from "../../theme/colors";
 import { ls } from "./LocationSearch.styles";
 import InputBox from "../InputBox/InputBox";
-
-type Suggestion = {
-  displayName: string;
-  lat: number;
-  lng: number;
-};
+import { searchNominatim } from "../../api/searchLocation";
+import { Suggestion } from "../../types";
 
 interface LocationSearchProps {
   initialValue?: string;
   onConfirm: (address: string, lat?: number, lng?: number) => void;
   setLocation: React.Dispatch<React.SetStateAction<string>>;
-}
-
-const MOCK_SUGGESTIONS: Suggestion[] = [
-  {
-    displayName: "Centro Sportivo Milano Nord, Via Testi 10, Milano",
-    lat: 45.518,
-    lng: 9.185,
-  },
-  {
-    displayName: "Parco Sport Roma Tre Fontane, Via delle Tre Fontane, Roma",
-    lat: 41.837,
-    lng: 12.464,
-  },
-  {
-    displayName: "Campo Calcio Napoli Est, Corso Malta 45, Napoli",
-    lat: 40.853,
-    lng: 14.287,
-  },
-  {
-    displayName: "Stadio Comunale Torino Sud, Via Druento 15, Torino",
-    lat: 45.063,
-    lng: 7.663,
-  },
-  {
-    displayName: "Centro Polisportivo Firenze, Piazzale dello Sport, Firenze",
-    lat: 43.78,
-    lng: 11.226,
-  },
-  {
-    displayName: "Impianti Sportivi Bologna, Via Arcoveggio 50, Bologna",
-    lat: 44.523,
-    lng: 11.345,
-  },
-  {
-    displayName: "Arena Sportiva Palermo, Via Ugo La Malfa 32, Palermo",
-    lat: 38.107,
-    lng: 13.341,
-  },
-];
-
-async function searchMock(query: string): Promise<Suggestion[]> {
-  await new Promise<void>((resolve) => setTimeout(resolve, 300));
-  const q = query.trim().toLowerCase();
-  if (!q) return MOCK_SUGGESTIONS;
-  return MOCK_SUGGESTIONS.filter((s) =>
-    s.displayName.toLowerCase().includes(q),
-  );
-}
-
-async function searchNominatim(query: string): Promise<Suggestion[]> {
-  const url = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(query)}&format=json&limit=5`;
-  const response = await fetch(url);
-  if (!response.ok) return [];
-  const data = await response.json();
-  return (data as any[]).map((item) => ({
-    displayName: item.display_name as string,
-    lat: parseFloat(item.lat),
-    lng: parseFloat(item.lon),
-  }));
 }
 
 type Mode = "search" | "preview" | "done";
@@ -103,8 +34,7 @@ export default function LocationSearch({
 
   const runSearch = (q: string) => {
     setIsSearching(true);
-    const searchFn = isMocking ? searchMock : searchNominatim;
-    searchFn(q)
+    searchNominatim(q)
       .then((results) => {
         setSuggestions(results.slice(0, 5));
       })

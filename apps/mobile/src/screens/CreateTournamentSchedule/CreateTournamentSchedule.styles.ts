@@ -221,7 +221,12 @@ export const s = StyleSheet.create({
     marginBottom: 8,
   },
   fieldLabel: { flex: 1, fontSize: 14, fontWeight: "600", color: colors.dark },
-  fieldSub: { fontSize: 11, color: colors.placeholder, marginTop: 1 },
+  fieldSub: { fontSize: 11, color: colors.placeholder },
+  fieldMinInput: {
+    flexDirection: "row",
+    alignItems: "center",
+    display: "flex",
+  },
 
   // Number input row
   numberInputRow: {

@@ -1,4 +1,5 @@
-import { View, Text, TextInput } from "react-native";
+import { View, Text } from "react-native";
+import InputBox from "../../../components/InputBox/InputBox";
 import { Stepper } from "../../../components/Stepper/Stepper";
 import { Ionicons } from "@expo/vector-icons";
 import { s } from "../CreateTournamentSchedule.styles";
@@ -64,14 +65,16 @@ export function renderStep4({
       <Text style={s.sectionLabel}>Durata e tempi</Text>
       <View style={s.numberInputRow}>
         <Text style={s.fieldLabel}>Durata incontro</Text>
-        <View style={{ flexDirection: "row", alignItems: "center" }}>
-          <TextInput
+        <View style={s.fieldMinInput}>
+          <InputBox
             style={s.numberInput}
             value={String(matchDuration)}
             onChangeText={(v) => setMatchDuration(parseInt(v, 10) || 0)}
             keyboardType="number-pad"
+            placeholder=""
+            isDark={false}
           />
-          <Text style={s.numberInputSuffix}>min</Text>
+          <Text style={(s.numberInputSuffix, { color: "black" })}>min</Text>
         </View>
       </View>
 
@@ -81,11 +84,13 @@ export function renderStep4({
           <Text style={s.fieldSub}>Dopo ogni partita</Text>
         </View>
         <View style={{ flexDirection: "row", alignItems: "center" }}>
-          <TextInput
+          <InputBox
             style={s.numberInput}
             value={String(restMinutes)}
             onChangeText={(v) => setRestMinutes(parseInt(v, 10) || 0)}
             keyboardType="number-pad"
+            placeholder=""
+            isDark={false}
           />
           <Text style={s.numberInputSuffix}>min</Text>
         </View>
@@ -97,11 +102,13 @@ export function renderStep4({
           <Text style={s.fieldSub}>Tempo per cambiare campo</Text>
         </View>
         <View style={{ flexDirection: "row", alignItems: "center" }}>
-          <TextInput
+          <InputBox
             style={s.numberInput}
             value={String(travelMinutes)}
             onChangeText={(v) => setTravelMinutes(parseInt(v, 10) || 0)}
             keyboardType="number-pad"
+            placeholder=""
+            isDark={false}
           />
           <Text style={s.numberInputSuffix}>min</Text>
         </View>

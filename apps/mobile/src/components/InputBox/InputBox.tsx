@@ -149,7 +149,7 @@ export default function InputBox({ isDark = true, ...props }: InputBoxProps) {
     deleteText,
   } = props;
   return (
-    <View style={styles.wrapper}>
+    <View>
       <TextInput
         style={[
           styles.input,

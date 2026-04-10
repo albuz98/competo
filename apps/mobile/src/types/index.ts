@@ -329,3 +329,9 @@ export type MainTabParamList = {
   Preferiti: undefined;
   Profilo: undefined;
 };
+
+export type Suggestion = {
+  displayName: string;
+  lat: number;
+  lng: number;
+};
