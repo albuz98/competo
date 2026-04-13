@@ -3,12 +3,8 @@ import {
   View,
   Text,
   ActivityIndicator,
-  Modal,
-  TextInput,
-  KeyboardAvoidingView,
-  Platform,
   Animated,
-  PanResponder,
+  TextInput,
 } from "react-native";
 import MapView, { Circle, Marker } from "react-native-maps";
 import type { Region } from "react-native-maps";
@@ -29,6 +25,7 @@ import {
   ButtonSelectable,
 } from "../../components/Button/Button";
 import { colors } from "../../theme/colors";
+import { ModalViewer } from "../../components/Modal/Modal";
 
 const DEFAULT = { lat: 45.4642, lng: 9.19 }; // Milan fallback
 const RADIUS_OPTIONS = [5, 10, 20, 50];
@@ -72,46 +69,6 @@ export default function Explore() {
 
   // Flag to skip geocoding when recenter sets center directly
   const skipGeocode = useRef(false);
-
-  // Modal swipe-to-dismiss
-  const panY = useRef(new Animated.Value(600)).current;
-
-  const openModal = () => {
-    panY.setValue(600);
-    setEditModal(true);
-    Animated.spring(panY, {
-      toValue: 0,
-      useNativeDriver: true,
-      bounciness: 2,
-    }).start();
-  };
-
-  const dismissModal = () => {
-    Animated.timing(panY, {
-      toValue: 600,
-      duration: 220,
-      useNativeDriver: true,
-    }).start(() => {
-      setEditModal(false);
-      panY.setValue(600);
-    });
-  };
-
-  const modalPanResponder = useRef(
-    PanResponder.create({
-      onStartShouldSetPanResponder: () => true,
-      onPanResponderMove: (_, { dy }) => {
-        if (dy > 0) panY.setValue(dy);
-      },
-      onPanResponderRelease: (_, { dy, vy }) => {
-        if (dy > 60 || vy > 0.5) {
-          dismissModal();
-        } else {
-          Animated.spring(panY, { toValue: 0, useNativeDriver: true }).start();
-        }
-      },
-    }),
-  ).current;
 
   // Toast for city-not-found
   const toastAnim = useRef(new Animated.Value(0)).current;
@@ -221,14 +178,15 @@ export default function Explore() {
   const openEdit = () => {
     setModalLoc(exploraLocation ?? "");
     setModalRadius(exploraRadius);
-    openModal();
+    setEditModal(true);
+    // openModal()
   };
 
   const applyEdit = () => {
     const trimmed = modalLoc.trim();
     if (trimmed) setExploraLocation(trimmed);
     setExploraRadius(modalRadius);
-    dismissModal();
+    setEditModal(false);
   };
 
   // First load: show full spinner until we have a center
@@ -416,76 +374,55 @@ export default function Explore() {
         }
         style={[styles.recenterBtn, { bottom: insets.bottom + 90 }]}
       />
-
-      {/* Edit modal */}
-      <Modal
-        visible={editModal}
-        transparent
-        animationType="none"
-        onRequestClose={dismissModal}
-      >
-        <KeyboardAvoidingView
-          style={styles.modalOverlay}
-          behavior={Platform.OS === "ios" ? "padding" : "height"}
-        >
-          <ButtonGeneric style={styles.modalDismiss} handleBtn={dismissModal} />
-          <Animated.View
-            style={[styles.modalCard, { transform: [{ translateY: panY }] }]}
-          >
-            <View {...modalPanResponder.panHandlers} style={styles.dragZone}>
-              <View style={styles.modalHandle} />
-              <Text style={styles.modalTitle}>Modifica area di ricerca</Text>
-            </View>
-            <Text style={styles.modalLabel}>POSIZIONE</Text>
-            <View style={styles.modalInputRow}>
-              <Ionicons
-                name="location-outline"
-                size={18}
-                color={colors.primaryGradientMid}
-                style={{ marginRight: 8 }}
-              />
-              <TextInput
-                style={styles.modalInput}
-                value={modalLoc}
-                onChangeText={setModalLoc}
-                placeholder="Es. Milano, Napoli..."
-                placeholderTextColor={colors.placeholder}
-                returnKeyType="done"
-              />
-              {modalLoc.length > 0 && (
-                <ButtonIcon
-                  icon={
-                    <Ionicons
-                      name="close-circle"
-                      size={18}
-                      color={colors.grayDark}
-                    />
-                  }
-                  handleBtn={() => setModalLoc("")}
+      <ModalViewer isOpen={editModal} onClose={() => setEditModal(false)}>
+        <View style={styles.dragZone}>
+          <View style={styles.modalHandle} />
+          <Text style={styles.modalTitle}>Modifica area di ricerca</Text>
+        </View>
+        <Text style={styles.modalLabel}>POSIZIONE</Text>
+        <View style={styles.modalInputRow}>
+          <Ionicons
+            name="location-outline"
+            size={18}
+            color={colors.primaryGradientMid}
+            style={{ marginRight: 8 }}
+          />
+          <TextInput
+            style={styles.modalInput}
+            value={modalLoc}
+            onChangeText={setModalLoc}
+            placeholder="Es. Milano, Napoli..."
+            placeholderTextColor={colors.placeholder}
+            returnKeyType="done"
+          />
+          {modalLoc.length > 0 && (
+            <ButtonIcon
+              icon={
+                <Ionicons
+                  name="close-circle"
+                  size={18}
+                  color={colors.grayDark}
                 />
-              )}
-            </View>
-
-            <Text style={styles.modalLabel}>RAGGIO DI RICERCA</Text>
-            <View style={styles.radiusRow}>
-              {RADIUS_OPTIONS.map((r) => (
-                <ButtonSelectable
-                  key={r}
-                  handleBtn={() => setModalRadius(r)}
-                  text={`${r} km`}
-                  isSelected={modalRadius === r}
-                />
-              ))}
-            </View>
-
-            <ButtonBorderColored
-              text="Applica"
-              handleBtn={applyEdit}
-              isColored
+              }
+              handleBtn={() => setModalLoc("")}
             />
-          </Animated.View>
-        </KeyboardAvoidingView>
-      </Modal>
+          )}
+        </View>
+
+        <Text style={styles.modalLabel}>RAGGIO DI RICERCA</Text>
+        <View style={styles.radiusRow}>
+          {RADIUS_OPTIONS.map((r) => (
+            <ButtonSelectable
+              key={r}
+              handleBtn={() => setModalRadius(r)}
+              text={`${r} km`}
+              isSelected={modalRadius === r}
+            />
+          ))}
+        </View>
+
+        <ButtonBorderColored text="Applica" handleBtn={applyEdit} isColored />
+      </ModalViewer>
     </View>
   );
 }
