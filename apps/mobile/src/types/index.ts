@@ -171,6 +171,18 @@ export interface OrganizerTournamentDetail extends MyTournament {
 
 // ─── Auth types ───────────────────────────────────────────────────────────────
 
+export enum UserRole {
+  PLAYER = "player",
+  ORGANIZER = "organizer",
+}
+
+export interface UserProfile {
+  id: string;
+  username: string;
+  avatarUrl?: string;
+  role?: UserRole;
+}
+
 export interface User {
   id: string;
   firstName: string;
@@ -185,6 +197,8 @@ export interface User {
   matchStats?: MatchStats;
   organizedTournaments?: OrganizedTournamentRecord[];
   password: string;
+  profiles?: UserProfile[];
+  currentProfileId?: string;
 }
 
 export interface LoginCredentials {

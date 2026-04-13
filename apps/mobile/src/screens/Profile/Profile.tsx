@@ -8,6 +8,7 @@ import {
   KeyboardAvoidingView,
   Platform,
   ActivityIndicator,
+  Pressable,
 } from "react-native";
 import {
   SafeAreaView,
@@ -15,13 +16,14 @@ import {
 } from "react-native-safe-area-context";
 import { LinearGradient } from "expo-linear-gradient";
 import { Ionicons } from "@expo/vector-icons";
+import Entypo from "@expo/vector-icons/Entypo";
 import * as ImagePicker from "expo-image-picker";
 import * as Location from "expo-location";
 import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useAuth } from "../../context/AuthContext";
 import { useTeams } from "../../context/TeamsContext";
-import { RootStackParamList } from "../../types";
+import { RootStackParamList, UserProfile } from "../../types";
 import { pStyles, styles } from "./Profile.styles";
 import { colorGradient, colors } from "../../theme/colors";
 import { Avatar } from "../../components/Avatar/Avatar";
@@ -30,10 +32,12 @@ import { styles as tabStyles } from "../../navigation/MainTabNavigator/MainTabNa
 import {
   ButtonBorderColored,
   ButtonGeneric,
+  ButtonGradient,
   ButtonIcon,
   ButtonLink,
 } from "../../components/Button/Button";
 import { sizesEnum } from "../../theme/dimension";
+import { ModalViewer } from "../../components/Modal/Modal";
 
 export default function Profile() {
   const { user, logout, updateProfile } = useAuth();
@@ -52,6 +56,7 @@ export default function Profile() {
   const navigation =
     useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const insets = useSafeAreaInsets();
+  const [changeProfileModal, setChangeProfileModal] = useState(false);
 
   useEffect(() => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -64,6 +69,16 @@ export default function Profile() {
 
   const scrollRef = useRef<ScrollView>(null);
   const savedScrollY = useRef(0);
+  const [selectedProfile, setSelectedProfile] = useState<UserProfile | null>(
+    user?.profiles?.find((p) => p.id === user?.currentProfileId) ||
+      user?.profiles?.[0] ||
+      null,
+  );
+
+  const handleSwitchProfile = (profile: UserProfile) => {
+    setSelectedProfile(profile);
+    setChangeProfileModal(false);
+  };
 
   useFocusEffect(
     useCallback(() => {
@@ -179,30 +194,39 @@ export default function Profile() {
       behavior={Platform.OS === "ios" ? "padding" : "height"}
     >
       <SafeAreaView style={styles.root} edges={["top"]}>
-        <View style={styles.header}>
-          <Text style={styles.headerText}>Profilo</Text>
-          {edit ? (
-            <ButtonLink
-              text="FATTO"
-              handleBtn={handleSave}
-              color={colors.primary}
-              fontSize={16}
-              isBold
-              isColored
-            />
-          ) : (
-            <ButtonIcon
-              handleBtn={handleLogout}
-              icon={
-                <Ionicons
-                  name="log-out-outline"
-                  size={20}
-                  color={colors.primary}
-                />
-              }
-            />
-          )}
-        </View>
+        <Pressable onPress={() => setChangeProfileModal(true)}>
+          <View style={styles.header}>
+            {!edit ? (
+              <View style={styles.containerHeaderText}>
+                <Text style={styles.headerText}>{user.username}</Text>
+                <Entypo name="chevron-down" size={20} color="black" />
+              </View>
+            ) : (
+              <Text style={styles.headerText}>Modifica profilo</Text>
+            )}
+            {edit ? (
+              <ButtonLink
+                text="FATTO"
+                handleBtn={handleSave}
+                color={colors.primary}
+                fontSize={16}
+                isBold
+                isColored
+              />
+            ) : (
+              <ButtonIcon
+                handleBtn={handleLogout}
+                icon={
+                  <Ionicons
+                    name="log-out-outline"
+                    size={20}
+                    color={colors.primary}
+                  />
+                }
+              />
+            )}
+          </View>
+        </Pressable>
         <ScrollView
           ref={scrollRef}
           showsVerticalScrollIndicator={false}
@@ -524,6 +548,127 @@ export default function Profile() {
             </>
           )}
         </ScrollView>
+        <ModalViewer
+          isOpen={changeProfileModal}
+          onClose={() => setChangeProfileModal(false)}
+        >
+          <View style={styles.headerModal}>
+            <Text style={styles.headerModalText}>I tuoi profili</Text>
+            <Ionicons name="add" size={24} color={colors.primaryGradientMid} />
+          </View>
+          {user?.profiles && user.profiles.length > 0 ? (
+            <View style={{ gap: 10 }}>
+              {user.profiles.map((profile) => (
+                <Pressable
+                  key={profile.id}
+                  onPress={() => handleSwitchProfile(profile)}
+                  style={[
+                    {
+                      flexDirection: "row",
+                      alignItems: "center",
+                      backgroundColor: colors.white,
+                      borderRadius: 12,
+                      padding: 12,
+                      borderWidth: 2,
+                      borderColor:
+                        selectedProfile?.id === profile.id
+                          ? colors.primary
+                          : colors.gray,
+                    },
+                  ]}
+                >
+                  {profile.avatarUrl ? (
+                    <View
+                      style={{
+                        width: 44,
+                        height: 44,
+                        borderRadius: 22,
+                        backgroundColor: colors.primaryGradientMid,
+                        alignItems: "center",
+                        justifyContent: "center",
+                        marginRight: 12,
+                        overflow: "hidden",
+                      }}
+                    >
+                      {/* Avatar image would go here */}
+                      <Text
+                        style={{
+                          color: colors.white,
+                          fontSize: 18,
+                          fontWeight: "800",
+                        }}
+                      >
+                        {profile.username.slice(0, 1).toUpperCase()}
+                      </Text>
+                    </View>
+                  ) : (
+                    <View
+                      style={{
+                        width: 44,
+                        height: 44,
+                        borderRadius: 22,
+                        backgroundColor: colors.primaryGradientMid,
+                        alignItems: "center",
+                        justifyContent: "center",
+                        marginRight: 12,
+                      }}
+                    >
+                      <Text
+                        style={{
+                          color: colors.white,
+                          fontSize: 18,
+                          fontWeight: "800",
+                        }}
+                      >
+                        {profile.username.slice(0, 1).toUpperCase()}
+                      </Text>
+                    </View>
+                  )}
+                  <View style={{ flex: 1 }}>
+                    <Text
+                      style={{
+                        fontSize: 14,
+                        fontWeight: "700",
+                        color: colors.dark,
+                      }}
+                    >
+                      {profile.username}
+                    </Text>
+                    {profile.role && (
+                      <Text
+                        style={{
+                          fontSize: 12,
+                          color: colors.placeholder,
+                          marginTop: 2,
+                        }}
+                      >
+                        {profile.role}
+                      </Text>
+                    )}
+                  </View>
+                  {selectedProfile?.id === profile.id && (
+                    <Ionicons
+                      name="checkmark-circle"
+                      size={24}
+                      color={colors.primary}
+                    />
+                  )}
+                </Pressable>
+              ))}
+            </View>
+          ) : (
+            <Text
+              style={{
+                fontSize: 14,
+                color: colors.placeholder,
+                textAlign: "center",
+                marginVertical: 20,
+              }}
+            >
+              Nessun profilo disponibile
+            </Text>
+          )}
+        </ModalViewer>
       </SafeAreaView>
     </KeyboardAvoidingView>
   );

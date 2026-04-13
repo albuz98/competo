@@ -375,10 +375,7 @@ export default function Explore() {
         style={[styles.recenterBtn, { bottom: insets.bottom + 90 }]}
       />
       <ModalViewer isOpen={editModal} onClose={() => setEditModal(false)}>
-        <View style={styles.dragZone}>
-          <View style={styles.modalHandle} />
-          <Text style={styles.modalTitle}>Modifica area di ricerca</Text>
-        </View>
+        <Text style={styles.modalTitle}>Modifica area di ricerca</Text>
         <Text style={styles.modalLabel}>POSIZIONE</Text>
         <View style={styles.modalInputRow}>
           <Ionicons

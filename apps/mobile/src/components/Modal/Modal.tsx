@@ -6,24 +6,8 @@ import {
   View,
   KeyboardAvoidingView,
   Platform,
-  StyleSheet,
 } from "react-native";
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: "flex-end",
-  },
-  overlayBackground: {
-    ...StyleSheet.absoluteFillObject,
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
-  },
-  card: {
-    backgroundColor: "white",
-    borderTopLeftRadius: 24,
-    borderTopRightRadius: 24,
-  },
-});
+import { styles } from "./Modal.styled";
 
 interface ModalViewerProps {
   isOpen: boolean;
@@ -108,6 +92,9 @@ export const ModalViewer = ({
       ]}
       {...modalPanResponder.panHandlers}
     >
+      <View style={styles.dragZone}>
+        <View style={styles.modalHandle} />
+      </View>
       {children}
     </Animated.View>
   );

@@ -8,14 +8,21 @@ export const styles = StyleSheet.create({
     display: "flex",
     flexDirection: "row",
     justifyContent: "space-between",
+    alignItems: "center",
     paddingHorizontal: 16,
     paddingTop: 16,
     paddingBottom: 8,
   },
   headerText: {
-    fontSize: 22,
+    fontSize: 20,
     fontWeight: "800",
     color: colors.dark,
+  },
+  containerHeaderText: {
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 5,
   },
   card: {
     alignItems: "center",
@@ -148,6 +155,18 @@ export const styles = StyleSheet.create({
   },
   createTeamTitle: { fontSize: 14, fontWeight: "700", color: colors.dark },
   createTeamSub: { fontSize: 11, color: colors.placeholder, marginTop: 2 },
+  headerModalText: {
+    fontSize: 18,
+    fontWeight: "800",
+    color: colors.dark,
+  },
+  headerModal: {
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    marginBottom: 16,
+  },
 });
 
 export const pStyles = StyleSheet.create({

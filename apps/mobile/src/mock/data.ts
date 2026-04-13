@@ -1,23 +1,22 @@
 import { faker } from "@faker-js/faker";
-import type {
-  Tournament,
-  User,
-  MyTournament,
-  TournamentStructure,
-  TournamentTeam,
-  TournamentMatch,
-  TournamentGroup,
-  Team,
-  TeamMember,
-  TeamRole,
-  AppUser,
-  MatchStats,
-  OrganizedTournamentRecord,
-  PlayerStats,
-  TeamRegistrationStatus,
-  TournamentPlayer,
-  TournamentRegisteredTeam,
-  OrganizerTournamentDetail,
+import {
+  type Tournament,
+  type User,
+  type MyTournament,
+  type TournamentStructure,
+  type TournamentTeam,
+  type TournamentMatch,
+  type TournamentGroup,
+  type Team,
+  type TeamMember,
+  type TeamRole,
+  type AppUser,
+  type PlayerStats,
+  type TeamRegistrationStatus,
+  type TournamentPlayer,
+  type TournamentRegisteredTeam,
+  type OrganizerTournamentDetail,
+  UserRole,
 } from "../types";
 
 export const GAMES = [
@@ -154,68 +153,22 @@ export const mockProfile: User = {
       totalPrizeMoney: "$3,200",
     },
   ],
+  currentProfileId: "mock-user-001",
+  profiles: [
+    {
+      id: "mock-user-001",
+      username: "mario.rossi",
+      avatarUrl: undefined,
+      role: UserRole.PLAYER,
+    },
+    {
+      id: "mock-user-002",
+      username: "giuseppe.bianchi",
+      avatarUrl: undefined,
+      role: UserRole.ORGANIZER,
+    },
+  ],
 };
-
-export function generateUser(overrides?: Partial<User>): User {
-  return {
-    id: faker.string.uuid(),
-    firstName: faker.person.firstName(),
-    lastName: faker.person.lastName(),
-    username: faker.internet.username(),
-    password: faker.internet.password(),
-    email: faker.internet.email(),
-    token: faker.string.alphanumeric(64),
-    dateOfBirth: faker.date
-      .birthdate({ min: 18, max: 60, mode: "age" })
-      .toISOString()
-      .slice(0, 10),
-    ...overrides,
-  };
-}
-
-export function generateMatchStats(): MatchStats {
-  const tournamentsPlayed = faker.number.int({ min: 3, max: 20 });
-  const tournamentsWon = faker.number.int({
-    min: 0,
-    max: Math.floor(tournamentsPlayed / 2),
-  });
-  const matchesPlayed =
-    tournamentsPlayed * faker.number.int({ min: 3, max: 8 });
-  const wins = faker.number.int({
-    min: Math.floor(matchesPlayed * 0.2),
-    max: Math.floor(matchesPlayed * 0.6),
-  });
-  const draws = faker.number.int({
-    min: 0,
-    max: Math.floor(matchesPlayed * 0.2),
-  });
-  const losses = matchesPlayed - wins - draws;
-  return {
-    matchesPlayed,
-    wins,
-    losses,
-    draws,
-    tournamentsPlayed,
-    tournamentsWon,
-  };
-}
-
-export function generateOrganizedTournamentRecord(): OrganizedTournamentRecord {
-  const totalTeams = faker.helpers.arrayElement([8, 16, 32]);
-  const entryFee = faker.helpers.arrayElement([10, 25, 50, 100]);
-  return {
-    id: faker.string.uuid(),
-    name: `${faker.helpers.arrayElement(ADJECTIVES)} ${faker.helpers.arrayElement(NOUNS)} ${faker.date.recent({ days: 365 }).getFullYear()}`,
-    sport: faker.helpers.arrayElement(GAMES),
-    date: faker.date.recent({ days: 365 }).toISOString(),
-    location: faker.helpers.arrayElement([
-      `${faker.location.city()}, Italia`,
-      "Online",
-    ]),
-    totalTeams,
-    totalPrizeMoney: `$${(totalTeams * entryFee).toLocaleString()}`,
-  };
-}
 
 export function generatePlayerStats(): PlayerStats {
   return {
