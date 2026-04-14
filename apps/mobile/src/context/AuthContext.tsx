@@ -2,11 +2,21 @@ import React, {
   createContext,
   useContext,
   useState,
+  useMemo,
   useEffect,
   type ReactNode,
 } from "react";
 import * as SecureStore from "expo-secure-store";
-import type { User, LoginCredentials, RegisterCredentials } from "../types";
+import type {
+  User,
+  LoginCredentials,
+  RegisterCredentials,
+  UpdateProfileData,
+  OrganizerProfile,
+  AppUser,
+  UserProfile,
+} from "../types";
+import { UserRole } from "../types";
 import {
   login as apiLogin,
   register as apiRegister,
@@ -18,6 +28,7 @@ const TOKEN_KEY = "authToken";
 
 interface AuthContextType {
   user: User | null;
+  currentProfile: UserProfile | null;
   location: string | undefined;
   loading: boolean;
   bootstrapping: boolean;
@@ -27,14 +38,10 @@ interface AuthContextType {
   logout: () => void;
   clearError: () => void;
   updateLocation: (location: string) => void;
-  updateProfile: (data: {
-    firstName?: string;
-    lastName?: string;
-    username?: string;
-    location?: string;
-    password?: string;
-    avatarUrl?: string;
-  }) => Promise<void>;
+  switchProfile: (profileId: string) => void;
+  updateProfile: (data: UpdateProfileData) => Promise<void>;
+  updateOrgProfileData: (profileId: string, updates: Partial<OrganizerProfile>) => void;
+  addCollaborator: (profileId: string, appUser: AppUser) => void;
 }
 
 const AuthContext = createContext<AuthContextType | null>(null);
@@ -45,6 +52,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(false);
   const [bootstrapping, setBootstrapping] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  // Always derived from user — single source of truth for the active profile
+  const currentProfile = useMemo<UserProfile | null>(
+    () =>
+      user?.profiles?.find((p) => p.id === user.currentProfileId) ??
+      user?.profiles?.[0] ??
+      null,
+    [user?.profiles, user?.currentProfileId],
+  );
 
   useEffect(() => {
     (async () => {
@@ -104,6 +120,45 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setLocation(loc);
     setUser((prev) => (prev ? { ...prev, location: loc } : prev));
   };
+  const switchProfile = (profileId: string) => {
+    setUser((prev) => (prev ? { ...prev, currentProfileId: profileId } : prev));
+  };
+
+  const addCollaborator = (profileId: string, appUser: AppUser) => {
+    setUser((prev) => {
+      if (!prev) return prev;
+      return {
+        ...prev,
+        profiles: prev.profiles?.map((p) => {
+          if (p.id !== profileId || p.role !== UserRole.ORGANIZER) return p;
+          const org = p as OrganizerProfile;
+          if (org.collaborators?.some((c) => c.id === appUser.id)) return p;
+          return {
+            ...org,
+            collaborators: [...(org.collaborators ?? []), appUser],
+          } as OrganizerProfile;
+        }),
+      };
+    });
+  };
+
+  const updateOrgProfileData = (
+    profileId: string,
+    updates: Partial<OrganizerProfile>,
+  ) => {
+    setUser((prev) =>
+      prev
+        ? {
+            ...prev,
+            profiles: prev.profiles?.map((p) =>
+              p.id === profileId && p.role === UserRole.ORGANIZER
+                ? ({ ...p, ...updates } as OrganizerProfile)
+                : p,
+            ),
+          }
+        : prev,
+    );
+  };
 
   const updateProfile = async (data: {
     firstName?: string;
@@ -132,6 +187,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     <AuthContext.Provider
       value={{
         user,
+        currentProfile,
         location,
         loading,
         bootstrapping,
@@ -141,7 +197,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         logout,
         clearError,
         updateLocation,
+        switchProfile,
         updateProfile,
+        updateOrgProfileData,
+        addCollaborator,
       }}
     >
       {children}

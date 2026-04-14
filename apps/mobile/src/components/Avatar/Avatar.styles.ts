@@ -14,5 +14,5 @@ export const styles = StyleSheet.create({
     height: 72,
     borderRadius: 36,
   },
-  avatarText: { color: colors.white, fontSize: 22, fontWeight: "800" },
+  avatarText: { color: colors.white, fontWeight: "800" },
 });

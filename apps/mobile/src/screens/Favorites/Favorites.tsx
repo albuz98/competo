@@ -9,7 +9,9 @@ import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import type { RootStackParamList, Tournament } from "../../types";
+import { UserRole } from "../../types";
 import { useFavorites } from "../../context/FavoritesContext";
+import { useAuth } from "../../context/AuthContext";
 import { ButtonGeneric, ButtonIcon } from "../../components/Button/Button";
 import { colors } from "../../theme/colors";
 
@@ -96,13 +98,24 @@ function TournamentCard({
 export default function Favorites() {
   const navigation = useNavigation<Nav>();
   const { favorites, removeFavorite } = useFavorites();
+  const { currentProfile } = useAuth();
   const insets = useSafeAreaInsets();
+
+  const isOrganizer = currentProfile?.role === UserRole.ORGANIZER;
 
   return (
     <SafeAreaView style={pf.root} edges={["top"]}>
       <StatusBar barStyle="dark-content" backgroundColor={colors.white} />
       <Text style={pf.header}>Preferiti</Text>
-      {favorites.length === 0 ? (
+      {isOrganizer ? (
+        <View style={pf.center}>
+          <Ionicons name="person-outline" size={64} color={colors.gray} />
+          <Text style={pf.emptyTitle}>Profilo organizzatore</Text>
+          <Text style={pf.emptySubtitle}>
+            Passa al profilo giocatore per vedere i tornei preferiti
+          </Text>
+        </View>
+      ) : favorites.length === 0 ? (
         <View style={pf.center}>
           <Ionicons name="bookmark-outline" size={64} color={colors.gray} />
           <Text style={pf.emptyTitle}>Nessun preferito</Text>

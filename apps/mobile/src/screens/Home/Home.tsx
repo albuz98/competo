@@ -20,7 +20,9 @@ import type {
   RootStackParamList,
   Tournament,
   MainTabParamList,
+  OrganizerProfile as OrganizerProfileType,
 } from "../../types";
+import { UserRole } from "../../types";
 import { useAuth } from "../../context/AuthContext";
 import { useNotifications } from "../../context/NotificationsContext";
 import { generateTournaments } from "../../mock/data";
@@ -191,7 +193,7 @@ function SmallCard({
 
 // ─── Main screen ─────────────────────────────────────────────────────────────
 export default function Home() {
-  const { user, location, updateLocation } = useAuth();
+  const { user, currentProfile, location, updateLocation } = useAuth();
   const { unreadCount } = useNotifications();
   const navigation = useNavigation<HomeNavProp>();
   const [search, setSearch] = useState("");
@@ -238,9 +240,13 @@ export default function Home() {
         >
           {/* ── Header ──────────────────────────────── */}
           <View style={styles.header}>
-            <Avatar user={user} />
+            <Avatar user={currentProfile ?? user} />
             <View style={styles.greetingBlock}>
-              <Text style={styles.greetingText}>{user?.username}</Text>
+              <Text style={styles.greetingText}>
+                {currentProfile?.role === UserRole.ORGANIZER
+                  ? (currentProfile as OrganizerProfileType).orgName
+                  : user?.username}
+              </Text>
               <ButtonLink
                 text={location ?? "Inserisci posizione"}
                 handleBtn={() => {

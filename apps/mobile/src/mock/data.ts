@@ -114,8 +114,7 @@ export const mockProfile: User = {
   dateOfBirth: "1990-05-15",
   location: "Milano, Italia",
   avatarUrl: undefined,
-  isOrganizer: true,
-  password: "ciccio",
+
   matchStats: {
     matchesPlayed: 47,
     wins: 28,
@@ -160,12 +159,29 @@ export const mockProfile: User = {
       username: "mario.rossi",
       avatarUrl: undefined,
       role: UserRole.PLAYER,
+      firstName: "Mario",
+      lastName: "Rossi",
     },
     {
       id: "mock-user-002",
-      username: "giuseppe.bianchi",
       avatarUrl: undefined,
       role: UserRole.ORGANIZER,
+      orgName: "Parona Sport",
+      isCreator: true,
+      collaborators: [
+        {
+          id: "collab-001",
+          firstName: "Luca",
+          lastName: "Ferrari",
+          username: "luca.ferrari",
+        },
+        {
+          id: "collab-002",
+          firstName: "Anna",
+          lastName: "Conti",
+          username: "anna.conti",
+        },
+      ],
     },
   ],
 };

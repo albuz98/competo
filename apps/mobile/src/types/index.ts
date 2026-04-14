@@ -176,27 +176,42 @@ export enum UserRole {
   ORGANIZER = "organizer",
 }
 
-export interface UserProfile {
+// OrganizerCollaborator shares the same shape as AppUser — no duplication needed
+export type OrganizerCollaborator = AppUser;
+
+export type PlayerProfile = {
   id: string;
+  role: UserRole.PLAYER;
   username: string;
+  firstName?: string;
+  lastName?: string;
   avatarUrl?: string;
-  role?: UserRole;
-}
+};
+
+export type OrganizerProfile = {
+  id: string;
+  role: UserRole.ORGANIZER;
+  avatarUrl?: string;
+  orgName: string;
+  isCreator: boolean;
+  collaborators?: OrganizerCollaborator[];
+};
+
+// Discriminated union: ogni profilo è esplicito sul suo ruolo
+export type UserProfile = PlayerProfile | OrganizerProfile;
 
 export interface User {
   id: string;
-  firstName: string;
-  lastName: string;
+  firstName?: string;
+  lastName?: string;
   username: string;
   email: string;
   token: string;
   dateOfBirth?: string;
   location?: string;
   avatarUrl?: string;
-  isOrganizer?: boolean;
   matchStats?: MatchStats;
   organizedTournaments?: OrganizedTournamentRecord[];
-  password: string;
   profiles?: UserProfile[];
   currentProfileId?: string;
 }
@@ -213,6 +228,15 @@ export interface RegisterCredentials {
   email: string;
   password: string;
   dateOfBirth: string;
+}
+
+export interface UpdateProfileData {
+  firstName?: string;
+  lastName?: string;
+  username?: string;
+  location?: string;
+  password?: string;
+  avatarUrl?: string;
 }
 
 // ─── Tournament Generator ─────────────────────────────────────────────────────
@@ -332,6 +356,7 @@ export type RootStackParamList = {
   CreateTeam: undefined;
   TeamDetail: { teamId: string };
   InvitePlayers: { teamId: string };
+  InviteCollaborators: { profileId: string };
   OrganizerTournamentDetail: { tournamentId: string };
   CreateTournamentSchedule: undefined;
   TournamentScheduleResult: undefined;

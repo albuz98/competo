@@ -12,6 +12,7 @@ import CreateTeam from "../screens/CreateTeam/CreateTeam";
 import CreateTournamentSchedule from "../screens/CreateTournamentSchedule/CreateTournamentSchedule";
 import TournamentScheduleResult from "../screens/TournamentScheduleResult/TournamentScheduleResult";
 import ForgotPassword from "../screens/ForgotPassword/ForgotPassword";
+import InviteCollaborators from "../screens/InviteCollaborators/InviteCollaborators";
 import InvitePlayers from "../screens/InvitePlayers/InvitePlayers";
 import Login from "../screens/Login/Login";
 import MyTournamentDetail from "../screens/MyTournamentDetail/MyTournamentDetail";
@@ -138,6 +139,11 @@ export default function AppNavigator() {
         <Stack.Screen
           name="InvitePlayers"
           component={InvitePlayers}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="InviteCollaborators"
+          component={InviteCollaborators}
           options={{ headerShown: false }}
         />
         <Stack.Screen

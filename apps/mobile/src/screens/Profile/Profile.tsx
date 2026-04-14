@@ -7,7 +7,6 @@ import {
   ScrollView,
   KeyboardAvoidingView,
   Platform,
-  ActivityIndicator,
   Pressable,
 } from "react-native";
 import {
@@ -17,30 +16,38 @@ import {
 import { LinearGradient } from "expo-linear-gradient";
 import { Ionicons } from "@expo/vector-icons";
 import Entypo from "@expo/vector-icons/Entypo";
-import * as ImagePicker from "expo-image-picker";
 import * as Location from "expo-location";
 import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useAuth } from "../../context/AuthContext";
 import { useTeams } from "../../context/TeamsContext";
-import { RootStackParamList, UserProfile } from "../../types";
+import {
+  RootStackParamList,
+  UserProfile,
+  UserRole,
+  type MyTournament,
+  type OrganizerProfile as OrganizerProfileType,
+} from "../../types";
 import { pStyles, styles } from "./Profile.styles";
 import { colorGradient, colors } from "../../theme/colors";
 import { Avatar } from "../../components/Avatar/Avatar";
-import InputBox from "../../components/InputBox/InputBox";
 import { styles as tabStyles } from "../../navigation/MainTabNavigator/MainTabNavigator.styles";
 import {
-  ButtonBorderColored,
   ButtonGeneric,
-  ButtonGradient,
   ButtonIcon,
   ButtonLink,
 } from "../../components/Button/Button";
 import { sizesEnum } from "../../theme/dimension";
 import { ModalViewer } from "../../components/Modal/Modal";
+import { fetchMyTournaments } from "../../api/tournaments";
+import { OrganizerProfile } from "./subComponents/OrganizeProfile/OrganizerProfile";
+import { HeaderCard } from "./subComponents/HeaderCard/HeaderCard";
+import InputBox from "../../components/InputBox/InputBox";
+import { getProfileSubtitle } from "../../functions/profile";
 
 export default function Profile() {
-  const { user, logout, updateProfile } = useAuth();
+  const { user, currentProfile, logout, updateProfile, switchProfile, updateOrgProfileData } =
+    useAuth();
   const { teams, refreshTeams } = useTeams();
   const [edit, setEdit] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -52,11 +59,14 @@ export default function Profile() {
     dateOfBirth: "",
     password: "",
     confirmPassword: "",
+    orgName: "",
   });
   const navigation =
     useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const insets = useSafeAreaInsets();
   const [changeProfileModal, setChangeProfileModal] = useState(false);
+  const [orgTournaments, setOrgTournaments] = useState<MyTournament[]>([]);
+  const [loadingOrgTournaments, setLoadingOrgTournaments] = useState(false);
 
   useEffect(() => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -69,14 +79,30 @@ export default function Profile() {
 
   const scrollRef = useRef<ScrollView>(null);
   const savedScrollY = useRef(0);
-  const [selectedProfile, setSelectedProfile] = useState<UserProfile | null>(
-    user?.profiles?.find((p) => p.id === user?.currentProfileId) ||
-      user?.profiles?.[0] ||
-      null,
-  );
+
+  const isOrganizerProfile = currentProfile?.role === UserRole.ORGANIZER;
+
+  useEffect(() => {
+    if (isOrganizerProfile) {
+      loadOrganizerTournaments();
+    }
+  }, [currentProfile?.id]);
+
+  const loadOrganizerTournaments = async () => {
+    setLoadingOrgTournaments(true);
+    try {
+      const allTournaments = await fetchMyTournaments();
+      const organizerTournaments = allTournaments.filter((t) => t.isOrganizer);
+      setOrgTournaments(organizerTournaments);
+    } catch (error) {
+      console.error("Error loading organizer tournaments:", error);
+    } finally {
+      setLoadingOrgTournaments(false);
+    }
+  };
 
   const handleSwitchProfile = (profile: UserProfile) => {
-    setSelectedProfile(profile);
+    switchProfile(profile.id);
     setChangeProfileModal(false);
   };
 
@@ -94,20 +120,25 @@ export default function Profile() {
   );
 
   const handleStartEdit = () => {
+    const orgProfile =
+      currentProfile?.role === UserRole.ORGANIZER
+        ? (currentProfile as OrganizerProfileType)
+        : null;
     setForm({
       firstName: user?.firstName ?? "",
       lastName: user?.lastName ?? "",
       username: user?.username ?? "",
       location: user?.location ?? "",
       dateOfBirth: user?.dateOfBirth ?? "",
-      password: user?.password ?? "",
+      password: "",
       confirmPassword: "",
+      orgName: orgProfile?.orgName ?? "",
     });
     setEdit(true);
   };
 
   const handleSave = async () => {
-    const passwordChanged = form.password !== (user?.password ?? "");
+    const passwordChanged = form.password.length > 0;
     if (passwordChanged && form.password.length < 6) {
       Alert.alert(
         "Password troppo corta",
@@ -121,6 +152,14 @@ export default function Profile() {
         "Le password inserite non corrispondono.",
       );
       return;
+    }
+
+    // Salva campi organizzatore
+    if (
+      currentProfile?.role === UserRole.ORGANIZER &&
+      form.orgName !== (currentProfile as OrganizerProfileType).orgName
+    ) {
+      updateOrgProfileData(currentProfile.id, { orgName: form.orgName });
     }
 
     const hasChanges =
@@ -160,26 +199,6 @@ export default function Profile() {
     navigation.reset({ index: 0, routes: [{ name: "ChoseAccess" }] });
   };
 
-  const handlePickAvatar = async () => {
-    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-    if (status !== "granted") {
-      Alert.alert(
-        "Permesso negato",
-        "Abilita l'accesso alla galleria nelle impostazioni.",
-      );
-      return;
-    }
-    const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ["images"],
-      allowsEditing: true,
-      aspect: [1, 1],
-      quality: 0.8,
-    });
-    if (!result.canceled) {
-      await updateProfile({ avatarUrl: result.assets[0].uri });
-    }
-  };
-
   if (!user) {
     return (
       <SafeAreaView style={styles.root} edges={["top"]}>
@@ -194,11 +213,15 @@ export default function Profile() {
       behavior={Platform.OS === "ios" ? "padding" : "height"}
     >
       <SafeAreaView style={styles.root} edges={["top"]}>
-        <Pressable onPress={() => setChangeProfileModal(true)}>
+        <Pressable onPress={() => !edit && setChangeProfileModal(true)}>
           <View style={styles.header}>
             {!edit ? (
               <View style={styles.containerHeaderText}>
-                <Text style={styles.headerText}>{user.username}</Text>
+                <Text style={styles.headerText}>
+                  {currentProfile?.role === UserRole.ORGANIZER
+                    ? (currentProfile as OrganizerProfileType).orgName
+                    : currentProfile?.username || user.username}
+                </Text>
                 <Entypo name="chevron-down" size={20} color="black" />
               </View>
             ) : (
@@ -240,310 +263,268 @@ export default function Profile() {
             savedScrollY.current = e.nativeEvent.contentOffset.y;
           }}
         >
-          <View style={[styles.card, edit && styles.cardEdit]}>
-            {/* Avatar + pencil */}
-            <View style={styles.avatarWrapper}>
-              <Avatar user={user} />
-              {edit && (
-                <ButtonIcon
-                  icon={
-                    <Ionicons name="pencil" size={13} color={colors.white} />
-                  }
-                  style={styles.pencilBtn}
-                  handleBtn={handlePickAvatar}
-                />
-              )}
-            </View>
-            {!edit && (
-              <View
-                style={{
-                  flex: 1,
-                  justifyContent: "space-between",
-                  display: "flex",
-                  flexDirection: "row",
-                }}
+          {/* ── ORGANIZER PROFILE ─────────────────────────── */}
+          {isOrganizerProfile ? (
+            <OrganizerProfile
+              selectedProfile={currentProfile as OrganizerProfileType | null}
+              orgTournaments={orgTournaments}
+              loadingOrgTournaments={loadingOrgTournaments}
+              user={user}
+              saving={saving}
+              edit={edit}
+              orgName={form.orgName}
+              onOrgNameChange={(v) => setForm((f) => ({ ...f, orgName: v }))}
+              updateProfile={updateProfile}
+              handleStartEdit={handleStartEdit}
+            />
+          ) : (
+            <>
+              {/* ── PLAYER PROFILE (existing code) ─────────────────── */}
+              <HeaderCard
+                user={user}
+                subtitle={user.location}
+                saving={saving}
+                edit={edit}
+                updateProfile={updateProfile}
+                handleStartEdit={handleStartEdit}
               >
-                <View style={{ marginTop: 5 }}>
-                  <Text style={styles.username}>{user.username}</Text>
-                  <Text style={styles.email}>{user.location}</Text>
-                </View>
-                <ButtonBorderColored
-                  isColored
-                  handleBtn={handleStartEdit}
-                  size={sizesEnum.medium}
-                  text="Modifica"
-                  iconLeft={
-                    <Ionicons
-                      name="create-outline"
-                      size={20}
-                      color={colors.primary}
-                    />
-                  }
-                />
-              </View>
-            )}
-            {edit && (
-              <View style={styles.cardEditFields}>
-                <InputBox
-                  variant="row"
-                  label="Nome"
-                  value={form.firstName}
-                  onChangeText={(v) => setForm((f) => ({ ...f, firstName: v }))}
-                />
-                <InputBox
-                  variant="row"
-                  label="Cognome"
-                  value={form.lastName}
-                  onChangeText={(v) => setForm((f) => ({ ...f, lastName: v }))}
-                />
-                <InputBox
-                  variant="row"
-                  label="Username"
-                  value={form.username}
-                  onChangeText={(v) => setForm((f) => ({ ...f, username: v }))}
-                />
-                <InputBox
-                  variant="row"
-                  label="Data di nascita"
-                  value={form.dateOfBirth}
-                  keyboardType="number-pad"
-                  onChangeText={(v) =>
-                    setForm((f) => ({ ...f, dateOfBirth: v }))
-                  }
-                />
-                <InputBox
-                  variant="row"
-                  label="Posizione"
-                  value={form.location}
-                  onChangeText={(v) => setForm((f) => ({ ...f, location: v }))}
-                />
-                <InputBox
-                  variant="row"
-                  label="Nuova password"
-                  value={form.password}
-                  onChangeText={(v) => setForm((f) => ({ ...f, password: v }))}
-                  secureTextEntry
-                  isLast={form.password === (user?.password ?? "")}
-                  error={
-                    form.password !== (user?.password ?? "") &&
-                    form.password.length < 6
-                      ? "La password è troppo corta"
-                      : undefined
-                  }
-                />
-                {form.password !== (user?.password ?? "") && (
+                <View style={styles.cardEditFields}>
                   <InputBox
                     variant="row"
-                    label="Conferma password"
-                    value={form.confirmPassword}
+                    label="Nome"
+                    value={form.firstName}
                     onChangeText={(v) =>
-                      setForm((f) => ({ ...f, confirmPassword: v }))
+                      setForm((f) => ({ ...f, firstName: v }))
+                    }
+                  />
+                  <InputBox
+                    variant="row"
+                    label="Cognome"
+                    value={form.lastName}
+                    onChangeText={(v) =>
+                      setForm((f) => ({ ...f, lastName: v }))
+                    }
+                  />
+                  <InputBox
+                    variant="row"
+                    label="Username"
+                    value={form.username}
+                    onChangeText={(v) =>
+                      setForm((f) => ({ ...f, username: v }))
+                    }
+                  />
+                  <InputBox
+                    variant="row"
+                    label="Data di nascita"
+                    value={form.dateOfBirth}
+                    keyboardType="number-pad"
+                    onChangeText={(v) =>
+                      setForm((f) => ({ ...f, dateOfBirth: v }))
+                    }
+                  />
+                  <InputBox
+                    variant="row"
+                    label="Posizione"
+                    value={form.location}
+                    onChangeText={(v) =>
+                      setForm((f) => ({ ...f, location: v }))
+                    }
+                  />
+                  <InputBox
+                    variant="row"
+                    label="Password"
+                    placeholder="Lascia vuoto per non modificare"
+                    value={form.password}
+                    onChangeText={(v) =>
+                      setForm((f) => ({ ...f, password: v }))
                     }
                     secureTextEntry
-                    isLast
+                    isLast={form.password.length === 0}
                     error={
-                      form.confirmPassword.length > 0 &&
-                      form.password !== form.confirmPassword
-                        ? "Le password non coincidono"
+                      form.password.length > 0 && form.password.length < 6
+                        ? "La password è troppo corta"
                         : undefined
                     }
                   />
-                )}
-              </View>
-            )}
-            {saving && (
-              <View style={styles.cardSavingOverlay}>
-                <ActivityIndicator size="large" color={colors.white} />
-              </View>
-            )}
-          </View>
-
-          {/* ── Statistiche Partite ────────────────── */}
-          {user.matchStats && !edit && (
-            <>
-              <View style={styles.teamsHeader}>
-                <Text style={styles.teamsTitle}>Statistiche Partite</Text>
-              </View>
-              <View style={pStyles.statsCard}>
-                <View style={pStyles.statsCardInner}>
-                  <View style={pStyles.statsRow}>
-                    <View style={pStyles.statBubble}>
-                      <Text
-                        style={[pStyles.statNum, { color: colors.success }]}
-                      >
-                        {user.matchStats.wins}
-                      </Text>
-                      <Text style={pStyles.statLabel}>Vittorie</Text>
-                    </View>
-                    <View style={pStyles.statDivider} />
-                    <View style={pStyles.statBubble}>
-                      <Text
-                        style={[pStyles.statNum, { color: colors.placeholder }]}
-                      >
-                        {user.matchStats.draws}
-                      </Text>
-                      <Text style={pStyles.statLabel}>Pareggi</Text>
-                    </View>
-                    <View style={pStyles.statDivider} />
-                    <View style={pStyles.statBubble}>
-                      <Text style={[pStyles.statNum, { color: colors.danger }]}>
-                        {user.matchStats.losses}
-                      </Text>
-                      <Text style={pStyles.statLabel}>Sconfitte</Text>
-                    </View>
-                  </View>
-                  <View style={pStyles.statsTourneyRow}>
-                    <View style={pStyles.statTourney}>
-                      <Ionicons
-                        name="trophy-outline"
-                        size={18}
-                        color={colors.primaryGradientMid}
-                      />
-                      <Text style={pStyles.statTourneyNum}>
-                        {user.matchStats.tournamentsWon}
-                      </Text>
-                      <Text style={pStyles.statTourneyLabel}>Tornei vinti</Text>
-                    </View>
-                    <View style={pStyles.statTourneyDivider} />
-                    <View style={pStyles.statTourney}>
-                      <Ionicons
-                        name="medal-outline"
-                        size={18}
-                        color={colors.placeholder}
-                      />
-                      <Text style={pStyles.statTourneyNum}>
-                        {user.matchStats.tournamentsPlayed}
-                      </Text>
-                      <Text style={pStyles.statTourneyLabel}>
-                        Tornei giocati
-                      </Text>
-                    </View>
-                    <View style={pStyles.statTourneyDivider} />
-                    <View style={pStyles.statTourney}>
-                      <Ionicons
-                        name="football-outline"
-                        size={18}
-                        color={colors.placeholder}
-                      />
-                      <Text style={pStyles.statTourneyNum}>
-                        {user.matchStats.matchesPlayed}
-                      </Text>
-                      <Text style={pStyles.statTourneyLabel}>
-                        Partite totali
-                      </Text>
-                    </View>
-                  </View>
-                </View>
-              </View>
-            </>
-          )}
-
-          {/* ── Genera Calendario Torneo ────────────── */}
-          {!edit && (
-            <>
-              <View style={styles.teamsHeader}>
-                <Text style={styles.teamsTitle}>Organizzazione</Text>
-              </View>
-              <ButtonGeneric
-                style={styles.createTeamCard}
-                handleBtn={() =>
-                  navigation.navigate("CreateTournamentSchedule")
-                }
-              >
-                <LinearGradient
-                  colors={colorGradient}
-                  style={styles.createTeamIcon}
-                >
-                  <Ionicons
-                    name="calendar-outline"
-                    size={22}
-                    color={colors.white}
-                  />
-                </LinearGradient>
-                <View style={{ flex: 1 }}>
-                  <Text style={styles.createTeamTitle}>
-                    Genera Calendario Torneo
-                  </Text>
-                  <Text style={styles.createTeamSub}>
-                    Crea tabelloni e calendari automatici per gironi,
-                    eliminatorie e sistemi svizzeri
-                  </Text>
-                </View>
-                <Ionicons
-                  name="chevron-forward"
-                  size={18}
-                  color={colors.grayDark}
-                />
-              </ButtonGeneric>
-            </>
-          )}
-
-          {/* ── Le mie squadre ─────────────────────── */}
-          {!edit && (
-            <>
-              <View style={styles.teamsHeader}>
-                <Text style={styles.teamsTitle}>Le mie squadre</Text>
-                <ButtonLink
-                  text="Vedi tutte"
-                  handleBtn={() => navigation.navigate("Teams")}
-                  color={styles.teamsViewAll.color as string}
-                  isColored
-                  isBold
-                />
-              </View>
-
-              {teams.length === 0 ? (
-                <ButtonGeneric
-                  style={styles.createTeamCard}
-                  handleBtn={() => navigation.navigate("CreateTeam")}
-                >
-                  <LinearGradient
-                    colors={colorGradient}
-                    style={styles.createTeamIcon}
-                  >
-                    <Ionicons name="add" size={22} color={colors.white} />
-                  </LinearGradient>
-                  <View style={{ flex: 1 }}>
-                    <Text style={styles.createTeamTitle}>Crea una squadra</Text>
-                    <Text style={styles.createTeamSub}>
-                      Invita amici e partecipa ai tornei insieme
-                    </Text>
-                  </View>
-                  <Ionicons
-                    name="chevron-forward"
-                    size={18}
-                    color={colors.grayDark}
-                  />
-                </ButtonGeneric>
-              ) : (
-                <ScrollView
-                  horizontal
-                  showsHorizontalScrollIndicator={false}
-                  contentContainerStyle={styles.teamsScroll}
-                >
-                  {teams.slice(0, 5).map((team) => (
-                    <ButtonGeneric
-                      key={team.id}
-                      style={styles.teamMiniCard}
-                      handleBtn={() =>
-                        navigation.navigate("TeamDetail", { teamId: team.id })
+                  {form.password.length > 0 && (
+                    <InputBox
+                      variant="row"
+                      label="Conferma password"
+                      value={form.confirmPassword}
+                      onChangeText={(v) =>
+                        setForm((f) => ({ ...f, confirmPassword: v }))
                       }
+                      secureTextEntry
+                      isLast
+                      error={
+                        form.confirmPassword.length > 0 &&
+                        form.password !== form.confirmPassword
+                          ? "Le password non coincidono"
+                          : undefined
+                      }
+                    />
+                  )}
+                </View>
+              </HeaderCard>
+              {/* ── Statistiche Partite ────────────────── */}
+              {user.matchStats && !edit && (
+                <>
+                  <View style={styles.teamsHeader}>
+                    <Text style={styles.teamsTitle}>Statistiche Partite</Text>
+                  </View>
+                  <View style={pStyles.statsCard}>
+                    <View style={pStyles.statsCardInner}>
+                      <View style={pStyles.statsRow}>
+                        <View style={pStyles.statBubble}>
+                          <Text
+                            style={[pStyles.statNum, { color: colors.success }]}
+                          >
+                            {user.matchStats.wins}
+                          </Text>
+                          <Text style={pStyles.statLabel}>Vittorie</Text>
+                        </View>
+                        <View style={pStyles.statDivider} />
+                        <View style={pStyles.statBubble}>
+                          <Text
+                            style={[
+                              pStyles.statNum,
+                              { color: colors.placeholder },
+                            ]}
+                          >
+                            {user.matchStats.draws}
+                          </Text>
+                          <Text style={pStyles.statLabel}>Pareggi</Text>
+                        </View>
+                        <View style={pStyles.statDivider} />
+                        <View style={pStyles.statBubble}>
+                          <Text
+                            style={[pStyles.statNum, { color: colors.danger }]}
+                          >
+                            {user.matchStats.losses}
+                          </Text>
+                          <Text style={pStyles.statLabel}>Sconfitte</Text>
+                        </View>
+                      </View>
+                      <View style={pStyles.statsTourneyRow}>
+                        <View style={pStyles.statTourney}>
+                          <Ionicons
+                            name="trophy-outline"
+                            size={18}
+                            color={colors.primaryGradientMid}
+                          />
+                          <Text style={pStyles.statTourneyNum}>
+                            {user.matchStats.tournamentsWon}
+                          </Text>
+                          <Text style={pStyles.statTourneyLabel}>
+                            Tornei vinti
+                          </Text>
+                        </View>
+                        <View style={pStyles.statTourneyDivider} />
+                        <View style={pStyles.statTourney}>
+                          <Ionicons
+                            name="medal-outline"
+                            size={18}
+                            color={colors.placeholder}
+                          />
+                          <Text style={pStyles.statTourneyNum}>
+                            {user.matchStats.tournamentsPlayed}
+                          </Text>
+                          <Text style={pStyles.statTourneyLabel}>
+                            Tornei giocati
+                          </Text>
+                        </View>
+                        <View style={pStyles.statTourneyDivider} />
+                        <View style={pStyles.statTourney}>
+                          <Ionicons
+                            name="football-outline"
+                            size={18}
+                            color={colors.placeholder}
+                          />
+                          <Text style={pStyles.statTourneyNum}>
+                            {user.matchStats.matchesPlayed}
+                          </Text>
+                          <Text style={pStyles.statTourneyLabel}>
+                            Partite totali
+                          </Text>
+                        </View>
+                      </View>
+                    </View>
+                  </View>
+                </>
+              )}
+
+              {/* ── Le mie squadre ─────────────────────── */}
+              {!edit && (
+                <>
+                  <View style={styles.teamsHeader}>
+                    <Text style={styles.teamsTitle}>Le mie squadre</Text>
+                    <ButtonLink
+                      text="Vedi tutte"
+                      handleBtn={() => navigation.navigate("Teams")}
+                      color={styles.teamsViewAll.color as string}
+                      isColored
+                      isBold
+                    />
+                  </View>
+
+                  {teams.length === 0 ? (
+                    <ButtonGeneric
+                      style={styles.createTeamCard}
+                      handleBtn={() => navigation.navigate("CreateTeam")}
                     >
                       <LinearGradient
                         colors={colorGradient}
-                        style={styles.teamMiniAvatar}
+                        style={styles.createTeamIcon}
                       >
-                        <Text style={styles.teamMiniAvatarText}>
-                          {team.name.slice(0, 2).toUpperCase()}
-                        </Text>
+                        <Ionicons name="add" size={22} color={colors.white} />
                       </LinearGradient>
-                      <Text style={styles.teamMiniName} numberOfLines={2}>
-                        {team.name}
-                      </Text>
-                      <Text style={styles.teamMiniSport}>{team.sport}</Text>
+                      <View style={{ flex: 1 }}>
+                        <Text style={styles.createTeamTitle}>
+                          Crea una squadra
+                        </Text>
+                        <Text style={styles.createTeamSub}>
+                          Invita amici e partecipa ai tornei insieme
+                        </Text>
+                      </View>
+                      <Ionicons
+                        name="chevron-forward"
+                        size={18}
+                        color={colors.grayDark}
+                      />
                     </ButtonGeneric>
-                  ))}
-                </ScrollView>
+                  ) : (
+                    <ScrollView
+                      horizontal
+                      showsHorizontalScrollIndicator={false}
+                      contentContainerStyle={styles.teamsScroll}
+                    >
+                      {teams.slice(0, 5).map((team) => (
+                        <ButtonGeneric
+                          key={team.id}
+                          style={styles.teamMiniCard}
+                          handleBtn={() =>
+                            navigation.navigate("TeamDetail", {
+                              teamId: team.id,
+                            })
+                          }
+                        >
+                          <LinearGradient
+                            colors={colorGradient}
+                            style={styles.teamMiniAvatar}
+                          >
+                            <Text style={styles.teamMiniAvatarText}>
+                              {team.name.slice(0, 2).toUpperCase()}
+                            </Text>
+                          </LinearGradient>
+                          <Text style={styles.teamMiniName} numberOfLines={2}>
+                            {team.name}
+                          </Text>
+                          <Text style={styles.teamMiniSport}>{team.sport}</Text>
+                        </ButtonGeneric>
+                      ))}
+                    </ScrollView>
+                  )}
+                </>
               )}
             </>
           )}
@@ -563,68 +544,17 @@ export default function Profile() {
                   key={profile.id}
                   onPress={() => handleSwitchProfile(profile)}
                   style={[
+                    styles.containerProfileModal,
                     {
-                      flexDirection: "row",
-                      alignItems: "center",
-                      backgroundColor: colors.white,
-                      borderRadius: 12,
-                      padding: 12,
-                      borderWidth: 2,
                       borderColor:
-                        selectedProfile?.id === profile.id
+                        currentProfile?.id === profile.id
                           ? colors.primary
                           : colors.gray,
                     },
                   ]}
                 >
-                  {profile.avatarUrl ? (
-                    <View
-                      style={{
-                        width: 44,
-                        height: 44,
-                        borderRadius: 22,
-                        backgroundColor: colors.primaryGradientMid,
-                        alignItems: "center",
-                        justifyContent: "center",
-                        marginRight: 12,
-                        overflow: "hidden",
-                      }}
-                    >
-                      {/* Avatar image would go here */}
-                      <Text
-                        style={{
-                          color: colors.white,
-                          fontSize: 18,
-                          fontWeight: "800",
-                        }}
-                      >
-                        {profile.username.slice(0, 1).toUpperCase()}
-                      </Text>
-                    </View>
-                  ) : (
-                    <View
-                      style={{
-                        width: 44,
-                        height: 44,
-                        borderRadius: 22,
-                        backgroundColor: colors.primaryGradientMid,
-                        alignItems: "center",
-                        justifyContent: "center",
-                        marginRight: 12,
-                      }}
-                    >
-                      <Text
-                        style={{
-                          color: colors.white,
-                          fontSize: 18,
-                          fontWeight: "800",
-                        }}
-                      >
-                        {profile.username.slice(0, 1).toUpperCase()}
-                      </Text>
-                    </View>
-                  )}
-                  <View style={{ flex: 1 }}>
+                  <Avatar user={profile} dimension={sizesEnum.small} />
+                  <View style={{ flex: 1, marginLeft: 12 }}>
                     <Text
                       style={{
                         fontSize: 14,
@@ -632,9 +562,11 @@ export default function Profile() {
                         color: colors.dark,
                       }}
                     >
-                      {profile.username}
+                      {profile.role === UserRole.ORGANIZER
+                        ? (profile as OrganizerProfileType).orgName
+                        : profile.username}
                     </Text>
-                    {profile.role && (
+                    {getProfileSubtitle(profile, user) && (
                       <Text
                         style={{
                           fontSize: 12,
@@ -642,11 +574,11 @@ export default function Profile() {
                           marginTop: 2,
                         }}
                       >
-                        {profile.role}
+                        {getProfileSubtitle(profile, user)}
                       </Text>
                     )}
                   </View>
-                  {selectedProfile?.id === profile.id && (
+                  {currentProfile?.id === profile.id && (
                     <Ionicons
                       name="checkmark-circle"
                       size={24}
