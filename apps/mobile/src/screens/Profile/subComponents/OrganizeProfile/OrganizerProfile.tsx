@@ -46,7 +46,10 @@ interface OrganizerProfileProps {
   orgName: string;
   onOrgNameChange: (v: string) => void;
   updateProfile: (data: UpdateProfileData) => Promise<void>;
-  updateOrgProfileData: (profileId: string, updates: Partial<OrganizerProfileType>) => void;
+  updateOrgProfileData: (
+    profileId: string,
+    updates: Partial<OrganizerProfileType>,
+  ) => void;
   handleStartEdit: () => void;
 }
 
@@ -209,7 +212,7 @@ export const OrganizerProfile = ({
 
       {/* ── Crea nuovo torneo ────────────────────────────── */}
       {!edit && (
-        <View style={{ paddingHorizontal: 16, marginVertical: 20 }}>
+        <View style={{ marginVertical: 20 }}>
           <ButtonGeneric
             style={styles.createTeamCard}
             handleBtn={() => navigation.navigate("CreateTournamentSchedule")}
