@@ -23,6 +23,7 @@ interface TeamsContextType {
   acceptInvite: (inviteId: string) => Promise<void>;
   rejectInvite: (inviteId: string) => Promise<void>;
   updateMemberRole: (teamId: string, memberId: string, newRole: TeamRole) => Promise<void>;
+  updateMemberJersey: (teamId: string, memberId: string, jerseyNumber: number | undefined) => void;
   getTeamById: (id: string) => Team | undefined;
   refreshTeams: () => Promise<void>;
 }
@@ -139,6 +140,16 @@ export function TeamsProvider({ children }: { children: ReactNode }) {
     }
   }, [user, loadTeams]);
 
+  const updateMemberJersey = useCallback((teamId: string, memberId: string, jerseyNumber: number | undefined) => {
+    setTeams(prev =>
+      prev.map(t =>
+        t.id === teamId
+          ? { ...t, members: t.members.map(m => m.id === memberId ? { ...m, jerseyNumber } : m) }
+          : t
+      )
+    );
+  }, []);
+
   const getTeamById = (id: string) => teams.find((t) => t.id === id);
 
   return (
@@ -153,6 +164,7 @@ export function TeamsProvider({ children }: { children: ReactNode }) {
       acceptInvite,
       rejectInvite,
       updateMemberRole,
+      updateMemberJersey,
       getTeamById,
       refreshTeams: loadTeams,
     }}>

@@ -27,6 +27,8 @@ import {
   UserRole,
   type MyTournament,
   type OrganizerProfile as OrganizerProfileType,
+  type PlayerProfile as PlayerProfileType,
+  type TournamentResult,
 } from "../../types";
 import { pStyles, styles } from "./Profile.styles";
 import { colorGradient, colors } from "../../theme/colors";
@@ -81,6 +83,19 @@ export default function Profile() {
   const savedScrollY = useRef(0);
 
   const isOrganizerProfile = currentProfile?.role === UserRole.ORGANIZER;
+  const playerProfile =
+    !isOrganizerProfile ? (currentProfile as PlayerProfileType | null) : null;
+
+  const SPORT_EMOJI: Record<string, string> = {
+    Calcio: "⚽", Basket: "🏀", Pallavolo: "🏐",
+    Tennis: "🎾", Padel: "🏸", Rugby: "🏉",
+  };
+  const RESULT_CONFIG: Record<TournamentResult, { label: string; color: string }> = {
+    won:       { label: "1° Posto",  color: colors.success },
+    runner_up: { label: "2° Posto",  color: colors.primaryGradientMid },
+    eliminated:{ label: "Eliminato", color: colors.grayDark },
+    ongoing:   { label: "In corso",  color: colors.purpleBlue },
+  };
 
   useEffect(() => {
     if (isOrganizerProfile) {
@@ -451,6 +466,121 @@ export default function Profile() {
                       </View>
                     </View>
                   </View>
+                </>
+              )}
+
+              {/* ── Statistiche individuali ───────────────── */}
+              {!edit && playerProfile?.careerStats && (
+                <>
+                  <View style={styles.teamsHeader}>
+                    <Text style={styles.teamsTitle}>
+                      {playerProfile.careerStats.playerRole === "portiere"
+                        ? "Statistiche portiere"
+                        : "Statistiche individuali"}
+                    </Text>
+                  </View>
+                  <View style={pStyles.careerCard}>
+                    <View style={pStyles.careerCardInner}>
+                      {/* Gol / Gol subiti */}
+                      <View style={pStyles.careerBubble}>
+                        <Text
+                          style={[pStyles.careerNum, { color: colors.primary }]}
+                        >
+                          {playerProfile.careerStats.playerRole === "portiere"
+                            ? (playerProfile.careerStats.goalsConceded ?? 0)
+                            : (playerProfile.careerStats.goals ?? 0)}
+                        </Text>
+                        <Text style={pStyles.careerLabel}>
+                          {playerProfile.careerStats.playerRole === "portiere"
+                            ? "Gol subiti"
+                            : "Gol"}
+                        </Text>
+                      </View>
+                      <View style={pStyles.careerDivider} />
+                      {/* Cartellini gialli */}
+                      <View style={pStyles.careerBubble}>
+                        <Text
+                          style={[
+                            pStyles.careerNum,
+                            { color: "#f59e0b" },
+                          ]}
+                        >
+                          {playerProfile.careerStats.yellowCards}
+                        </Text>
+                        <Text style={pStyles.careerLabel}>Gialli</Text>
+                      </View>
+                      <View style={pStyles.careerDivider} />
+                      {/* Cartellini rossi */}
+                      <View style={pStyles.careerBubble}>
+                        <Text
+                          style={[pStyles.careerNum, { color: colors.danger }]}
+                        >
+                          {playerProfile.careerStats.redCards}
+                        </Text>
+                        <Text style={pStyles.careerLabel}>Rossi</Text>
+                      </View>
+                    </View>
+                  </View>
+                </>
+              )}
+
+              {/* ── Storico tornei ────────────────────────── */}
+              {!edit && user.playedTournaments && user.playedTournaments.length > 0 && (
+                <>
+                  <View style={styles.teamsHeader}>
+                    <Text style={styles.teamsTitle}>Storico tornei</Text>
+                    {user.playedTournaments.length > 3 && (
+                      <ButtonLink
+                        text="Vedi tutti"
+                        handleBtn={() => navigation.navigate("TournamentHistory")}
+                        color={styles.teamsViewAll.color as string}
+                        isColored
+                        isBold
+                      />
+                    )}
+                  </View>
+                  {[...user.playedTournaments]
+                    .sort(
+                      (a, b) =>
+                        new Date(b.date).getTime() - new Date(a.date).getTime(),
+                    )
+                    .slice(0, 3)
+                    .map((t) => {
+                      const cfg = RESULT_CONFIG[t.result];
+                      return (
+                        <View key={t.id} style={pStyles.historyCard}>
+                          <View style={pStyles.historyIconBox}>
+                            <Text style={pStyles.historyIconText}>
+                              {SPORT_EMOJI[t.sport] ?? "🏅"}
+                            </Text>
+                          </View>
+                          <View style={pStyles.historyInfo}>
+                            <Text style={pStyles.historyName} numberOfLines={1}>
+                              {t.name}
+                            </Text>
+                            <Text style={pStyles.historyMeta}>
+                              {new Date(t.date).toLocaleDateString("it-IT", {
+                                day: "2-digit",
+                                month: "short",
+                                year: "numeric",
+                              })}{" "}
+                              · {t.location}
+                            </Text>
+                            <Text style={pStyles.historyTeam}>{t.teamName}</Text>
+                          </View>
+                          <View
+                            style={[
+                              pStyles.historyBadge,
+                              { backgroundColor: cfg.color },
+                            ]}
+                          >
+                            <Text style={pStyles.historyBadgeText}>
+                              {cfg.label}
+                            </Text>
+                          </View>
+                        </View>
+                      );
+                    })}
                 </>
               )}
 

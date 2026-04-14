@@ -75,6 +75,28 @@ export interface MatchStats {
   tournamentsWon: number;
 }
 
+export type PlayerCareerRole = "calciatore" | "portiere";
+
+export interface PlayerCareerStats {
+  playerRole: PlayerCareerRole;
+  goals?: number;         // solo calciatore
+  goalsConceded?: number; // solo portiere
+  yellowCards: number;
+  redCards: number;
+}
+
+export type TournamentResult = "won" | "runner_up" | "eliminated" | "ongoing";
+
+export interface PlayedTournamentRecord {
+  id: string;
+  name: string;
+  sport: string;
+  date: string; // ISO date string
+  location: string;
+  result: TournamentResult;
+  teamName: string;
+}
+
 export interface OrganizedTournamentRecord {
   id: string;
   name: string;
@@ -112,6 +134,7 @@ export interface TeamMember {
   username: string;
   avatarUrl?: string;
   role: TeamRole;
+  jerseyNumber?: number;
 }
 
 export interface Team {
@@ -186,6 +209,7 @@ export type PlayerProfile = {
   firstName?: string;
   lastName?: string;
   avatarUrl?: string;
+  careerStats?: PlayerCareerStats;
 };
 
 export type OrganizerProfile = {
@@ -211,6 +235,7 @@ export interface User {
   location?: string;
   avatarUrl?: string;
   matchStats?: MatchStats;
+  playedTournaments?: PlayedTournamentRecord[];
   organizedTournaments?: OrganizedTournamentRecord[];
   profiles?: UserProfile[];
   currentProfileId?: string;
@@ -360,6 +385,7 @@ export type RootStackParamList = {
   OrganizerTournamentDetail: { tournamentId: string };
   CreateTournamentSchedule: undefined;
   TournamentScheduleResult: undefined;
+  TournamentHistory: undefined;
 };
 
 export type MainTabParamList = {

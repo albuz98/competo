@@ -22,6 +22,7 @@ import TeamDetail from "../screens/TeamDetail/TeamDetail";
 import TeamSelect from "../screens/TeamSelect/TeamSelect";
 import ChoseAccess from "../screens/ChoseAccess/ChoseAccess";
 import TournamentDetail from "../screens/TournamentDetail/TournamentDetail";
+import TournamentHistoryScreen from "../screens/TournamentHistory/TournamentHistory";
 import { colors } from "../theme/colors";
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -148,6 +149,11 @@ export default function AppNavigator() {
         <Stack.Screen
           name="TournamentScheduleResult"
           component={TournamentScheduleResult}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="TournamentHistory"
+          component={TournamentHistoryScreen}
           options={{ headerShown: false }}
         />
       </Stack.Navigator>

@@ -164,6 +164,32 @@ export const tds = StyleSheet.create({
   },
   pendingBadgeText: { fontSize: 11, color: colors.brown, fontWeight: "700" },
 
+  jerseyBadge: {
+    minWidth: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: colors.gray,
+    alignItems: "center",
+    justifyContent: "center",
+    paddingHorizontal: 6,
+  },
+  jerseyBadgeEditable: {
+    backgroundColor: colors.primarySelectedBg,
+  },
+  jerseyText: {
+    fontSize: 13,
+    fontWeight: "800",
+    color: colors.placeholder,
+  },
+  jerseyTextEditable: {
+    color: colors.primary,
+  },
+  jerseyEmpty: {
+    fontSize: 18,
+    color: colors.primaryGradientMid,
+    lineHeight: 22,
+  },
+
   modalOverlay: {
     flex: 1,
     backgroundColor: colors.opacized,

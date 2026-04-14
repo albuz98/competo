@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, Text, ScrollView, StatusBar, Modal } from "react-native";
+import { View, Text, ScrollView, StatusBar, Modal, TextInput } from "react-native";
 import { tds } from "./TeamDetail.styles";
 import {
   SafeAreaView,
@@ -30,19 +30,30 @@ const ROLE_LABEL: Record<string, string> = {
   portiere: "Portiere",
 };
 
+const HAS_JERSEY: Record<string, boolean> = {
+  representative: true,
+  calciatore: true,
+  portiere: true,
+  allenatore: false,
+};
+
 function MemberRow({
   member,
   currentUserIsRep,
   onRemove,
   onChangeRole,
+  onEditJersey,
 }: {
   member: TeamMember;
   currentUserIsRep: boolean;
   onRemove: () => void;
   onChangeRole: () => void;
+  onEditJersey: () => void;
 }) {
   const initials = (member.firstName[0] ?? "") + (member.lastName[0] ?? "");
   const isRep = member.role === "representative";
+  const showJersey = HAS_JERSEY[member.role] === true;
+
   return (
     <View style={[tds.memberRow, isRep && tds.memberRowRep]}>
       <View style={[tds.memberAvatar, isRep && tds.memberAvatarRep]}>
@@ -107,6 +118,29 @@ function MemberRow({
             ))}
         </View>
       </View>
+      {/* Jersey number — solo calciatore/portiere */}
+      {showJersey && (
+        <ButtonGeneric
+          handleBtn={currentUserIsRep ? onEditJersey : () => {}}
+          style={[
+            tds.jerseyBadge,
+            currentUserIsRep && tds.jerseyBadgeEditable,
+          ]}
+        >
+          {member.jerseyNumber != null ? (
+            <Text
+              style={[
+                tds.jerseyText,
+                currentUserIsRep && tds.jerseyTextEditable,
+              ]}
+            >
+              #{member.jerseyNumber}
+            </Text>
+          ) : (
+            <Text style={tds.jerseyEmpty}>+</Text>
+          )}
+        </ButtonGeneric>
+      )}
       {currentUserIsRep && !isRep ? (
         <ButtonIcon
           handleBtn={onRemove}
@@ -125,13 +159,15 @@ function MemberRow({
 
 export default function TeamDetail({ route, navigation }: Props) {
   const { teamId } = route.params;
-  const { getTeamById, removeMember, sentPendingInvites, updateMemberRole } =
+  const { getTeamById, removeMember, sentPendingInvites, updateMemberRole, updateMemberJersey } =
     useTeams() as any;
   const { user } = useAuth();
   const insets = useSafeAreaInsets();
   const team = getTeamById(teamId);
   const [confirmTarget, setConfirmTarget] = useState<TeamMember | null>(null);
   const [roleTarget, setRoleTarget] = useState<TeamMember | null>(null);
+  const [jerseyTarget, setJerseyTarget] = useState<TeamMember | null>(null);
+  const [jerseyInput, setJerseyInput] = useState("");
 
   const isRep =
     team?.members.find((m: TeamMember) => m.id === user?.id)?.role ===
@@ -215,6 +251,10 @@ export default function TeamDetail({ route, navigation }: Props) {
               currentUserIsRep={isRep}
               onRemove={() => setConfirmTarget(m)}
               onChangeRole={() => setRoleTarget(m)}
+              onEditJersey={() => {
+                setJerseyTarget(m);
+                setJerseyInput(m.jerseyNumber != null ? String(m.jerseyNumber) : "");
+              }}
             />
           ))}
         </View>
@@ -383,6 +423,70 @@ export default function TeamDetail({ route, navigation }: Props) {
               text="Annulla"
               handleBtn={() => setRoleTarget(null)}
             />
+          </View>
+        </View>
+      </Modal>
+
+      {/* Jersey number edit modal */}
+      <Modal
+        visible={jerseyTarget !== null}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setJerseyTarget(null)}
+      >
+        <View style={tds.modalOverlay}>
+          <View style={tds.modalCard}>
+            <Text style={tds.modalTitle}>Numero di maglia</Text>
+            <Text style={[tds.modalBody, { marginBottom: 16 }]}>
+              {jerseyTarget?.firstName} {jerseyTarget?.lastName}
+            </Text>
+            <TextInput
+              style={{
+                width: "100%",
+                borderWidth: 1.5,
+                borderColor: colors.primarySelectedBg,
+                borderRadius: 12,
+                paddingVertical: 12,
+                paddingHorizontal: 16,
+                fontSize: 28,
+                fontWeight: "800",
+                color: colors.dark,
+                textAlign: "center",
+                marginBottom: 20,
+              }}
+              value={jerseyInput}
+              onChangeText={(v) => {
+                const clean = v.replace(/[^0-9]/g, "").slice(0, 2);
+                setJerseyInput(clean);
+              }}
+              keyboardType="number-pad"
+              placeholder="—"
+              placeholderTextColor={colors.grayDark}
+              maxLength={2}
+              autoFocus
+            />
+            <View style={tds.modalActions}>
+              <ButtonLink
+                style={tds.modalCancelBtn}
+                text="Annulla"
+                handleBtn={() => setJerseyTarget(null)}
+              />
+              <ButtonLink
+                style={[tds.modalRemoveBtn, { backgroundColor: colors.primary }]}
+                text="Salva"
+                handleBtn={() => {
+                  if (!jerseyTarget) return;
+                  const num = parseInt(jerseyInput, 10);
+                  const valid = !isNaN(num) && num >= 1 && num <= 99;
+                  updateMemberJersey(
+                    teamId,
+                    jerseyTarget.id,
+                    valid ? num : undefined,
+                  );
+                  setJerseyTarget(null);
+                }}
+              />
+            </View>
           </View>
         </View>
       </Modal>

@@ -152,6 +152,53 @@ export const mockProfile: User = {
       totalPrizeMoney: "$3,200",
     },
   ],
+  playedTournaments: [
+    {
+      id: "pt-001",
+      name: "Coppa Primavera 2025",
+      sport: "Calcio",
+      date: "2025-03-10T10:00:00.000Z",
+      location: "Milano, Italia",
+      result: "won" as const,
+      teamName: "Milan FC",
+    },
+    {
+      id: "pt-002",
+      name: "Summer Cup 2024",
+      sport: "Calcio",
+      date: "2024-07-22T10:00:00.000Z",
+      location: "Roma, Italia",
+      result: "runner_up" as const,
+      teamName: "Milan FC",
+    },
+    {
+      id: "pt-003",
+      name: "Winter League 2024",
+      sport: "Calcio",
+      date: "2024-01-15T10:00:00.000Z",
+      location: "Torino, Italia",
+      result: "eliminated" as const,
+      teamName: "Rossoneri United",
+    },
+    {
+      id: "pt-004",
+      name: "Pro Cup 2023",
+      sport: "Calcio",
+      date: "2023-11-05T10:00:00.000Z",
+      location: "Napoli, Italia",
+      result: "won" as const,
+      teamName: "Rossoneri United",
+    },
+    {
+      id: "pt-005",
+      name: "City League 2023",
+      sport: "Calcio",
+      date: "2023-06-20T10:00:00.000Z",
+      location: "Firenze, Italia",
+      result: "eliminated" as const,
+      teamName: "FC Stars",
+    },
+  ],
   currentProfileId: "mock-user-001",
   profiles: [
     {
@@ -161,6 +208,12 @@ export const mockProfile: User = {
       role: UserRole.PLAYER,
       firstName: "Mario",
       lastName: "Rossi",
+      careerStats: {
+        playerRole: "calciatore" as const,
+        goals: 24,
+        yellowCards: 6,
+        redCards: 1,
+      },
     },
     {
       id: "mock-user-002",
@@ -416,12 +469,16 @@ export function generateMyTournaments(count = 5): MyTournament[] {
 // ─── Team generators ──────────────────────────────────────────────────────────
 
 export function generateTeamMember(role: TeamRole = "calciatore"): TeamMember {
+  const hasJersey = role === "calciatore" || role === "portiere" || role === "representative";
   return {
     id: faker.string.uuid(),
     firstName: faker.person.firstName(),
     lastName: faker.person.lastName(),
     username: faker.internet.username(),
     role,
+    ...(hasJersey
+      ? { jerseyNumber: faker.number.int({ min: 1, max: 99 }) }
+      : {}),
   };
 }
 
