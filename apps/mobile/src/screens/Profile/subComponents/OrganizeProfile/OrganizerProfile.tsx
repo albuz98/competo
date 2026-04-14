@@ -46,6 +46,7 @@ interface OrganizerProfileProps {
   orgName: string;
   onOrgNameChange: (v: string) => void;
   updateProfile: (data: UpdateProfileData) => Promise<void>;
+  updateOrgProfileData: (profileId: string, updates: Partial<OrganizerProfileType>) => void;
   handleStartEdit: () => void;
 }
 
@@ -59,11 +60,20 @@ export const OrganizerProfile = ({
   orgName,
   onOrgNameChange,
   updateProfile,
+  updateOrgProfileData,
   handleStartEdit,
 }: OrganizerProfileProps) => {
   const navigation =
     useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const [expandedCollaborators, setExpandedCollaborators] = useState(false);
+
+  const handleOrgUpdateProfile = async (data: UpdateProfileData) => {
+    if (data.avatarUrl !== undefined && selectedProfile) {
+      updateOrgProfileData(selectedProfile.id, { avatarUrl: data.avatarUrl });
+      return;
+    }
+    return updateProfile(data);
+  };
 
   const toggleCollaborators = () => {
     LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
@@ -99,7 +109,7 @@ export const OrganizerProfile = ({
         subtitle={getProfileSubtitle(selectedProfile, user)}
         saving={saving}
         edit={edit}
-        updateProfile={updateProfile}
+        updateProfile={handleOrgUpdateProfile}
         handleStartEdit={handleStartEdit}
       >
         {/* Campi modificabili in edit mode */}

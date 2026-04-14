@@ -275,6 +275,7 @@ export default function Profile() {
               orgName={form.orgName}
               onOrgNameChange={(v) => setForm((f) => ({ ...f, orgName: v }))}
               updateProfile={updateProfile}
+              updateOrgProfileData={updateOrgProfileData}
               handleStartEdit={handleStartEdit}
             />
           ) : (
@@ -553,7 +554,14 @@ export default function Profile() {
                     },
                   ]}
                 >
-                  <Avatar user={profile} dimension={sizesEnum.small} />
+                  <Avatar
+                    user={
+                      profile.role === UserRole.PLAYER
+                        ? { ...profile, avatarUrl: profile.avatarUrl ?? user.avatarUrl }
+                        : profile
+                    }
+                    dimension={sizesEnum.small}
+                  />
                   <View style={{ flex: 1, marginLeft: 12 }}>
                     <Text
                       style={{

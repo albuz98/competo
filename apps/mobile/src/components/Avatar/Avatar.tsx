@@ -27,7 +27,10 @@ export function Avatar({ user, dimension = sizesEnum.big }: AvatarProps) {
   return (
     <>
       {user && user.avatarUrl ? (
-        <Image source={{ uri: user.avatarUrl }} style={styles.avatarImg} />
+        <Image
+          source={{ uri: user.avatarUrl }}
+          style={[styles.avatarImg, { width: size, height: size, borderRadius: size / 2 }]}
+        />
       ) : (
         <LinearGradient
           colors={colorGradient}
