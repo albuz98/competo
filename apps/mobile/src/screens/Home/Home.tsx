@@ -24,7 +24,6 @@ import type {
 } from "../../types";
 import { UserRole } from "../../types";
 import { useAuth } from "../../context/AuthContext";
-import { useNotifications } from "../../context/NotificationsContext";
 import { generateTournaments } from "../../mock/data";
 import { getMyTournamentsCache } from "../../api/tournaments";
 import type { MyTournament } from "../../types";
@@ -34,7 +33,6 @@ import {
   ButtonBorderColored,
   ButtonFullColored,
   ButtonGeneric,
-  ButtonGradient,
   ButtonLink,
 } from "../../components/Button/Button";
 import { sizesEnum } from "../../theme/dimension";
@@ -194,7 +192,6 @@ function SmallCard({
 // ─── Main screen ─────────────────────────────────────────────────────────────
 export default function Home() {
   const { user, currentProfile, location, updateLocation } = useAuth();
-  const { unreadCount } = useNotifications();
   const navigation = useNavigation<HomeNavProp>();
   const [search, setSearch] = useState("");
   const [locationModal, setLocationModal] = useState(false);
@@ -270,13 +267,6 @@ export default function Home() {
                 isColored
               />
             </View>
-            <ButtonGradient
-              handleBtn={() => navigation.navigate("Notifiche")}
-              style={styles.notifBtn}
-            >
-              <Ionicons name="notifications" size={20} color={colors.white} />
-              {unreadCount > 0 && <View style={styles.notifBadge} />}
-            </ButtonGradient>
           </View>
 
           {/* ── Location Modal ───────────────────────── */}

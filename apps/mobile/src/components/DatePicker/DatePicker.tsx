@@ -1,19 +1,10 @@
 import React, { useRef, useState, useEffect } from "react";
-import {
-  View,
-  Text,
-  Modal,
-  FlatList,
-  Pressable,
-  Animated,
-  ListRenderItem,
-} from "react-native";
+import { View, Text, FlatList, ListRenderItem } from "react-native";
 import { dp } from "./DatePicker.styled";
 import { MONTHS } from "../../constants/generals";
-import { ITEM_H, PICKER_H } from "./constants";
+import { ITEM_H } from "./constants";
 import { ButtonGeneric } from "../Button/Button";
-
-const SHEET_H = PICKER_H + 24 + 52 + 32; // columns + header + paddingBottom
+import { ModalViewer, ModalViewerRef } from "../Modal/Modal";
 
 export interface DatePickerModalProps {
   visible: boolean;
@@ -79,9 +70,8 @@ export function DatePickerModal({
   const yearRef = useRef<FlatList>(null);
   const monthRef = useRef<FlatList>(null);
   const dayRef = useRef<FlatList>(null);
-
-  const backdropOpacity = useRef(new Animated.Value(0)).current;
-  const sheetTranslateY = useRef(new Animated.Value(SHEET_H)).current;
+  const modalRef = useRef<ModalViewerRef>(null);
+  const pendingIso = useRef<string | null>(null);
 
   const numDays = daysInMonth(selYear, selMonth);
   const days: number[] = Array.from({ length: numDays }, (_, i) => i + 1);
@@ -92,40 +82,23 @@ export function DatePickerModal({
     if (selDay > max) setSelDay(max);
   }, [selYear, selMonth]);
 
-  // Animate in when visible becomes true
-  useEffect(() => {
-    if (visible) {
-      Animated.parallel([
-        Animated.timing(backdropOpacity, {
-          toValue: 1,
-          duration: 300,
-          useNativeDriver: true,
-        }),
-        Animated.timing(sheetTranslateY, {
-          toValue: 0,
-          duration: 300,
-          useNativeDriver: true,
-        }),
-      ]).start();
-    } else {
-      backdropOpacity.setValue(0);
-      sheetTranslateY.setValue(SHEET_H);
-    }
-  }, [visible]);
+  function handleConfirm() {
+    pendingIso.current = toISO(selYear, selMonth, selDay);
+    modalRef.current?.dismiss();
+  }
 
-  function handleClose(cb: () => void) {
-    Animated.parallel([
-      Animated.timing(backdropOpacity, {
-        toValue: 0,
-        duration: 250,
-        useNativeDriver: true,
-      }),
-      Animated.timing(sheetTranslateY, {
-        toValue: SHEET_H,
-        duration: 250,
-        useNativeDriver: true,
-      }),
-    ]).start(() => cb());
+  function handleCancel() {
+    pendingIso.current = null;
+    modalRef.current?.dismiss();
+  }
+
+  function handleClose() {
+    if (pendingIso.current !== null) {
+      onConfirm(pendingIso.current);
+    } else {
+      onCancel();
+    }
+    pendingIso.current = null;
   }
 
   // Reset selection and scroll when modal opens
@@ -217,97 +190,81 @@ export function DatePickerModal({
   });
 
   return (
-    <Modal
-      visible={visible}
-      transparent
-      animationType="none"
-      onRequestClose={() => handleClose(onCancel)}
+    <ModalViewer
+      ref={modalRef}
+      isOpen={visible}
+      onClose={handleClose}
+      padding={0}
+      paddingBottom={32}
+      withKeyboardAvoid={false}
     >
-      <View style={dp.overlay}>
-        <Pressable style={{ flex: 1 }} onPress={() => handleClose(onCancel)}>
-          <Animated.View style={[dp.backdrop, { opacity: backdropOpacity }]} />
-        </Pressable>
-
-        <Animated.View
-          style={[dp.sheet, { transform: [{ translateY: sheetTranslateY }] }]}
-        >
-          {/* Header */}
-          <View style={dp.header}>
-            <ButtonGeneric
-              handleBtn={() => handleClose(onCancel)}
-              style={dp.headerBtn}
-            >
-              <Text style={dp.cancelText}>Annulla</Text>
-            </ButtonGeneric>
-            <Text style={dp.headerTitle}>Seleziona data</Text>
-            <ButtonGeneric
-              handleBtn={() =>
-                handleClose(() => onConfirm(toISO(selYear, selMonth, selDay)))
-              }
-              style={dp.headerBtn}
-            >
-              <Text style={dp.confirmText}>Conferma</Text>
-            </ButtonGeneric>
-          </View>
-
-          {/* Columns */}
-          <View style={dp.columns}>
-            {/* Year */}
-            <View style={dp.column}>
-              <Text style={dp.colLabel}>Anno</Text>
-              <FlatList
-                ref={yearRef}
-                data={years}
-                keyExtractor={(item) => String(item)}
-                renderItem={renderYearItem as ListRenderItem<number>}
-                getItemLayout={getItemLayout}
-                showsVerticalScrollIndicator={false}
-                style={dp.list}
-                contentContainerStyle={dp.listContent}
-                snapToInterval={ITEM_H}
-                decelerationRate="fast"
-                onScrollToIndexFailed={() => {}}
-              />
-            </View>
-
-            {/* Month */}
-            <View style={dp.column}>
-              <Text style={dp.colLabel}>Mese</Text>
-              <FlatList
-                ref={monthRef}
-                data={MONTHS}
-                keyExtractor={(_, i) => String(i)}
-                renderItem={renderMonthItem as ListRenderItem<string>}
-                getItemLayout={getItemLayout}
-                showsVerticalScrollIndicator={false}
-                style={dp.list}
-                contentContainerStyle={dp.listContent}
-                snapToInterval={ITEM_H}
-                decelerationRate="fast"
-                onScrollToIndexFailed={() => {}}
-              />
-            </View>
-
-            {/* Day */}
-            <View style={dp.column}>
-              <Text style={dp.colLabel}>Giorno</Text>
-              <FlatList
-                ref={dayRef}
-                data={days}
-                keyExtractor={(item) => String(item)}
-                renderItem={renderDayItem as ListRenderItem<number>}
-                getItemLayout={getItemLayout}
-                showsVerticalScrollIndicator={false}
-                style={dp.list}
-                contentContainerStyle={dp.listContent}
-                snapToInterval={ITEM_H}
-                decelerationRate="fast"
-                onScrollToIndexFailed={() => {}}
-              />
-            </View>
-          </View>
-        </Animated.View>
+      {/* Header */}
+      <View style={dp.header}>
+        <ButtonGeneric handleBtn={handleCancel} style={dp.headerBtn}>
+          <Text style={dp.cancelText}>Annulla</Text>
+        </ButtonGeneric>
+        <Text style={dp.headerTitle}>Seleziona data</Text>
+        <ButtonGeneric handleBtn={handleConfirm} style={dp.headerBtn}>
+          <Text style={dp.confirmText}>Conferma</Text>
+        </ButtonGeneric>
       </View>
-    </Modal>
+
+      {/* Columns */}
+      <View style={dp.columns}>
+        {/* Year */}
+        <View style={dp.column}>
+          <Text style={dp.colLabel}>Anno</Text>
+          <FlatList
+            ref={yearRef}
+            data={years}
+            keyExtractor={(item) => String(item)}
+            renderItem={renderYearItem as ListRenderItem<number>}
+            getItemLayout={getItemLayout}
+            showsVerticalScrollIndicator={false}
+            style={dp.list}
+            contentContainerStyle={dp.listContent}
+            snapToInterval={ITEM_H}
+            decelerationRate="fast"
+            onScrollToIndexFailed={() => {}}
+          />
+        </View>
+
+        {/* Month */}
+        <View style={dp.column}>
+          <Text style={dp.colLabel}>Mese</Text>
+          <FlatList
+            ref={monthRef}
+            data={MONTHS}
+            keyExtractor={(_, i) => String(i)}
+            renderItem={renderMonthItem as ListRenderItem<string>}
+            getItemLayout={getItemLayout}
+            showsVerticalScrollIndicator={false}
+            style={dp.list}
+            contentContainerStyle={dp.listContent}
+            snapToInterval={ITEM_H}
+            decelerationRate="fast"
+            onScrollToIndexFailed={() => {}}
+          />
+        </View>
+
+        {/* Day */}
+        <View style={dp.column}>
+          <Text style={dp.colLabel}>Giorno</Text>
+          <FlatList
+            ref={dayRef}
+            data={days}
+            keyExtractor={(item) => String(item)}
+            renderItem={renderDayItem as ListRenderItem<number>}
+            getItemLayout={getItemLayout}
+            showsVerticalScrollIndicator={false}
+            style={dp.list}
+            contentContainerStyle={dp.listContent}
+            snapToInterval={ITEM_H}
+            decelerationRate="fast"
+            onScrollToIndexFailed={() => {}}
+          />
+        </View>
+      </View>
+    </ModalViewer>
   );
 }

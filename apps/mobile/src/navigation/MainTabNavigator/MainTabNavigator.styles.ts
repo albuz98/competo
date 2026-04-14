@@ -1,4 +1,5 @@
 import { StyleSheet } from 'react-native';
+import { colors } from '../../theme/colors';
 
 export const styles = StyleSheet.create({
   tabBar: {
@@ -22,5 +23,14 @@ export const styles = StyleSheet.create({
   },
   iconActive: {
     color: '#E8601A',
+  },
+  badge: {
+    position: 'absolute',
+    top: 0,
+    right: -2,
+    width: 7,
+    height: 7,
+    borderRadius: 4,
+    backgroundColor: colors.danger,
   },
 });

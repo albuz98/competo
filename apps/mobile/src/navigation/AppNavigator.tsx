@@ -16,7 +16,6 @@ import InviteCollaborators from "../screens/InviteCollaborators/InviteCollaborat
 import InvitePlayers from "../screens/InvitePlayers/InvitePlayers";
 import Login from "../screens/Login/Login";
 import MyTournamentDetail from "../screens/MyTournamentDetail/MyTournamentDetail";
-import Notifications from "../screens/Notifications/Notifications";
 import Payment from "../screens/Payment/Payment";
 import Register from "../screens/Register/Register";
 import TeamDetail from "../screens/TeamDetail/TeamDetail";
@@ -105,11 +104,6 @@ export default function AppNavigator() {
             headerShown: false,
             contentStyle: { backgroundColor: colors.black },
           }}
-        />
-        <Stack.Screen
-          name="Notifiche"
-          component={Notifications}
-          options={{ headerShown: false }}
         />
         <Stack.Screen
           name="MyTournamentDetail"

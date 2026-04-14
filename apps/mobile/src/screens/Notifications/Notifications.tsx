@@ -11,7 +11,6 @@ import {
 import { RootStackParamList } from "../../types";
 import { styles } from "./Notifications.styles";
 import {
-  ButtonBack,
   ButtonGeneric,
   ButtonLink,
 } from "../../components/Button/Button";
@@ -66,7 +65,6 @@ export default function Notifications() {
   return (
     <SafeAreaView style={styles.root} edges={["top"]}>
       <View style={styles.headerRow}>
-        <ButtonBack handleBtn={() => navigation.goBack()} isArrowBack={false} />
         <Text style={styles.header}>Notifiche</Text>
         {unreadCount > 0 && (
           <ButtonLink

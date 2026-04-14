@@ -366,6 +366,7 @@ export type MainTabParamList = {
   Home: undefined;
   Esplora: undefined;
   Preferiti: undefined;
+  Notifiche: undefined;
   Profilo: undefined;
 };
 

@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useImperativeHandle, forwardRef } from "react";
 import {
   Modal,
   Animated,
@@ -18,14 +18,18 @@ interface ModalViewerProps {
   paddingBottom?: number;
 }
 
-export const ModalViewer = ({
+export interface ModalViewerRef {
+  dismiss: () => void;
+}
+
+export const ModalViewer = forwardRef<ModalViewerRef, ModalViewerProps>(({
   isOpen,
   onClose,
   children,
   withKeyboardAvoid = true,
   padding = 24,
   paddingBottom = 40,
-}: ModalViewerProps) => {
+}, ref) => {
   const panY = useRef(new Animated.Value(600)).current;
   const overlayOpacity = useRef(new Animated.Value(0)).current;
 
@@ -63,6 +67,8 @@ export const ModalViewer = ({
       },
     }),
   ).current;
+
+  useImperativeHandle(ref, () => ({ dismiss: dismissModal }));
 
   // Trigger animation quando isOpen cambia
   useEffect(() => {
@@ -130,4 +136,5 @@ export const ModalViewer = ({
       {content}
     </Modal>
   );
-};
+});
+
