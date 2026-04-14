@@ -48,8 +48,14 @@ import InputBox from "../../components/InputBox/InputBox";
 import { getProfileSubtitle } from "../../functions/profile";
 
 export default function Profile() {
-  const { user, currentProfile, logout, updateProfile, switchProfile, updateOrgProfileData } =
-    useAuth();
+  const {
+    user,
+    currentProfile,
+    logout,
+    updateProfile,
+    switchProfile,
+    updateOrgProfileData,
+  } = useAuth();
   const { teams, refreshTeams } = useTeams();
   const [edit, setEdit] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -83,18 +89,26 @@ export default function Profile() {
   const savedScrollY = useRef(0);
 
   const isOrganizerProfile = currentProfile?.role === UserRole.ORGANIZER;
-  const playerProfile =
-    !isOrganizerProfile ? (currentProfile as PlayerProfileType | null) : null;
+  const playerProfile = !isOrganizerProfile
+    ? (currentProfile as PlayerProfileType | null)
+    : null;
 
   const SPORT_EMOJI: Record<string, string> = {
-    Calcio: "⚽", Basket: "🏀", Pallavolo: "🏐",
-    Tennis: "🎾", Padel: "🏸", Rugby: "🏉",
+    Calcio: "⚽",
+    Basket: "🏀",
+    Pallavolo: "🏐",
+    Tennis: "🎾",
+    Padel: "🏸",
+    Rugby: "🏉",
   };
-  const RESULT_CONFIG: Record<TournamentResult, { label: string; color: string }> = {
-    won:       { label: "1° Posto",  color: colors.success },
-    runner_up: { label: "2° Posto",  color: colors.primaryGradientMid },
-    eliminated:{ label: "Eliminato", color: colors.grayDark },
-    ongoing:   { label: "In corso",  color: colors.purpleBlue },
+  const RESULT_CONFIG: Record<
+    TournamentResult,
+    { label: string; color: string }
+  > = {
+    won: { label: "1° Posto", color: colors.success },
+    runner_up: { label: "2° Posto", color: colors.primaryGradientMid },
+    eliminated: { label: "Eliminato", color: colors.grayDark },
+    ongoing: { label: "In corso", color: colors.purpleBlue },
   };
 
   useEffect(() => {
@@ -502,7 +516,7 @@ export default function Profile() {
                         <Text
                           style={[
                             pStyles.careerNum,
-                            { color: "#f59e0b" },
+                            { color: colors.primaryGradientEnd },
                           ]}
                         >
                           {playerProfile.careerStats.yellowCards}
@@ -525,64 +539,74 @@ export default function Profile() {
               )}
 
               {/* ── Storico tornei ────────────────────────── */}
-              {!edit && user.playedTournaments && user.playedTournaments.length > 0 && (
-                <>
-                  <View style={styles.teamsHeader}>
-                    <Text style={styles.teamsTitle}>Storico tornei</Text>
-                    {user.playedTournaments.length > 3 && (
-                      <ButtonLink
-                        text="Vedi tutti"
-                        handleBtn={() => navigation.navigate("TournamentHistory")}
-                        color={styles.teamsViewAll.color as string}
-                        isColored
-                        isBold
-                      />
-                    )}
-                  </View>
-                  {[...user.playedTournaments]
-                    .sort(
-                      (a, b) =>
-                        new Date(b.date).getTime() - new Date(a.date).getTime(),
-                    )
-                    .slice(0, 3)
-                    .map((t) => {
-                      const cfg = RESULT_CONFIG[t.result];
-                      return (
-                        <View key={t.id} style={pStyles.historyCard}>
-                          <View style={pStyles.historyIconBox}>
-                            <Text style={pStyles.historyIconText}>
-                              {SPORT_EMOJI[t.sport] ?? "🏅"}
-                            </Text>
+              {!edit &&
+                user.playedTournaments &&
+                user.playedTournaments.length > 0 && (
+                  <>
+                    <View style={styles.teamsHeader}>
+                      <Text style={styles.teamsTitle}>Storico tornei</Text>
+                      {user.playedTournaments.length > 3 && (
+                        <ButtonLink
+                          text="Vedi tutti"
+                          handleBtn={() =>
+                            navigation.navigate("TournamentHistory")
+                          }
+                          color={styles.teamsViewAll.color as string}
+                          isColored
+                          isBold
+                        />
+                      )}
+                    </View>
+                    {[...user.playedTournaments]
+                      .sort(
+                        (a, b) =>
+                          new Date(b.date).getTime() -
+                          new Date(a.date).getTime(),
+                      )
+                      .slice(0, 3)
+                      .map((t) => {
+                        const cfg = RESULT_CONFIG[t.result];
+                        return (
+                          <View key={t.id} style={pStyles.historyCard}>
+                            <View style={pStyles.historyIconBox}>
+                              <Text style={pStyles.historyIconText}>
+                                {SPORT_EMOJI[t.sport] ?? "🏅"}
+                              </Text>
+                            </View>
+                            <View style={pStyles.historyInfo}>
+                              <Text
+                                style={pStyles.historyName}
+                                numberOfLines={1}
+                              >
+                                {t.name}
+                              </Text>
+                              <Text style={pStyles.historyMeta}>
+                                {new Date(t.date).toLocaleDateString("it-IT", {
+                                  day: "2-digit",
+                                  month: "short",
+                                  year: "numeric",
+                                })}{" "}
+                                · {t.location}
+                              </Text>
+                              <Text style={pStyles.historyTeam}>
+                                {t.teamName}
+                              </Text>
+                            </View>
+                            <View
+                              style={[
+                                pStyles.historyBadge,
+                                { backgroundColor: cfg.color },
+                              ]}
+                            >
+                              <Text style={pStyles.historyBadgeText}>
+                                {cfg.label}
+                              </Text>
+                            </View>
                           </View>
-                          <View style={pStyles.historyInfo}>
-                            <Text style={pStyles.historyName} numberOfLines={1}>
-                              {t.name}
-                            </Text>
-                            <Text style={pStyles.historyMeta}>
-                              {new Date(t.date).toLocaleDateString("it-IT", {
-                                day: "2-digit",
-                                month: "short",
-                                year: "numeric",
-                              })}{" "}
-                              · {t.location}
-                            </Text>
-                            <Text style={pStyles.historyTeam}>{t.teamName}</Text>
-                          </View>
-                          <View
-                            style={[
-                              pStyles.historyBadge,
-                              { backgroundColor: cfg.color },
-                            ]}
-                          >
-                            <Text style={pStyles.historyBadgeText}>
-                              {cfg.label}
-                            </Text>
-                          </View>
-                        </View>
-                      );
-                    })}
-                </>
-              )}
+                        );
+                      })}
+                  </>
+                )}
 
               {/* ── Le mie squadre ─────────────────────── */}
               {!edit && (
@@ -687,7 +711,10 @@ export default function Profile() {
                   <Avatar
                     user={
                       profile.role === UserRole.PLAYER
-                        ? { ...profile, avatarUrl: profile.avatarUrl ?? user.avatarUrl }
+                        ? {
+                            ...profile,
+                            avatarUrl: profile.avatarUrl ?? user.avatarUrl,
+                          }
                         : profile
                     }
                     dimension={sizesEnum.small}
