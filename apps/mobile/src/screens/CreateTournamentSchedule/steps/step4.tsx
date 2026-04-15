@@ -64,10 +64,9 @@ export function renderStep4({
 
       <Text style={s.sectionLabel}>Durata e tempi</Text>
       <View style={s.numberInputRow}>
-        <Text style={s.fieldLabel}>Durata incontro</Text>
+        <Text style={s.fieldLabel}>Durata del singolo tempo</Text>
         <View style={s.fieldMinInput}>
           <InputBox
-            // style={s.numberInput}
             value={String(matchDuration)}
             onChangeText={(v) => setMatchDuration(parseInt(v, 10) || 0)}
             keyboardType="number-pad"
@@ -79,13 +78,9 @@ export function renderStep4({
       </View>
 
       <View style={s.numberInputRow}>
-        <View>
-          <Text style={s.fieldLabel}>Tempo di riposo</Text>
-          <Text style={s.fieldSub}>Dopo ogni partita</Text>
-        </View>
+        <Text style={s.fieldLabel}>Intervallo</Text>
         <View style={{ flexDirection: "row", alignItems: "center" }}>
           <InputBox
-            // style={s.numberInput}
             value={String(restMinutes)}
             onChangeText={(v) => setRestMinutes(parseInt(v, 10) || 0)}
             keyboardType="number-pad"
@@ -97,13 +92,9 @@ export function renderStep4({
       </View>
 
       <View style={s.numberInputRow}>
-        <View>
-          <Text style={s.fieldLabel}>Spostamento tra campi</Text>
-          <Text style={s.fieldSub}>Tempo per cambiare campo</Text>
-        </View>
+        <Text style={s.fieldLabel}>Tempo tra le partite</Text>
         <View style={{ flexDirection: "row", alignItems: "center" }}>
           <InputBox
-            // style={s.numberInput}
             value={String(travelMinutes)}
             onChangeText={(v) => setTravelMinutes(parseInt(v, 10) || 0)}
             keyboardType="number-pad"

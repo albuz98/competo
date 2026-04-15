@@ -57,6 +57,8 @@ export default function CreateTournamentSchedule({ navigation }: Props) {
   const [location, setLocation] = useState("");
   const [locationLat, setLocationLat] = useState<number | undefined>(undefined);
   const [locationLng, setLocationLng] = useState<number | undefined>(undefined);
+  const [regulationFileName, setRegulationFileName] = useState<string | null>(null);
+  const [regulationFileUri, setRegulationFileUri] = useState<string | null>(null);
 
   // Step 2: Structure (chosen first)
   const [phaseKind, setPhaseKind] = useState<TournamentPhaseKind>("single");
@@ -263,6 +265,7 @@ export default function CreateTournamentSchedule({ navigation }: Props) {
         config,
         lat: locationLat,
         lng: locationLng,
+        regulationUri: regulationFileUri ?? undefined,
       };
       await createTournament(payload, user?.token);
 
@@ -340,6 +343,11 @@ export default function CreateTournamentSchedule({ navigation }: Props) {
               setLocation,
               setLocationLat,
               setLocationLng,
+              locationLat,
+              locationLng,
+              regulationFileName,
+              setRegulationFileName,
+              setRegulationFileUri,
             })}
           {step === 2 &&
             renderStep2({
@@ -408,14 +416,13 @@ export default function CreateTournamentSchedule({ navigation }: Props) {
 
         <SafeAreaView edges={["bottom"]}>
           <View style={s.bottomNav}>
-            {step > 1 && (
-              <ButtonBorderColored
-                isColored
-                handleBtn={handleBack}
-                text="Indietro"
-                fullColor={colors.grayDark}
-              />
-            )}
+            <ButtonBorderColored
+              isColored
+              handleBtn={handleBack}
+              text="Indietro"
+              fullColor={colors.grayDark}
+              isDisabled={step === 1}
+            />
 
             <ButtonGradient
               handleBtn={handleNext}

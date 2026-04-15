@@ -392,7 +392,7 @@ export default function Explore() {
             style={styles.modalInput}
             value={modalLoc}
             onChangeText={setModalLoc}
-            placeholder="Es. Milano, Napoli..."
+            placeholder="Nome città"
             placeholderTextColor={colors.placeholder}
             returnKeyType="done"
           />

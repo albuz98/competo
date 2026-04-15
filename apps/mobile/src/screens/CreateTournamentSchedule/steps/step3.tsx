@@ -123,25 +123,32 @@ export function renderStep3({
             size={18}
             color={colors.primary}
           />
-          <View style={{ flex: 1, gap: 2 }}>
-            <Text
-              style={[s.infoBoxText, { color: colors.dark, fontWeight: "700" }]}
-            >
-              Partite stimate: {matchInfo.total}
-            </Text>
-            {phaseKind === "multi" ? (
+          {phaseKind === "multi" ? (
+            <View style={{ flex: 1, gap: 2 }}>
+              <Text
+                style={[s.infoBoxText, { color: colors.dark, fontWeight: "700" }]}
+              >
+                Partite stimate: {matchInfo.total}
+              </Text>
               <Text style={s.infoBoxText}>
                 {matchInfo.groups} nei gironi + {matchInfo.knockout} nella fase
                 eliminatoria
               </Text>
-            ) : (
-              <Text style={s.infoBoxText}>
-                {numTeams % 2 !== 0 && format === "round-robin"
-                  ? "Con N dispari: aggiunto un turno di Bye (vittoria d'ufficio)."
-                  : ""}
+            </View>
+          ) : (
+            <View style={{ flex: 1, gap: 2 }}>
+              <Text
+                style={[s.infoBoxText, { color: colors.dark, fontWeight: "700" }]}
+              >
+                Partite stimate: {matchInfo.total}
               </Text>
-            )}
-          </View>
+              {numTeams % 2 !== 0 && format === "round-robin" && (
+                <Text style={s.infoBoxText}>
+                  Con N dispari: aggiunto un turno di Bye (vittoria d'ufficio).
+                </Text>
+              )}
+            </View>
+          )}
         </View>
       )}
     </>

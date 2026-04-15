@@ -228,19 +228,7 @@ export const s = StyleSheet.create({
     display: "flex",
   },
 
-  // Number input row
-  numberInputRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    backgroundColor: colors.white,
-    borderRadius: 12,
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    borderWidth: 1,
-    borderColor: colors.disabled,
-    marginBottom: 8,
-  },
+  // Number input row — defined below with reduced height
   numberInput: {
     textAlign: "right",
     fontSize: 16,
@@ -324,5 +312,54 @@ export const s = StyleSheet.create({
     letterSpacing: 0.8,
     marginBottom: 8,
     marginTop: 16,
+  },
+
+  // PDF picker
+  pdfPickerBtn: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 10,
+    backgroundColor: colors.white,
+    borderRadius: 12,
+    paddingHorizontal: 16,
+    paddingVertical: 14,
+    borderWidth: 1.5,
+    borderColor: colors.disabled,
+    borderStyle: "dashed",
+  },
+  pdfPickerText: {
+    fontSize: 14,
+    color: colors.grayDark,
+    fontWeight: "500",
+  },
+  pdfRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 10,
+    backgroundColor: colors.white,
+    borderRadius: 12,
+    paddingHorizontal: 16,
+    paddingVertical: 13,
+    borderWidth: 1,
+    borderColor: colors.primary,
+  },
+  pdfFileName: {
+    flex: 1,
+    fontSize: 13,
+    color: colors.dark,
+    fontWeight: "600",
+  },
+
+  // numberInputRow reduced height
+  numberInputRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    backgroundColor: colors.white,
+    borderRadius: 12,
+    paddingHorizontal: 16,
+    borderWidth: 1,
+    borderColor: colors.disabled,
+    marginBottom: 8,
   },
 });

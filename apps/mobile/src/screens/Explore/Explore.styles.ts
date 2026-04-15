@@ -206,9 +206,9 @@ export const styles = StyleSheet.create({
     borderColor: colors.disabled,
     borderRadius: 12,
     paddingHorizontal: 14,
-    paddingVertical: 12,
+    height: 50,
     marginBottom: 24,
   },
-  modalInput: { flex: 1, fontSize: 15, color: colors.dark },
+  modalInput: { flex: 1, fontSize: 15, color: colors.dark, paddingVertical: 0 },
   radiusRow: { flexDirection: "row", gap: 10, marginBottom: 28 },
 });

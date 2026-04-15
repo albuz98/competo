@@ -13,6 +13,9 @@ import { InputBoxSearch } from "../InputBoxSearch/InputBoxSearch";
 
 interface LocationSearchProps {
   initialValue?: string;
+  initialLat?: number;
+  initialLng?: number;
+  isConfirmed?: boolean;
   onConfirm: (address: string, lat?: number, lng?: number) => void;
   setLocation: React.Dispatch<React.SetStateAction<string>>;
 }
@@ -21,12 +24,21 @@ type Mode = "search" | "preview" | "done";
 
 export default function LocationSearch({
   initialValue = "",
+  initialLat,
+  initialLng,
+  isConfirmed = false,
   onConfirm,
   setLocation,
 }: LocationSearchProps) {
   const [selectedSuggestion, setSelectedSuggestion] =
-    useState<Suggestion | null>(null);
-  const [mode, setMode] = useState<Mode>("search");
+    useState<Suggestion | null>(
+      isConfirmed && initialValue
+        ? { displayName: initialValue, lat: initialLat ?? 0, lng: initialLng ?? 0 }
+        : null,
+    );
+  const [mode, setMode] = useState<Mode>(
+    isConfirmed && initialValue ? "done" : "search",
+  );
 
   const handleSelectSuggestion = (suggestion: Suggestion) => {
     setSelectedSuggestion(suggestion);

@@ -286,7 +286,7 @@ export function renderStep5({
       </View>
 
       <Text style={s.sectionLabel}>Data di inizio</Text>
-      <View style={s.numberInputRow}>
+      <View style={[s.numberInputRow, { paddingVertical: 8 }]}>
         <Text style={s.fieldLabel}>Data di inizio</Text>
         <ButtonBorderColored
           text={startDate}

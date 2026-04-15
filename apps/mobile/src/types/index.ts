@@ -352,6 +352,7 @@ export interface CreateTournamentPayload {
   config: GeneratorConfig;
   lat?: number;
   lng?: number;
+  regulationUri?: string;
 }
 
 export interface TournametNumberPartecipants {
