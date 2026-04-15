@@ -1,14 +1,5 @@
 import React, { useState } from "react";
-import {
-  View,
-  Text,
-  ScrollView,
-  TextInput,
-  StatusBar,
-  Modal,
-  KeyboardAvoidingView,
-  Platform,
-} from "react-native";
+import { View, Text, ScrollView, TextInput, StatusBar } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { LinearGradient } from "expo-linear-gradient";
 import { Ionicons } from "@expo/vector-icons";
@@ -20,20 +11,16 @@ import type {
   RootStackParamList,
   Tournament,
   MainTabParamList,
-  OrganizerProfile as OrganizerProfileType,
 } from "../../types";
-import { NavigationEnum, UserRole } from "../../types";
+import { NavigationEnum } from "../../types";
 import { useAuth } from "../../context/AuthContext";
 import { generateTournaments } from "../../mock/data";
 import { getMyTournamentsCache } from "../../api/tournaments";
 import type { MyTournament } from "../../types";
 import { styles, BIG_W, BIG_H, SMALL_W } from "../../screens/Home/Home.styles";
-import { Avatar } from "../../components/Avatar/Avatar";
 import {
-  ButtonBorderColored,
   ButtonFullColored,
   ButtonGeneric,
-  ButtonLink,
 } from "../../components/Button/Button";
 import { sizesEnum } from "../../theme/dimension";
 import { colorGradient, colors } from "../../theme/colors";
@@ -170,19 +157,9 @@ function SmallCard({
 
 // ─── Main screen ─────────────────────────────────────────────────────────────
 export default function Home() {
-  const { user, currentProfile, location, updateLocation } = useAuth();
+  const { user } = useAuth();
   const navigation = useNavigation<HomeNavProp>();
   const [search, setSearch] = useState("");
-  const [locationModal, setLocationModal] = useState(false);
-  const [locationInput, setLocationInput] = useState("");
-
-  const saveLocation = () => {
-    if (locationInput.trim()) {
-      updateLocation(locationInput.trim());
-    }
-    setLocationModal(false);
-    setLocationInput("");
-  };
 
   const goToDetail = (id: string) => {
     if (!user) {

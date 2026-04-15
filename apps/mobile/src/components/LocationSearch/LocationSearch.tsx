@@ -6,7 +6,6 @@ import { Ionicons } from "@expo/vector-icons";
 import { isMocking } from "../../api/config";
 import { colors, colorGradient } from "../../theme/colors";
 import { ls } from "./LocationSearch.styles";
-import InputBox from "../InputBox/InputBox";
 import { searchNominatim } from "../../api/searchLocation";
 import { Suggestion } from "../../types";
 

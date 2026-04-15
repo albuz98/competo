@@ -47,9 +47,9 @@ import { ModalViewer } from "../../components/Modal/Modal";
 import { fetchMyTournaments } from "../../api/tournaments";
 import { OrganizerProfile } from "./subComponents/OrganizeProfile/OrganizerProfile";
 import { HeaderCard } from "./subComponents/HeaderCard/HeaderCard";
-import InputBox from "../../components/InputBox/InputBox";
 import { getProfileSubtitle } from "../../functions/profile";
 import { RESULT_CONFIG } from "../../constants/tournament";
+import { InputBoxRow } from "../../components/InputBoxRow/InputBoxRow";
 
 export default function Profile() {
   const {
@@ -310,32 +310,28 @@ export default function Profile() {
                 updateProfile={updateProfile}
               >
                 <View style={styles.cardEditFields}>
-                  <InputBox
-                    variant="row"
+                  <InputBoxRow
                     label="Nome"
                     value={form.firstName}
                     onChangeText={(v) =>
                       setForm((f) => ({ ...f, firstName: v }))
                     }
                   />
-                  <InputBox
-                    variant="row"
+                  <InputBoxRow
                     label="Cognome"
                     value={form.lastName}
                     onChangeText={(v) =>
                       setForm((f) => ({ ...f, lastName: v }))
                     }
                   />
-                  <InputBox
-                    variant="row"
+                  <InputBoxRow
                     label="Username"
                     value={form.username}
                     onChangeText={(v) =>
                       setForm((f) => ({ ...f, username: v }))
                     }
                   />
-                  <InputBox
-                    variant="row"
+                  <InputBoxRow
                     label="Data di nascita"
                     value={form.dateOfBirth}
                     keyboardType="number-pad"
@@ -343,16 +339,14 @@ export default function Profile() {
                       setForm((f) => ({ ...f, dateOfBirth: v }))
                     }
                   />
-                  <InputBox
-                    variant="row"
+                  <InputBoxRow
                     label="Posizione"
                     value={form.location}
                     onChangeText={(v) =>
                       setForm((f) => ({ ...f, location: v }))
                     }
                   />
-                  <InputBox
-                    variant="row"
+                  <InputBoxRow
                     label="Password"
                     placeholder="Lascia vuoto per non modificare"
                     value={form.password}
@@ -368,8 +362,7 @@ export default function Profile() {
                     }
                   />
                   {form.password.length > 0 && (
-                    <InputBox
-                      variant="row"
+                    <InputBoxRow
                       label="Conferma password"
                       value={form.confirmPassword}
                       onChangeText={(v) =>

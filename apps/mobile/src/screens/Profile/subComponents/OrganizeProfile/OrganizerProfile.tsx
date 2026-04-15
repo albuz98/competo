@@ -28,7 +28,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { styles } from "./OrganizerProfile.styled";
 import { HeaderCard } from "../HeaderCard/HeaderCard";
 import { getProfileSubtitle } from "../../../../functions/profile";
-import InputBox from "../../../../components/InputBox/InputBox";
+import { InputBoxRow } from "../../../../components/InputBoxRow/InputBoxRow";
 
 if (
   Platform.OS === "android" &&
@@ -118,8 +118,7 @@ export const OrganizerProfile = ({
         hideName
       >
         {/* Campi modificabili in edit mode */}
-        <InputBox
-          variant="row"
+        <InputBoxRow
           label="Nome organizzazione"
           value={orgName}
           onChangeText={onOrgNameChange}

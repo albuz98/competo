@@ -27,3 +27,27 @@ export const CARD_GRADIENTS: [string, string][] = [
   ["#0B3045", "#1A5C80"],
   ["#3D2B0B", "#8B6020"],
 ];
+
+export type inputTextContentType =
+  | "none"
+  | "oneTimeCode"
+  | "password"
+  | "newPassword"
+  | "username"
+  | "emailAddress"
+  | "name"
+  | "givenName"
+  | "familyName"
+  | "telephoneNumber"
+  | "addressCity"
+  | "addressState"
+  | "addressCityAndState"
+  | "sublocality"
+  | "countryName"
+  | "postalCode"
+  | "streetAddressLine1"
+  | "streetAddressLine2"
+  | "creditCardNumber"
+  | "creditCardSecurityCode";
+
+export type textAutoCapitalize = "none" | "sentences" | "words" | "characters";

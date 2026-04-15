@@ -2,7 +2,6 @@ import { useState } from "react";
 import {
   KeyboardTypeOptions,
   ReturnKeyTypeOptions,
-  Text,
   TextInput,
   TextInputSubmitEditingEvent,
   View,
@@ -12,144 +11,52 @@ import { styles } from "./InputBox.styles";
 import { ButtonIcon } from "../Button/Button";
 import { colors } from "../../theme/colors";
 import Feather from "@expo/vector-icons/Feather";
+import {
+  inputTextContentType,
+  textAutoCapitalize,
+} from "../../constants/generals";
 
-type CommonProps = {
+interface InputBoxProps {
+  isDark?: boolean;
   value: string;
   onChangeText: (v: string) => void;
   secureTextEntry?: boolean;
   maxLength?: number;
+  placeholder: string;
   keyboardType?: KeyboardTypeOptions;
   autoComplete?: any;
-  returnKeyType?: ReturnKeyTypeOptions;
   onSubmitEditing?: (e: TextInputSubmitEditingEvent) => void;
-  autoCapitalize?: "none" | "sentences" | "words" | "characters";
+  autoCapitalize?: textAutoCapitalize;
   autoCorrect?: boolean;
-  isDark?: boolean;
   isMultiline?: boolean;
   deleteText?: () => void;
   numberOfLines?: number;
-  style?: any;
-  textContentType?:
-    | "none"
-    | "oneTimeCode"
-    | "password"
-    | "newPassword"
-    | "username"
-    | "emailAddress"
-    | "name"
-    | "givenName"
-    | "familyName"
-    | "telephoneNumber"
-    | "addressCity"
-    | "addressState"
-    | "addressCityAndState"
-    | "sublocality"
-    | "countryName"
-    | "postalCode"
-    | "streetAddressLine1"
-    | "streetAddressLine2"
-    | "creditCardNumber"
-    | "creditCardSecurityCode";
-};
-
-type AuthProps = CommonProps & {
-  variant?: "auth";
-  placeholder: string;
+  textContentType?: inputTextContentType;
+  returnKeyType?: ReturnKeyTypeOptions;
   isError?: boolean;
-};
+}
 
-type RowProps = CommonProps & {
-  variant: "row";
-  label: string;
-  placeholder?: string;
-  isLast?: boolean;
-  error?: string;
-};
-
-type InputBoxProps = AuthProps | RowProps;
-
-export default function InputBox({ isDark = true, ...props }: InputBoxProps) {
+export const InputBox = ({
+  isDark = true,
+  value,
+  onChangeText,
+  secureTextEntry,
+  maxLength,
+  placeholder,
+  keyboardType,
+  autoComplete,
+  autoCapitalize,
+  autoCorrect,
+  isMultiline,
+  deleteText,
+  numberOfLines,
+  textContentType,
+  returnKeyType,
+  onSubmitEditing,
+  isError,
+}: InputBoxProps) => {
   const [hidden, setHidden] = useState(true);
 
-  if (props.variant === "row") {
-    const {
-      label,
-      value,
-      onChangeText,
-      secureTextEntry,
-      isLast,
-      error,
-      placeholder,
-      keyboardType,
-      autoCapitalize,
-      autoCorrect,
-      maxLength,
-      textContentType,
-      returnKeyType,
-      onSubmitEditing,
-    } = props;
-    return (
-      <View style={[styles.row, isLast && !error && styles.rowLast]}>
-        <View style={{ flex: 1 }}>
-          <Text style={styles.rowLabel}>{label}</Text>
-          <View style={styles.rowInputRow}>
-            <TextInput
-              style={[
-                styles.rowInput,
-                secureTextEntry ? styles.rowInputWithIcon : undefined,
-                error ? styles.rowInputError : undefined,
-              ]}
-              value={value}
-              onChangeText={onChangeText}
-              placeholder={placeholder}
-              placeholderTextColor={colors.placeholder}
-              secureTextEntry={secureTextEntry && hidden}
-              textContentType={textContentType ?? "oneTimeCode"}
-              keyboardType={keyboardType}
-              autoCapitalize={autoCapitalize}
-              autoCorrect={autoCorrect}
-              maxLength={maxLength}
-              returnKeyType={returnKeyType}
-              onSubmitEditing={onSubmitEditing}
-            />
-            {secureTextEntry && (
-              <ButtonIcon
-                style={styles.rowEyeBtn}
-                handleBtn={() => setHidden((h) => !h)}
-                icon={
-                  <Ionicons
-                    name={hidden ? "eye-outline" : "eye-off-outline"}
-                    size={18}
-                    color={colors.placeholder}
-                  />
-                }
-              />
-            )}
-          </View>
-          {error && <Text style={styles.rowError}>{error}</Text>}
-        </View>
-      </View>
-    );
-  }
-
-  const {
-    value,
-    onChangeText,
-    placeholder,
-    keyboardType,
-    autoComplete,
-    returnKeyType,
-    onSubmitEditing,
-    secureTextEntry,
-    autoCapitalize = "none",
-    autoCorrect = true,
-    maxLength,
-    isError,
-    textContentType,
-    isMultiline,
-    numberOfLines,
-    deleteText,
-  } = props;
   return (
     <View>
       <TextInput
@@ -200,4 +107,4 @@ export default function InputBox({ isDark = true, ...props }: InputBoxProps) {
       )}
     </View>
   );
-}
+};
