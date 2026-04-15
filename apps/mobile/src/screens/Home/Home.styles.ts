@@ -79,28 +79,35 @@ export const styles = StyleSheet.create({
     borderColor: colors.white,
   },
 
-  searchBar: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: colors.white,
-    borderRadius: 50,
-    borderWidth: 1,
-    borderColor: colors.disabled,
+  searchWrap: {
     marginHorizontal: 16,
-    paddingHorizontal: 10,
-    paddingVertical: 8,
     marginTop: 20,
     marginBottom: 20,
   },
-  searchIconWrap: {
-    width: 34,
-    height: 34,
-    borderRadius: 17,
-    alignItems: "center",
-    justifyContent: "center",
-    marginRight: 8,
+  searchResultItem: {
+    backgroundColor: colors.white,
+    borderRadius: 10,
+    paddingHorizontal: 14,
+    paddingVertical: 11,
+    borderWidth: 1,
+    borderColor: colors.disabled,
+    gap: 4,
   },
-  searchInput: { flex: 1, fontSize: 14, color: colors.dark },
+  searchResultName: {
+    fontSize: 14,
+    fontWeight: "700",
+    color: colors.dark,
+  },
+  searchResultMeta: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 4,
+  },
+  searchResultLocation: {
+    fontSize: 12,
+    color: colors.placeholder,
+    flex: 1,
+  },
 
   sectionTitle: {
     fontSize: 18,

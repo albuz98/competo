@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { View, Text, ScrollView, TextInput, StatusBar } from "react-native";
+import React from "react";
+import { View, Text, ScrollView, StatusBar, TouchableOpacity } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { LinearGradient } from "expo-linear-gradient";
 import { Ionicons } from "@expo/vector-icons";
@@ -23,8 +23,9 @@ import {
   ButtonGeneric,
 } from "../../components/Button/Button";
 import { sizesEnum } from "../../theme/dimension";
-import { colorGradient, colors } from "../../theme/colors";
+import { colors } from "../../theme/colors";
 import { CARD_GRADIENTS, SPORT_EMOJI } from "../../constants/generals";
+import { InputBoxSearch } from "../../components/InputBoxSearch/InputBoxSearch";
 
 type HomeNavProp = CompositeNavigationProp<
   BottomTabNavigationProp<MainTabParamList, "Home">,
@@ -156,10 +157,20 @@ function SmallCard({
 }
 
 // ─── Main screen ─────────────────────────────────────────────────────────────
+const searchTournaments = (q: string): Promise<Tournament[]> => {
+  const lower = q.toLowerCase();
+  return Promise.resolve(
+    RECOMMENDED.filter(
+      (t) =>
+        t.name.toLowerCase().includes(lower) ||
+        t.location.toLowerCase().includes(lower),
+    ),
+  );
+};
+
 export default function Home() {
   const { user } = useAuth();
   const navigation = useNavigation<HomeNavProp>();
-  const [search, setSearch] = useState("");
 
   const goToDetail = (id: string) => {
     if (!user) {
@@ -196,19 +207,34 @@ export default function Home() {
           contentContainerStyle={styles.scroll}
         >
           {/* ── Search ──────────────────────────────── */}
-          <View style={styles.searchBar}>
-            <LinearGradient
-              colors={colorGradient}
-              style={styles.searchIconWrap}
-            >
-              <Ionicons name="search" size={16} color={colors.white} />
-            </LinearGradient>
-            <TextInput
-              style={[styles.searchInput, { outline: "none" } as any]}
-              placeholder="Cerca..."
-              placeholderTextColor={colors.placeholder}
-              value={search}
-              onChangeText={setSearch}
+          <View style={styles.searchWrap}>
+            <InputBoxSearch<Tournament>
+              placeholder="Cerca tornei..."
+              gradientIcon
+              onSearch={searchTournaments}
+              emptyMessage="Nessun torneo trovato"
+              onSelect={(t) => goToDetail(t.id)}
+              renderResult={(t, index, onPress) => (
+                <TouchableOpacity
+                  key={index}
+                  style={styles.searchResultItem}
+                  onPress={onPress}
+                >
+                  <Text style={styles.searchResultName} numberOfLines={1}>
+                    {t.name}
+                  </Text>
+                  <View style={styles.searchResultMeta}>
+                    <Ionicons
+                      name="location-outline"
+                      size={12}
+                      color={colors.placeholder}
+                    />
+                    <Text style={styles.searchResultLocation} numberOfLines={1}>
+                      {t.location}
+                    </Text>
+                  </View>
+                </TouchableOpacity>
+              )}
             />
           </View>
 
