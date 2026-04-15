@@ -100,7 +100,7 @@ export default function CreateTeam({ navigation }: Props) {
                   setName(text);
                   setCreateError(null);
                 }}
-                placeholder="Es. Roma Eagles FC"
+                placeholder="Nome squadra"
                 placeholderTextColor={colors.grayDark}
                 autoFocus
                 returnKeyType="done"

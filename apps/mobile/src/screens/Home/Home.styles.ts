@@ -81,8 +81,8 @@ export const styles = StyleSheet.create({
 
   searchWrap: {
     marginHorizontal: 16,
-    marginTop: 20,
-    marginBottom: 20,
+    marginTop: 40,
+    marginBottom: 10,
   },
   searchResultItem: {
     backgroundColor: colors.white,
