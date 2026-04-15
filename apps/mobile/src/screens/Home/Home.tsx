@@ -22,7 +22,7 @@ import type {
   MainTabParamList,
   OrganizerProfile as OrganizerProfileType,
 } from "../../types";
-import { UserRole } from "../../types";
+import { NavigationEnum, UserRole } from "../../types";
 import { useAuth } from "../../context/AuthContext";
 import { generateTournaments } from "../../mock/data";
 import { getMyTournamentsCache } from "../../api/tournaments";
@@ -186,23 +186,27 @@ export default function Home() {
 
   const goToDetail = (id: string) => {
     if (!user) {
-      navigation.navigate("Login", {
+      navigation.navigate(NavigationEnum.LOGIN, {
         redirect: "tournament",
         tournamentId: id,
       });
     } else {
-      navigation.navigate("TournamentDetail", { tournamentId: id });
+      navigation.navigate(NavigationEnum.TOURNAMENT_DETAIL, {
+        tournamentId: id,
+      });
     }
   };
 
   const goToMyTournament = (id: string) => {
     if (!user) {
-      navigation.navigate("Login", {
+      navigation.navigate(NavigationEnum.LOGIN, {
         redirect: "tournament",
         tournamentId: id,
       });
     } else {
-      navigation.navigate("MyTournamentDetail", { tournamentId: id });
+      navigation.navigate(NavigationEnum.MY_TOURNAMENT_DETAIL, {
+        tournamentId: id,
+      });
     }
   };
 
@@ -214,93 +218,6 @@ export default function Home() {
           showsVerticalScrollIndicator={false}
           contentContainerStyle={styles.scroll}
         >
-          {/* ── Header ──────────────────────────────── */}
-          <View style={styles.header}>
-            <Avatar user={currentProfile ?? user} />
-            <View style={styles.greetingBlock}>
-              <Text style={styles.greetingText}>
-                {currentProfile?.role === UserRole.ORGANIZER
-                  ? (currentProfile as OrganizerProfileType).orgName
-                  : user?.username}
-              </Text>
-              <ButtonLink
-                text={location ?? "Inserisci posizione"}
-                handleBtn={() => {
-                  if (location) {
-                    navigation.navigate("Esplora");
-                  } else {
-                    setLocationModal(true);
-                  }
-                }}
-                icon={
-                  <Ionicons
-                    name="location-sharp"
-                    size={12}
-                    color={colors.primaryGradientMid}
-                  />
-                }
-                style={styles.locationRow}
-                color={
-                  location ? colors.placeholder : colors.primaryGradientMid
-                }
-                isColored
-              />
-            </View>
-          </View>
-
-          {/* ── Location Modal ───────────────────────── */}
-          <Modal
-            visible={locationModal}
-            transparent
-            animationType="fade"
-            onRequestClose={() => setLocationModal(false)}
-          >
-            <KeyboardAvoidingView
-              style={styles.modalOverlay}
-              behavior={Platform.OS === "ios" ? "padding" : "height"}
-            >
-              <View style={styles.modalCard}>
-                <Text style={styles.modalTitle}>La tua posizione</Text>
-                <Text style={styles.modalSub}>
-                  Inserisci la tua città per trovare tornei vicino a te
-                </Text>
-                <View style={styles.modalInputRow}>
-                  <Ionicons
-                    name="location-outline"
-                    size={18}
-                    color={colors.primaryGradientMid}
-                    style={{ marginRight: 8 }}
-                  />
-                  <TextInput
-                    style={styles.modalInput}
-                    placeholder="Es. Milano, Roma..."
-                    placeholderTextColor={colors.placeholder}
-                    value={locationInput}
-                    onChangeText={setLocationInput}
-                    autoFocus
-                    returnKeyType="done"
-                    onSubmitEditing={saveLocation}
-                  />
-                </View>
-                <View style={styles.modalBtns}>
-                  <ButtonBorderColored
-                    text="Annulla"
-                    handleBtn={() => {
-                      setLocationModal(false);
-                      setLocationInput("");
-                    }}
-                  />
-                  <ButtonFullColored
-                    text="Salva"
-                    handleBtn={saveLocation}
-                    isDisabled={!locationInput.trim()}
-                    isColored
-                  />
-                </View>
-              </View>
-            </KeyboardAvoidingView>
-          </Modal>
-
           {/* ── Search ──────────────────────────────── */}
           <View style={styles.searchBar}>
             <LinearGradient
@@ -322,7 +239,7 @@ export default function Home() {
           {MY_PARTICIPANT_TOURNAMENTS.length > 0 && (
             <>
               <Text style={[styles.sectionTitle, { marginTop: 20 }]}>
-                I Tuoi Tornei
+                I tuoi tornei
               </Text>
               <ScrollView
                 horizontal

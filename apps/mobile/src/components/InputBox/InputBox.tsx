@@ -96,6 +96,7 @@ export default function InputBox({ isDark = true, ...props }: InputBoxProps) {
             <TextInput
               style={[
                 styles.rowInput,
+                secureTextEntry ? styles.rowInputWithIcon : undefined,
                 error ? styles.rowInputError : undefined,
               ]}
               value={value}
@@ -113,6 +114,7 @@ export default function InputBox({ isDark = true, ...props }: InputBoxProps) {
             />
             {secureTextEntry && (
               <ButtonIcon
+                style={styles.rowEyeBtn}
                 handleBtn={() => setHidden((h) => !h)}
                 icon={
                   <Ionicons

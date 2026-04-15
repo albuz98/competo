@@ -1,11 +1,14 @@
 import React from "react";
 import { View, Text, Alert, Pressable } from "react-native";
-import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
+import {
+  SafeAreaView,
+  useSafeAreaInsets,
+} from "react-native-safe-area-context";
 import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { Ionicons } from "@expo/vector-icons";
 import { useAuth } from "../../context/AuthContext";
-import { RootStackParamList, UserRole } from "../../types";
+import { NavigationEnum, RootStackParamList, UserRole } from "../../types";
 import { colors } from "../../theme/colors";
 import { ButtonBack } from "../../components/Button/Button";
 import { styles } from "./Settings.styles";
@@ -22,24 +25,18 @@ export default function Settings() {
 
   const handleEditProfile = () => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (navigation as any).navigate("MainTabs", {
-      screen: "Profilo",
+    (navigation as any).navigate(NavigationEnum.MAIN_TABS, {
+      screen: NavigationEnum.PROFILE,
       params: { startEdit: true },
     });
   };
 
   const handleTwoFactor = () => {
-    Alert.alert(
-      "Autenticazione a due fattori",
-      "Funzionalità in arrivo.",
-    );
+    Alert.alert("Autenticazione a due fattori", "Funzionalità in arrivo.");
   };
 
   const handleOrganize = () => {
-    Alert.alert(
-      "Vuoi organizzare un torneo?",
-      "Funzionalità in arrivo.",
-    );
+    Alert.alert("Vuoi organizzare un torneo?", "Funzionalità in arrivo.");
   };
 
   const handleLogout = () => {
@@ -60,12 +57,23 @@ export default function Settings() {
         <View style={styles.card}>
           <Pressable style={styles.row} onPress={handleEditProfile}>
             <View
-              style={[styles.rowIcon, { backgroundColor: colors.primarySelectedBg }]}
+              style={[
+                styles.rowIcon,
+                { backgroundColor: colors.primarySelectedBg },
+              ]}
             >
-              <Ionicons name="create-outline" size={20} color={colors.primary} />
+              <Ionicons
+                name="create-outline"
+                size={20}
+                color={colors.primary}
+              />
             </View>
             <Text style={styles.rowText}>Modifica profilo</Text>
-            <Ionicons name="chevron-forward" size={18} color={colors.grayDark} />
+            <Ionicons
+              name="chevron-forward"
+              size={18}
+              color={colors.grayDark}
+            />
           </Pressable>
 
           <View style={styles.divider} />
@@ -79,7 +87,11 @@ export default function Settings() {
               />
             </View>
             <Text style={styles.rowText}>Autenticazione a due fattori</Text>
-            <Ionicons name="chevron-forward" size={18} color={colors.grayDark} />
+            <Ionicons
+              name="chevron-forward"
+              size={18}
+              color={colors.grayDark}
+            />
           </Pressable>
 
           {!isAlreadyOrganizer && (
@@ -90,7 +102,11 @@ export default function Settings() {
                   <Ionicons name="trophy-outline" size={20} color="#ca8a04" />
                 </View>
                 <Text style={styles.rowText}>Vuoi organizzare un torneo?</Text>
-                <Ionicons name="chevron-forward" size={18} color={colors.grayDark} />
+                <Ionicons
+                  name="chevron-forward"
+                  size={18}
+                  color={colors.grayDark}
+                />
               </Pressable>
             </>
           )}
@@ -101,10 +117,18 @@ export default function Settings() {
         <View style={[styles.card, styles.cardDanger]}>
           <Pressable style={styles.row} onPress={handleLogout}>
             <View style={[styles.rowIcon, { backgroundColor: "#fee2e2" }]}>
-              <Ionicons name="log-out-outline" size={20} color={colors.danger} />
+              <Ionicons
+                name="log-out-outline"
+                size={20}
+                color={colors.danger}
+              />
             </View>
             <Text style={[styles.rowText, styles.rowTextDanger]}>Logout</Text>
-            <Ionicons name="chevron-forward" size={18} color={colors.grayDark} />
+            <Ionicons
+              name="chevron-forward"
+              size={18}
+              color={colors.grayDark}
+            />
           </Pressable>
         </View>
       </View>

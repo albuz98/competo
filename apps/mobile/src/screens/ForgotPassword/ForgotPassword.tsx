@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { View, Text } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { RootStackParamList } from "../../types";
+import { NavigationEnum, RootStackParamList } from "../../types";
 import { forgotPassword } from "../../api/auth";
 import { styles } from "./ForgotPassword.styles";
 import AuthLayout from "../../components/AuthLayout/AuthLayout";
@@ -56,7 +56,7 @@ export default function ForgotPassword({ navigation }: Props) {
           </Text>
           <ButtonFullColored
             text="Torna al login"
-            handleBtn={() => navigation.navigate("Login", {})}
+            handleBtn={() => navigation.navigate(NavigationEnum.LOGIN, {})}
           />
         </View>
       ) : (

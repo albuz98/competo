@@ -1,7 +1,7 @@
 import React, { useState, useLayoutEffect } from "react";
 import { Text } from "react-native";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
-import type { RootStackParamList } from "../../types";
+import { NavigationEnum, type RootStackParamList } from "../../types";
 import { useAuth } from "../../context/AuthContext";
 import CompetoLogo from "../../components/CompetoLogo/CompetoLogo";
 import AuthErrorBox from "../../components/AuthErrorBox/AuthErrorBox";
@@ -68,14 +68,14 @@ export default function Register({ navigation }: Props) {
         dateOfBirth,
         password,
       });
-      navigation.replace("MainTabs");
+      navigation.replace(NavigationEnum.MAIN_TABS);
     } catch {
       // error displayed from context
     }
   };
 
   return (
-    <AuthLayout onClose={() => navigation.replace("ChoseAccess")}>
+    <AuthLayout onClose={() => navigation.replace(NavigationEnum.CHOSE_ACCESS)}>
       <Text style={styles.cardTitle}>Crea account</Text>
 
       {error && <AuthErrorBox message={error} />}
@@ -171,7 +171,7 @@ export default function Register({ navigation }: Props) {
 
       <ButtonLink
         text="Hai già un account? Accedi"
-        handleBtn={() => navigation.navigate("Login", {})}
+        handleBtn={() => navigation.navigate(NavigationEnum.LOGIN, {})}
       />
 
       <CompetoLogo />

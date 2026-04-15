@@ -1,7 +1,7 @@
 import React, { useState, useLayoutEffect } from "react";
 import { Text } from "react-native";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
-import type { RootStackParamList } from "../../types";
+import { NavigationEnum, type RootStackParamList } from "../../types";
 import { useAuth } from "../../context/AuthContext";
 import CompetoLogo from "../../components/CompetoLogo/CompetoLogo";
 import AuthErrorBox from "../../components/AuthErrorBox/AuthErrorBox";
@@ -35,9 +35,9 @@ export default function Login({ navigation, route }: Props) {
     try {
       await login({ email, password });
       if (redirect === "tournament" && tournamentId) {
-        navigation.replace("TournamentDetail", { tournamentId });
+        navigation.replace(NavigationEnum.TOURNAMENT_DETAIL, { tournamentId });
       } else {
-        navigation.replace("MainTabs");
+        navigation.replace(NavigationEnum.MAIN_TABS);
       }
     } catch {
       // error displayed from context
@@ -45,7 +45,7 @@ export default function Login({ navigation, route }: Props) {
   };
 
   return (
-    <AuthLayout onClose={() => navigation.replace("ChoseAccess")}>
+    <AuthLayout onClose={() => navigation.replace(NavigationEnum.CHOSE_ACCESS)}>
       <Text style={styles.cardTitle}>Accedi</Text>
 
       {error && <AuthErrorBox message={error} />}
@@ -83,12 +83,12 @@ export default function Login({ navigation, route }: Props) {
 
       <ButtonLink
         text={"Forgot Password?"}
-        handleBtn={() => navigation.navigate("ForgotPassword")}
+        handleBtn={() => navigation.navigate(NavigationEnum.FORGOT_PASSWORD)}
       />
 
       <ButtonLink
         text={"Signup!"}
-        handleBtn={() => navigation.replace("Register")}
+        handleBtn={() => navigation.replace(NavigationEnum.REGISTER)}
       />
 
       <CompetoLogo />

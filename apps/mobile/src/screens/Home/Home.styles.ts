@@ -89,6 +89,7 @@ export const styles = StyleSheet.create({
     marginHorizontal: 16,
     paddingHorizontal: 10,
     paddingVertical: 8,
+    marginTop: 20,
     marginBottom: 20,
   },
   searchIconWrap: {

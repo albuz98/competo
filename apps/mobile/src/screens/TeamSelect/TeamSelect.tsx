@@ -14,7 +14,11 @@ import {
 import { LinearGradient } from "expo-linear-gradient";
 import { Ionicons } from "@expo/vector-icons";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
-import type { RootStackParamList, Team } from "../../types";
+import {
+  NavigationEnum,
+  type RootStackParamList,
+  type Team,
+} from "../../types";
 import { useTeams } from "../../context/TeamsContext";
 import {
   ButtonFullColored,
@@ -76,7 +80,7 @@ export default function TeamSelect({ route, navigation }: Props) {
 
   const handleContinue = () => {
     if (!selectedId || !selectedTeam) return;
-    navigation.navigate("Payment", {
+    navigation.navigate(NavigationEnum.PAYMENT, {
       tournamentId,
       entryFee,
       tournamentName,
@@ -128,7 +132,9 @@ export default function TeamSelect({ route, navigation }: Props) {
               </Text>
               <ButtonFullColored
                 text="Crea una squadra"
-                handleBtn={() => navigation.navigate("CreateTeam")}
+                handleBtn={() =>
+                  navigation.navigate(NavigationEnum.CREATE_TEAM)
+                }
               />
             </View>
           ) : (

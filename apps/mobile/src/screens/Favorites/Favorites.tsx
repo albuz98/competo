@@ -9,7 +9,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import type { RootStackParamList, Tournament } from "../../types";
-import { UserRole } from "../../types";
+import { NavigationEnum, UserRole } from "../../types";
 import { useFavorites } from "../../context/FavoritesContext";
 import { useAuth } from "../../context/AuthContext";
 import { ButtonGeneric, ButtonIcon } from "../../components/Button/Button";
@@ -137,7 +137,7 @@ export default function Favorites() {
             <TournamentCard
               item={item}
               onPress={() =>
-                navigation.navigate("TournamentDetail", {
+                navigation.navigate(NavigationEnum.TOURNAMENT_DETAIL, {
                   tournamentId: item.id,
                 })
               }

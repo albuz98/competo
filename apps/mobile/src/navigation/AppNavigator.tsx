@@ -87,22 +87,22 @@ export default function AppNavigator() {
           }}
         />
         <Stack.Screen
-          name="MainTabs"
+          name={NavigationEnum.MAIN_TABS}
           component={MainTabNavigator}
           options={{ headerShown: false }}
         />
         <Stack.Screen
-          name="TournamentDetail"
+          name={NavigationEnum.TOURNAMENT_DETAIL}
           component={TournamentDetail}
           options={{ title: "Dettagli Torneo" }}
         />
         <Stack.Screen
-          name="Payment"
+          name={NavigationEnum.PAYMENT}
           component={Payment}
           options={{ headerShown: false }}
         />
         <Stack.Screen
-          name="ForgotPassword"
+          name={NavigationEnum.FORGOT_PASSWORD}
           component={ForgotPassword}
           options={{
             headerShown: false,
@@ -110,57 +110,57 @@ export default function AppNavigator() {
           }}
         />
         <Stack.Screen
-          name="MyTournamentDetail"
+          name={NavigationEnum.MY_TOURNAMENT_DETAIL}
           component={MyTournamentDetail}
           options={{ headerShown: false }}
         />
         <Stack.Screen
-          name="TeamSelect"
+          name={NavigationEnum.TEAM_SELECT}
           component={TeamSelect}
           options={{ headerShown: false, presentation: "modal" }}
         />
         <Stack.Screen
-          name="Teams"
+          name={NavigationEnum.TEAMS}
           component={TeamsScreen}
           options={{ headerShown: false }}
         />
         <Stack.Screen
-          name="CreateTeam"
+          name={NavigationEnum.CREATE_TEAM}
           component={CreateTeam}
           options={{ headerShown: false }}
         />
         <Stack.Screen
-          name="TeamDetail"
+          name={NavigationEnum.TEAM_DETAIL}
           component={TeamDetail}
           options={{ headerShown: false }}
         />
         <Stack.Screen
-          name="InvitePlayers"
+          name={NavigationEnum.INVITE_PLAYERS}
           component={InvitePlayers}
           options={{ headerShown: false }}
         />
         <Stack.Screen
-          name="InviteCollaborators"
+          name={NavigationEnum.INVITE_COLLABORATORS}
           component={InviteCollaborators}
           options={{ headerShown: false }}
         />
         <Stack.Screen
-          name="CreateTournamentSchedule"
+          name={NavigationEnum.CREATE_TOURNAMENT_SCHEDULE}
           component={CreateTournamentSchedule}
           options={{ headerShown: false }}
         />
         <Stack.Screen
-          name="TournamentScheduleResult"
+          name={NavigationEnum.TOURNAMENT_SCHEDULE_RESULT}
           component={TournamentScheduleResult}
           options={{ headerShown: false }}
         />
         <Stack.Screen
-          name="TournamentHistory"
+          name={NavigationEnum.TOURNAMENT_HISTORY}
           component={TournamentHistoryScreen}
           options={{ headerShown: false }}
         />
         <Stack.Screen
-          name="Settings"
+          name={NavigationEnum.SETTINGS}
           component={Settings}
           options={{ headerShown: false }}
         />

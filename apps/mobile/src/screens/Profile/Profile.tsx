@@ -31,6 +31,7 @@ import {
   type MyTournament,
   type OrganizerProfile as OrganizerProfileType,
   type PlayerProfile as PlayerProfileType,
+  NavigationEnum,
 } from "../../types";
 import { pStyles, styles } from "./Profile.styles";
 import { colorGradient, colors } from "../../theme/colors";
@@ -73,7 +74,7 @@ export default function Profile() {
   });
   const navigation =
     useNavigation<NativeStackNavigationProp<RootStackParamList>>();
-  const route = useRoute<RouteProp<MainTabParamList, "Profilo">>();
+  const route = useRoute<RouteProp<MainTabParamList, NavigationEnum.PROFILE>>();
   const insets = useSafeAreaInsets();
   const [changeProfileModal, setChangeProfileModal] = useState(false);
   const [orgTournaments, setOrgTournaments] = useState<MyTournament[]>([]);
@@ -211,11 +212,11 @@ export default function Profile() {
       setSaving(false);
     }
     setEdit(false);
-    navigation.navigate("Settings");
+    navigation.navigate(NavigationEnum.SETTINGS);
   };
 
   const handleOpenSettings = () => {
-    navigation.navigate("Settings");
+    navigation.navigate(NavigationEnum.SETTINGS);
   };
 
   if (!user) {

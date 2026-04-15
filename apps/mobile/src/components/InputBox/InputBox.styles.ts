@@ -46,7 +46,6 @@ export const styles = StyleSheet.create({
   rowInputRow: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 8,
   },
   rowInput: {
     fontSize: 14,
@@ -56,6 +55,17 @@ export const styles = StyleSheet.create({
     borderBottomColor: colors.primary,
     paddingVertical: 2,
     flex: 1,
+  },
+  rowInputWithIcon: {
+    paddingRight: 36,
+  },
+  rowEyeBtn: {
+    position: "absolute",
+    right: 0,
+    top: 0,
+    bottom: 0,
+    width: 32,
+    height: undefined,
   },
   rowInputError: {
     borderBottomColor: colors.danger,

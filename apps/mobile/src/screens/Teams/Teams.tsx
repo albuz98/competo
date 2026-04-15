@@ -15,7 +15,12 @@ import {
 import { LinearGradient } from "expo-linear-gradient";
 import { Ionicons } from "@expo/vector-icons";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
-import type { RootStackParamList, Team, PendingInvite } from "../../types";
+import {
+  type RootStackParamList,
+  type Team,
+  type PendingInvite,
+  NavigationEnum,
+} from "../../types";
 import { useTeams } from "../../context/TeamsContext";
 import {
   ButtonAccept,
@@ -131,7 +136,7 @@ export default function TeamsScreen({ navigation }: Props) {
           <Text style={tss.headerTitle}>Le mie squadre</Text>
           <ButtonGradient
             style={tss.addBtn}
-            handleBtn={() => navigation.navigate("CreateTeam")}
+            handleBtn={() => navigation.navigate(NavigationEnum.CREATE_TEAM)}
           >
             <Ionicons name="add" size={20} color={colors.white} />
           </ButtonGradient>
@@ -180,7 +185,9 @@ export default function TeamsScreen({ navigation }: Props) {
                 </Text>
                 <ButtonFullColored
                   text="Crea squadra"
-                  handleBtn={() => navigation.navigate("CreateTeam")}
+                  handleBtn={() =>
+                    navigation.navigate(NavigationEnum.CREATE_TEAM)
+                  }
                 />
               </View>
             ) : (
@@ -189,7 +196,9 @@ export default function TeamsScreen({ navigation }: Props) {
                   key={t.id}
                   team={t}
                   onPress={() =>
-                    navigation.navigate("TeamDetail", { teamId: t.id })
+                    navigation.navigate(NavigationEnum.TEAM_DETAIL, {
+                      teamId: t.id,
+                    })
                   }
                 />
               ))

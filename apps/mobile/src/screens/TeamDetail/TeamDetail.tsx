@@ -1,5 +1,12 @@
 import React, { useState } from "react";
-import { View, Text, ScrollView, StatusBar, Modal, TextInput } from "react-native";
+import {
+  View,
+  Text,
+  ScrollView,
+  StatusBar,
+  Modal,
+  TextInput,
+} from "react-native";
 import { tds } from "./TeamDetail.styles";
 import {
   SafeAreaView,
@@ -8,7 +15,12 @@ import {
 import { LinearGradient } from "expo-linear-gradient";
 import { Ionicons } from "@expo/vector-icons";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
-import type { RootStackParamList, TeamMember, TeamRole } from "../../types";
+import {
+  NavigationEnum,
+  type RootStackParamList,
+  type TeamMember,
+  type TeamRole,
+} from "../../types";
 import { useTeams } from "../../context/TeamsContext";
 import { useAuth } from "../../context/AuthContext";
 import { colorGradient, colors } from "../../theme/colors";
@@ -122,10 +134,7 @@ function MemberRow({
       {showJersey && (
         <ButtonGeneric
           handleBtn={currentUserIsRep ? onEditJersey : () => {}}
-          style={[
-            tds.jerseyBadge,
-            currentUserIsRep && tds.jerseyBadgeEditable,
-          ]}
+          style={[tds.jerseyBadge, currentUserIsRep && tds.jerseyBadgeEditable]}
         >
           {member.jerseyNumber != null ? (
             <Text
@@ -159,8 +168,13 @@ function MemberRow({
 
 export default function TeamDetail({ route, navigation }: Props) {
   const { teamId } = route.params;
-  const { getTeamById, removeMember, sentPendingInvites, updateMemberRole, updateMemberJersey } =
-    useTeams() as any;
+  const {
+    getTeamById,
+    removeMember,
+    sentPendingInvites,
+    updateMemberRole,
+    updateMemberJersey,
+  } = useTeams() as any;
   const { user } = useAuth();
   const insets = useSafeAreaInsets();
   const team = getTeamById(teamId);
@@ -253,7 +267,9 @@ export default function TeamDetail({ route, navigation }: Props) {
               onChangeRole={() => setRoleTarget(m)}
               onEditJersey={() => {
                 setJerseyTarget(m);
-                setJerseyInput(m.jerseyNumber != null ? String(m.jerseyNumber) : "");
+                setJerseyInput(
+                  m.jerseyNumber != null ? String(m.jerseyNumber) : "",
+                );
               }}
             />
           ))}
@@ -302,7 +318,9 @@ export default function TeamDetail({ route, navigation }: Props) {
                 />
               }
               handleBtn={() =>
-                navigation.navigate("InvitePlayers", { teamId: team.id })
+                navigation.navigate(NavigationEnum.INVITE_PLAYERS, {
+                  teamId: team.id,
+                })
               }
               isColored
             />
@@ -472,7 +490,10 @@ export default function TeamDetail({ route, navigation }: Props) {
                 handleBtn={() => setJerseyTarget(null)}
               />
               <ButtonLink
-                style={[tds.modalRemoveBtn, { backgroundColor: colors.primary }]}
+                style={[
+                  tds.modalRemoveBtn,
+                  { backgroundColor: colors.primary },
+                ]}
                 text="Salva"
                 handleBtn={() => {
                   if (!jerseyTarget) return;

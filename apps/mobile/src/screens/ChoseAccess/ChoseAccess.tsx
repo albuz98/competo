@@ -1,5 +1,5 @@
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { RootStackParamList } from "../../types";
+import { NavigationEnum, RootStackParamList } from "../../types";
 import { StatusBar, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { styles } from "./ChoseAccess.styles";
@@ -31,11 +31,11 @@ export default function ChoseAccess({ navigation }: Props) {
         <View style={styles.button}>
           <ButtonFullColored
             text="Accedi"
-            handleBtn={() => navigation.replace("Login", {})}
+            handleBtn={() => navigation.replace(NavigationEnum.LOGIN, {})}
           />
           <ButtonBorderColored
             text="Registrati"
-            handleBtn={() => navigation.replace("Register")}
+            handleBtn={() => navigation.replace(NavigationEnum.REGISTER)}
           />
         </View>
       </SafeAreaView>

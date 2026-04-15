@@ -11,12 +11,13 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
-import type {
-  RootStackParamList,
-  TournamentFormat,
-  TournamentPhaseKind,
-  CreateTournamentPayload,
-  TournametNumberPartecipants,
+import {
+  type RootStackParamList,
+  type TournamentFormat,
+  type TournamentPhaseKind,
+  type CreateTournamentPayload,
+  type TournametNumberPartecipants,
+  NavigationEnum,
 } from "../../types";
 import { createTournament } from "../../api/tournaments";
 import { useAuth } from "../../context/AuthContext";
@@ -265,7 +266,7 @@ export default function CreateTournamentSchedule({ navigation }: Props) {
       };
       await createTournament(payload, user?.token);
 
-      navigation.replace("TournamentScheduleResult");
+      navigation.replace(NavigationEnum.TOURNAMENT_SCHEDULE_RESULT);
     } catch (e: unknown) {
       Alert.alert(
         "Errore",

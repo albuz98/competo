@@ -14,7 +14,7 @@ import {
 } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { RootStackParamList } from "../../types";
+import { NavigationEnum, RootStackParamList } from "../../types";
 import { useTeams } from "../../context/TeamsContext";
 import { ButtonEnum } from "../../types/components";
 import { cs } from "./CreateTeam.styles";
@@ -46,7 +46,7 @@ export default function CreateTeam({ navigation }: Props) {
     setError(null);
     try {
       const team = await createTeam(name.trim(), sport);
-      navigation.replace("TeamDetail", { teamId: team.id });
+      navigation.replace(NavigationEnum.TEAM_DETAIL, { teamId: team.id });
     } catch (e) {
       setCreateError(e instanceof Error ? e.message : "Errore nella creazione");
       setError("Errore nella creazione della squadra. Riprova.");

@@ -17,7 +17,11 @@ import {
 import { LinearGradient } from "expo-linear-gradient";
 import { Ionicons } from "@expo/vector-icons";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
-import type { RootStackParamList, Tournament } from "../../types";
+import {
+  NavigationEnum,
+  type RootStackParamList,
+  type Tournament,
+} from "../../types";
 import { fetchTournament } from "../../api/tournaments";
 import { useAuth } from "../../context/AuthContext";
 import { useFavorites } from "../../context/FavoritesContext";
@@ -192,7 +196,7 @@ export default function TournamentDetail({ route, navigation }: Props) {
 
   const handleGoToPayment = () => {
     if (!tournament) return;
-    navigation.navigate("TeamSelect", {
+    navigation.navigate(NavigationEnum.TEAM_SELECT, {
       tournamentId: tournament.id,
       entryFee: tournament.entryFee,
       tournamentName: tournament.name,

@@ -15,7 +15,11 @@ import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useAuth } from "../../context/AuthContext";
 import { generateTournaments } from "../../mock/data";
-import type { Tournament, RootStackParamList } from "../../types";
+import {
+  type Tournament,
+  type RootStackParamList,
+  NavigationEnum,
+} from "../../types";
 import { styles } from "./Explore.styles";
 import {
   ButtonBorderColored,
@@ -306,7 +310,7 @@ export default function Explore() {
             }
             handleBtn={() => {
               setSelectedTournament(null);
-              navigation.navigate("TournamentDetail", {
+              navigation.navigate(NavigationEnum.TOURNAMENT_DETAIL, {
                 tournamentId: selectedTournament.id,
               });
             }}

@@ -397,10 +397,10 @@ export type RootStackParamList = {
 
 export type MainTabParamList = {
   Home: undefined;
-  Esplora: undefined;
-  Preferiti: undefined;
-  Notifiche: undefined;
-  Profilo: { startEdit?: boolean } | undefined;
+  Explore: undefined;
+  Favorites: undefined;
+  Notification: undefined;
+  Profile: { startEdit?: boolean } | undefined;
 };
 
 export type Suggestion = {
@@ -410,6 +410,12 @@ export type Suggestion = {
 };
 
 export enum NavigationEnum {
+  EXPLORE = "Explore",
+  HOME = "Home",
+  FAVORITES = "Favorites",
+  NOTIFICATION = "Notification",
+  PROFILE = "Profile",
+
   CHOSE_ACCESS = "ChoseAccess",
   LOGIN = "Login",
   REGISTER = "Register",

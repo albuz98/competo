@@ -13,12 +13,13 @@ import {
   ButtonLink,
 } from "../../../../components/Button/Button";
 import { LinearGradient } from "expo-linear-gradient";
-import type {
-  MyTournament,
-  OrganizerProfile as OrganizerProfileType,
-  RootStackParamList,
-  UpdateProfileData,
-  User,
+import {
+  NavigationEnum,
+  type MyTournament,
+  type OrganizerProfile as OrganizerProfileType,
+  type RootStackParamList,
+  type UpdateProfileData,
+  type User,
 } from "../../../../types";
 import { colorGradient, colors } from "../../../../theme/colors";
 import { useNavigation } from "@react-navigation/native";
@@ -196,7 +197,7 @@ export const OrganizerProfile = ({
                   text="+ Invita collaboratore"
                   handleBtn={() =>
                     selectedProfile &&
-                    navigation.navigate("InviteCollaborators", {
+                    navigation.navigate(NavigationEnum.INVITE_COLLABORATORS, {
                       profileId: selectedProfile.id,
                     })
                   }
@@ -216,7 +217,9 @@ export const OrganizerProfile = ({
         <View style={{ marginVertical: 20 }}>
           <ButtonGeneric
             style={styles.createTeamCard}
-            handleBtn={() => navigation.navigate("CreateTournamentSchedule")}
+            handleBtn={() =>
+              navigation.navigate(NavigationEnum.CREATE_TOURNAMENT_SCHEDULE)
+            }
           >
             <LinearGradient
               colors={colorGradient}

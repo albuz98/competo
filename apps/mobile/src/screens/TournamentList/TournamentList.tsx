@@ -9,7 +9,11 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import type { RootStackParamList, Tournament } from "../../types";
+import {
+  NavigationEnum,
+  type RootStackParamList,
+  type Tournament,
+} from "../../types";
 import { fetchTournaments } from "../../api/tournaments";
 import { useAuth } from "../../context/AuthContext";
 import { styles } from "./TournamentList.styles";
@@ -118,12 +122,14 @@ export default function TournamentListScreen() {
 
   const handlePress = (tournament: Tournament) => {
     if (!user) {
-      navigation.navigate("Login", {
+      navigation.navigate(NavigationEnum.LOGIN, {
         redirect: "tournament",
         tournamentId: tournament.id,
       });
     } else {
-      navigation.navigate("TournamentDetail", { tournamentId: tournament.id });
+      navigation.navigate(NavigationEnum.TOURNAMENT_DETAIL, {
+        tournamentId: tournament.id,
+      });
     }
   };
 

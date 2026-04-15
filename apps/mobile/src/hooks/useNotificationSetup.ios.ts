@@ -1,12 +1,13 @@
-import { useEffect, useRef } from 'react';
-import * as Notifications from 'expo-notifications';
-import * as Location from 'expo-location';
-import { navigationRef } from '../navigation/navigationRef';
-import { useNotifications } from '../context/NotificationsContext';
-import { useAuth } from '../context/AuthContext';
-import { generateTournament } from '../mock/data';
-import { addToMockCache } from '../api/tournaments';
-import { registerPushToken } from '../api/auth';
+import { useEffect, useRef } from "react";
+import * as Notifications from "expo-notifications";
+import * as Location from "expo-location";
+import { navigationRef } from "../navigation/navigationRef";
+import { useNotifications } from "../context/NotificationsContext";
+import { useAuth } from "../context/AuthContext";
+import { generateTournament } from "../mock/data";
+import { addToMockCache } from "../api/tournaments";
+import { registerPushToken } from "../api/auth";
+import { NavigationEnum } from "../types";
 
 function haversineKm(lat1: number, lng1: number, lat2: number, lng2: number) {
   const R = 6371;
@@ -40,6 +41,8 @@ export function useNotificationSetup() {
         shouldShowAlert: true,
         shouldPlaySound: true,
         shouldSetBadge: false,
+        shouldShowBanner: true,
+        shouldShowList: true,
       }),
     });
 
@@ -48,7 +51,7 @@ export function useNotificationSetup() {
     (async () => {
       try {
         const { status } = await Notifications.requestPermissionsAsync();
-        if (status === 'granted' && userTokenRef.current) {
+        if (status === "granted" && userTokenRef.current) {
           const tokenData = await Notifications.getExpoPushTokenAsync();
           await registerPushToken(tokenData.data, userTokenRef.current);
         }
@@ -58,10 +61,12 @@ export function useNotificationSetup() {
     const handleNotificationData = (data: Record<string, unknown>) => {
       const screen = data?.screen as string | undefined;
       const tournamentId = data?.tournamentId as string | undefined;
-      if (screen === 'Teams') {
-        navigationRef.navigate('Teams');
+      if (screen === NavigationEnum.TEAMS) {
+        navigationRef.navigate(NavigationEnum.TEAMS);
       } else if (tournamentId) {
-        navigationRef.navigate('TournamentDetail', { tournamentId });
+        navigationRef.navigate(NavigationEnum.TOURNAMENT_DETAIL, {
+          tournamentId,
+        });
       }
     };
 
@@ -79,15 +84,19 @@ export function useNotificationSetup() {
     };
 
     // App in foreground or background
-    const responseSub = Notifications.addNotificationResponseReceivedListener((response) => {
-      navigateWhenReady(response.notification.request.content.data);
-    });
+    const responseSub = Notifications.addNotificationResponseReceivedListener(
+      (response) => {
+        navigateWhenReady(response.notification.request.content.data);
+      },
+    );
 
     // App cold-started by tapping a notification
-    Notifications.getLastNotificationResponseAsync().then((response) => {
-      if (!response) return;
-      navigateWhenReady(response.notification.request.content.data);
-    }).catch(() => {});
+    Notifications.getLastNotificationResponseAsync()
+      .then((response) => {
+        if (!response) return;
+        navigateWhenReady(response.notification.request.content.data);
+      })
+      .catch(() => {});
 
     const timer = setTimeout(async () => {
       if (notificationSent.current) return;
@@ -97,7 +106,7 @@ export function useNotificationSetup() {
       let lng = 9.19;
       try {
         const { status } = await Location.requestForegroundPermissionsAsync();
-        if (status === 'granted') {
+        if (status === "granted") {
           const pos = await Location.getCurrentPositionAsync({
             accuracy: Location.Accuracy.Low,
           });
@@ -116,7 +125,7 @@ export function useNotificationSetup() {
       const tournament = generateTournament();
       addToMockCache(tournament);
 
-      const title = 'Nuovo torneo vicino a te 🏆';
+      const title = "Nuovo torneo vicino a te 🏆";
       const body = `"${tournament.name}" è aperto a ${distKm.toFixed(1)} km da te. Iscriviti ora!`;
 
       addNotificationRef.current({

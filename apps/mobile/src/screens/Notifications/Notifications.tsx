@@ -8,12 +8,9 @@ import {
   AppNotification,
   useNotifications,
 } from "../../context/NotificationsContext";
-import { RootStackParamList } from "../../types";
+import { NavigationEnum, RootStackParamList } from "../../types";
 import { styles } from "./Notifications.styles";
-import {
-  ButtonGeneric,
-  ButtonLink,
-} from "../../components/Button/Button";
+import { ButtonGeneric, ButtonLink } from "../../components/Button/Button";
 import { colors } from "../../theme/colors";
 
 function formatDate(iso: string) {
@@ -90,11 +87,11 @@ export default function Notifications() {
               onPress={() => {
                 markAsRead(item.id);
                 if (item.tournamentId) {
-                  navigation.navigate("TournamentDetail", {
+                  navigation.navigate(NavigationEnum.TOURNAMENT_DETAIL, {
                     tournamentId: item.tournamentId,
                   });
                 } else if (item.teamId) {
-                  navigation.navigate("Teams");
+                  navigation.navigate(NavigationEnum.TEAMS);
                 }
               }}
             />
