@@ -53,4 +53,22 @@ export const s = StyleSheet.create({
     textAlign: "center",
     paddingVertical: 10,
   },
+
+  // ── Overlay (modal) mode styles ──────────────────────────────────────────
+  dimOverlay: {
+    backgroundColor: "rgba(0,0,0,0.45)",
+  },
+  modalSearchWrap: {
+    paddingHorizontal: 16,
+    paddingBottom: 10,
+  },
+  fakePlaceholder: {
+    flex: 1,
+    fontSize: 15,
+    paddingVertical: 0,
+    color: colors.placeholder,
+  },
+  resultsModalSpacing: {
+    marginTop: 12,
+  },
 });

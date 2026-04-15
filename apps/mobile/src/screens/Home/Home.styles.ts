@@ -9,7 +9,7 @@ export const SMALL_W = SW * 0.42;
 export const styles = StyleSheet.create({
   root: { flex: 1, backgroundColor: colors.white },
   safeArea: { flex: 1 },
-  scroll: { paddingBottom: 100 },
+  scroll: { paddingBottom: 100, paddingTop: 8 },
 
   header: {
     flexDirection: "row",
@@ -81,7 +81,7 @@ export const styles = StyleSheet.create({
 
   searchWrap: {
     marginHorizontal: 16,
-    marginTop: 40,
+    marginTop: 20,
     marginBottom: 10,
   },
   searchResultItem: {

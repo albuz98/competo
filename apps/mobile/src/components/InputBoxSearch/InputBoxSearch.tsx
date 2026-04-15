@@ -1,11 +1,15 @@
 import { useEffect, useRef, useState } from "react";
 import {
   ActivityIndicator,
+  Modal,
+  StyleSheet,
   Text,
   TextInput,
   TouchableOpacity,
+  TouchableWithoutFeedback,
   View,
 } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import Feather from "@expo/vector-icons/Feather";
@@ -36,6 +40,18 @@ interface InputBoxSearchProps<T> {
   isError?: boolean;
   /** Message shown when the search returns no results */
   emptyMessage?: string;
+  /**
+   * Overlay mode: renders a fake (non-interactive) bar; tapping it opens a
+   * transparent full-screen Modal that contains the real input + results.
+   * The Modal covers the tab bar too. Default: false (inline rendering).
+   */
+  overlayDropdown?: boolean;
+  /**
+   * Extra top spacing inside the Modal search area, in addition to safe-area
+   * insets. Should match the marginTop of the wrapping View in the screen.
+   * Default: 20
+   */
+  modalTopSpacing?: number;
 }
 
 export function InputBoxSearch<T>({
@@ -51,13 +67,18 @@ export function InputBoxSearch<T>({
   isDark = false,
   isError = false,
   emptyMessage,
+  overlayDropdown = false,
+  modalTopSpacing = 20,
 }: InputBoxSearchProps<T>) {
+  const insets = useSafeAreaInsets();
+
   const [query, setQuery] = useState(defaultValue ?? "");
   const [results, setResults] = useState<T[]>([]);
   const [isSearching, setIsSearching] = useState(false);
-  const debounceTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
-  // Tracks whether a search has been attempted (to decide when to show emptyMessage)
   const [hasSearched, setHasSearched] = useState(false);
+  const [modalVisible, setModalVisible] = useState(false);
+
+  const debounceTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const handleQueryChange = (text: string) => {
     setQuery(text);
@@ -101,25 +122,148 @@ export function InputBoxSearch<T>({
     setResults([]);
     setHasSearched(false);
     onQueryChange?.("");
+    if (overlayDropdown) setModalVisible(false);
   };
 
   const handleSelect = (item: T) => {
     onSelect?.(item);
+    if (overlayDropdown) {
+      setQuery("");
+      setResults([]);
+      setHasSearched(false);
+      onQueryChange?.("");
+      setModalVisible(false);
+    }
   };
 
   const showEmpty =
-    !isSearching &&
-    hasSearched &&
-    results.length === 0 &&
-    !!emptyMessage;
+    !isSearching && hasSearched && results.length === 0 && !!emptyMessage;
 
+  const inputBg = isDark ? colors.opacized : colors.white;
+
+  // ── Overlay (modal) mode ──────────────────────────────────────────────────
+  if (overlayDropdown) {
+    return (
+      <View style={s.container}>
+        {/* Fake bar — tapping opens the modal */}
+        <TouchableOpacity
+          style={[s.inputRow, { backgroundColor: inputBg }]}
+          onPress={() => setModalVisible(true)}
+          activeOpacity={1}
+        >
+          {gradientIcon ? (
+            <LinearGradient
+              colors={colorGradient}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 0 }}
+              style={s.gradientIconWrap}
+            >
+              <Ionicons name="search" size={15} color={colors.white} />
+            </LinearGradient>
+          ) : (
+            <Ionicons name="search-outline" size={18} color={colors.placeholder} />
+          )}
+          <Text style={s.fakePlaceholder} numberOfLines={1}>
+            {placeholder}
+          </Text>
+        </TouchableOpacity>
+
+        {/* Transparent full-screen Modal — covers tab bar */}
+        <Modal
+          visible={modalVisible}
+          transparent
+          animationType="none"
+          statusBarTranslucent
+          onRequestClose={handleClear}
+        >
+          <View style={StyleSheet.absoluteFillObject}>
+            {/* Dim overlay — visible only after first character, tap to dismiss */}
+            <TouchableWithoutFeedback onPress={handleClear}>
+              <View
+                style={[
+                  StyleSheet.absoluteFillObject,
+                  query.length >= 1 && s.dimOverlay,
+                ]}
+              />
+            </TouchableWithoutFeedback>
+
+            {/* Search area — same visual position as the real bar */}
+            <View
+              style={[
+                s.modalSearchWrap,
+                { paddingTop: insets.top + modalTopSpacing },
+              ]}
+              pointerEvents="box-none"
+            >
+              {/* Real input row */}
+              <View style={[s.inputRow, { backgroundColor: inputBg }]}>
+                {gradientIcon ? (
+                  <LinearGradient
+                    colors={colorGradient}
+                    start={{ x: 0, y: 0 }}
+                    end={{ x: 1, y: 0 }}
+                    style={s.gradientIconWrap}
+                  >
+                    <Ionicons name="search" size={15} color={colors.white} />
+                  </LinearGradient>
+                ) : (
+                  <Ionicons
+                    name="search-outline"
+                    size={18}
+                    color={colors.placeholder}
+                  />
+                )}
+
+                <TextInput
+                  style={[s.input, { color: isDark ? colors.white : colors.dark }]}
+                  value={query}
+                  onChangeText={handleQueryChange}
+                  placeholder={placeholder}
+                  placeholderTextColor={isDark ? colors.grayOpacized : colors.placeholder}
+                  autoCapitalize="none"
+                  autoCorrect={false}
+                  returnKeyType="search"
+                  autoFocus
+                />
+
+                {isSearching && (
+                  <ActivityIndicator size="small" color={colors.primary} />
+                )}
+
+                {!isSearching && query.length > 0 && (
+                  <TouchableOpacity onPress={handleClear} style={s.clearBtn}>
+                    <Feather name="x" size={18} color={colors.placeholder} />
+                  </TouchableOpacity>
+                )}
+              </View>
+
+              {/* Results — max 5 */}
+              {!isSearching && results.length > 0 && (
+                <View style={[s.resultsList, s.resultsModalSpacing]}>
+                  {results.slice(0, 5).map((item, index) =>
+                    renderResult(item, index, () => handleSelect(item))
+                  )}
+                </View>
+              )}
+
+              {showEmpty && (
+                <Text style={[s.emptyText, s.resultsModalSpacing]}>{emptyMessage}</Text>
+              )}
+            </View>
+          </View>
+        </Modal>
+      </View>
+    );
+  }
+
+  // ── Inline mode (default) ────────────────────────────────────────────────
   return (
     <View style={s.container}>
       <View
         style={[
           s.inputRow,
           isError && s.inputRowError,
-          { backgroundColor: isDark ? colors.opacized : colors.white },
+          { backgroundColor: inputBg },
         ]}
       >
         {gradientIcon ? (

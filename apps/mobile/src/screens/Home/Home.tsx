@@ -171,7 +171,6 @@ const searchTournaments = (q: string): Promise<Tournament[]> => {
 export default function Home() {
   const { user } = useAuth();
   const navigation = useNavigation<HomeNavProp>();
-
   const goToDetail = (id: string) => {
     if (!user) {
       navigation.navigate(NavigationEnum.LOGIN, {
@@ -202,42 +201,43 @@ export default function Home() {
     <View style={styles.root}>
       <StatusBar barStyle="dark-content" backgroundColor={colors.white} />
       <SafeAreaView style={styles.safeArea} edges={["top"]}>
+        {/* ── Search ──────────────────────────────── */}
+        <View style={styles.searchWrap}>
+          <InputBoxSearch<Tournament>
+            placeholder="Cerca tornei..."
+            gradientIcon
+            overlayDropdown
+            onSearch={searchTournaments}
+            emptyMessage="Nessun torneo trovato"
+            onSelect={(t) => goToDetail(t.id)}
+            renderResult={(t, index, onPress) => (
+              <TouchableOpacity
+                key={index}
+                style={styles.searchResultItem}
+                onPress={onPress}
+              >
+                <Text style={styles.searchResultName} numberOfLines={1}>
+                  {t.name}
+                </Text>
+                <View style={styles.searchResultMeta}>
+                  <Ionicons
+                    name="location-outline"
+                    size={12}
+                    color={colors.placeholder}
+                  />
+                  <Text style={styles.searchResultLocation} numberOfLines={1}>
+                    {t.location}
+                  </Text>
+                </View>
+              </TouchableOpacity>
+            )}
+          />
+        </View>
+
         <ScrollView
           showsVerticalScrollIndicator={false}
           contentContainerStyle={styles.scroll}
         >
-          {/* ── Search ──────────────────────────────── */}
-          <View style={styles.searchWrap}>
-            <InputBoxSearch<Tournament>
-              placeholder="Cerca tornei..."
-              gradientIcon
-              onSearch={searchTournaments}
-              emptyMessage="Nessun torneo trovato"
-              onSelect={(t) => goToDetail(t.id)}
-              renderResult={(t, index, onPress) => (
-                <TouchableOpacity
-                  key={index}
-                  style={styles.searchResultItem}
-                  onPress={onPress}
-                >
-                  <Text style={styles.searchResultName} numberOfLines={1}>
-                    {t.name}
-                  </Text>
-                  <View style={styles.searchResultMeta}>
-                    <Ionicons
-                      name="location-outline"
-                      size={12}
-                      color={colors.placeholder}
-                    />
-                    <Text style={styles.searchResultLocation} numberOfLines={1}>
-                      {t.location}
-                    </Text>
-                  </View>
-                </TouchableOpacity>
-              )}
-            />
-          </View>
-
           {/* ── I Tuoi Tornei ───────────────────────── */}
           {MY_PARTICIPANT_TOURNAMENTS.length > 0 && (
             <>
