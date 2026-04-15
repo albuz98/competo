@@ -1,11 +1,9 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState } from "react";
 import {
   View,
   Text,
-  TextInput,
   StatusBar,
-  FlatList,
-  ActivityIndicator,
+  ScrollView,
   Share,
   Alert,
 } from "react-native";
@@ -31,6 +29,7 @@ import {
 import { sizesEnum } from "../../theme/dimension";
 import { TabBar } from "../../components/TabBar/TabBar";
 import { colors } from "../../theme/colors";
+import { InputBoxSearch } from "../../components/InputBoxSearch/InputBoxSearch";
 
 type Props = NativeStackScreenProps<RootStackParamList, "InvitePlayers">;
 type Tab = "cerca" | "condividi";
@@ -87,11 +86,8 @@ export default function InvitePlayers({ route, navigation }: Props) {
   const insets = useSafeAreaInsets();
 
   const [tab, setTab] = useState<Tab>("cerca");
-  const [query, setQuery] = useState("");
-  const [results, setResults] = useState<AppUser[]>([]);
-  const [searching, setSearching] = useState(false);
+  const [localQuery, setLocalQuery] = useState("");
   const [invited, setInvited] = useState<Set<string>>(new Set());
-  const searchTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const team = getTeamById(teamId);
   const memberIds = new Set(team?.members.map((m) => m.id) ?? []);
@@ -104,27 +100,6 @@ export default function InvitePlayers({ route, navigation }: Props) {
 
   const isRep =
     team?.members.find((m) => m.id === user?.id)?.role === "representative";
-
-  // Debounced search
-  useEffect(() => {
-    if (searchTimer.current) clearTimeout(searchTimer.current);
-    if (query.trim().length === 0) {
-      setResults([]);
-      return;
-    }
-    setSearching(true);
-    searchTimer.current = setTimeout(async () => {
-      try {
-        const res = await searchUsers(query, user?.token ?? "");
-        setResults(res);
-      } finally {
-        setSearching(false);
-      }
-    }, 400);
-    return () => {
-      if (searchTimer.current) clearTimeout(searchTimer.current);
-    };
-  }, [query]);
 
   const handleInvite = async (appUser: AppUser) => {
     try {
@@ -237,45 +212,35 @@ export default function InvitePlayers({ route, navigation }: Props) {
         />
 
         {tab === "cerca" ? (
-          <>
-            {/* Search input */}
-            <View style={ip.searchWrap}>
-              <Ionicons
-                name="search"
-                size={18}
-                color={colors.placeholder}
-                style={{ marginRight: 8 }}
-              />
-              <TextInput
-                style={ip.searchInput}
-                value={query}
-                onChangeText={setQuery}
-                placeholder="Cerca per nome o username..."
-                placeholderTextColor={colors.placeholder}
-                autoFocus={tab === "cerca"}
-                returnKeyType="search"
-              />
-              {query.length > 0 && (
-                <ButtonIcon
-                  handleBtn={() => setQuery("")}
-                  icon={
-                    <Ionicons
-                      name="close-circle"
-                      size={18}
-                      color={colors.grayDark}
-                    />
+          <ScrollView
+            keyboardShouldPersistTaps="handled"
+            contentContainerStyle={[
+              ip.cercaContainer,
+              { paddingBottom: insets.bottom + 20 },
+            ]}
+          >
+            <InputBoxSearch<AppUser>
+              placeholder="Cerca per nome o username..."
+              onSearch={(q) => searchUsers(q, user?.token ?? "")}
+              onQueryChange={setLocalQuery}
+              emptyMessage={
+                localQuery.trim()
+                  ? `Nessun utente trovato per "${localQuery}"`
+                  : undefined
+              }
+              renderResult={(u, _i, _onPress) => (
+                <UserRow
+                  key={u.id}
+                  user={u}
+                  alreadyMember={memberIds.has(u.id)}
+                  invited={
+                    invited.has(u.id) || pendingInviteUserIds.has(u.id)
                   }
+                  onInvite={() => handleInvite(u)}
                 />
               )}
-            </View>
-
-            {/* Results */}
-            {searching ? (
-              <ActivityIndicator
-                color={colors.primaryGradientMid}
-                style={{ marginTop: 32 }}
-              />
-            ) : query.trim().length === 0 ? (
+            />
+            {localQuery.trim().length === 0 && (
               <View style={ip.hintBox}>
                 <Ionicons
                   name="people-outline"
@@ -287,30 +252,8 @@ export default function InvitePlayers({ route, navigation }: Props) {
                   squadra.
                 </Text>
               </View>
-            ) : results.length === 0 ? (
-              <View style={ip.hintBox}>
-                <Text style={ip.hintText}>
-                  Nessun utente trovato per "{query}"
-                </Text>
-              </View>
-            ) : (
-              <FlatList
-                data={results}
-                keyExtractor={(u) => u.id}
-                contentContainerStyle={{ paddingBottom: insets.bottom + 20 }}
-                renderItem={({ item }) => (
-                  <UserRow
-                    user={item}
-                    alreadyMember={memberIds.has(item.id)}
-                    invited={
-                      invited.has(item.id) || pendingInviteUserIds.has(item.id)
-                    }
-                    onInvite={() => handleInvite(item)}
-                  />
-                )}
-              />
             )}
-          </>
+          </ScrollView>
         ) : (
           /* Share link tab */
           <View style={ip.shareTab}>

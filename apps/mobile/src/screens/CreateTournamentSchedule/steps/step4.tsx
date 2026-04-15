@@ -1,9 +1,9 @@
 import { View, Text } from "react-native";
-import InputBox from "../../../components/InputBox/InputBox";
 import { Stepper } from "../../../components/Stepper/Stepper";
 import { Ionicons } from "@expo/vector-icons";
 import { s } from "../CreateTournamentSchedule.styles";
 import { colors } from "../../../theme/colors";
+import { InputBox } from "../../../components/InputBox/InputBox";
 
 interface renderStep4Props {
   numFields: number;
@@ -67,7 +67,7 @@ export function renderStep4({
         <Text style={s.fieldLabel}>Durata incontro</Text>
         <View style={s.fieldMinInput}>
           <InputBox
-            style={s.numberInput}
+            // style={s.numberInput}
             value={String(matchDuration)}
             onChangeText={(v) => setMatchDuration(parseInt(v, 10) || 0)}
             keyboardType="number-pad"
@@ -85,7 +85,7 @@ export function renderStep4({
         </View>
         <View style={{ flexDirection: "row", alignItems: "center" }}>
           <InputBox
-            style={s.numberInput}
+            // style={s.numberInput}
             value={String(restMinutes)}
             onChangeText={(v) => setRestMinutes(parseInt(v, 10) || 0)}
             keyboardType="number-pad"
@@ -103,7 +103,7 @@ export function renderStep4({
         </View>
         <View style={{ flexDirection: "row", alignItems: "center" }}>
           <InputBox
-            style={s.numberInput}
+            // style={s.numberInput}
             value={String(travelMinutes)}
             onChangeText={(v) => setTravelMinutes(parseInt(v, 10) || 0)}
             keyboardType="number-pad"

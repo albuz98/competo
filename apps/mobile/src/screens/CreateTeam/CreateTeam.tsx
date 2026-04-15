@@ -16,7 +16,6 @@ import { Ionicons } from "@expo/vector-icons";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { NavigationEnum, RootStackParamList } from "../../types";
 import { useTeams } from "../../context/TeamsContext";
-import { ButtonEnum } from "../../types/components";
 import { cs } from "./CreateTeam.styles";
 import { GAMES } from "../../mock/data";
 import {

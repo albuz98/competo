@@ -36,19 +36,10 @@ export const ip = StyleSheet.create({
     borderBottomColor: colors.gray,
   },
 
-  searchWrap: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: colors.white,
-    marginHorizontal: 16,
-    marginTop: 14,
-    borderRadius: 14,
-    borderWidth: 1.5,
-    borderColor: colors.gray,
-    paddingHorizontal: 14,
-    height: 48,
+  cercaContainer: {
+    padding: 16,
+    gap: 4,
   },
-  searchInput: { flex: 1, fontSize: 14, color: colors.dark, height: 48 },
 
   userRow: {
     flexDirection: "row",

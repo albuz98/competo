@@ -14,12 +14,16 @@ import { s } from "./InputBoxSearch.styles";
 
 interface InputBoxSearchProps<T> {
   placeholder?: string;
+  /** Pre-fills the input on mount */
+  defaultValue?: string;
   /** Async function that receives the trimmed query and returns results */
   onSearch: (query: string) => Promise<T[]>;
   /** Render each result item; call onPress to notify the parent */
   renderResult: (item: T, index: number, onPress: () => void) => React.ReactNode;
   /** Called when the user taps a result */
   onSelect?: (item: T) => void;
+  /** Called on every query change (including clear) */
+  onQueryChange?: (query: string) => void;
   /** Show the orange gradient icon bubble on the left (like in Home). Default: plain search icon */
   gradientIcon?: boolean;
   /** Debounce delay in ms. Default: 500 */
@@ -36,9 +40,11 @@ interface InputBoxSearchProps<T> {
 
 export function InputBoxSearch<T>({
   placeholder = "Cerca...",
+  defaultValue,
   onSearch,
   renderResult,
   onSelect,
+  onQueryChange,
   gradientIcon = false,
   debounceMs = 500,
   minChars = 1,
@@ -46,12 +52,17 @@ export function InputBoxSearch<T>({
   isError = false,
   emptyMessage,
 }: InputBoxSearchProps<T>) {
-  const [query, setQuery] = useState("");
+  const [query, setQuery] = useState(defaultValue ?? "");
   const [results, setResults] = useState<T[]>([]);
   const [isSearching, setIsSearching] = useState(false);
   const debounceTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   // Tracks whether a search has been attempted (to decide when to show emptyMessage)
   const [hasSearched, setHasSearched] = useState(false);
+
+  const handleQueryChange = (text: string) => {
+    setQuery(text);
+    onQueryChange?.(text);
+  };
 
   useEffect(() => {
     if (debounceTimer.current) clearTimeout(debounceTimer.current);
@@ -89,6 +100,7 @@ export function InputBoxSearch<T>({
     setQuery("");
     setResults([]);
     setHasSearched(false);
+    onQueryChange?.("");
   };
 
   const handleSelect = (item: T) => {
@@ -133,7 +145,7 @@ export function InputBoxSearch<T>({
             { color: isDark ? colors.white : colors.dark },
           ]}
           value={query}
-          onChangeText={setQuery}
+          onChangeText={handleQueryChange}
           placeholder={placeholder}
           placeholderTextColor={isDark ? colors.grayOpacized : colors.placeholder}
           autoCapitalize="none"

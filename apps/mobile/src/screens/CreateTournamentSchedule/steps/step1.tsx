@@ -2,7 +2,7 @@ import { Text } from "react-native";
 import { s } from "../CreateTournamentSchedule.styles";
 import { colors } from "../../../theme/colors";
 import LocationSearch from "../../../components/LocationSearch/LocationSearch";
-import InputBox from "../../../components/InputBox/InputBox";
+import { InputBox } from "../../../components/InputBox/InputBox";
 
 interface renderStep1Props {
   tournamentName: string;

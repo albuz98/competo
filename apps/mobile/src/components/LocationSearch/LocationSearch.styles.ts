@@ -95,14 +95,22 @@ export const ls = StyleSheet.create({
     fontWeight: "700",
     color: colors.white,
   },
-  loadingRow: {
+  confirmedRow: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 8,
-    padding: 12,
+    gap: 10,
+    backgroundColor: colors.successBg,
+    borderRadius: 12,
+    paddingHorizontal: 14,
+    paddingVertical: 12,
+    borderWidth: 1,
+    borderColor: colors.success,
   },
-  loadingText: {
+  confirmedText: {
+    flex: 1,
     fontSize: 13,
-    color: colors.placeholder,
+    color: colors.dark,
+    fontWeight: "600",
+    lineHeight: 18,
   },
 });
