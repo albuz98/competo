@@ -68,7 +68,7 @@ export const ths = StyleSheet.create({
   badgeText: {
     fontSize: 11,
     fontWeight: "700",
-    color: colors.white,
+    color: colors.dark,
   },
 
   emptyBox: {

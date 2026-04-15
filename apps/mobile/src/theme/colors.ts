@@ -28,6 +28,9 @@ export const colors = {
   purple: "#8b5cf6",
   yellow: "#fef9c3",
   brown: "#854d0e",
+  gold: "#ffd700",
+  silver: "#c0c0c0",
+  bronze: "#CD7F32",
 } as const;
 
 export const colorGradient = [

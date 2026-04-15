@@ -9,14 +9,15 @@ import {
   type TournamentGroup,
   type Team,
   type TeamMember,
-  type TeamRole,
   type AppUser,
   type PlayerStats,
   type TeamRegistrationStatus,
+  TeamRole,
   type TournamentPlayer,
   type TournamentRegisteredTeam,
   type OrganizerTournamentDetail,
   UserRole,
+  TournamentResult,
 } from "../types";
 
 export const GAMES = [
@@ -159,7 +160,7 @@ export const mockProfile: User = {
       sport: "Calcio",
       date: "2025-03-10T10:00:00.000Z",
       location: "Milano, Italia",
-      result: "won" as const,
+      result: TournamentResult.WON,
       teamName: "Milan FC",
     },
     {
@@ -168,7 +169,7 @@ export const mockProfile: User = {
       sport: "Calcio",
       date: "2024-07-22T10:00:00.000Z",
       location: "Roma, Italia",
-      result: "runner_up" as const,
+      result: TournamentResult.SECOND,
       teamName: "Milan FC",
     },
     {
@@ -177,7 +178,7 @@ export const mockProfile: User = {
       sport: "Calcio",
       date: "2024-01-15T10:00:00.000Z",
       location: "Torino, Italia",
-      result: "eliminated" as const,
+      result: TournamentResult.ELIMINATED,
       teamName: "Rossoneri United",
     },
     {
@@ -186,7 +187,7 @@ export const mockProfile: User = {
       sport: "Calcio",
       date: "2023-11-05T10:00:00.000Z",
       location: "Napoli, Italia",
-      result: "won" as const,
+      result: TournamentResult.THIRD,
       teamName: "Rossoneri United",
     },
     {
@@ -195,7 +196,7 @@ export const mockProfile: User = {
       sport: "Calcio",
       date: "2023-06-20T10:00:00.000Z",
       location: "Firenze, Italia",
-      result: "eliminated" as const,
+      result: TournamentResult.ELIMINATED,
       teamName: "FC Stars",
     },
   ],
@@ -249,7 +250,7 @@ export function generatePlayerStats(): PlayerStats {
 }
 
 export function generateTournamentPlayer(
-  role: TeamRole = "calciatore",
+  role: TeamRole = TeamRole.CALCIORE,
 ): TournamentPlayer {
   return {
     id: faker.string.uuid(),
@@ -273,9 +274,9 @@ export function generateTournamentRegisteredTeam(
     "calciatore",
   );
   const roles: TeamRole[] = [
-    "representative",
-    "portiere",
-    "allenatore",
+    TeamRole.REPRESENTATIVE,
+    TeamRole.PORTEIRE,
+    TeamRole.ALLENATORE,
     ...extraRoles,
   ];
   const players = roles.map((r) => generateTournamentPlayer(r));
@@ -468,8 +469,13 @@ export function generateMyTournaments(count = 5): MyTournament[] {
 
 // ─── Team generators ──────────────────────────────────────────────────────────
 
-export function generateTeamMember(role: TeamRole = "calciatore"): TeamMember {
-  const hasJersey = role === "calciatore" || role === "portiere" || role === "representative";
+export function generateTeamMember(
+  role: TeamRole = TeamRole.CALCIORE,
+): TeamMember {
+  const hasJersey =
+    role === TeamRole.CALCIORE ||
+    role === TeamRole.PORTEIRE ||
+    role === TeamRole.REPRESENTATIVE;
   return {
     id: faker.string.uuid(),
     firstName: faker.person.firstName(),
@@ -485,18 +491,18 @@ export function generateTeamMember(role: TeamRole = "calciatore"): TeamMember {
 export function generateTeam(id?: string): Team {
   const memberCount = faker.number.int({ min: 2, max: 8 });
   const members: TeamMember[] = [
-    generateTeamMember("representative"),
+    generateTeamMember(TeamRole.REPRESENTATIVE),
     ...Array.from({ length: memberCount - 1 }, () =>
-      generateTeamMember("calciatore"),
+      generateTeamMember(TeamRole.CALCIORE),
     ),
   ];
   // Randomly assign special roles to at most 1 portiere and 1 allenatore
-  const nonReps = members.filter((m) => m.role !== "representative");
+  const nonReps = members.filter((m) => m.role !== TeamRole.REPRESENTATIVE);
   if (nonReps.length > 0) {
-    nonReps[0].role = "portiere";
+    nonReps[0].role = TeamRole.PORTEIRE;
   }
   if (nonReps.length > 1) {
-    nonReps[1].role = "allenatore";
+    nonReps[1].role = TeamRole.ALLENATORE;
   }
   return {
     id: id ?? faker.string.uuid(),

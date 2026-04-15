@@ -2,7 +2,7 @@ import React from "react";
 import { ActivityIndicator, View } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import type { RootStackParamList } from "../types";
+import { NavigationEnum, type RootStackParamList } from "../types";
 import { navigationRef } from "./navigationRef";
 import { useNotificationSetup } from "../hooks/useNotificationSetup";
 import TeamsScreen from "../screens/Teams/Teams";
@@ -23,6 +23,7 @@ import TeamSelect from "../screens/TeamSelect/TeamSelect";
 import ChoseAccess from "../screens/ChoseAccess/ChoseAccess";
 import TournamentDetail from "../screens/TournamentDetail/TournamentDetail";
 import TournamentHistoryScreen from "../screens/TournamentHistory/TournamentHistory";
+import Settings from "../screens/Settings/Settings";
 import { colors } from "../theme/colors";
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -54,7 +55,9 @@ export default function AppNavigator() {
     <NavigationContainer ref={navigationRef}>
       <NavigationSetup />
       <Stack.Navigator
-        initialRouteName={user ? "MainTabs" : "ChoseAccess"}
+        initialRouteName={
+          user ? NavigationEnum.MAIN_TABS : NavigationEnum.CHOSE_ACCESS
+        }
         screenOptions={{
           headerStyle: { backgroundColor: colors.purpleBlue },
           headerTintColor: colors.white,
@@ -63,12 +66,12 @@ export default function AppNavigator() {
         }}
       >
         <Stack.Screen
-          name="ChoseAccess"
+          name={NavigationEnum.CHOSE_ACCESS}
           component={ChoseAccess}
           options={{ headerShown: false }}
         />
         <Stack.Screen
-          name="Login"
+          name={NavigationEnum.LOGIN}
           component={Login}
           options={{
             headerShown: false,
@@ -76,7 +79,7 @@ export default function AppNavigator() {
           }}
         />
         <Stack.Screen
-          name="Register"
+          name={NavigationEnum.REGISTER}
           component={Register}
           options={{
             headerShown: false,
@@ -154,6 +157,11 @@ export default function AppNavigator() {
         <Stack.Screen
           name="TournamentHistory"
           component={TournamentHistoryScreen}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="Settings"
+          component={Settings}
           options={{ headerShown: false }}
         />
       </Stack.Navigator>

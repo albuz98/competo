@@ -32,7 +32,7 @@ import { renderStep3 } from "./steps/step3";
 import { estimateTotalMatches } from "../../functions/tournamet";
 import { renderStep4 } from "./steps/step4";
 import { renderStep5 } from "./steps/step5";
-import { STEP_TITLES } from "../../constants/formatTournament";
+import { STEP_TITLES } from "../../constants/tournament";
 
 type Props = NativeStackScreenProps<
   RootStackParamList,

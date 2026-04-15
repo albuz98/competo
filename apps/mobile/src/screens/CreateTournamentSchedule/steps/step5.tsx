@@ -1,6 +1,6 @@
 import React from "react";
 import { TouchableOpacity, View, Text, Alert, Switch } from "react-native";
-import { DAY_LABELS } from "../../../constants/formatTournament";
+import { DAY_LABELS } from "../../../constants/tournament";
 import { estimateTotalMatches } from "../../../functions/tournamet";
 import {
   TournamentFormat,

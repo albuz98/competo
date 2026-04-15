@@ -1,27 +1,19 @@
 import React from "react";
 import { View, Text, ScrollView, StatusBar } from "react-native";
-import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
+import {
+  SafeAreaView,
+  useSafeAreaInsets,
+} from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
-import type { RootStackParamList, TournamentResult } from "../../types";
+import { TournamentResult, type RootStackParamList } from "../../types";
 import { useAuth } from "../../context/AuthContext";
 import { colors } from "../../theme/colors";
 import { ButtonIcon } from "../../components/Button/Button";
 import { ths } from "./TournamentHistory.styles";
+import { RESULT_CONFIG } from "../../constants/tournament";
 
 type Props = NativeStackScreenProps<RootStackParamList, "TournamentHistory">;
-
-const SPORT_EMOJI: Record<string, string> = {
-  Calcio: "⚽", Basket: "🏀", Pallavolo: "🏐",
-  Tennis: "🎾", Padel: "🏸", Rugby: "🏉",
-};
-
-const RESULT_CONFIG: Record<TournamentResult, { label: string; color: string }> = {
-  won:        { label: "1° Posto",  color: colors.success },
-  runner_up:  { label: "2° Posto",  color: colors.primaryGradientMid },
-  eliminated: { label: "Eliminato", color: colors.grayDark },
-  ongoing:    { label: "In corso",  color: colors.purpleBlue },
-};
 
 export default function TournamentHistoryScreen({ navigation }: Props) {
   const { user } = useAuth();
@@ -39,7 +31,9 @@ export default function TournamentHistoryScreen({ navigation }: Props) {
           <ButtonIcon
             handleBtn={() => navigation.goBack()}
             style={ths.backBtn}
-            icon={<Ionicons name="chevron-back" size={24} color={colors.dark} />}
+            icon={
+              <Ionicons name="chevron-back" size={24} color={colors.dark} />
+            }
           />
           <Text style={ths.headerTitle}>Storico tornei</Text>
         </View>
@@ -47,7 +41,11 @@ export default function TournamentHistoryScreen({ navigation }: Props) {
         {sorted.length === 0 ? (
           <View style={ths.emptyBox}>
             <View style={ths.emptyIcon}>
-              <Ionicons name="trophy-outline" size={48} color={colors.grayDark} />
+              <Ionicons
+                name="trophy-outline"
+                size={48}
+                color={colors.grayDark}
+              />
             </View>
             <Text style={ths.emptyTitle}>Nessun torneo</Text>
             <Text style={ths.emptySub}>
@@ -68,7 +66,13 @@ export default function TournamentHistoryScreen({ navigation }: Props) {
                 <View key={t.id} style={ths.card}>
                   <View style={ths.iconBox}>
                     <Text style={ths.iconText}>
-                      {SPORT_EMOJI[t.sport] ?? "🏅"}
+                      {t.result === TournamentResult.WON
+                        ? "🥇"
+                        : t.result === TournamentResult.SECOND
+                          ? "🥈"
+                          : t.result === TournamentResult.THIRD
+                            ? "🥉"
+                            : "💔"}
                     </Text>
                   </View>
                   <View style={ths.info}>
@@ -85,8 +89,18 @@ export default function TournamentHistoryScreen({ navigation }: Props) {
                     </Text>
                     <Text style={ths.team}>{t.teamName}</Text>
                   </View>
-                  <View style={[ths.badge, { backgroundColor: cfg.color }]}>
-                    <Text style={ths.badgeText}>{cfg.label}</Text>
+                  <View
+                    style={[
+                      ths.badge,
+                      {
+                        backgroundColor:
+                          t.result === TournamentResult.ELIMINATED
+                            ? colors.white
+                            : cfg?.color,
+                      },
+                    ]}
+                  >
+                    <Text style={ths.badgeText}>{cfg?.label}</Text>
                   </View>
                 </View>
               );

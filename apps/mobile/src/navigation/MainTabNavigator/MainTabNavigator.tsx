@@ -52,17 +52,17 @@ export default function MainTabNavigator() {
         },
       })}
     >
-      <Tab.Screen name="Home" component={Home} options={{ title: "Home" }} />
-      <Tab.Screen
-        name="Esplora"
-        component={Explore}
-        options={{ title: "Esplora" }}
-      />
       <Tab.Screen
         name="Preferiti"
         component={Favorites}
         options={{ title: "Preferiti" }}
       />
+      <Tab.Screen
+        name="Esplora"
+        component={Explore}
+        options={{ title: "Esplora" }}
+      />
+      <Tab.Screen name="Home" component={Home} options={{ title: "Home" }} />
       <Tab.Screen
         name="Notifiche"
         component={Notifications}

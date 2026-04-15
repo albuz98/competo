@@ -1,4 +1,9 @@
-import { TournamentFormat, TournamentPhaseKind } from "../types";
+import { colors } from "../theme/colors";
+import {
+  TournamentFormat,
+  TournamentPhaseKind,
+  TournamentResult,
+} from "../types";
 
 export const PHASES: {
   value: TournamentPhaseKind;
@@ -75,3 +80,13 @@ export const STEP_TITLES = [
   "Logistica",
   "Calendario",
 ];
+
+export const RESULT_CONFIG: Record<
+  TournamentResult,
+  { label: string; color: string }
+> = {
+  won: { label: "1° Posto", color: colors.gold },
+  second: { label: "2° Posto", color: colors.silver },
+  third: { label: "3° Posto", color: colors.bronze },
+  eliminated: { label: "Eliminato", color: colors.grayDark },
+};

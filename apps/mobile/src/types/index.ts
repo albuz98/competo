@@ -79,13 +79,18 @@ export type PlayerCareerRole = "calciatore" | "portiere";
 
 export interface PlayerCareerStats {
   playerRole: PlayerCareerRole;
-  goals?: number;         // solo calciatore
+  goals?: number; // solo calciatore
   goalsConceded?: number; // solo portiere
   yellowCards: number;
   redCards: number;
 }
 
-export type TournamentResult = "won" | "runner_up" | "eliminated" | "ongoing";
+export enum TournamentResult {
+  WON = "won",
+  SECOND = "second",
+  THIRD = "third",
+  ELIMINATED = "eliminated",
+}
 
 export interface PlayedTournamentRecord {
   id: string;
@@ -109,11 +114,12 @@ export interface OrganizedTournamentRecord {
 
 // ─── Team types ───────────────────────────────────────────────────────────────
 
-export type TeamRole =
-  | "representative"
-  | "calciatore"
-  | "allenatore"
-  | "portiere";
+export enum TeamRole {
+  REPRESENTATIVE = "representative",
+  CALCIORE = "calciatore",
+  ALLENATORE = "allenatore",
+  PORTEIRE = "portiere",
+}
 
 export interface PendingInvite {
   id: string;
@@ -386,6 +392,7 @@ export type RootStackParamList = {
   CreateTournamentSchedule: undefined;
   TournamentScheduleResult: undefined;
   TournamentHistory: undefined;
+  Settings: undefined;
 };
 
 export type MainTabParamList = {
@@ -393,7 +400,7 @@ export type MainTabParamList = {
   Esplora: undefined;
   Preferiti: undefined;
   Notifiche: undefined;
-  Profilo: undefined;
+  Profilo: { startEdit?: boolean } | undefined;
 };
 
 export type Suggestion = {
@@ -401,3 +408,26 @@ export type Suggestion = {
   lat: number;
   lng: number;
 };
+
+export enum NavigationEnum {
+  CHOSE_ACCESS = "ChoseAccess",
+  LOGIN = "Login",
+  REGISTER = "Register",
+  MAIN_TABS = "MainTabs",
+  TOURNAMENT_DETAIL = "TournamentDetail",
+  MY_TOURNAMENT_DETAIL = "MyTournamentDetail",
+  PAYMENT = "Payment",
+  TEAM_SELECT = "TeamSelect",
+  FORGOT_PASSWORD = "ForgotPassword",
+  NOTIFICHE = "Notifiche",
+  TEAMS = "Teams",
+  CREATE_TEAM = "CreateTeam",
+  TEAM_DETAIL = "TeamDetail",
+  INVITE_PLAYERS = "InvitePlayers",
+  INVITE_COLLABORATORS = "InviteCollaborators",
+  ORGANIZER_TOURNAMENT_DETAIL = "OrganizerTournamentDetail",
+  CREATE_TOURNAMENT_SCHEDULE = "CreateTournamentSchedule",
+  TOURNAMENT_SCHEDULE_RESULT = "TournamentScheduleResult",
+  TOURNAMENT_HISTORY = "TournamentHistory",
+  SETTINGS = "Settings",
+}

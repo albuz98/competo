@@ -281,6 +281,6 @@ export const pStyles = StyleSheet.create({
   historyBadgeText: {
     fontSize: 11,
     fontWeight: "700",
-    color: colors.white,
+    color: colors.dark,
   },
 });

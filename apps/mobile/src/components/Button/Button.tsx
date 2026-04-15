@@ -12,8 +12,6 @@ import { big, medium, sizesEnum, small } from "../../theme/dimension";
 import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 
-// ─── ButtonFullColored ───────────────────────────────────────────────────────────
-
 interface ButtonFullColoredProps {
   text: string;
   iconLeft?: React.ReactNode;

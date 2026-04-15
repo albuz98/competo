@@ -37,33 +37,12 @@ import {
 } from "../../components/Button/Button";
 import { sizesEnum } from "../../theme/dimension";
 import { colorGradient, colors } from "../../theme/colors";
+import { CARD_GRADIENTS, SPORT_EMOJI } from "../../constants/generals";
 
 type HomeNavProp = CompositeNavigationProp<
   BottomTabNavigationProp<MainTabParamList, "Home">,
   NativeStackNavigationProp<RootStackParamList>
 >;
-
-const SPORT_EMOJI: Record<string, string> = {
-  Calcio: "⚽",
-  Basket: "🏀",
-  Pallavolo: "🏐",
-  Tennis: "🎾",
-  Padel: "🏸",
-  Rugby: "🏉",
-  "Ping Pong": "🏓",
-  "Calcio a 5": "⚽",
-  "Beach Volley": "🏐",
-  Badminton: "🏸",
-};
-
-const CARD_GRADIENTS: [string, string][] = [
-  ["#0D2B5E", "#1E4B9A"],
-  ["#0B3D25", "#1A6B45"],
-  ["#5C0D0D", "#A02020"],
-  ["#2D0B5C", "#5A1BA0"],
-  ["#0B3045", "#1A5C80"],
-  ["#3D2B0B", "#8B6020"],
-];
 
 // Shared cache so MyTournamentDetailScreen finds the same IDs
 const MY_ALL_TOURNAMENTS: MyTournament[] = getMyTournamentsCache();

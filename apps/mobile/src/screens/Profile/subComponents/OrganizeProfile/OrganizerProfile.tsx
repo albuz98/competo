@@ -114,6 +114,7 @@ export const OrganizerProfile = ({
         edit={edit}
         updateProfile={handleOrgUpdateProfile}
         handleStartEdit={handleStartEdit}
+        hideName
       >
         {/* Campi modificabili in edit mode */}
         <InputBox

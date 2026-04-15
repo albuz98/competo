@@ -7,7 +7,7 @@ import {
   KO_FORMATS,
   PHASES,
   SINGLE_FORMATS,
-} from "../../../constants/formatTournament";
+} from "../../../constants/tournament";
 import { ButtonGeneric } from "../../../components/Button/Button";
 
 interface renderStep2Props {

@@ -1,5 +1,6 @@
 import React, { useRef, useCallback, useState, useEffect } from "react";
-import { useFocusEffect } from "@react-navigation/native";
+import { useFocusEffect, useRoute } from "@react-navigation/native";
+import type { RouteProp } from "@react-navigation/native";
 import {
   View,
   Text,
@@ -23,12 +24,13 @@ import { useAuth } from "../../context/AuthContext";
 import { useTeams } from "../../context/TeamsContext";
 import {
   RootStackParamList,
+  MainTabParamList,
+  TournamentResult,
   UserProfile,
   UserRole,
   type MyTournament,
   type OrganizerProfile as OrganizerProfileType,
   type PlayerProfile as PlayerProfileType,
-  type TournamentResult,
 } from "../../types";
 import { pStyles, styles } from "./Profile.styles";
 import { colorGradient, colors } from "../../theme/colors";
@@ -46,12 +48,12 @@ import { OrganizerProfile } from "./subComponents/OrganizeProfile/OrganizerProfi
 import { HeaderCard } from "./subComponents/HeaderCard/HeaderCard";
 import InputBox from "../../components/InputBox/InputBox";
 import { getProfileSubtitle } from "../../functions/profile";
+import { RESULT_CONFIG } from "../../constants/tournament";
 
 export default function Profile() {
   const {
     user,
     currentProfile,
-    logout,
     updateProfile,
     switchProfile,
     updateOrgProfileData,
@@ -71,6 +73,7 @@ export default function Profile() {
   });
   const navigation =
     useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+  const route = useRoute<RouteProp<MainTabParamList, "Profilo">>();
   const insets = useSafeAreaInsets();
   const [changeProfileModal, setChangeProfileModal] = useState(false);
   const [orgTournaments, setOrgTournaments] = useState<MyTournament[]>([]);
@@ -92,24 +95,6 @@ export default function Profile() {
   const playerProfile = !isOrganizerProfile
     ? (currentProfile as PlayerProfileType | null)
     : null;
-
-  const SPORT_EMOJI: Record<string, string> = {
-    Calcio: "⚽",
-    Basket: "🏀",
-    Pallavolo: "🏐",
-    Tennis: "🎾",
-    Padel: "🏸",
-    Rugby: "🏉",
-  };
-  const RESULT_CONFIG: Record<
-    TournamentResult,
-    { label: string; color: string }
-  > = {
-    won: { label: "1° Posto", color: colors.success },
-    runner_up: { label: "2° Posto", color: colors.primaryGradientMid },
-    eliminated: { label: "Eliminato", color: colors.grayDark },
-    ongoing: { label: "In corso", color: colors.purpleBlue },
-  };
 
   useEffect(() => {
     if (isOrganizerProfile) {
@@ -145,7 +130,12 @@ export default function Profile() {
         );
       }
       if (user) refreshTeams();
-    }, [user?.id]),
+      if (route.params?.startEdit) {
+        handleStartEdit();
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (navigation as any).setParams({ startEdit: undefined });
+      }
+    }, [user?.id, route.params?.startEdit]),
   );
 
   const handleStartEdit = () => {
@@ -221,11 +211,11 @@ export default function Profile() {
       setSaving(false);
     }
     setEdit(false);
+    navigation.navigate("Settings");
   };
 
-  const handleLogout = () => {
-    logout();
-    navigation.reset({ index: 0, routes: [{ name: "ChoseAccess" }] });
+  const handleOpenSettings = () => {
+    navigation.navigate("Settings");
   };
 
   if (!user) {
@@ -267,11 +257,11 @@ export default function Profile() {
               />
             ) : (
               <ButtonIcon
-                handleBtn={handleLogout}
+                handleBtn={handleOpenSettings}
                 icon={
                   <Ionicons
-                    name="log-out-outline"
-                    size={20}
+                    name="settings-outline"
+                    size={22}
                     color={colors.primary}
                   />
                 }
@@ -313,10 +303,10 @@ export default function Profile() {
               <HeaderCard
                 user={user}
                 subtitle={user.location}
+                dateOfBirth={user.dateOfBirth}
                 saving={saving}
                 edit={edit}
                 updateProfile={updateProfile}
-                handleStartEdit={handleStartEdit}
               >
                 <View style={styles.cardEditFields}>
                   <InputBox
@@ -551,7 +541,7 @@ export default function Profile() {
                           handleBtn={() =>
                             navigation.navigate("TournamentHistory")
                           }
-                          color={styles.teamsViewAll.color as string}
+                          color={colors.primaryGradientMid}
                           isColored
                           isBold
                         />
@@ -570,7 +560,13 @@ export default function Profile() {
                           <View key={t.id} style={pStyles.historyCard}>
                             <View style={pStyles.historyIconBox}>
                               <Text style={pStyles.historyIconText}>
-                                {SPORT_EMOJI[t.sport] ?? "🏅"}
+                                {t.result === TournamentResult.WON
+                                  ? "🥇"
+                                  : t.result === TournamentResult.SECOND
+                                    ? "🥈"
+                                    : t.result === TournamentResult.THIRD
+                                      ? "🥉"
+                                      : "💔"}
                               </Text>
                             </View>
                             <View style={pStyles.historyInfo}>
@@ -595,11 +591,16 @@ export default function Profile() {
                             <View
                               style={[
                                 pStyles.historyBadge,
-                                { backgroundColor: cfg.color },
+                                {
+                                  backgroundColor:
+                                    t.result === TournamentResult.ELIMINATED
+                                      ? colors.white
+                                      : cfg?.color,
+                                },
                               ]}
                             >
                               <Text style={pStyles.historyBadgeText}>
-                                {cfg.label}
+                                {cfg?.label}
                               </Text>
                             </View>
                           </View>
@@ -616,7 +617,7 @@ export default function Profile() {
                     <ButtonLink
                       text="Vedi tutte"
                       handleBtn={() => navigation.navigate("Teams")}
-                      color={styles.teamsViewAll.color as string}
+                      color={colors.primaryGradientMid}
                       isColored
                       isBold
                     />
