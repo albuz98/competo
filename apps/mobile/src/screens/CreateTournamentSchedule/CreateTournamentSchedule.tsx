@@ -1,15 +1,5 @@
 import React, { useState, useEffect } from "react";
-import {
-  View,
-  Text,
-  ScrollView,
-  TouchableOpacity,
-  Alert,
-  KeyboardAvoidingView,
-  Platform,
-} from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { Ionicons } from "@expo/vector-icons";
+import { ScrollView, Alert } from "react-native";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import {
   type RootStackParamList,
@@ -21,19 +11,15 @@ import {
 } from "../../types";
 import { createTournament } from "../../api/tournaments";
 import { useAuth } from "../../context/AuthContext";
-import { colors } from "../../theme/colors";
 import { s } from "./CreateTournamentSchedule.styles";
-import {
-  ButtonBorderColored,
-  ButtonGradient,
-} from "../../components/Button/Button";
 import { renderStep1 } from "./steps/step1";
 import { renderStep2 } from "./steps/step2";
 import { renderStep3 } from "./steps/step3";
 import { estimateTotalMatches } from "../../functions/tournamet";
 import { renderStep4 } from "./steps/step4";
 import { renderStep5 } from "./steps/step5";
-import { STEP_TITLES } from "../../constants/tournament";
+import { STEP_TITLES_TOURNAMENT } from "../../constants/tournament";
+import { StructureSchedule } from "../../components/StructureSchedule/StructureSchedule";
 
 type Props = NativeStackScreenProps<
   RootStackParamList,
@@ -48,7 +34,7 @@ function todayISO(): string {
 // ── Screen ────────────────────────────────────────────────────────────────────
 export default function CreateTournamentSchedule({ navigation }: Props) {
   const { user } = useAuth();
-  const [step, setStep] = useState<1 | 2 | 3 | 4 | 5>(1);
+  const [step, setStep] = useState<number>(1);
   const [generating, setGenerating] = useState(false);
 
   // Step 1: Tournament info
@@ -57,8 +43,12 @@ export default function CreateTournamentSchedule({ navigation }: Props) {
   const [location, setLocation] = useState("");
   const [locationLat, setLocationLat] = useState<number | undefined>(undefined);
   const [locationLng, setLocationLng] = useState<number | undefined>(undefined);
-  const [regulationFileName, setRegulationFileName] = useState<string | null>(null);
-  const [regulationFileUri, setRegulationFileUri] = useState<string | null>(null);
+  const [regulationFileName, setRegulationFileName] = useState<string | null>(
+    null,
+  );
+  const [regulationFileUri, setRegulationFileUri] = useState<string | null>(
+    null,
+  );
 
   // Step 2: Structure (chosen first)
   const [phaseKind, setPhaseKind] = useState<TournamentPhaseKind>("single");
@@ -172,53 +162,6 @@ export default function CreateTournamentSchedule({ navigation }: Props) {
     return true;
   }
 
-  function handleNext() {
-    if (!validateStep()) return;
-    if (step < 5) setStep((p) => (p + 1) as 1 | 2 | 3 | 4 | 5);
-    else handleGenerate();
-  }
-
-  function handleBack() {
-    if (step > 1) setStep((p) => (p - 1) as 1 | 2 | 3 | 4 | 5);
-  }
-
-  function isStepValid(): boolean {
-    if (step === 1) {
-      return tournamentName.trim().length > 0 && location.trim().length > 0;
-    }
-    if (step === 4) {
-      return matchDuration > 0 && numFields > 0;
-    }
-    if (step === 5) {
-      if (!/^\d{4}-\d{2}-\d{2}$/.test(startDate)) return false;
-      if (!isSingleDay) {
-        if (playDays.length === 0) return false;
-        if (playDays.length > maxDaysNeeded) return false;
-        if (hasFinalDay) {
-          if (!/^\d{4}-\d{2}-\d{2}$/.test(finalDayDate)) return false;
-          if (finalDayDate <= startDate) return false;
-        }
-      }
-      return true;
-    }
-    return true;
-  }
-
-  function confirmCancel() {
-    Alert.alert(
-      "Annulla creazione",
-      "Sei sicuro di voler annullare la creazione del torneo?",
-      [
-        { text: "No", style: "cancel" },
-        {
-          text: "Sì, annulla",
-          style: "destructive",
-          onPress: () => navigation.goBack(),
-        },
-      ],
-    );
-  }
-
   async function handleGenerate() {
     setGenerating(true);
     try {
@@ -280,169 +223,259 @@ export default function CreateTournamentSchedule({ navigation }: Props) {
     }
   }
 
-  // ── Step indicator ──────────────────────────────────────────────────────────
-  function renderStepIndicator() {
-    return (
-      <View style={s.stepBar}>
-        {([1, 2, 3, 4, 5] as const).map((n) => (
-          <React.Fragment key={n}>
-            <View
-              style={[
-                s.stepDot,
-                step === n && s.stepDotActive,
-                step > n && s.stepDotDone,
-              ]}
-            >
-              {step > n ? (
-                <Ionicons name="checkmark" size={14} color={colors.primary} />
-              ) : (
-                <Text
-                  style={[s.stepDotText, step === n && s.stepDotTextActive]}
-                >
-                  {n}
-                </Text>
-              )}
-            </View>
-            {n < 5 && <View style={[s.stepLine, step > n && s.stepLineDone]} />}
-          </React.Fragment>
-        ))}
-      </View>
-    );
+  function isStepValid(): boolean {
+    if (step === 1) {
+      return tournamentName.trim().length > 0 && location.trim().length > 0;
+    }
+    if (step === 4) {
+      return matchDuration > 0 && numFields > 0;
+    }
+    if (step === 5) {
+      if (!/^\d{4}-\d{2}-\d{2}$/.test(startDate)) return false;
+      if (!isSingleDay) {
+        if (playDays.length === 0) return false;
+        if (playDays.length > maxDaysNeeded) return false;
+        if (hasFinalDay) {
+          if (!/^\d{4}-\d{2}-\d{2}$/.test(finalDayDate)) return false;
+          if (finalDayDate <= startDate) return false;
+        }
+      }
+      return true;
+    }
+    return true;
   }
 
   // ── Main render ───────────────────────────────────────────────────────────
   return (
-    <SafeAreaView style={s.root} edges={["top"]}>
-      <View style={s.header}>
-        <TouchableOpacity style={s.headerSide} onPress={confirmCancel}>
-          <Ionicons name="chevron-back" size={24} color={colors.dark} />
-        </TouchableOpacity>
-        <Text style={s.headerTitle}>{STEP_TITLES[step - 1]}</Text>
-        <View style={s.headerSide} />
-      </View>
-
-      {renderStepIndicator()}
-
-      <KeyboardAvoidingView
+    <StructureSchedule
+      numberSteps={5}
+      handleGenerate={handleGenerate}
+      validateStep={validateStep}
+      step={step}
+      setStep={setStep}
+      generating={generating}
+      stepTitles={STEP_TITLES_TOURNAMENT}
+      isStepValid={isStepValid}
+      navigation={navigation}
+    >
+      <ScrollView
         style={{ flex: 1 }}
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        contentContainerStyle={s.scroll}
+        keyboardShouldPersistTaps="handled"
+        showsVerticalScrollIndicator={false}
       >
-        <ScrollView
-          style={{ flex: 1 }}
-          contentContainerStyle={s.scroll}
-          keyboardShouldPersistTaps="handled"
-          showsVerticalScrollIndicator={false}
-        >
-          {step === 1 &&
-            renderStep1({
-              setTournamentName,
-              tournamentName,
-              description,
-              setDescription,
-              location,
-              setLocation,
-              setLocationLat,
-              setLocationLng,
-              locationLat,
-              locationLng,
-              regulationFileName,
-              setRegulationFileName,
-              setRegulationFileUri,
-            })}
-          {step === 2 &&
-            renderStep2({
-              phaseKind,
-              setPhaseKind,
-              format,
-              setFormat,
-              knockoutFormat,
-              setKnockoutFormat,
-            })}
-          {step === 3 &&
-            renderStep3({
-              numTeams,
-              setNumGroups,
-              setNumTeams,
-              effGroups,
-              format,
-              phaseKind,
-              knockoutFormat,
-              maxGroups,
-            })}
-          {step === 4 &&
-            renderStep4({
-              numFields,
-              setNumFields,
-              setMatchDuration,
-              setRestMinutes,
-              setTravelMinutes,
-              numTeams,
-              matchDuration,
-              restMinutes,
-              travelMinutes,
-            })}
-          {step === 5 &&
-            renderStep5({
-              isSingleDay,
-              setIsSingleDay,
-              startDate,
-              setStartDate,
-              startHour,
-              setStartHour,
-              playDays,
-              setPlayDays,
-              maxMatchesPerDay,
-              setMaxMatchesPerDay,
-              hasFinalDay,
-              setHasFinalDay,
-              finalDayDate,
-              setFinalDayDate,
-              maxDaysNeeded,
-              effectiveMatchesPerDay,
-              matchInfoDerived,
-              numTeams,
-              format,
-              phaseKind,
-              knockoutFormat,
-              effGroups,
-              numFields,
-              matchDuration,
-              restMinutes,
-              travelMinutes,
-              activeDateField,
-              setActiveDateField,
-            })}
-        </ScrollView>
+        {step === 1 &&
+          renderStep1({
+            setTournamentName,
+            tournamentName,
+            description,
+            setDescription,
+            location,
+            setLocation,
+            setLocationLat,
+            setLocationLng,
+            locationLat,
+            locationLng,
+            regulationFileName,
+            setRegulationFileName,
+            setRegulationFileUri,
+          })}
+        {step === 2 &&
+          renderStep2({
+            phaseKind,
+            setPhaseKind,
+            format,
+            setFormat,
+            knockoutFormat,
+            setKnockoutFormat,
+          })}
+        {step === 3 &&
+          renderStep3({
+            numTeams,
+            setNumGroups,
+            setNumTeams,
+            effGroups,
+            format,
+            phaseKind,
+            knockoutFormat,
+            maxGroups,
+          })}
+        {step === 4 &&
+          renderStep4({
+            numFields,
+            setNumFields,
+            setMatchDuration,
+            setRestMinutes,
+            setTravelMinutes,
+            numTeams,
+            matchDuration,
+            restMinutes,
+            travelMinutes,
+          })}
+        {step === 5 &&
+          renderStep5({
+            isSingleDay,
+            setIsSingleDay,
+            startDate,
+            setStartDate,
+            startHour,
+            setStartHour,
+            playDays,
+            setPlayDays,
+            maxMatchesPerDay,
+            setMaxMatchesPerDay,
+            hasFinalDay,
+            setHasFinalDay,
+            finalDayDate,
+            setFinalDayDate,
+            maxDaysNeeded,
+            effectiveMatchesPerDay,
+            matchInfoDerived,
+            numTeams,
+            format,
+            phaseKind,
+            knockoutFormat,
+            effGroups,
+            numFields,
+            matchDuration,
+            restMinutes,
+            travelMinutes,
+            activeDateField,
+            setActiveDateField,
+          })}
+      </ScrollView>
+    </StructureSchedule>
+    // <SafeAreaView style={s.root} edges={["top"]}>
+    //   <View style={s.header}>
+    //     <TouchableOpacity style={s.headerSide} onPress={confirmCancel}>
+    //       <Ionicons name="chevron-back" size={24} color={colors.dark} />
+    //     </TouchableOpacity>
+    //     <Text style={s.headerTitle}>{STEP_TITLES[step - 1]}</Text>
+    //     <View style={s.headerSide} />
+    //   </View>
 
-        <SafeAreaView edges={["bottom"]}>
-          <View style={s.bottomNav}>
-            <ButtonBorderColored
-              isColored
-              handleBtn={handleBack}
-              text="Indietro"
-              fullColor={colors.grayDark}
-              isDisabled={step === 1}
-            />
+    //   {renderStepIndicator()}
 
-            <ButtonGradient
-              handleBtn={handleNext}
-              isDisabled={generating || !isStepValid()}
-              loading={generating}
-              isFullWidth
-              style={[
-                s.btnNext,
-                {
-                  opacity: generating || !isStepValid() ? 0.5 : 1,
-                },
-              ]}
-            >
-              <Text style={s.btnNextText}>
-                {step === 5 ? "Crea" : "Avanti"}
-              </Text>
-            </ButtonGradient>
-          </View>
-        </SafeAreaView>
-      </KeyboardAvoidingView>
-    </SafeAreaView>
+    //   <KeyboardAvoidingView
+    //     style={{ flex: 1 }}
+    //     behavior={Platform.OS === "ios" ? "padding" : "height"}
+    //   >
+    // <ScrollView
+    //   style={{ flex: 1 }}
+    //   contentContainerStyle={s.scroll}
+    //   keyboardShouldPersistTaps="handled"
+    //   showsVerticalScrollIndicator={false}
+    // >
+    //   {step === 1 &&
+    //     renderStep1({
+    //       setTournamentName,
+    //       tournamentName,
+    //       description,
+    //       setDescription,
+    //       location,
+    //       setLocation,
+    //       setLocationLat,
+    //       setLocationLng,
+    //       locationLat,
+    //       locationLng,
+    //       regulationFileName,
+    //       setRegulationFileName,
+    //       setRegulationFileUri,
+    //     })}
+    //   {step === 2 &&
+    //     renderStep2({
+    //       phaseKind,
+    //       setPhaseKind,
+    //       format,
+    //       setFormat,
+    //       knockoutFormat,
+    //       setKnockoutFormat,
+    //     })}
+    //   {step === 3 &&
+    //     renderStep3({
+    //       numTeams,
+    //       setNumGroups,
+    //       setNumTeams,
+    //       effGroups,
+    //       format,
+    //       phaseKind,
+    //       knockoutFormat,
+    //       maxGroups,
+    //     })}
+    //   {step === 4 &&
+    //     renderStep4({
+    //       numFields,
+    //       setNumFields,
+    //       setMatchDuration,
+    //       setRestMinutes,
+    //       setTravelMinutes,
+    //       numTeams,
+    //       matchDuration,
+    //       restMinutes,
+    //       travelMinutes,
+    //     })}
+    //   {step === 5 &&
+    //     renderStep5({
+    //       isSingleDay,
+    //       setIsSingleDay,
+    //       startDate,
+    //       setStartDate,
+    //       startHour,
+    //       setStartHour,
+    //       playDays,
+    //       setPlayDays,
+    //       maxMatchesPerDay,
+    //       setMaxMatchesPerDay,
+    //       hasFinalDay,
+    //       setHasFinalDay,
+    //       finalDayDate,
+    //       setFinalDayDate,
+    //       maxDaysNeeded,
+    //       effectiveMatchesPerDay,
+    //       matchInfoDerived,
+    //       numTeams,
+    //       format,
+    //       phaseKind,
+    //       knockoutFormat,
+    //       effGroups,
+    //       numFields,
+    //       matchDuration,
+    //       restMinutes,
+    //       travelMinutes,
+    //       activeDateField,
+    //       setActiveDateField,
+    //     })}
+    // </ScrollView>
+
+    //     <SafeAreaView edges={["bottom"]}>
+    //       <View style={s.bottomNav}>
+    //         <ButtonBorderColored
+    //           isColored
+    //           handleBtn={handleBack}
+    //           text="Indietro"
+    //           fullColor={colors.grayDark}
+    //           isDisabled={step === 1}
+    //         />
+
+    //         <ButtonGradient
+    //           handleBtn={handleNext}
+    //           isDisabled={generating || !isStepValid()}
+    //           loading={generating}
+    //           isFullWidth
+    //           style={[
+    //             s.btnNext,
+    //             {
+    //               opacity: generating || !isStepValid() ? 0.5 : 1,
+    //             },
+    //           ]}
+    //         >
+    //           <Text style={s.btnNextText}>
+    //             {step === 5 ? "Crea" : "Avanti"}
+    //           </Text>
+    //         </ButtonGradient>
+    //       </View>
+    //     </SafeAreaView>
+    //   </KeyboardAvoidingView>
+    // </SafeAreaView>
   );
 }

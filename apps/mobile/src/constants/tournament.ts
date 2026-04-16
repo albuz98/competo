@@ -73,7 +73,7 @@ export const KO_FORMATS: {
 
 export const DAY_LABELS = ["D", "L", "M", "M", "G", "V", "S"];
 
-export const STEP_TITLES = [
+export const STEP_TITLES_TOURNAMENT = [
   "Info Torneo",
   "Struttura",
   "Partecipanti",
