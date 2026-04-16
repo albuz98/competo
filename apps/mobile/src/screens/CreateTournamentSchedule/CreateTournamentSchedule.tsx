@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { ScrollView, Alert } from "react-native";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import {
   type RootStackParamList,
   NavigationEnum,
 } from "../../types/navigation";
+import { useMutation } from "@tanstack/react-query";
 import { createTournament } from "../../api/tournaments";
 import { useAuth } from "../../context/AuthContext";
 import { s } from "./CreateTournamentSchedule.styles";
@@ -34,7 +35,20 @@ type Props = NativeStackScreenProps<
 export default function CreateTournamentSchedule({ navigation }: Props) {
   const { user } = useAuth();
   const [step, setStep] = useState<number>(1);
-  const [generating, setGenerating] = useState(false);
+  const createMutation = useMutation({
+    mutationFn: (payload: CreateTournamentPayload) =>
+      createTournament(payload, user?.token ?? ''),
+    onSuccess: () => {
+      navigation.replace(NavigationEnum.TOURNAMENT_SCHEDULE_RESULT);
+    },
+    onError: (e: unknown) => {
+      Alert.alert(
+        "Errore",
+        e instanceof Error ? e.message : "Errore nella generazione.",
+      );
+    },
+  });
+  const generating = createMutation.isPending;
 
   // Step 1: Tournament info
   const [tournamentName, setTournamentName] = useState("");
@@ -165,21 +179,20 @@ export default function CreateTournamentSchedule({ navigation }: Props) {
     return true;
   }
 
-  async function handleGenerate() {
-    setGenerating(true);
-    try {
-      const participants = Array.from({ length: numTeams }, (_, i) => ({
-        name: `Squadra ${i + 1}`,
-      }));
+  const handleGenerate = useCallback(async () => {
+    if (!isStepValid()) return;
+    const participants = Array.from({ length: numTeams }, (_, i) => ({
+      name: `Squadra ${i + 1}`,
+    }));
 
-      const mInfo = estimateTotalMatches(
-        numTeams,
-        format,
-        phaseKind,
-        effGroups,
-        phaseKind === "multi" ? knockoutFormat : undefined,
-      );
-      const cappedPerDay = Math.min(
+    const mInfo = estimateTotalMatches(
+      numTeams,
+      format,
+      phaseKind,
+      effGroups,
+      phaseKind === "multi" ? knockoutFormat : undefined,
+    );
+    const cappedPerDay = Math.min(
         Math.max(maxMatchesPerDay, numFields),
         Math.max(numFields, mInfo.total - 1),
       );
@@ -207,24 +220,17 @@ export default function CreateTournamentSchedule({ navigation }: Props) {
         singleDay: isSingleDay,
       };
 
-      const payload: CreateTournamentPayload = {
-        config,
-        lat: locationLat,
-        lng: locationLng,
-        regulationUri: regulationFileUri ?? undefined,
-      };
-      await createTournament(payload, user?.token);
-
-      navigation.replace(NavigationEnum.TOURNAMENT_SCHEDULE_RESULT);
-    } catch (e: unknown) {
-      Alert.alert(
-        "Errore",
-        e instanceof Error ? e.message : "Errore nella generazione.",
-      );
-    } finally {
-      setGenerating(false);
-    }
-  }
+    const payload: CreateTournamentPayload = {
+      config,
+      lat: locationLat,
+      lng: locationLng,
+      regulationUri: regulationFileUri ?? undefined,
+    };
+    createMutation.mutate(payload);
+  }, [numTeams, format, phaseKind, effGroups, knockoutFormat, numFields,
+      matchDuration, restMinutes, travelMinutes, startDate, startHour,
+      isSingleDay, playDays, hasFinalDay, finalDayDate, locationLat,
+      locationLng, regulationFileUri, createMutation]);
 
   function isStepValid(): boolean {
     if (step === 1) {

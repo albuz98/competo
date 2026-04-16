@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { View, Text, ScrollView, ActivityIndicator } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { LinearGradient } from "expo-linear-gradient";
@@ -13,7 +13,9 @@ import type {
   TournamentBracket,
   TournamentTeam,
 } from "../../types/navigation";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { fetchMyTournament, activateTournament } from "../../api/tournaments";
+import { queryKeys } from "../../lib/queryKeys";
 import { useAuth } from "../../context/AuthContext";
 import { colors, colorGradient } from "../../theme/colors";
 import {
@@ -418,22 +420,24 @@ function GroupsView({
 export default function MyTournamentDetailScreen({ route, navigation }: Props) {
   const { tournamentId } = route.params;
   const { user } = useAuth();
+  const qc = useQueryClient();
   const insets = useSafeAreaInsets();
 
-  const [tournament, setTournament] = useState<MyTournament | null>(null);
   const [structure, setStructure] = useState<TournamentStructure | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [activating, setActivating] = useState(false);
   const [isGenerated, setIsGenerated] = useState(false);
 
+  const { data: tournament, isLoading: loading } = useQuery({
+    queryKey: queryKeys.myTournament(tournamentId),
+    queryFn: () => fetchMyTournament(tournamentId, user?.token ?? ''),
+    enabled: !!user,
+  });
+
+  // Sync derived state when tournament data arrives or changes
   useEffect(() => {
-    fetchMyTournament(tournamentId).then((t) => {
-      setTournament(t);
-      setStructure(t.structure);
-      setIsGenerated(t.isGenerated !== false);
-      setLoading(false);
-    });
-  }, [tournamentId]);
+    if (!tournament) return;
+    setStructure(tournament.structure);
+    setIsGenerated(tournament.isGenerated !== false);
+  }, [tournament?.id, tournament?.isGenerated]);
 
   useEffect(() => {
     if (!isGenerated) return;
@@ -443,14 +447,20 @@ export default function MyTournamentDetailScreen({ route, navigation }: Props) {
     return () => clearInterval(id);
   }, [isGenerated]);
 
-  const handleActivate = async () => {
+  const activateMutation = useMutation({
+    mutationFn: (id: string) => activateTournament(id, user?.token ?? ''),
+    onSuccess: (_data, id) => {
+      qc.setQueryData<MyTournament>(queryKeys.myTournament(id), (old: MyTournament | undefined) =>
+        old ? { ...old, isGenerated: true } : old,
+      );
+      setIsGenerated(true);
+    },
+  });
+
+  const handleActivate = useCallback(async () => {
     if (!user?.token || !tournament) return;
-    setActivating(true);
-    await activateTournament(tournament.id, user.token);
-    setTournament((prev) => (prev ? { ...prev, isGenerated: true } : prev));
-    setIsGenerated(true);
-    setActivating(false);
-  };
+    await activateMutation.mutateAsync(tournament.id);
+  }, [user?.token, tournament?.id]);
 
   if (loading || !tournament || !structure) {
     return (
@@ -509,7 +519,7 @@ export default function MyTournamentDetailScreen({ route, navigation }: Props) {
               <ButtonFullColored
                 text="Genera torneo"
                 handleBtn={handleActivate}
-                loading={activating}
+                loading={activateMutation.isPending}
                 isColored
               />
             </>

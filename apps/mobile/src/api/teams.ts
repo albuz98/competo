@@ -95,7 +95,7 @@ export async function createTeam(
   }
   return apiFetch<Team>(
     "/teams",
-    { method: "POST", body: JSON.stringify({ name, sport }) },
+    { method: "POST", body: JSON.stringify({ name: name.trim(), sport }) },
     token,
   );
 }
@@ -131,7 +131,7 @@ export async function inviteMember(
     return;
   }
   return apiFetch<void>(
-    `/teams/${teamId}/invite`,
+    `/teams/${encodeURIComponent(teamId)}/invite`,
     { method: "POST", body: JSON.stringify({ userId: appUser.id }) },
     token,
   );
@@ -154,7 +154,7 @@ export async function removeMember(
     return;
   }
   return apiFetch<void>(
-    `/teams/${teamId}/members/${memberId}`,
+    `/teams/${encodeURIComponent(teamId)}/members/${encodeURIComponent(memberId)}`,
     { method: "DELETE" },
     token,
   );
@@ -238,7 +238,7 @@ export async function acceptInvite(
     return;
   }
   return apiFetch<void>(
-    `/teams/invites/${inviteId}/accept`,
+    `/teams/invites/${encodeURIComponent(inviteId)}/accept`,
     { method: "POST" },
     token,
   );
@@ -256,7 +256,7 @@ export async function rejectInvite(
     return;
   }
   return apiFetch<void>(
-    `/teams/invites/${inviteId}/reject`,
+    `/teams/invites/${encodeURIComponent(inviteId)}/reject`,
     { method: "POST" },
     token,
   );
@@ -272,7 +272,7 @@ export async function getSentInvites(
       (i) => i.teamId === teamId && i.toUserId !== "__current__",
     );
   }
-  return apiFetch<PendingInvite[]>(`/teams/${teamId}/invites`, {}, token);
+  return apiFetch<PendingInvite[]>(`/teams/${encodeURIComponent(teamId)}/invites`, {}, token);
 }
 
 export async function updateMemberRole(
@@ -305,7 +305,7 @@ export async function updateMemberRole(
     return;
   }
   return apiFetch<void>(
-    `/teams/${teamId}/members/${memberId}/role`,
+    `/teams/${encodeURIComponent(teamId)}/members/${encodeURIComponent(memberId)}/role`,
     { method: "PATCH", body: JSON.stringify({ role: newRole }) },
     token,
   );

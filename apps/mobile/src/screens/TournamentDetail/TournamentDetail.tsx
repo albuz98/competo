@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useLayoutEffect } from "react";
+import React, { useEffect, useLayoutEffect } from "react";
 import {
   View,
   Text,
@@ -20,9 +20,10 @@ import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import {
   NavigationEnum,
   type RootStackParamList,
-  type Tournament,
 } from "../../types/navigation";
+import { useQuery } from "@tanstack/react-query";
 import { fetchTournament } from "../../api/tournaments";
+import { queryKeys } from "../../lib/queryKeys";
 import { useAuth } from "../../context/AuthContext";
 import { useFavorites } from "../../context/FavoritesContext";
 import { useNotifications } from "../../context/NotificationsContext";
@@ -117,10 +118,43 @@ export default function TournamentDetail({ route, navigation }: Props) {
     useFavorites();
   const { addNotification } = useNotifications();
   const insets = useSafeAreaInsets();
-  const [tournament, setTournament] = useState<Tournament | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [showMapsModal, setShowMapsModal] = useState(false);
+  const [showMapsModal, setShowMapsModal] = React.useState(false);
+
+  useLayoutEffect(() => {
+    navigation.setOptions({ headerShown: false });
+  }, [navigation]);
+
+  const {
+    data: tournament,
+    isLoading: loading,
+    error: queryError,
+  } = useQuery({
+    queryKey: queryKeys.tournament(tournamentId),
+    queryFn: () => fetchTournament(tournamentId),
+  });
+
+  // Side-effects that run once the tournament data is loaded
+  useEffect(() => {
+    if (!tournament) return;
+    if ((tournament.isRegistered || tournament.status === "completed") && isFavorite(tournament.id)) {
+      removeFavorite(tournament.id);
+    }
+    const spotsAvail = tournament.maxParticipants - tournament.currentParticipants;
+    if (spotsAvail > 0 && isFavorite(tournament.id) && wasAddedWhenFull(tournament.id)) {
+      addNotification({
+        title: "Posto disponibile!",
+        body: `Si è liberato un posto nel torneo "${tournament.name}". Iscriviti ora!`,
+        timestamp: new Date().toISOString(),
+      });
+    }
+  }, [tournament?.id]);
+
+  // justRegistered: mark locally as registered (avoids a full refetch)
+  useEffect(() => {
+    if (justRegistered) {
+      removeFavorite(tournamentId);
+    }
+  }, [justRegistered]);
 
   const favorited = tournament ? isFavorite(tournament.id) : false;
   const toggleFavorite = () => {
@@ -129,57 +163,14 @@ export default function TournamentDetail({ route, navigation }: Props) {
     favorited ? removeFavorite(tournament.id) : addFavorite(tournament);
   };
 
-  useLayoutEffect(() => {
-    navigation.setOptions({ headerShown: false });
-  }, [navigation]);
-
-  useEffect(() => {
-    fetchTournament(tournamentId)
-      .then((t) => {
-        setTournament(t);
-        // Auto-remove from favorites if user is registered or tournament is over
-        if ((t.isRegistered || t.status === "completed") && isFavorite(t.id)) {
-          removeFavorite(t.id);
-        }
-        // Notify if a spot opened for a full-when-added tournament
-        const spotsAvail = t.maxParticipants - t.currentParticipants;
-        if (spotsAvail > 0 && isFavorite(t.id) && wasAddedWhenFull(t.id)) {
-          addNotification({
-            title: "Posto disponibile!",
-            body: `Si è liberato un posto nel torneo "${t.name}". Iscriviti ora!`,
-            timestamp: new Date().toISOString(),
-          });
-        }
-      })
-      .catch((e) =>
-        setError(e instanceof Error ? e.message : "Errore nel caricamento"),
-      )
-      .finally(() => setLoading(false));
-  }, [tournamentId]);
-
-  useEffect(() => {
-    if (justRegistered) {
-      removeFavorite(tournamentId);
-      setTournament((prev) =>
-        prev
-          ? {
-              ...prev,
-              isRegistered: true,
-              currentParticipants: prev.currentParticipants + 1,
-            }
-          : prev,
-      );
-    }
-  }, [justRegistered]);
-
   const openMaps = () => {
     setShowMapsModal(false);
-    const query = encodeURIComponent(tournament!.location);
+    const query = encodeURIComponent(displayTournament.location);
     const url =
-      tournament?.lat && tournament?.lng
+      displayTournament.lat && displayTournament.lng
         ? Platform.select({
-            ios: `maps://maps.apple.com/?ll=${tournament.lat},${tournament.lng}&q=${query}`,
-            android: `geo:${tournament.lat},${tournament.lng}?q=${query}`,
+            ios: `maps://maps.apple.com/?ll=${displayTournament.lat},${displayTournament.lng}&q=${query}`,
+            android: `geo:${displayTournament.lat},${displayTournament.lng}?q=${query}`,
           })
         : Platform.select({
             ios: `maps://maps.apple.com/?q=${query}`,
@@ -195,11 +186,10 @@ export default function TournamentDetail({ route, navigation }: Props) {
   };
 
   const handleGoToPayment = () => {
-    if (!tournament) return;
     navigation.navigate(NavigationEnum.TEAM_SELECT, {
-      tournamentId: tournament.id,
-      entryFee: tournament.entryFee,
-      tournamentName: tournament.name,
+      tournamentId: displayTournament.id,
+      entryFee: displayTournament.entryFee,
+      tournamentName: displayTournament.name,
     });
   };
 
@@ -211,13 +201,24 @@ export default function TournamentDetail({ route, navigation }: Props) {
     );
   }
 
-  if (error || !tournament) {
+  if (queryError || !tournament) {
     return (
       <View style={styles.center}>
-        <Text style={styles.errorText}>{error ?? "Torneo non trovato"}</Text>
+        <Text style={styles.errorText}>
+          {queryError instanceof Error ? queryError.message : "Torneo non trovato"}
+        </Text>
       </View>
     );
   }
+
+  // When justRegistered, reflect the state locally without a round trip
+  const displayTournament = justRegistered
+    ? {
+        ...tournament,
+        isRegistered: true,
+        currentParticipants: tournament.currentParticipants + 1,
+      }
+    : tournament;
 
   const startDate = new Date(tournament.startDate).toLocaleDateString("it-IT", {
     day: "2-digit",
@@ -230,19 +231,19 @@ export default function TournamentDetail({ route, navigation }: Props) {
     year: "numeric",
   });
 
-  const spotsLeft = tournament.maxParticipants - tournament.currentParticipants;
+  const spotsLeft = displayTournament.maxParticipants - displayTournament.currentParticipants;
   const isFull = spotsLeft <= 0;
-  const isCompleted = tournament.status === "completed";
+  const isCompleted = displayTournament.status === "completed";
   const fillPercent = Math.min(
-    (tournament.currentParticipants / tournament.maxParticipants) * 100,
+    (displayTournament.currentParticipants / displayTournament.maxParticipants) * 100,
     100,
   );
 
   const canSignUp =
-    !tournament.isRegistered && !isFull && !isCompleted && !!user;
+    !displayTournament.isRegistered && !isFull && !isCompleted && !!user;
 
   const btnText = (): string => {
-    if (tournament?.isRegistered) return "Iscritto";
+    if (displayTournament.isRegistered) return "Iscritto";
     if (isFull) return "Terminato";
     if (isCompleted) return "Al completo";
     return "Iscriviti";
@@ -269,15 +270,15 @@ export default function TournamentDetail({ route, navigation }: Props) {
                 <View
                   style={[
                     styles.statusBadge,
-                    { backgroundColor: STATUS_COLOR[tournament.status] },
+                    { backgroundColor: STATUS_COLOR[displayTournament.status] },
                   ]}
                 >
                   <Text style={styles.statusText}>
-                    {STATUS_LABEL[tournament.status]}
+                    {STATUS_LABEL[displayTournament.status]}
                   </Text>
                 </View>
-                {!tournament.isRegistered &&
-                  tournament.status !== "completed" && (
+                {!displayTournament.isRegistered &&
+                  displayTournament.status !== "completed" && (
                     <ButtonIcon
                       handleBtn={toggleFavorite}
                       style={styles.bookmarkBtn}
@@ -295,8 +296,8 @@ export default function TournamentDetail({ route, navigation }: Props) {
 
             {/* Game + Name */}
             <View style={styles.headerContent}>
-              <Text style={styles.headerGame}>{tournament.game}</Text>
-              <Text style={styles.headerTitle}>{tournament.name}</Text>
+              <Text style={styles.headerGame}>{displayTournament.game}</Text>
+              <Text style={styles.headerTitle}>{displayTournament.name}</Text>
             </View>
 
             {/* Stats chips */}
@@ -307,7 +308,7 @@ export default function TournamentDetail({ route, navigation }: Props) {
                   size={13}
                   color={colors.white}
                 />
-                <Text style={styles.chipText}>{tournament.prizePool}</Text>
+                <Text style={styles.chipText}>{displayTournament.prizePool}</Text>
               </View>
               <View style={styles.chip}>
                 <Ionicons
@@ -316,7 +317,7 @@ export default function TournamentDetail({ route, navigation }: Props) {
                   color={colors.white}
                 />
                 <Text style={styles.chipText}>
-                  {tournament.currentParticipants}/{tournament.maxParticipants}
+                  {displayTournament.currentParticipants}/{displayTournament.maxParticipants}
                 </Text>
               </View>
               <View style={styles.chip}>
@@ -326,7 +327,7 @@ export default function TournamentDetail({ route, navigation }: Props) {
                   color={colors.white}
                 />
                 <Text style={styles.chipText} numberOfLines={1}>
-                  {tournament.location}
+                  {displayTournament.location}
                 </Text>
               </View>
             </View>
@@ -340,12 +341,12 @@ export default function TournamentDetail({ route, navigation }: Props) {
             <Row
               icon="business-outline"
               label="Organizzatore"
-              value={tournament.organizer}
+              value={displayTournament.organizer}
             />
             <LocationRow
               icon="location-outline"
               label="Sede"
-              value={tournament.location}
+              value={displayTournament.location}
               onPress={() => setShowMapsModal(true)}
             />
             <Row icon="calendar-outline" label="Inizio" value={startDate} />
@@ -364,7 +365,7 @@ export default function TournamentDetail({ route, navigation }: Props) {
             </View>
             <View style={styles.progressLabels}>
               <Text style={styles.progressText}>
-                {tournament.currentParticipants} iscritti
+                {displayTournament.currentParticipants} iscritti
               </Text>
               <Text style={styles.progressText}>
                 {isFull ? "Al completo" : `${spotsLeft} posti liberi`}
@@ -374,12 +375,12 @@ export default function TournamentDetail({ route, navigation }: Props) {
 
           {/* Description */}
           <SectionCard title="Descrizione">
-            <Text style={styles.description}>{tournament.description}</Text>
+            <Text style={styles.description}>{displayTournament.description}</Text>
           </SectionCard>
 
           {/* Rules */}
           <SectionCard title="Regolamento">
-            {tournament.rules.map((rule, i) => (
+            {displayTournament.rules.map((rule, i) => (
               <View key={i} style={styles.ruleItem}>
                 <View style={styles.ruleNumber}>
                   <Text style={styles.ruleNumberText}>{i + 1}</Text>
@@ -395,7 +396,7 @@ export default function TournamentDetail({ route, navigation }: Props) {
       <View style={[styles.bottomBar, { paddingBottom: insets.bottom }]}>
         <View style={styles.costBlock}>
           <Text style={styles.costLabel}>Quota iscrizione</Text>
-          <Text style={styles.costValue}>{tournament.entryFee}</Text>
+          <Text style={styles.costValue}>{displayTournament.entryFee}</Text>
         </View>
 
         <ButtonFullColored

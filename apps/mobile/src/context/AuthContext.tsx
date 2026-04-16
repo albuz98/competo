@@ -7,6 +7,7 @@ import React, {
   type ReactNode,
 } from "react";
 import * as SecureStore from "expo-secure-store";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   login as apiLogin,
   register as apiRegister,
@@ -49,13 +50,12 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | null>(null);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
+  const qc = useQueryClient();
   const [user, setUser] = useState<User | null>(null);
   const [location, setLocation] = useState<string | undefined>(undefined);
-  const [loading, setLoading] = useState(false);
   const [bootstrapping, setBootstrapping] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Always derived from user — single source of truth for the active profile
   const currentProfile = useMemo<UserProfile | null>(
     () =>
       user?.profiles?.find((p) => p.id === user.currentProfileId) ??
@@ -64,6 +64,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     [user?.profiles, user?.currentProfileId],
   );
 
+  // Bootstrap: restore session from SecureStore on app start
   useEffect(() => {
     (async () => {
       try {
@@ -81,49 +82,89 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     })();
   }, []);
 
-  const login = async (credentials: LoginCredentials) => {
-    setLoading(true);
-    setError(null);
-    try {
-      const userData = await apiLogin(credentials);
+  // ─── Mutations ─────────────────────────────────────────────────────────────
+
+  const loginMutation = useMutation({
+    mutationFn: (credentials: LoginCredentials) => apiLogin(credentials),
+    onSuccess: async (userData) => {
       await SecureStore.setItemAsync(TOKEN_KEY, userData.token);
       setUser(userData);
-    } catch (e) {
+      setError(null);
+    },
+    onError: (e) => {
       const msg = e instanceof Error ? e.message : "Login failed";
       setError(msg);
-      throw e;
-    } finally {
-      setLoading(false);
-    }
+    },
+  });
+
+  const registerMutation = useMutation({
+    mutationFn: (credentials: RegisterCredentials) => apiRegister(credentials),
+    onSuccess: async (userData) => {
+      await SecureStore.setItemAsync(TOKEN_KEY, userData.token);
+      setUser(userData);
+      setError(null);
+    },
+    onError: (e) => {
+      const msg = e instanceof Error ? e.message : "Registration failed";
+      setError(msg);
+    },
+  });
+
+  const updateProfileMutation = useMutation({
+    mutationFn: (data: UpdateProfileData) =>
+      apiUpdateProfile(data, user?.token ?? "", user),
+    onSuccess: (updated) => {
+      setUser(updated);
+      if (updated.location !== undefined)
+        setLocation(updated.location || undefined);
+      setError(null);
+    },
+    onError: (e) => {
+      const msg = e instanceof Error ? e.message : "Update failed";
+      setError(msg);
+    },
+  });
+
+  // loading reflects any in-flight auth mutation
+  const loading =
+    loginMutation.isPending ||
+    registerMutation.isPending ||
+    updateProfileMutation.isPending;
+
+  // ─── Public API ─────────────────────────────────────────────────────────────
+
+  const login = async (credentials: LoginCredentials) => {
+    setError(null);
+    await loginMutation.mutateAsync(credentials);
   };
 
   const register = async (credentials: RegisterCredentials) => {
-    setLoading(true);
     setError(null);
-    try {
-      const userData = await apiRegister(credentials);
-      await SecureStore.setItemAsync(TOKEN_KEY, userData.token);
-      setUser(userData);
-    } catch (e) {
-      const msg = e instanceof Error ? e.message : "Registration failed";
-      setError(msg);
-      throw e;
-    } finally {
-      setLoading(false);
-    }
+    await registerMutation.mutateAsync(credentials);
   };
 
   const logout = () => {
     SecureStore.deleteItemAsync(TOKEN_KEY).catch(() => {});
     setUser(null);
+    setLocation(undefined);
+    // Clear all user-scoped cached data
+    qc.clear();
   };
+
   const clearError = () => setError(null);
+
   const updateLocation = (loc: string) => {
     setLocation(loc);
     setUser((prev) => (prev ? { ...prev, location: loc } : prev));
   };
+
   const switchProfile = (profileId: string) => {
     setUser((prev) => (prev ? { ...prev, currentProfileId: profileId } : prev));
+  };
+
+  const updateProfile = async (data: UpdateProfileData) => {
+    setError(null);
+    await updateProfileMutation.mutateAsync(data);
   };
 
   const addCollaborator = (profileId: string, appUser: AppUser) => {
@@ -179,29 +220,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           }
         : prev,
     );
-  };
-
-  const updateProfile = async (data: {
-    firstName?: string;
-    lastName?: string;
-    username?: string;
-    location?: string;
-    password?: string;
-    avatarUrl?: string;
-  }) => {
-    setLoading(true);
-    setError(null);
-    try {
-      const updated = await apiUpdateProfile(data, user);
-      setUser(updated);
-      if (data.location !== undefined) setLocation(data.location || undefined);
-    } catch (e) {
-      const msg = e instanceof Error ? e.message : "Update failed";
-      setError(msg);
-      throw e;
-    } finally {
-      setLoading(false);
-    }
   };
 
   return (

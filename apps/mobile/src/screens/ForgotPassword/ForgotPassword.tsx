@@ -1,8 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
 import { View, Text } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { NavigationEnum, RootStackParamList } from "../../types/navigation";
+import { useMutation } from "@tanstack/react-query";
 import { forgotPassword } from "../../api/auth";
 import { styles } from "./ForgotPassword.styles";
 import AuthLayout from "../../components/AuthLayout/AuthLayout";
@@ -16,29 +17,26 @@ type Props = NativeStackScreenProps<RootStackParamList, "ForgotPassword">;
 
 export default function ForgotPassword({ navigation }: Props) {
   const [email, setEmail] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [sent, setSent] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const isValid = email.includes("@") && email.includes(".");
 
-  const handleSend = async () => {
+  const sendMutation = useMutation({
+    mutationFn: () => forgotPassword(email),
+    onError: (e) => {
+      setError(e instanceof Error ? e.message : "Errore durante l'invio");
+    },
+  });
+
+  const handleSend = useCallback(() => {
     if (!isValid) return;
     setError(null);
-    setLoading(true);
-    try {
-      await forgotPassword(email);
-      setSent(true);
-    } catch (e) {
-      setError(e instanceof Error ? e.message : "Errore durante l'invio");
-    } finally {
-      setLoading(false);
-    }
-  };
+    sendMutation.mutate();
+  }, [isValid, email, sendMutation]);
 
   return (
     <AuthLayout onClose={() => navigation.goBack()}>
-      {sent ? (
+      {sendMutation.isSuccess ? (
         <View style={styles.successContainer}>
           <Ionicons
             name="mail-outline"
@@ -84,8 +82,8 @@ export default function ForgotPassword({ navigation }: Props) {
           <ButtonFullColored
             text="Invia link di reset"
             handleBtn={handleSend}
-            isDisabled={!isValid || loading}
-            loading={loading}
+            isDisabled={!isValid || sendMutation.isPending}
+            loading={sendMutation.isPending}
           />
 
           <ButtonLink

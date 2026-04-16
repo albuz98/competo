@@ -38,14 +38,15 @@ import {
 } from "../../components/Button/Button";
 import { sizesEnum } from "../../theme/dimension";
 import { ModalViewer } from "../../components/Modal/Modal";
+import { useQuery } from "@tanstack/react-query";
 import { fetchMyTournaments } from "../../api/tournaments";
+import { queryKeys } from "../../lib/queryKeys";
 import { OrganizerProfile } from "./subComponents/OrganizeProfile/OrganizerProfile";
 import { HeaderCard } from "./subComponents/HeaderCard/HeaderCard";
 import { getProfileSubtitle } from "../../functions/profile";
 import { RESULT_CONFIG, TournamentResult } from "../../constants/tournament";
 import { InputBoxRow } from "../../components/InputBoxRow/InputBoxRow";
 import { UserRole } from "../../constants/user";
-import { MyTournament } from "../../types/tournament";
 import { UserProfile } from "../../types/user";
 
 export default function Profile() {
@@ -74,8 +75,7 @@ export default function Profile() {
   const route = useRoute<RouteProp<MainTabParamList, NavigationEnum.PROFILE>>();
   const insets = useSafeAreaInsets();
   const [changeProfileModal, setChangeProfileModal] = useState(false);
-  const [orgTournaments, setOrgTournaments] = useState<MyTournament[]>([]);
-  const [loadingOrgTournaments, setLoadingOrgTournaments] = useState(false);
+  const isOrganizerProfile = currentProfile?.role === UserRole.ORGANIZER;
 
   useEffect(() => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -89,27 +89,14 @@ export default function Profile() {
   const scrollRef = useRef<ScrollView>(null);
   const savedScrollY = useRef(0);
 
-  const isOrganizerProfile = currentProfile?.role === UserRole.ORGANIZER;
   const playerProfile = !isOrganizerProfile ? currentProfile : null;
 
-  useEffect(() => {
-    if (isOrganizerProfile) {
-      loadOrganizerTournaments();
-    }
-  }, [currentProfile?.id]);
-
-  const loadOrganizerTournaments = async () => {
-    setLoadingOrgTournaments(true);
-    try {
-      const allTournaments = await fetchMyTournaments();
-      const organizerTournaments = allTournaments.filter((t) => t.isOrganizer);
-      setOrgTournaments(organizerTournaments);
-    } catch (error) {
-      console.error("Error loading organizer tournaments:", error);
-    } finally {
-      setLoadingOrgTournaments(false);
-    }
-  };
+  const { data: allMyTournaments = [], isLoading: loadingOrgTournaments } = useQuery({
+    queryKey: queryKeys.myTournaments(),
+    queryFn: () => fetchMyTournaments(user?.token ?? ''),
+    enabled: !!user && isOrganizerProfile,
+  });
+  const orgTournaments = allMyTournaments.filter((t) => t.isOrganizer);
 
   const handleSwitchProfile = (profile: UserProfile) => {
     switchProfile(profile.id);

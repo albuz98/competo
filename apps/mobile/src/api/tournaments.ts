@@ -75,21 +75,21 @@ export function getMyTournamentsCache(): MyTournament[] {
   return myTournamentsCache;
 }
 
-export async function fetchMyTournaments(): Promise<MyTournament[]> {
+export async function fetchMyTournaments(token: string): Promise<MyTournament[]> {
   if (isMocking && mockFlags.IS_MOCKING_FETCH_MY_TOURNAMENTS) {
     await new Promise((r) => setTimeout(r, 500));
     return getMyTournamentsCache();
   }
-  return apiFetch<MyTournament[]>("/my-tournaments");
+  return apiFetch<MyTournament[]>("/my-tournaments", {}, token);
 }
 
-export async function fetchMyTournament(id: string): Promise<MyTournament> {
+export async function fetchMyTournament(id: string, token: string): Promise<MyTournament> {
   if (isMocking && mockFlags.IS_MOCKING_FETCH_MY_TOURNAMENT) {
     await new Promise((r) => setTimeout(r, 300));
     const found = getMyTournamentsCache().find((t) => t.id === id);
     return found ?? generateMyTournament(id);
   }
-  return apiFetch<MyTournament>(`/my-tournaments/${id}`);
+  return apiFetch<MyTournament>(`/my-tournaments/${encodeURIComponent(id)}`, {}, token);
 }
 
 export async function signUpForTournament(
@@ -112,7 +112,7 @@ export async function signUpForTournament(
   }
 
   return apiFetch<void>(
-    `/tournaments/${tournamentId}/signup`,
+    `/tournaments/${encodeURIComponent(tournamentId)}/signup`,
     { method: "POST", body: JSON.stringify({ teamId }) },
     token,
   );
@@ -141,7 +141,7 @@ export async function fetchNearbyTournaments(
 
 export async function createTournament(
   payload: CreateTournamentPayload,
-  token?: string,
+  token: string,
 ): Promise<GeneratorOutput> {
   if (isMocking && mockFlags.IS_MOCKING_CREATE_TOURNAMENT) {
     await new Promise((r) => setTimeout(r, 800));
@@ -167,7 +167,7 @@ export async function activateTournament(
     return;
   }
   return apiFetch<void>(
-    `/my-tournaments/${tournamentId}/activate`,
+    `/my-tournaments/${encodeURIComponent(tournamentId)}/activate`,
     { method: "POST" },
     token,
   );
@@ -194,6 +194,7 @@ function getOrganizerCache(): Map<string, OrganizerTournamentDetail> {
 
 export async function fetchOrganizerTournament(
   id: string,
+  token: string,
 ): Promise<OrganizerTournamentDetail> {
   if (isMocking && mockFlags.IS_MOCKING_FETCH_ORGANIZER_TOURNAMENT) {
     await new Promise((r) => setTimeout(r, 300));
@@ -207,12 +208,17 @@ export async function fetchOrganizerTournament(
     getOrganizerCache().set(id, detail);
     return { ...detail, registeredTeams: [...detail.registeredTeams] };
   }
-  return apiFetch<OrganizerTournamentDetail>(`/organizer/tournaments/${id}`);
+  return apiFetch<OrganizerTournamentDetail>(
+    `/organizer/tournaments/${encodeURIComponent(id)}`,
+    {},
+    token,
+  );
 }
 
 export async function approveTeam(
   tournamentId: string,
   teamId: string,
+  token: string,
 ): Promise<void> {
   if (isMocking && mockFlags.IS_MOCKING_APPROVE_TEAM) {
     await new Promise((r) => setTimeout(r, 400));
@@ -227,14 +233,16 @@ export async function approveTeam(
     return;
   }
   return apiFetch<void>(
-    `/organizer/tournaments/${tournamentId}/teams/${teamId}/approve`,
+    `/organizer/tournaments/${encodeURIComponent(tournamentId)}/teams/${encodeURIComponent(teamId)}/approve`,
     { method: "POST" },
+    token,
   );
 }
 
 export async function rejectTeam(
   tournamentId: string,
   teamId: string,
+  token: string,
 ): Promise<void> {
   if (isMocking && mockFlags.IS_MOCKING_REJECT_TEAM_FROM_TOURNAMENT) {
     await new Promise((r) => setTimeout(r, 400));
@@ -244,14 +252,16 @@ export async function rejectTeam(
     return;
   }
   return apiFetch<void>(
-    `/organizer/tournaments/${tournamentId}/teams/${teamId}/reject`,
+    `/organizer/tournaments/${encodeURIComponent(tournamentId)}/teams/${encodeURIComponent(teamId)}/reject`,
     { method: "POST" },
+    token,
   );
 }
 
 export async function removeTeam(
   tournamentId: string,
   teamId: string,
+  token: string,
 ): Promise<void> {
   if (isMocking && mockFlags.IS_MOCKING_REMOVE_TEAM_FROM_TOURNAMENT) {
     await new Promise((r) => setTimeout(r, 400));
@@ -260,7 +270,8 @@ export async function removeTeam(
     return;
   }
   return apiFetch<void>(
-    `/organizer/tournaments/${tournamentId}/teams/${teamId}`,
+    `/organizer/tournaments/${encodeURIComponent(tournamentId)}/teams/${encodeURIComponent(teamId)}`,
     { method: "DELETE" },
+    token,
   );
 }

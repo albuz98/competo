@@ -2,9 +2,9 @@ import React, {
   createContext,
   useContext,
   useState,
-  useEffect,
   type ReactNode,
 } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   fetchFavorites,
   addFavorite as apiAdd,
@@ -12,6 +12,7 @@ import {
 } from "../api/favorites";
 import { useAuth } from "./AuthContext";
 import { Tournament } from "../types/tournament";
+import { queryKeys } from "../lib/queryKeys";
 
 interface FavoritesContextType {
   favorites: Tournament[];
@@ -25,25 +26,26 @@ const FavoritesContext = createContext<FavoritesContextType | null>(null);
 
 export function FavoritesProvider({ children }: { children: ReactNode }) {
   const { user } = useAuth();
-  const [favorites, setFavorites] = useState<Tournament[]>([]);
+  const qc = useQueryClient();
+
+  // Tracks IDs of full tournaments at the time they were bookmarked — used to
+  // notify the user when a spot opens up. Pure local state, not persisted.
   const [fullWhenAddedIds, setFullWhenAddedIds] = useState<string[]>([]);
 
-  // Load favorites from the API whenever the logged-in user changes.
-  // In mock mode fetchFavorites returns the module-level in-memory cache.
-  useEffect(() => {
-    if (!user) {
-      setFavorites([]);
-      setFullWhenAddedIds([]);
-      return;
-    }
-    fetchFavorites(user.token)
-      .then(setFavorites)
-      .catch(() => {});
-  }, [user?.id]);
+  // ─── Query ─────────────────────────────────────────────────────────────────
+
+  const { data: favorites = [] } = useQuery({
+    queryKey: queryKeys.favorites(),
+    queryFn: () => fetchFavorites(user!.token),
+    enabled: !!user,
+  });
+
+  // ─── Mutations (optimistic, fire-and-forget API sync) ──────────────────────
 
   const addFavorite = (tournament: Tournament) => {
-    setFavorites((prev) =>
-      prev.some((t) => t.id === tournament.id) ? prev : [...prev, tournament],
+    // Optimistic cache update — no need for useMutation since this is fire-and-forget
+    qc.setQueryData<Tournament[]>(queryKeys.favorites(), (old = []) =>
+      old.some((t) => t.id === tournament.id) ? old : [...old, tournament],
     );
     if (tournament.currentParticipants >= tournament.maxParticipants) {
       setFullWhenAddedIds((prev) =>
@@ -54,7 +56,9 @@ export function FavoritesProvider({ children }: { children: ReactNode }) {
   };
 
   const removeFavorite = (tournamentId: string) => {
-    setFavorites((prev) => prev.filter((t) => t.id !== tournamentId));
+    qc.setQueryData<Tournament[]>(queryKeys.favorites(), (old = []) =>
+      old.filter((t) => t.id !== tournamentId),
+    );
     setFullWhenAddedIds((prev) => prev.filter((id) => id !== tournamentId));
     if (user) apiRemove(tournamentId, user.token).catch(() => {});
   };

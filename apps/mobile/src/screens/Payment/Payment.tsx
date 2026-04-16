@@ -1,4 +1,4 @@
-import React, { useState, useLayoutEffect } from "react";
+import React, { useState, useLayoutEffect, useCallback } from "react";
 import {
   View,
   Text,
@@ -16,6 +16,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { CommonActions } from "@react-navigation/native";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../../types/navigation";
+import { useMutation } from "@tanstack/react-query";
 import { useAuth } from "../../context/AuthContext";
 import { signUpForTournament } from "../../api/tournaments";
 import { styles } from "./Payment.styles";
@@ -49,7 +50,6 @@ export default function PaymentScreen({ navigation, route }: Props) {
   const [cvv, setCvv] = useState("");
   const [name, setName] = useState("");
 
-  const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   useLayoutEffect(() => {
@@ -62,12 +62,9 @@ export default function PaymentScreen({ navigation, route }: Props) {
     cvv.length >= 3 &&
     name.trim().length > 0;
 
-  const handlePay = async () => {
-    if (!isCardValid || !user) return;
-    setLoading(true);
-    setError(null);
-    try {
-      await signUpForTournament(tournamentId, user.token, teamId);
+  const signUpMutation = useMutation({
+    mutationFn: () => signUpForTournament(tournamentId, user!.token, teamId),
+    onSuccess: () => {
       navigation.dispatch(
         CommonActions.reset({
           index: 1,
@@ -80,12 +77,17 @@ export default function PaymentScreen({ navigation, route }: Props) {
           ],
         }),
       );
-    } catch (e) {
+    },
+    onError: (e) => {
       setError(e instanceof Error ? e.message : "Pagamento fallito. Riprova.");
-    } finally {
-      setLoading(false);
-    }
-  };
+    },
+  });
+
+  const handlePay = useCallback(() => {
+    if (!isCardValid || !user) return;
+    setError(null);
+    signUpMutation.mutate();
+  }, [isCardValid, user, signUpMutation]);
 
   return (
     <View style={styles.root}>
@@ -195,8 +197,8 @@ export default function PaymentScreen({ navigation, route }: Props) {
               <ButtonFullColored
                 text={`Paga  ${entryFee}`}
                 handleBtn={handlePay}
-                isDisabled={!isCardValid || loading}
-                loading={loading}
+                isDisabled={!isCardValid || signUpMutation.isPending}
+                loading={signUpMutation.isPending}
               />
 
               <View style={styles.secureRow}>

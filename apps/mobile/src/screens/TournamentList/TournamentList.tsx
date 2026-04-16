@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from "react";
+import React from "react";
 import {
   View,
   Text,
@@ -9,6 +9,7 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { useQuery } from "@tanstack/react-query";
 import {
   NavigationEnum,
   type RootStackParamList,
@@ -22,6 +23,7 @@ import {
   ButtonGeneric,
 } from "../../components/Button/Button";
 import { colors } from "../../theme/colors";
+import { queryKeys } from "../../lib/queryKeys";
 
 const STATUS_COLORS: Record<string, string> = {
   upcoming: colors.purpleBlue,
@@ -98,27 +100,17 @@ export default function TournamentListScreen() {
   const navigation =
     useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const { user } = useAuth();
-  const [tournaments, setTournaments] = useState<Tournament[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [refreshing, setRefreshing] = useState(false);
-  const [error, setError] = useState<string | null>(null);
 
-  const load = useCallback(async () => {
-    try {
-      setError(null);
-      const data = await fetchTournaments();
-      setTournaments(data);
-    } catch (e) {
-      setError(e instanceof Error ? e.message : "Failed to load tournaments");
-    } finally {
-      setLoading(false);
-      setRefreshing(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    load();
-  }, [load]);
+  const {
+    data: tournaments = [],
+    isLoading,
+    isRefetching,
+    error,
+    refetch,
+  } = useQuery({
+    queryKey: queryKeys.tournaments(),
+    queryFn: fetchTournaments,
+  });
 
   const handlePress = (tournament: Tournament) => {
     if (!user) {
@@ -133,7 +125,7 @@ export default function TournamentListScreen() {
     }
   };
 
-  if (loading) {
+  if (isLoading) {
     return (
       <View style={styles.center}>
         <ActivityIndicator size="large" color={colors.purpleBlue} />
@@ -145,14 +137,10 @@ export default function TournamentListScreen() {
   if (error) {
     return (
       <View style={styles.center}>
-        <Text style={styles.errorText}>{error}</Text>
-        <ButtonFullColored
-          text="Retry"
-          handleBtn={() => {
-            setLoading(true);
-            load();
-          }}
-        />
+        <Text style={styles.errorText}>
+          {error instanceof Error ? error.message : "Failed to load tournaments"}
+        </Text>
+        <ButtonFullColored text="Retry" handleBtn={() => { void refetch(); }} />
       </View>
     );
   }
@@ -168,11 +156,8 @@ export default function TournamentListScreen() {
         contentContainerStyle={styles.list}
         refreshControl={
           <RefreshControl
-            refreshing={refreshing}
-            onRefresh={() => {
-              setRefreshing(true);
-              load();
-            }}
+            refreshing={isRefetching}
+            onRefresh={refetch}
             tintColor={colors.purpleBlue}
           />
         }

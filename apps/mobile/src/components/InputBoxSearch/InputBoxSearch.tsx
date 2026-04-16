@@ -13,6 +13,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import Feather from "@expo/vector-icons/Feather";
+import { useQuery } from "@tanstack/react-query";
 import { colors, colorGradient } from "../../theme/colors";
 import { s } from "./InputBoxSearch.styles";
 
@@ -73,54 +74,41 @@ export function InputBoxSearch<T>({
   const insets = useSafeAreaInsets();
 
   const [query, setQuery] = useState(defaultValue ?? "");
-  const [results, setResults] = useState<T[]>([]);
-  const [isSearching, setIsSearching] = useState(false);
-  const [hasSearched, setHasSearched] = useState(false);
+  // debouncedQuery is what actually drives the useQuery
+  const [debouncedQuery, setDebouncedQuery] = useState(defaultValue?.trim() ?? "");
   const [modalVisible, setModalVisible] = useState(false);
 
-  const debounceTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  // Unique key per component instance so different search boxes don't share cache
+  const instanceId = useRef(`ibsearch-${Math.random().toString(36).slice(2)}`).current;
+
+  // Debounce: update debouncedQuery after the user stops typing
+  useEffect(() => {
+    const trimmed = query.trim();
+    if (trimmed.length < minChars) {
+      setDebouncedQuery("");
+      return;
+    }
+    const timer = setTimeout(() => setDebouncedQuery(trimmed), debounceMs);
+    return () => clearTimeout(timer);
+  }, [query, debounceMs, minChars]);
+
+  const { data: results = [], isFetching: isSearching, isSuccess } = useQuery({
+    queryKey: [instanceId, debouncedQuery],
+    queryFn: () => onSearch(debouncedQuery),
+    enabled: debouncedQuery.length >= minChars,
+    staleTime: 30_000, // avoid redundant refetches for the same query
+  });
+
+  const hasSearched = isSuccess && debouncedQuery.length >= minChars;
 
   const handleQueryChange = (text: string) => {
     setQuery(text);
     onQueryChange?.(text);
   };
 
-  useEffect(() => {
-    if (debounceTimer.current) clearTimeout(debounceTimer.current);
-
-    const trimmed = query.trim();
-
-    if (trimmed.length < minChars) {
-      setResults([]);
-      setIsSearching(false);
-      setHasSearched(false);
-      return;
-    }
-
-    setIsSearching(true);
-
-    debounceTimer.current = setTimeout(() => {
-      onSearch(trimmed)
-        .then((res) => {
-          setResults(res);
-          setHasSearched(true);
-        })
-        .catch(() => {
-          setResults([]);
-          setHasSearched(true);
-        })
-        .finally(() => setIsSearching(false));
-    }, debounceMs);
-
-    return () => {
-      if (debounceTimer.current) clearTimeout(debounceTimer.current);
-    };
-  }, [query]);
-
   const handleClear = () => {
     setQuery("");
-    setResults([]);
-    setHasSearched(false);
+    setDebouncedQuery("");
     onQueryChange?.("");
     if (overlayDropdown) setModalVisible(false);
   };
@@ -129,8 +117,7 @@ export function InputBoxSearch<T>({
     onSelect?.(item);
     if (overlayDropdown) {
       setQuery("");
-      setResults([]);
-      setHasSearched(false);
+      setDebouncedQuery("");
       onQueryChange?.("");
       setModalVisible(false);
     }

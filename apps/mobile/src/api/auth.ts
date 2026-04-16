@@ -49,6 +49,7 @@ export async function updateProfile(
     password?: string;
     avatarUrl?: string;
   },
+  token: string,
   currentUser: User | null,
 ): Promise<User> {
   if (isMocking && mockFlags.IS_MOCKING_UPDATE_PROFILE) {
@@ -63,10 +64,11 @@ export async function updateProfile(
       ...(data.avatarUrl !== undefined ? { avatarUrl: data.avatarUrl } : {}),
     };
   }
-  return apiFetch<User>("/auth/profile", {
-    method: "PATCH",
-    body: JSON.stringify(data),
-  });
+  return apiFetch<User>(
+    "/auth/profile",
+    { method: "PATCH", body: JSON.stringify(data) },
+    token,
+  );
 }
 
 export async function login(credentials: LoginCredentials): Promise<User> {
