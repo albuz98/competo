@@ -1,6 +1,12 @@
-import React, { createContext, useContext, useState, useEffect, useCallback, type ReactNode } from 'react';
-import type { Team, AppUser, PendingInvite, TeamRole } from '../types';
-import { useAuth } from './AuthContext';
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  useCallback,
+  type ReactNode,
+} from "react";
+import { useAuth } from "./AuthContext";
 import {
   fetchUserTeams,
   createTeam as apiCreateTeam,
@@ -10,7 +16,9 @@ import {
   acceptInvite as apiAcceptInvite,
   rejectInvite as apiRejectInvite,
   updateMemberRole as updateMemberRoleAPI,
-} from '../api/teams';
+} from "../api/teams";
+import { TeamRole } from "../constants/team";
+import { Team, PendingInvite, AppUser } from "../types/team";
 
 interface TeamsContextType {
   teams: Team[];
@@ -22,8 +30,16 @@ interface TeamsContextType {
   removeMember: (teamId: string, memberId: string) => Promise<void>;
   acceptInvite: (inviteId: string) => Promise<void>;
   rejectInvite: (inviteId: string) => Promise<void>;
-  updateMemberRole: (teamId: string, memberId: string, newRole: TeamRole) => Promise<void>;
-  updateMemberJersey: (teamId: string, memberId: string, jerseyNumber: number | undefined) => void;
+  updateMemberRole: (
+    teamId: string,
+    memberId: string,
+    newRole: TeamRole,
+  ) => Promise<void>;
+  updateMemberJersey: (
+    teamId: string,
+    memberId: string,
+    jerseyNumber: number | undefined,
+  ) => void;
   getTeamById: (id: string) => Team | undefined;
   refreshTeams: () => Promise<void>;
 }
@@ -34,8 +50,12 @@ export function TeamsProvider({ children }: { children: ReactNode }) {
   const { user } = useAuth();
   const [teams, setTeams] = useState<Team[]>([]);
   const [loading, setLoading] = useState(false);
-  const [pendingReceivedInvites, setPendingReceivedInvites] = useState<PendingInvite[]>([]);
-  const [sentPendingInvites, setSentPendingInvites] = useState<PendingInvite[]>([]);
+  const [pendingReceivedInvites, setPendingReceivedInvites] = useState<
+    PendingInvite[]
+  >([]);
+  const [sentPendingInvites, setSentPendingInvites] = useState<PendingInvite[]>(
+    [],
+  );
 
   const loadTeams = useCallback(async () => {
     if (!user) {
@@ -67,107 +87,162 @@ export function TeamsProvider({ children }: { children: ReactNode }) {
 
   const createTeam = async (name: string, sport: string): Promise<Team> => {
     const representative = user
-      ? { id: user.id, firstName: user.firstName, lastName: user.lastName, username: user.username }
-      : undefined;
-    const team = await apiCreateTeam(name, sport, user?.token ?? '', representative);
+      ? {
+          id: user.id,
+          firstName: user.firstName ?? "",
+          lastName: user.lastName ?? "",
+          username: user.username ?? "",
+        }
+      : {
+          id: "",
+          firstName: "",
+          lastName: "",
+          username: "",
+        };
+    const team = await apiCreateTeam(
+      name,
+      sport,
+      user?.token ?? "",
+      representative,
+    );
     setTeams((prev) => [...prev, team]);
     return team;
   };
 
   const addMember = async (teamId: string, appUser: AppUser): Promise<void> => {
-    await apiInviteMember(teamId, appUser, user?.token ?? '');
-    const team = teams.find(t => t.id === teamId);
+    await apiInviteMember(teamId, appUser, user?.token ?? "");
+    const team = teams.find((t) => t.id === teamId);
     const newInvite: PendingInvite = {
       id: `invite-${Date.now()}-${appUser.id}`,
       teamId,
-      teamName: team?.name ?? '',
-      sport: team?.sport ?? '',
-      fromUserId: user?.id ?? '',
-      fromFirstName: user?.firstName ?? '',
-      fromLastName: user?.lastName ?? '',
+      teamName: team?.name ?? "",
+      sport: team?.sport ?? "",
+      fromUserId: user?.id ?? "",
+      fromFirstName: user?.firstName ?? "",
+      fromLastName: user?.lastName ?? "",
       toUserId: appUser.id,
       createdAt: new Date().toISOString(),
     };
-    setSentPendingInvites(prev => [...prev, newInvite]);
+    setSentPendingInvites((prev) => [...prev, newInvite]);
   };
 
-  const removeMember = useCallback(async (teamId: string, memberId: string) => {
-    if (!user) return;
-    // Optimistic update
-    setTeams(prev =>
-      prev.map(t =>
-        t.id === teamId
-          ? { ...t, members: t.members.filter(m => m.id !== memberId) }
-          : t
-      )
-    );
-    try {
-      await removeMemberAPI(teamId, memberId, user.token);
-    } catch (e) {
-      // Revert on error - refresh from API
+  const removeMember = useCallback(
+    async (teamId: string, memberId: string) => {
+      if (!user) return;
+      // Optimistic update
+      setTeams((prev) =>
+        prev.map((t) =>
+          t.id === teamId
+            ? { ...t, members: t.members.filter((m) => m.id !== memberId) }
+            : t,
+        ),
+      );
+      try {
+        await removeMemberAPI(teamId, memberId, user.token);
+      } catch (e) {
+        // Revert on error - refresh from API
+        await loadTeams();
+        throw e;
+      }
+    },
+    [user, loadTeams],
+  );
+
+  const acceptInvite = useCallback(
+    async (inviteId: string) => {
+      if (!user) return;
+      await apiAcceptInvite(
+        inviteId,
+        {
+          id: user.id,
+          firstName: user.firstName ?? "",
+          lastName: user.lastName ?? "",
+          username: user.username ?? "",
+        },
+        user.token,
+      );
+      setPendingReceivedInvites((prev) =>
+        prev.filter((i) => i.id !== inviteId),
+      );
       await loadTeams();
-      throw e;
-    }
-  }, [user, loadTeams]);
+    },
+    [user, loadTeams],
+  );
 
-  const acceptInvite = useCallback(async (inviteId: string) => {
-    if (!user) return;
-    await apiAcceptInvite(inviteId, { id: user.id, firstName: user.firstName, lastName: user.lastName, username: user.username }, user.token);
-    setPendingReceivedInvites(prev => prev.filter(i => i.id !== inviteId));
-    await loadTeams();
-  }, [user, loadTeams]);
+  const rejectInvite = useCallback(
+    async (inviteId: string) => {
+      if (!user) return;
+      await apiRejectInvite(inviteId, user.token);
+      setPendingReceivedInvites((prev) =>
+        prev.filter((i) => i.id !== inviteId),
+      );
+    },
+    [user],
+  );
 
-  const rejectInvite = useCallback(async (inviteId: string) => {
-    if (!user) return;
-    await apiRejectInvite(inviteId, user.token);
-    setPendingReceivedInvites(prev => prev.filter(i => i.id !== inviteId));
-  }, [user]);
+  const updateMemberRole = useCallback(
+    async (teamId: string, memberId: string, newRole: TeamRole) => {
+      if (!user) return;
+      setTeams((prev) =>
+        prev.map((t) =>
+          t.id === teamId
+            ? {
+                ...t,
+                members: t.members.map((m) =>
+                  m.id === memberId ? { ...m, role: newRole } : m,
+                ),
+              }
+            : t,
+        ),
+      );
+      try {
+        await updateMemberRoleAPI(teamId, memberId, newRole, user.token);
+      } catch (e) {
+        await loadTeams();
+        throw e;
+      }
+    },
+    [user, loadTeams],
+  );
 
-  const updateMemberRole = useCallback(async (teamId: string, memberId: string, newRole: TeamRole) => {
-    if (!user) return;
-    setTeams(prev =>
-      prev.map(t =>
-        t.id === teamId
-          ? { ...t, members: t.members.map(m => m.id === memberId ? { ...m, role: newRole } : m) }
-          : t
-      )
-    );
-    try {
-      await updateMemberRoleAPI(teamId, memberId, newRole, user.token);
-    } catch (e) {
-      await loadTeams();
-      throw e;
-    }
-  }, [user, loadTeams]);
-
-  const updateMemberJersey = useCallback((teamId: string, memberId: string, jerseyNumber: number | undefined) => {
-    setTeams(prev =>
-      prev.map(t =>
-        t.id === teamId
-          ? { ...t, members: t.members.map(m => m.id === memberId ? { ...m, jerseyNumber } : m) }
-          : t
-      )
-    );
-  }, []);
+  const updateMemberJersey = useCallback(
+    (teamId: string, memberId: string, jerseyNumber: number | undefined) => {
+      setTeams((prev) =>
+        prev.map((t) =>
+          t.id === teamId
+            ? {
+                ...t,
+                members: t.members.map((m) =>
+                  m.id === memberId ? { ...m, jerseyNumber } : m,
+                ),
+              }
+            : t,
+        ),
+      );
+    },
+    [],
+  );
 
   const getTeamById = (id: string) => teams.find((t) => t.id === id);
 
   return (
-    <TeamsContext.Provider value={{
-      teams,
-      loading,
-      pendingReceivedInvites,
-      sentPendingInvites,
-      createTeam,
-      addMember,
-      removeMember,
-      acceptInvite,
-      rejectInvite,
-      updateMemberRole,
-      updateMemberJersey,
-      getTeamById,
-      refreshTeams: loadTeams,
-    }}>
+    <TeamsContext.Provider
+      value={{
+        teams,
+        loading,
+        pendingReceivedInvites,
+        sentPendingInvites,
+        createTeam,
+        addMember,
+        removeMember,
+        acceptInvite,
+        rejectInvite,
+        updateMemberRole,
+        updateMemberJersey,
+        getTeamById,
+        refreshTeams: loadTeams,
+      }}
+    >
       {children}
     </TeamsContext.Provider>
   );
@@ -175,6 +250,6 @@ export function TeamsProvider({ children }: { children: ReactNode }) {
 
 export function useTeams() {
   const ctx = useContext(TeamsContext);
-  if (!ctx) throw new Error('useTeams must be used within TeamsProvider');
+  if (!ctx) throw new Error("useTeams must be used within TeamsProvider");
   return ctx;
 }

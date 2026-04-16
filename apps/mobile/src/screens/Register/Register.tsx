@@ -1,7 +1,10 @@
 import React, { useState, useLayoutEffect } from "react";
 import { Text } from "react-native";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { NavigationEnum, type RootStackParamList } from "../../types";
+import {
+  NavigationEnum,
+  type RootStackParamList,
+} from "../../types/navigation";
 import { useAuth } from "../../context/AuthContext";
 import CompetoLogo from "../../components/CompetoLogo/CompetoLogo";
 import AuthErrorBox from "../../components/AuthErrorBox/AuthErrorBox";

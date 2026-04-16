@@ -16,7 +16,6 @@ import { Ionicons } from "@expo/vector-icons";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { useAuth } from "../../context/AuthContext";
 import { useNotifications } from "../../context/NotificationsContext";
-import { AppUser, OrganizerProfile, RootStackParamList, UserRole } from "../../types";
 import { ic } from "./InviteCollaborators.styles";
 import { searchUsers } from "../../api/teams";
 import {
@@ -27,6 +26,10 @@ import {
 import { sizesEnum } from "../../theme/dimension";
 import { TabBar } from "../../components/TabBar/TabBar";
 import { colors } from "../../theme/colors";
+import { UserRole } from "../../constants/user";
+import { RootStackParamList } from "../../types/navigation";
+import { AppUser } from "../../types/team";
+import { OrganizerProfile } from "../../types/user";
 
 type Props = NativeStackScreenProps<RootStackParamList, "InviteCollaborators">;
 type Tab = "cerca" | "condividi";
@@ -92,7 +95,9 @@ export default function InviteCollaborators({ route, navigation }: Props) {
     (p) => p.id === profileId && p.role === UserRole.ORGANIZER,
   ) as OrganizerProfile | undefined;
 
-  const collaboratorIds = new Set(orgProfile?.collaborators?.map((c) => c.id) ?? []);
+  const collaboratorIds = new Set(
+    orgProfile?.collaborators?.map((c) => c.id) ?? [],
+  );
   const inviteLink = `competo://org/invite/${profileId}`;
 
   // Debounced search
@@ -150,11 +155,7 @@ export default function InviteCollaborators({ route, navigation }: Props) {
           <Text style={ic.headerTitle}>Invita collaboratori</Text>
           <View style={{ width: 36 }} />
         </View>
-        {orgProfile && (
-          <Text style={ic.orgName}>
-            {orgProfile.orgName}
-          </Text>
-        )}
+        {orgProfile && <Text style={ic.orgName}>{orgProfile.orgName}</Text>}
 
         {/* Tab bar */}
         <TabBar
@@ -243,7 +244,11 @@ export default function InviteCollaborators({ route, navigation }: Props) {
           /* Share link tab */
           <View style={ic.shareTab}>
             <View style={ic.shareIllustration}>
-              <Ionicons name="link" size={36} color={colors.primaryGradientMid} />
+              <Ionicons
+                name="link"
+                size={36}
+                color={colors.primaryGradientMid}
+              />
             </View>
             <Text style={ic.shareTitle}>Condividi il link di invito</Text>
             <Text style={ic.shareSub}>
@@ -276,7 +281,11 @@ export default function InviteCollaborators({ route, navigation }: Props) {
                   style={ic.socialBtn}
                   handleBtn={handleShare}
                   icon={
-                    <Ionicons name={icon} size={22} color={colors.placeholder} />
+                    <Ionicons
+                      name={icon}
+                      size={22}
+                      color={colors.placeholder}
+                    />
                   }
                 />
               ))}

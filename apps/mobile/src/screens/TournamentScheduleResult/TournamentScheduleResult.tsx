@@ -3,7 +3,7 @@ import { View, Text, ScrollView, TouchableOpacity } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
-import type { RootStackParamList, ScheduledMatch } from "../../types";
+import type { RootStackParamList } from "../../types/navigation";
 import {
   lastOutput,
   formatDisplayDate,
@@ -12,13 +12,20 @@ import {
 } from "../../utils/tournamentGenerator";
 import { colors } from "../../theme/colors";
 import { r } from "./TournamentScheduleResult.styles";
+import { ScheduledMatch } from "../../types/tournament";
 
 type Props = NativeStackScreenProps<
   RootStackParamList,
   "TournamentScheduleResult"
 >;
 
-type TabKey = "calendar" | "teams" | "referee" | "standings" | "structure";
+enum TabScheduleKey {
+  CALENDAR = "calendar",
+  TEAMS = "teams",
+  REFEREE = "referee",
+  STANDINGS = "standings",
+  STRUCTURE = "structure",
+}
 
 // ── Phase accent colors ────────────────────────────────────────────────────────
 function phaseColor(phase: ScheduledMatch["phase"]): string {
@@ -49,7 +56,9 @@ function groupByDate(matches: ScheduledMatch[]): Map<string, ScheduledMatch[]> {
 }
 
 export default function TournamentScheduleResult({ navigation }: Props) {
-  const [activeTab, setActiveTab] = useState<TabKey>("calendar");
+  const [activeTab, setActiveTab] = useState<TabScheduleKey>(
+    TabScheduleKey.CALENDAR,
+  );
   const [selectedTeam, setSelectedTeam] = useState<string | null>(null);
   const [structureSubTab, setStructureSubTab] = useState<
     "gironi" | "eliminazione"
@@ -95,13 +104,13 @@ export default function TournamentScheduleResult({ navigation }: Props) {
     config.phaseKind === "single" && config.format === "round-robin";
   const isMultiPhase = config.phaseKind === "multi";
 
-  const tabs: { key: TabKey; label: string }[] = [
-    { key: "calendar", label: "Calendario" },
-    { key: "teams", label: "Schede" },
-    { key: "referee", label: "Tabellino" },
+  const tabs: { key: TabScheduleKey; label: string }[] = [
+    { key: TabScheduleKey.CALENDAR, label: "Calendario" },
+    { key: TabScheduleKey.TEAMS, label: "Schede" },
+    { key: TabScheduleKey.REFEREE, label: "Tabellino" },
     showClassifica
-      ? { key: "standings", label: "Classifica" }
-      : { key: "structure", label: "Struttura" },
+      ? { key: TabScheduleKey.STANDINGS, label: "Classifica" }
+      : { key: TabScheduleKey.STRUCTURE, label: "Struttura" },
   ];
 
   // ── Tab: Calendario ──────────────────────────────────────────────────────────

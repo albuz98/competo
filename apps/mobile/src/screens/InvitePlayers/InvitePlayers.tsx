@@ -1,12 +1,5 @@
 import React, { useState } from "react";
-import {
-  View,
-  Text,
-  StatusBar,
-  ScrollView,
-  Share,
-  Alert,
-} from "react-native";
+import { View, Text, StatusBar, ScrollView, Share, Alert } from "react-native";
 
 import {
   SafeAreaView,
@@ -18,7 +11,7 @@ import * as Notifications from "expo-notifications";
 import { useTeams } from "../../context/TeamsContext";
 import { useAuth } from "../../context/AuthContext";
 import { useNotifications } from "../../context/NotificationsContext";
-import { AppUser, RootStackParamList } from "../../types";
+import { RootStackParamList } from "../../types/navigation";
 import { ip } from "./InvitePlayers.styles";
 import { searchUsers } from "../../api/teams";
 import {
@@ -30,21 +23,19 @@ import { sizesEnum } from "../../theme/dimension";
 import { TabBar } from "../../components/TabBar/TabBar";
 import { colors } from "../../theme/colors";
 import { InputBoxSearch } from "../../components/InputBoxSearch/InputBoxSearch";
+import { AppUser, Team } from "../../types/team";
 
 type Props = NativeStackScreenProps<RootStackParamList, "InvitePlayers">;
 type Tab = "cerca" | "condividi";
 
-function UserRow({
-  user,
-  alreadyMember,
-  invited,
-  onInvite,
-}: {
+interface UseRowProps {
   user: AppUser;
   alreadyMember: boolean;
   invited: boolean;
   onInvite: () => void;
-}) {
+}
+
+function UserRow({ user, alreadyMember, invited, onInvite }: UseRowProps) {
   const initials = (user.firstName[0] ?? "") + (user.lastName[0] ?? "");
   return (
     <View style={ip.userRow}>
@@ -89,7 +80,7 @@ export default function InvitePlayers({ route, navigation }: Props) {
   const [localQuery, setLocalQuery] = useState("");
   const [invited, setInvited] = useState<Set<string>>(new Set());
 
-  const team = getTeamById(teamId);
+  const team: Team | undefined = getTeamById(teamId);
   const memberIds = new Set(team?.members.map((m) => m.id) ?? []);
 
   const pendingInviteUserIds = new Set(
@@ -233,9 +224,7 @@ export default function InvitePlayers({ route, navigation }: Props) {
                   key={u.id}
                   user={u}
                   alreadyMember={memberIds.has(u.id)}
-                  invited={
-                    invited.has(u.id) || pendingInviteUserIds.has(u.id)
-                  }
+                  invited={invited.has(u.id) || pendingInviteUserIds.has(u.id)}
                   onInvite={() => handleInvite(u)}
                 />
               )}

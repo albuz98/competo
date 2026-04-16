@@ -19,7 +19,7 @@ import {
   type Tournament,
   type RootStackParamList,
   NavigationEnum,
-} from "../../types";
+} from "../../types/navigation";
 import { styles } from "./Explore.styles";
 import {
   ButtonBorderColored,

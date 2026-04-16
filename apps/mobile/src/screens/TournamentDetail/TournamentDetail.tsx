@@ -21,7 +21,7 @@ import {
   NavigationEnum,
   type RootStackParamList,
   type Tournament,
-} from "../../types";
+} from "../../types/navigation";
 import { fetchTournament } from "../../api/tournaments";
 import { useAuth } from "../../context/AuthContext";
 import { useFavorites } from "../../context/FavoritesContext";

@@ -1,5 +1,11 @@
 import React from "react";
-import { View, Text, ScrollView, StatusBar, TouchableOpacity } from "react-native";
+import {
+  View,
+  Text,
+  ScrollView,
+  StatusBar,
+  TouchableOpacity,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { LinearGradient } from "expo-linear-gradient";
 import { Ionicons } from "@expo/vector-icons";
@@ -11,12 +17,12 @@ import type {
   RootStackParamList,
   Tournament,
   MainTabParamList,
-} from "../../types";
-import { NavigationEnum } from "../../types";
+} from "../../types/navigation";
+import { NavigationEnum } from "../../types/navigation";
 import { useAuth } from "../../context/AuthContext";
 import { generateTournaments } from "../../mock/data";
 import { getMyTournamentsCache } from "../../api/tournaments";
-import type { MyTournament } from "../../types";
+import type { MyTournament } from "../../types/navigation";
 import { styles, BIG_W, BIG_H, SMALL_W } from "../../screens/Home/Home.styles";
 import {
   ButtonFullColored,

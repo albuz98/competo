@@ -12,7 +12,7 @@ import type {
   TournamentGroup,
   TournamentBracket,
   TournamentTeam,
-} from "../../types";
+} from "../../types/navigation";
 import { fetchMyTournament, activateTournament } from "../../api/tournaments";
 import { useAuth } from "../../context/AuthContext";
 import { colors, colorGradient } from "../../theme/colors";

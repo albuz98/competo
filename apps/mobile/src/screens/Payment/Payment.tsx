@@ -15,13 +15,13 @@ import { LinearGradient } from "expo-linear-gradient";
 import { Ionicons } from "@expo/vector-icons";
 import { CommonActions } from "@react-navigation/native";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { RootStackParamList } from "../../types";
+import { RootStackParamList } from "../../types/navigation";
 import { useAuth } from "../../context/AuthContext";
 import { signUpForTournament } from "../../api/tournaments";
 import { styles } from "./Payment.styles";
 import { ButtonFullColored, ButtonIcon } from "../../components/Button/Button";
-import InputBox from "../../components/InputBox/InputBox";
 import { colorGradient, colors } from "../../theme/colors";
+import { InputBox } from "../../components/InputBox/InputBox";
 
 type Props = NativeStackScreenProps<RootStackParamList, "Payment">;
 

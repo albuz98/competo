@@ -8,10 +8,11 @@ import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { Ionicons } from "@expo/vector-icons";
 import { useAuth } from "../../context/AuthContext";
-import { NavigationEnum, RootStackParamList, UserRole } from "../../types";
+import { NavigationEnum, RootStackParamList } from "../../types/navigation";
 import { colors } from "../../theme/colors";
 import { ButtonBack } from "../../components/Button/Button";
 import { styles } from "./Settings.styles";
+import { UserRole } from "../../constants/user";
 
 export default function Settings() {
   const navigation =

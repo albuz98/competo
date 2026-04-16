@@ -1,4 +1,5 @@
-import { TournamentFormat, TournamentPhaseKind } from "../types";
+import { TournamentFormat, TournamentPhaseKind } from "../constants/tournament";
+import { TournametNumberPartecipants } from "../types/tournament";
 
 export function estimateTotalMatches(
   numTeams: number,
@@ -6,7 +7,7 @@ export function estimateTotalMatches(
   phaseKind: TournamentPhaseKind,
   numGroups: number,
   koFormat?: TournamentFormat,
-): { total: number; groups: number; knockout: number } {
+): TournametNumberPartecipants {
   if (phaseKind === "multi") {
     const effGroups = Math.max(1, numGroups);
     const tpg = Math.ceil(numTeams / effGroups);
@@ -39,4 +40,6 @@ export function estimateTotalMatches(
     case "double-elimination":
       return { total: numTeams * 2 - 1, groups: 0, knockout: numTeams * 2 - 1 };
   }
+
+  return { total: 0, groups: 0, knockout: 0 };
 }

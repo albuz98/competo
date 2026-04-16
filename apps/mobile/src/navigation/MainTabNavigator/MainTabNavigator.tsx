@@ -4,7 +4,7 @@ import { styles } from "./MainTabNavigator.styles";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Ionicons } from "@expo/vector-icons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { NavigationEnum, type MainTabParamList } from "../../types";
+import { NavigationEnum, type MainTabParamList } from "../../types/navigation";
 import Explore from "../../screens/Explore/Explore";
 import Home from "../../screens/Home/Home";
 import Favorites from "../../screens/Favorites/Favorites";

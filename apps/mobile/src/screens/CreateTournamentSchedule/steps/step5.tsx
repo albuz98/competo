@@ -1,12 +1,11 @@
 import React from "react";
 import { TouchableOpacity, View, Text, Alert, Switch } from "react-native";
-import { DAY_LABELS } from "../../../constants/tournament";
-import { estimateTotalMatches } from "../../../functions/tournamet";
 import {
+  DAY_LABELS,
   TournamentFormat,
   TournamentPhaseKind,
-  TournametNumberPartecipants,
-} from "../../../types";
+} from "../../../constants/tournament";
+import { estimateTotalMatches } from "../../../functions/tournamet";
 import { s } from "../CreateTournamentSchedule.styles";
 import { Ionicons } from "@expo/vector-icons";
 import { colors } from "../../../theme/colors";
@@ -18,6 +17,7 @@ import {
 import { DatePickerModal } from "../../../components/DatePicker/DatePicker";
 import { sizesEnum } from "../../../theme/dimension";
 import { todayISO } from "../../../functions/general";
+import { TournametNumberPartecipants } from "../../../types/tournament";
 
 interface renderStep5Props {
   isSingleDay: boolean;
@@ -174,6 +174,7 @@ export function renderStep5({
       case "double-elimination":
         return deSR(numTeams);
     }
+    return 0;
   }
 
   const totalSR = estimateSubRounds(

@@ -25,14 +25,8 @@ import { useTeams } from "../../context/TeamsContext";
 import {
   RootStackParamList,
   MainTabParamList,
-  TournamentResult,
-  UserProfile,
-  UserRole,
-  type MyTournament,
-  type OrganizerProfile as OrganizerProfileType,
-  type PlayerProfile as PlayerProfileType,
   NavigationEnum,
-} from "../../types";
+} from "../../types/navigation";
 import { pStyles, styles } from "./Profile.styles";
 import { colorGradient, colors } from "../../theme/colors";
 import { Avatar } from "../../components/Avatar/Avatar";
@@ -48,8 +42,11 @@ import { fetchMyTournaments } from "../../api/tournaments";
 import { OrganizerProfile } from "./subComponents/OrganizeProfile/OrganizerProfile";
 import { HeaderCard } from "./subComponents/HeaderCard/HeaderCard";
 import { getProfileSubtitle } from "../../functions/profile";
-import { RESULT_CONFIG } from "../../constants/tournament";
+import { RESULT_CONFIG, TournamentResult } from "../../constants/tournament";
 import { InputBoxRow } from "../../components/InputBoxRow/InputBoxRow";
+import { UserRole } from "../../constants/user";
+import { MyTournament } from "../../types/tournament";
+import { UserProfile } from "../../types/user";
 
 export default function Profile() {
   const {
@@ -93,9 +90,7 @@ export default function Profile() {
   const savedScrollY = useRef(0);
 
   const isOrganizerProfile = currentProfile?.role === UserRole.ORGANIZER;
-  const playerProfile = !isOrganizerProfile
-    ? (currentProfile as PlayerProfileType | null)
-    : null;
+  const playerProfile = !isOrganizerProfile ? currentProfile : null;
 
   useEffect(() => {
     if (isOrganizerProfile) {
@@ -141,9 +136,7 @@ export default function Profile() {
 
   const handleStartEdit = () => {
     const orgProfile =
-      currentProfile?.role === UserRole.ORGANIZER
-        ? (currentProfile as OrganizerProfileType)
-        : null;
+      currentProfile?.role === UserRole.ORGANIZER ? currentProfile : null;
     if (orgProfile?.pendingApproval) {
       Alert.alert(
         "Profilo in revisione",
@@ -184,7 +177,7 @@ export default function Profile() {
     // Salva campi organizzatore
     if (
       currentProfile?.role === UserRole.ORGANIZER &&
-      form.orgName !== (currentProfile as OrganizerProfileType).orgName
+      form.orgName !== currentProfile.orgName
     ) {
       updateOrgProfileData(currentProfile.id, { orgName: form.orgName });
     }
@@ -246,7 +239,7 @@ export default function Profile() {
               <View style={styles.containerHeaderText}>
                 <Text style={styles.headerText}>
                   {currentProfile?.role === UserRole.ORGANIZER
-                    ? (currentProfile as OrganizerProfileType).orgName
+                    ? currentProfile.orgName
                     : currentProfile?.username || user.username}
                 </Text>
                 <Entypo name="chevron-down" size={20} color="black" />
@@ -293,7 +286,7 @@ export default function Profile() {
           {/* ── ORGANIZER PROFILE ─────────────────────────── */}
           {isOrganizerProfile ? (
             <OrganizerProfile
-              selectedProfile={currentProfile as OrganizerProfileType | null}
+              selectedProfile={currentProfile}
               orgTournaments={orgTournaments}
               loadingOrgTournaments={loadingOrgTournaments}
               user={user}
@@ -699,7 +692,11 @@ export default function Profile() {
               }}
               hitSlop={8}
             >
-              <Ionicons name="add" size={24} color={colors.primaryGradientMid} />
+              <Ionicons
+                name="add"
+                size={24}
+                color={colors.primaryGradientMid}
+              />
             </Pressable>
           </View>
           {user?.profiles && user.profiles.length > 0 ? (
@@ -738,7 +735,7 @@ export default function Profile() {
                       }}
                     >
                       {profile.role === UserRole.ORGANIZER
-                        ? (profile as OrganizerProfileType).orgName
+                        ? profile.orgName
                         : profile.username}
                     </Text>
                     {getProfileSubtitle(profile, user) && (

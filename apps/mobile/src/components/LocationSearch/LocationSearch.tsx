@@ -8,8 +8,8 @@ import { isMocking } from "../../api/config";
 import { colors, colorGradient } from "../../theme/colors";
 import { ls } from "./LocationSearch.styles";
 import { searchNominatim } from "../../api/searchLocation";
-import { Suggestion } from "../../types";
 import { InputBoxSearch } from "../InputBoxSearch/InputBoxSearch";
+import { Suggestion } from "../../types/location";
 
 interface LocationSearchProps {
   initialValue?: string;
@@ -33,7 +33,11 @@ export default function LocationSearch({
   const [selectedSuggestion, setSelectedSuggestion] =
     useState<Suggestion | null>(
       isConfirmed && initialValue
-        ? { displayName: initialValue, lat: initialLat ?? 0, lng: initialLng ?? 0 }
+        ? {
+            displayName: initialValue,
+            lat: initialLat ?? 0,
+            lng: initialLng ?? 0,
+          }
         : null,
     );
   const [mode, setMode] = useState<Mode>(
@@ -120,11 +124,7 @@ export default function LocationSearch({
     return (
       <View style={ls.container}>
         <View style={ls.confirmedRow}>
-          <Ionicons
-            name="checkmark-circle"
-            size={18}
-            color={colors.success}
-          />
+          <Ionicons name="checkmark-circle" size={18} color={colors.success} />
           <Text style={ls.confirmedText} numberOfLines={2}>
             {selectedSuggestion.displayName}
           </Text>

@@ -2,7 +2,7 @@ import React from "react";
 import { ActivityIndicator, View } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { NavigationEnum, type RootStackParamList } from "../types";
+import { NavigationEnum, type RootStackParamList } from "../types/navigation";
 import { navigationRef } from "./navigationRef";
 import { useNotificationSetup } from "../hooks/useNotificationSetup";
 import TeamsScreen from "../screens/Teams/Teams";

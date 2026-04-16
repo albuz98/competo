@@ -20,7 +20,7 @@ import {
   type RootStackParamList,
   type TeamMember,
   type TeamRole,
-} from "../../types";
+} from "../../types/navigation";
 import { useTeams } from "../../context/TeamsContext";
 import { useAuth } from "../../context/AuthContext";
 import { colorGradient, colors } from "../../theme/colors";

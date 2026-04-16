@@ -3,8 +3,11 @@ import { s } from "../CreateTournamentSchedule.styles";
 import { Ionicons } from "@expo/vector-icons";
 import { colors } from "../../../theme/colors";
 import { Stepper } from "../../../components/Stepper/Stepper";
-import { TournamentFormat, TournamentPhaseKind } from "../../../types";
 import { estimateTotalMatches } from "../../../functions/tournamet";
+import {
+  TournamentFormat,
+  TournamentPhaseKind,
+} from "../../../constants/tournament";
 
 interface renderStep3Props {
   setNumTeams: React.Dispatch<React.SetStateAction<number>>;
@@ -126,7 +129,10 @@ export function renderStep3({
           {phaseKind === "multi" ? (
             <View style={{ flex: 1, gap: 2 }}>
               <Text
-                style={[s.infoBoxText, { color: colors.dark, fontWeight: "700" }]}
+                style={[
+                  s.infoBoxText,
+                  { color: colors.dark, fontWeight: "700" },
+                ]}
               >
                 Partite stimate: {matchInfo.total}
               </Text>
@@ -138,7 +144,10 @@ export function renderStep3({
           ) : (
             <View style={{ flex: 1, gap: 2 }}>
               <Text
-                style={[s.infoBoxText, { color: colors.dark, fontWeight: "700" }]}
+                style={[
+                  s.infoBoxText,
+                  { color: colors.dark, fontWeight: "700" },
+                ]}
               >
                 Partite stimate: {matchInfo.total}
               </Text>

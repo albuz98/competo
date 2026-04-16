@@ -1,11 +1,17 @@
-import React, { createContext, useContext, useState, useEffect, type ReactNode } from 'react';
-import type { Tournament } from '../types';
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  type ReactNode,
+} from "react";
 import {
   fetchFavorites,
   addFavorite as apiAdd,
   removeFavorite as apiRemove,
-} from '../api/favorites';
-import { useAuth } from './AuthContext';
+} from "../api/favorites";
+import { useAuth } from "./AuthContext";
+import { Tournament } from "../types/tournament";
 
 interface FavoritesContextType {
   favorites: Tournament[];
@@ -30,7 +36,9 @@ export function FavoritesProvider({ children }: { children: ReactNode }) {
       setFullWhenAddedIds([]);
       return;
     }
-    fetchFavorites(user.token).then(setFavorites).catch(() => {});
+    fetchFavorites(user.token)
+      .then(setFavorites)
+      .catch(() => {});
   }, [user?.id]);
 
   const addFavorite = (tournament: Tournament) => {
@@ -58,7 +66,15 @@ export function FavoritesProvider({ children }: { children: ReactNode }) {
     fullWhenAddedIds.includes(tournamentId);
 
   return (
-    <FavoritesContext.Provider value={{ favorites, addFavorite, removeFavorite, isFavorite, wasAddedWhenFull }}>
+    <FavoritesContext.Provider
+      value={{
+        favorites,
+        addFavorite,
+        removeFavorite,
+        isFavorite,
+        wasAddedWhenFull,
+      }}
+    >
       {children}
     </FavoritesContext.Provider>
   );
@@ -66,6 +82,7 @@ export function FavoritesProvider({ children }: { children: ReactNode }) {
 
 export function useFavorites() {
   const ctx = useContext(FavoritesContext);
-  if (!ctx) throw new Error('useFavorites must be used within FavoritesProvider');
+  if (!ctx)
+    throw new Error("useFavorites must be used within FavoritesProvider");
   return ctx;
 }

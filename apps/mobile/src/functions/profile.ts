@@ -1,4 +1,5 @@
-import { User, UserProfile, UserRole } from "../types";
+import { UserRole } from "../constants/user";
+import { User, UserProfile } from "../types/user";
 
 export const getProfileSubtitle = (
   profile: UserProfile | null,

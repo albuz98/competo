@@ -1,9 +1,29 @@
 import { colors } from "../theme/colors";
-import {
-  TournamentFormat,
-  TournamentPhaseKind,
-  TournamentResult,
-} from "../types";
+
+export enum TournamentResult {
+  WON = "won",
+  SECOND = "second",
+  THIRD = "third",
+  ELIMINATED = "eliminated",
+}
+
+export enum TournamentFormat {
+  ROUND_ROBIN = "round-robin",
+  KNOCKOUT = "knockout",
+  DOUBLE_ELIMINATION = "double-elimination",
+}
+
+export enum TeamRegistrationStatus {
+  PENDING_APPROVAL = "pending_approval",
+  REJECTED = "rejected",
+  ACCEPTED = "accepted",
+  PAID = "paid",
+}
+
+export enum TournamentPhaseKind {
+  SINGLE = "single",
+  MULTI = "multi",
+}
 
 export const PHASES: {
   value: TournamentPhaseKind;
@@ -12,13 +32,13 @@ export const PHASES: {
   icon: string;
 }[] = [
   {
-    value: "single",
+    value: TournamentPhaseKind.SINGLE,
     label: "Fase Unica",
     sub: "Un solo formato per tutto il torneo",
     icon: "arrow-forward-circle-outline",
   },
   {
-    value: "multi",
+    value: TournamentPhaseKind.MULTI,
     label: "Multi-fase",
     sub: "Gironi (girone all'italiana) poi fase ad eliminazione",
     icon: "git-merge-outline",
@@ -32,19 +52,19 @@ export const SINGLE_FORMATS: {
   icon: string;
 }[] = [
   {
-    value: "round-robin",
+    value: TournamentFormat.ROUND_ROBIN,
     label: "Girone all'italiana",
     sub: "Ogni squadra affronta tutte le altre. V=3, P=1, S=0",
     icon: "refresh-circle-outline",
   },
   {
-    value: "knockout",
+    value: TournamentFormat.KNOCKOUT,
     label: "Eliminazione Diretta",
     sub: "Sconfitti eliminati. Seeding automatico (1ª vs ultima)",
     icon: "trophy-outline",
   },
   {
-    value: "double-elimination",
+    value: TournamentFormat.DOUBLE_ELIMINATION,
     label: "Doppia Eliminazione",
     sub: "Torneo A + Torneo B (Ultima Chance). Reset finale possibile",
     icon: "repeat-outline",
@@ -58,13 +78,13 @@ export const KO_FORMATS: {
   icon: string;
 }[] = [
   {
-    value: "knockout",
+    value: TournamentFormat.KNOCKOUT,
     label: "Eliminazione Diretta",
     sub: "Sconfitti eliminati al primo errore. Seeding automatico",
     icon: "trophy-outline",
   },
   {
-    value: "double-elimination",
+    value: TournamentFormat.DOUBLE_ELIMINATION,
     label: "Doppia Eliminazione",
     sub: "Torneo A + Torneo B (Ultima Chance). Reset finale possibile",
     icon: "repeat-outline",

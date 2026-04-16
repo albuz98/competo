@@ -1,12 +1,13 @@
 import { View, Text } from "react-native";
 import { s } from "../CreateTournamentSchedule.styles";
 import { colors } from "../../../theme/colors";
-import { TournamentFormat, TournamentPhaseKind } from "../../../types";
 import { Ionicons } from "@expo/vector-icons";
 import {
   KO_FORMATS,
   PHASES,
   SINGLE_FORMATS,
+  TournamentFormat,
+  TournamentPhaseKind,
 } from "../../../constants/tournament";
 import { ButtonGeneric } from "../../../components/Button/Button";
 

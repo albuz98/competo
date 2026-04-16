@@ -20,7 +20,7 @@ import {
   type Team,
   type PendingInvite,
   NavigationEnum,
-} from "../../types";
+} from "../../types/navigation";
 import { useTeams } from "../../context/TeamsContext";
 import {
   ButtonAccept,

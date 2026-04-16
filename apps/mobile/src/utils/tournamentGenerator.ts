@@ -1,11 +1,11 @@
-import type {
-  GeneratorConfig,
-  GeneratorGroup,
-  GeneratorOutput,
+import {
   ScheduledMatch,
-  StandingsEntry,
+  GeneratorConfig,
+  GeneratorOutput,
+  GeneratorGroup,
   TeamSchedule,
-} from "../types";
+  StandingsEntry,
+} from "../types/tournament";
 
 const BYE = "Bye (Pausa)";
 
@@ -27,15 +27,30 @@ function nextPowerOf2(n: number): number {
   return p;
 }
 
-function advanceToNextPlayDay(from: Date, playDays: number[], startHour: number): Date {
-  const d = new Date(from.getFullYear(), from.getMonth(), from.getDate() + 1, startHour, 0, 0, 0);
+function advanceToNextPlayDay(
+  from: Date,
+  playDays: number[],
+  startHour: number,
+): Date {
+  const d = new Date(
+    from.getFullYear(),
+    from.getMonth(),
+    from.getDate() + 1,
+    startHour,
+    0,
+    0,
+    0,
+  );
   while (!playDays.includes(d.getDay())) {
     d.setDate(d.getDate() + 1);
   }
   return d;
 }
 
-function knockoutRoundLabel(indexFromStart: number, totalRounds: number): string {
+function knockoutRoundLabel(
+  indexFromStart: number,
+  totalRounds: number,
+): string {
   const fromEnd = totalRounds - 1 - indexFromStart;
   if (fromEnd === 0) return "Finale";
   if (fromEnd === 1) return "Semifinali";
@@ -142,7 +157,10 @@ function doubleEliminationPairs(teams: string[]): MatchSpec[][] {
     rounds.push(winnersRounds[i]);
 
     // Losers bracket round feeds from this winners round
-    const numLosersMatches = Math.max(1, Math.floor(winnersRounds[i].length / 2));
+    const numLosersMatches = Math.max(
+      1,
+      Math.floor(winnersRounds[i].length / 2),
+    );
     const lRound: MatchSpec[] = [];
     for (let j = 0; j < numLosersMatches; j++) {
       lRound.push({
@@ -180,7 +198,10 @@ function doubleEliminationPairs(teams: string[]): MatchSpec[][] {
 
 // ── Scheduling ────────────────────────────────────────────────────────────────
 
-function scheduleRounds(rounds: MatchSpec[][], config: GeneratorConfig): ScheduledMatch[] {
+function scheduleRounds(
+  rounds: MatchSpec[][],
+  config: GeneratorConfig,
+): ScheduledMatch[] {
   const allMatches: ScheduledMatch[] = [];
   let matchId = 1;
 
@@ -190,8 +211,13 @@ function scheduleRounds(rounds: MatchSpec[][], config: GeneratorConfig): Schedul
   // Advance to first valid play day
   while (!config.playDays.includes(currentDate.getDay())) {
     currentDate = new Date(
-      currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate() + 1,
-      config.startHour, 0, 0, 0,
+      currentDate.getFullYear(),
+      currentDate.getMonth(),
+      currentDate.getDate() + 1,
+      config.startHour,
+      0,
+      0,
+      0,
     );
   }
 
@@ -226,13 +252,17 @@ function scheduleRounds(rounds: MatchSpec[][], config: GeneratorConfig): Schedul
   function canFitBatch(batch: MatchSpec[], date: Date): boolean {
     if (!config.playDays.includes(date.getDay())) return false;
     // Check total daily match limit
-    const realCount = batch.filter((m) => !m.isBye && m.home !== "TBD" && m.away !== "TBD").length;
+    const realCount = batch.filter(
+      (m) => !m.isBye && m.home !== "TBD" && m.away !== "TBD",
+    ).length;
     if (getDayTotal(date) + realCount > dailyLimit) return false;
     // Check per-team daily limit
     for (const m of batch) {
       if (m.isBye || m.home === "TBD" || m.away === "TBD") continue;
-      if (getCount(m.home, date) >= config.maxMatchesPerDayPerTeam) return false;
-      if (getCount(m.away, date) >= config.maxMatchesPerDayPerTeam) return false;
+      if (getCount(m.home, date) >= config.maxMatchesPerDayPerTeam)
+        return false;
+      if (getCount(m.away, date) >= config.maxMatchesPerDayPerTeam)
+        return false;
     }
     return true;
   }
@@ -248,15 +278,26 @@ function scheduleRounds(rounds: MatchSpec[][], config: GeneratorConfig): Schedul
     // Phase change (groups → knockout) or final day: advance to next day (skip in single-day mode)
     if (
       !config.singleDay &&
-      ((prevPhase && currPhase && prevPhase !== currPhase && prevPhase === "groups") ||
+      ((prevPhase &&
+        currPhase &&
+        prevPhase !== currPhase &&
+        prevPhase === "groups") ||
         (config.hasFinalDay && roundIdx === rounds.length - 1))
     ) {
-      if (config.hasFinalDay && config.finalDayDate && roundIdx === rounds.length - 1) {
+      if (
+        config.hasFinalDay &&
+        config.finalDayDate &&
+        roundIdx === rounds.length - 1
+      ) {
         // Jump to the exact final day date chosen by the user
         const [fy, fm, fd] = config.finalDayDate.split("-").map(Number);
         currentDate = new Date(fy, fm - 1, fd, config.startHour, 0, 0, 0);
       } else {
-        currentDate = advanceToNextPlayDay(currentDate, config.playDays, config.startHour);
+        currentDate = advanceToNextPlayDay(
+          currentDate,
+          config.playDays,
+          config.startHour,
+        );
       }
     }
     prevPhase = currPhase;
@@ -267,14 +308,20 @@ function scheduleRounds(rounds: MatchSpec[][], config: GeneratorConfig): Schedul
 
       // Ensure we're on a valid play day and within daily limits
       if (!canFitBatch(batch, currentDate)) {
-        currentDate = advanceToNextPlayDay(currentDate, config.playDays, config.startHour);
+        currentDate = advanceToNextPlayDay(
+          currentDate,
+          config.playDays,
+          config.startHour,
+        );
       }
 
       // Schedule each match in the batch on a different field simultaneously
       let realScheduled = 0;
       batch.forEach((m, fieldIdx) => {
         const startTime = new Date(currentDate);
-        const endTime = new Date(currentDate.getTime() + config.matchDurationMinutes * 60_000);
+        const endTime = new Date(
+          currentDate.getTime() + config.matchDurationMinutes * 60_000,
+        );
 
         allMatches.push({
           id: String(matchId++),
@@ -300,12 +347,19 @@ function scheduleRounds(rounds: MatchSpec[][], config: GeneratorConfig): Schedul
       // Advance time for next sub-batch
       currentDate = new Date(
         currentDate.getTime() +
-          (config.matchDurationMinutes + config.restMinutes + config.travelMinutes) * 60_000,
+          (config.matchDurationMinutes +
+            config.restMinutes +
+            config.travelMinutes) *
+            60_000,
       );
 
       // For multi-day mode: if it's gotten late (past 22:00) roll to next play day
       if (!config.singleDay && currentDate.getHours() >= 22) {
-        currentDate = advanceToNextPlayDay(currentDate, config.playDays, config.startHour);
+        currentDate = advanceToNextPlayDay(
+          currentDate,
+          config.playDays,
+          config.startHour,
+        );
       }
     }
   }
@@ -330,7 +384,9 @@ export function generateTournament(config: GeneratorConfig): GeneratorOutput {
     throw new Error("Serve almeno 1 campo.");
   }
 
-  const teamNames = config.participants.map((p, i) => p.name.trim() || `Squadra ${i + 1}`);
+  const teamNames = config.participants.map(
+    (p, i) => p.name.trim() || `Squadra ${i + 1}`,
+  );
   const realTeams = teamNames.filter((n) => n !== BYE);
 
   // Build round specs
@@ -345,13 +401,17 @@ export function generateTournament(config: GeneratorConfig): GeneratorOutput {
     groupsInfo = [];
     const groupRoundsData: MatchSpec[][][] = [];
     for (let g = 0; g < numGroups; g++) {
-      const groupTeams = realTeams.slice(g * teamsPerGroup, (g + 1) * teamsPerGroup);
+      const groupTeams = realTeams.slice(
+        g * teamsPerGroup,
+        (g + 1) * teamsPerGroup,
+      );
       if (groupTeams.length < 2) continue;
       const letter = String.fromCharCode(65 + g);
       const groupName = numGroups === 1 ? "Girone" : `Girone ${letter}`;
       groupsInfo.push({ name: groupName, teams: groupTeams });
 
-      const withBye = groupTeams.length % 2 !== 0 ? [...groupTeams, BYE] : groupTeams;
+      const withBye =
+        groupTeams.length % 2 !== 0 ? [...groupTeams, BYE] : groupTeams;
       const label = numGroups === 1 ? "Girone - " : `Girone ${letter} - `;
       groupRoundsData.push(
         roundRobinPairs(withBye, label).map((r) =>
@@ -373,10 +433,19 @@ export function generateTournament(config: GeneratorConfig): GeneratorOutput {
 
     // Knockout: top 2 per group advance, cross-group ordering
     const advancingCount = Math.min(numGroups * 2, realTeams.length);
-    const groupLetters = Array.from({ length: numGroups }, (_, i) => String.fromCharCode(65 + i));
+    const groupLetters = Array.from({ length: numGroups }, (_, i) =>
+      String.fromCharCode(65 + i),
+    );
     const winners = groupLetters.map((l) => `1° Gir. ${l}`);
-    const runnersUpTail = groupLetters.slice(1).reverse().map((l) => `2° Gir. ${l}`);
-    const allKoLabels = [...winners, `2° Gir. ${groupLetters[0]}`, ...runnersUpTail];
+    const runnersUpTail = groupLetters
+      .slice(1)
+      .reverse()
+      .map((l) => `2° Gir. ${l}`);
+    const allKoLabels = [
+      ...winners,
+      `2° Gir. ${groupLetters[0]}`,
+      ...runnersUpTail,
+    ];
     const koTeams = allKoLabels.slice(0, advancingCount);
 
     const koRounds =
@@ -398,6 +467,8 @@ export function generateTournament(config: GeneratorConfig): GeneratorOutput {
       case "double-elimination":
         rounds = doubleEliminationPairs(realTeams);
         break;
+      default:
+        rounds = [];
     }
   }
 
@@ -413,7 +484,9 @@ export function generateTournament(config: GeneratorConfig): GeneratorOutput {
 
   // Initial standings (all zeroes — filled in as results come in)
   const standings: StandingsEntry[] = realTeams.map((name) => {
-    const byeWins = allMatches.filter((m) => m.isBye && (m.homeTeam === name || m.awayTeam === name)).length;
+    const byeWins = allMatches.filter(
+      (m) => m.isBye && (m.homeTeam === name || m.awayTeam === name),
+    ).length;
     return {
       teamName: name,
       played: byeWins,
@@ -426,7 +499,13 @@ export function generateTournament(config: GeneratorConfig): GeneratorOutput {
     };
   });
 
-  const output: GeneratorOutput = { config, allMatches, teamSchedules, standings, groups: groupsInfo };
+  const output: GeneratorOutput = {
+    config,
+    allMatches,
+    teamSchedules,
+    standings,
+    groups: groupsInfo,
+  };
   lastOutput = output;
   return output;
 }
@@ -434,7 +513,20 @@ export function generateTournament(config: GeneratorConfig): GeneratorOutput {
 // ── Display helpers (used by result screen) ───────────────────────────────────
 
 const IT_DAYS = ["Dom", "Lun", "Mar", "Mer", "Gio", "Ven", "Sab"];
-const IT_MONTHS = ["Gen", "Feb", "Mar", "Apr", "Mag", "Giu", "Lug", "Ago", "Set", "Ott", "Nov", "Dic"];
+const IT_MONTHS = [
+  "Gen",
+  "Feb",
+  "Mar",
+  "Apr",
+  "Mag",
+  "Giu",
+  "Lug",
+  "Ago",
+  "Set",
+  "Ott",
+  "Nov",
+  "Dic",
+];
 
 export function formatDisplayDate(iso: string): string {
   const d = new Date(iso);

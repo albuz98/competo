@@ -18,7 +18,7 @@ import {
   NavigationEnum,
   type RootStackParamList,
   type Team,
-} from "../../types";
+} from "../../types/navigation";
 import { useTeams } from "../../context/TeamsContext";
 import {
   ButtonFullColored,

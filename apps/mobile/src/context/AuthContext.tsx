@@ -7,22 +7,20 @@ import React, {
   type ReactNode,
 } from "react";
 import * as SecureStore from "expo-secure-store";
-import type {
-  User,
-  LoginCredentials,
-  RegisterCredentials,
-  UpdateProfileData,
-  OrganizerProfile,
-  AppUser,
-  UserProfile,
-} from "../types";
-import { UserRole } from "../types";
 import {
   login as apiLogin,
   register as apiRegister,
   updateProfile as apiUpdateProfile,
   fetchProfile,
 } from "../api/auth";
+import { OrganizerProfile, User, UserProfile } from "../types/user";
+import {
+  LoginCredentials,
+  RegisterCredentials,
+  UpdateProfileData,
+} from "../types/auth";
+import { UserRole } from "../constants/user";
+import { AppUser } from "../types/team";
 
 const TOKEN_KEY = "authToken";
 
@@ -40,7 +38,10 @@ interface AuthContextType {
   updateLocation: (location: string) => void;
   switchProfile: (profileId: string) => void;
   updateProfile: (data: UpdateProfileData) => Promise<void>;
-  updateOrgProfileData: (profileId: string, updates: Partial<OrganizerProfile>) => void;
+  updateOrgProfileData: (
+    profileId: string,
+    updates: Partial<OrganizerProfile>,
+  ) => void;
   addCollaborator: (profileId: string, appUser: AppUser) => void;
   addOrganizerProfile: (orgName: string) => void;
 }

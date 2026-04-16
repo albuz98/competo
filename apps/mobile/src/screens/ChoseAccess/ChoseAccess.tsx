@@ -1,5 +1,5 @@
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { NavigationEnum, RootStackParamList } from "../../types";
+import { NavigationEnum, RootStackParamList } from "../../types/navigation";
 import { StatusBar, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { styles } from "./ChoseAccess.styles";

@@ -1,7 +1,10 @@
 import React, { useState } from "react";
 import { Alert, ScrollView } from "react-native";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { type RootStackParamList, NavigationEnum } from "../../types";
+import {
+  type RootStackParamList,
+  NavigationEnum,
+} from "../../types/navigation";
 import { useAuth } from "../../context/AuthContext";
 import { s } from "./CreateOrganizerProfile.styles";
 import { StructureSchedule } from "../../components/StructureSchedule/StructureSchedule";

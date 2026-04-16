@@ -3,12 +3,8 @@ import { ScrollView, Alert } from "react-native";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import {
   type RootStackParamList,
-  type TournamentFormat,
-  type TournamentPhaseKind,
-  type CreateTournamentPayload,
-  type TournametNumberPartecipants,
   NavigationEnum,
-} from "../../types";
+} from "../../types/navigation";
 import { createTournament } from "../../api/tournaments";
 import { useAuth } from "../../context/AuthContext";
 import { s } from "./CreateTournamentSchedule.styles";
@@ -18,9 +14,17 @@ import { renderStep3 } from "./steps/step3";
 import { estimateTotalMatches } from "../../functions/tournamet";
 import { renderStep4 } from "./steps/step4";
 import { renderStep5 } from "./steps/step5";
-import { STEP_TITLES_TOURNAMENT } from "../../constants/tournament";
+import {
+  STEP_TITLES_TOURNAMENT,
+  TournamentFormat,
+  TournamentPhaseKind,
+} from "../../constants/tournament";
 import { StructureSchedule } from "../../components/StructureSchedule/StructureSchedule";
 import { todayISO } from "../../functions/general";
+import {
+  CreateTournamentPayload,
+  TournametNumberPartecipants,
+} from "../../types/tournament";
 
 type Props = NativeStackScreenProps<
   RootStackParamList,
@@ -46,10 +50,15 @@ export default function CreateTournamentSchedule({ navigation }: Props) {
   );
 
   // Step 2: Structure (chosen first)
-  const [phaseKind, setPhaseKind] = useState<TournamentPhaseKind>("single");
-  const [format, setFormat] = useState<TournamentFormat>("round-robin");
-  const [knockoutFormat, setKnockoutFormat] =
-    useState<TournamentFormat>("knockout");
+  const [phaseKind, setPhaseKind] = useState<TournamentPhaseKind>(
+    TournamentPhaseKind.SINGLE,
+  );
+  const [format, setFormat] = useState<TournamentFormat>(
+    TournamentFormat.ROUND_ROBIN,
+  );
+  const [knockoutFormat, setKnockoutFormat] = useState<TournamentFormat>(
+    TournamentFormat.KNOCKOUT,
+  );
 
   // Step 3: Participants (informed by structure)
   const [numTeams, setNumTeams] = useState(8);

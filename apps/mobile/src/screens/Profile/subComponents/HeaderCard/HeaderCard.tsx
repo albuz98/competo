@@ -5,7 +5,7 @@ import {
   ButtonBorderColored,
   ButtonIcon,
 } from "../../../../components/Button/Button";
-import { UpdateProfileData, User } from "../../../../types";
+import { UpdateProfileData, User } from "../../../../types/navigation";
 import { Ionicons } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
 import QRCode from "react-native-qrcode-svg";

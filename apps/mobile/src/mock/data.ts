@@ -1,24 +1,24 @@
 import { faker } from "@faker-js/faker";
 import {
-  type Tournament,
-  type User,
-  type MyTournament,
-  type TournamentStructure,
-  type TournamentTeam,
-  type TournamentMatch,
-  type TournamentGroup,
-  type Team,
-  type TeamMember,
-  type AppUser,
-  type PlayerStats,
-  type TeamRegistrationStatus,
-  TeamRole,
-  type TournamentPlayer,
-  type TournamentRegisteredTeam,
-  type OrganizerTournamentDetail,
-  UserRole,
+  MyTournament,
+  OrganizerTournamentDetail,
+  Tournament,
+  TournamentGroup,
+  TournamentMatch,
+  TournamentPlayer,
+  TournamentRegisteredTeam,
+  TournamentStructure,
+  TournamentTeam,
+} from "../types/tournament";
+import { TeamRole } from "../constants/team";
+import {
   TournamentResult,
-} from "../types";
+  TeamRegistrationStatus,
+} from "../constants/tournament";
+import { UserRole } from "../constants/user";
+import { PlayerStats } from "../types/stats";
+import { TeamMember, Team, AppUser } from "../types/team";
+import { User } from "../types/user";
 
 export const GAMES = [
   "Calcio",
@@ -267,7 +267,7 @@ export function generateTournamentPlayer(
 }
 
 export function generateTournamentRegisteredTeam(
-  status: TeamRegistrationStatus = "pending_approval",
+  status: TeamRegistrationStatus = TeamRegistrationStatus.PENDING_APPROVAL,
 ): TournamentRegisteredTeam {
   const playerCount = faker.number.int({ min: 5, max: 11 });
   const extraRoles: TeamRole[] = Array(Math.max(0, playerCount - 3)).fill(
@@ -300,19 +300,22 @@ export function generateOrganizerTournamentDetail(
   const MAX_TEAMS = 4;
   const registeredTeams: TournamentRegisteredTeam[] = allPaid
     ? Array.from({ length: MAX_TEAMS }, () =>
-        generateTournamentRegisteredTeam("paid"),
+        generateTournamentRegisteredTeam(TeamRegistrationStatus.PAID),
       )
     : [
-        generateTournamentRegisteredTeam("paid"),
-        generateTournamentRegisteredTeam("paid"),
-        generateTournamentRegisteredTeam("accepted"),
-        generateTournamentRegisteredTeam("pending_approval"),
+        generateTournamentRegisteredTeam(TeamRegistrationStatus.PAID),
+        generateTournamentRegisteredTeam(TeamRegistrationStatus.PAID),
+        generateTournamentRegisteredTeam(TeamRegistrationStatus.ACCEPTED),
+        generateTournamentRegisteredTeam(
+          TeamRegistrationStatus.PENDING_APPROVAL,
+        ),
       ];
   return {
     ...base,
     maxParticipants: MAX_TEAMS,
-    currentParticipants: registeredTeams.filter((t) => t.status !== "rejected")
-      .length,
+    currentParticipants: registeredTeams.filter(
+      (t) => t.status !== TeamRegistrationStatus.REJECTED,
+    ).length,
     registeredTeams,
   };
 }

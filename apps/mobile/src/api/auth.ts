@@ -1,12 +1,17 @@
 import { isMocking, apiFetch } from "./config";
 import { mockFlags } from "./mockFlags";
 import { mockProfile } from "../mock/data";
-import type { LoginCredentials, RegisterCredentials, User } from "../types";
+import type {
+  LoginCredentials,
+  RegisterCredentials,
+  User,
+} from "../types/navigation";
 
 // Reload the authenticated user from the server (e.g. on app restart with a stored token).
 // In mock mode returns the editable mockProfile object from src/mock/data.ts.
 export async function fetchProfile(token: string): Promise<User> {
-  if (isMocking && mockFlags.IS_MOCKING_FETCH_PROFILE) return { ...mockProfile };
+  if (isMocking && mockFlags.IS_MOCKING_FETCH_PROFILE)
+    return { ...mockProfile };
   return apiFetch<User>("/auth/profile", {}, token);
 }
 

@@ -14,7 +14,7 @@ import {
 } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { NavigationEnum, RootStackParamList } from "../../types";
+import { NavigationEnum, RootStackParamList } from "../../types/navigation";
 import { useTeams } from "../../context/TeamsContext";
 import { cs } from "./CreateTeam.styles";
 import { GAMES } from "../../mock/data";

@@ -21,7 +21,7 @@ import {
   type RootStackParamList,
   type UpdateProfileData,
   type User,
-} from "../../../../types";
+} from "../../../../types/navigation";
 import { colorGradient, colors } from "../../../../theme/colors";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
