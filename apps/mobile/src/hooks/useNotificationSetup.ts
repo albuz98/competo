@@ -1,8 +1,8 @@
-import { useEffect, useRef } from 'react';
-import * as Location from 'expo-location';
-import { useNotifications } from '../context/NotificationsContext';
-import { generateTournament } from '../mock/data';
-import { addToMockCache } from '../api/tournaments';
+import { useEffect, useRef } from "react";
+import * as Location from "expo-location";
+import { useNotifications } from "../context/NotificationsContext";
+import { addToMockCache } from "../api/tournaments";
+import { generateTournament } from "../mock/tournaments";
 
 function haversineKm(lat1: number, lng1: number, lat2: number, lng2: number) {
   const R = 6371;
@@ -34,7 +34,7 @@ export function useNotificationSetup() {
       let lng = 9.19;
       try {
         const { status } = await Location.requestForegroundPermissionsAsync();
-        if (status === 'granted') {
+        if (status === "granted") {
           const pos = await Location.getCurrentPositionAsync({
             accuracy: Location.Accuracy.Low,
           });
@@ -54,7 +54,7 @@ export function useNotificationSetup() {
       addToMockCache(tournament);
 
       addNotificationRef.current({
-        title: 'Nuovo torneo vicino a te 🏆',
+        title: "Nuovo torneo vicino a te 🏆",
         body: `"${tournament.name}" è aperto a ${distKm.toFixed(1)} km da te. Iscriviti ora!`,
         timestamp: new Date().toISOString(),
         tournamentId: tournament.id,

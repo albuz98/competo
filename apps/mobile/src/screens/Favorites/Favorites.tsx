@@ -8,8 +8,10 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import type { RootStackParamList, Tournament } from "../../types/navigation";
-import { NavigationEnum, UserRole } from "../../types/navigation";
+import type { RootStackParamList } from "../../types/navigation";
+import { NavigationEnum } from "../../types/navigation";
+import type { Tournament } from "../../types/tournament";
+import { UserRole } from "../../constants/user";
 import { useFavorites } from "../../context/FavoritesContext";
 import { useAuth } from "../../context/AuthContext";
 import { ButtonGeneric, ButtonIcon } from "../../components/Button/Button";

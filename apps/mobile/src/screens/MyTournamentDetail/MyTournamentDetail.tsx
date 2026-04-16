@@ -4,15 +4,15 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { LinearGradient } from "expo-linear-gradient";
 import { Ionicons } from "@expo/vector-icons";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
+import type { RootStackParamList } from "../../types/navigation";
 import type {
-  RootStackParamList,
   MyTournament,
   TournamentStructure,
   TournamentMatch,
   TournamentGroup,
   TournamentBracket,
   TournamentTeam,
-} from "../../types/navigation";
+} from "../../types/tournament";
 import { fetchMyTournament, activateTournament } from "../../api/tournaments";
 import { useAuth } from "../../context/AuthContext";
 import { colors, colorGradient } from "../../theme/colors";

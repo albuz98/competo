@@ -6,10 +6,8 @@ import {
 } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
-import {
-  TournamentResult,
-  type RootStackParamList,
-} from "../../types/navigation";
+import type { RootStackParamList } from "../../types/navigation";
+import { TournamentResult } from "../../constants/tournament";
 import { useAuth } from "../../context/AuthContext";
 import { colors } from "../../theme/colors";
 import { ButtonIcon } from "../../components/Button/Button";

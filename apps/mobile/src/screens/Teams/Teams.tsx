@@ -15,12 +15,8 @@ import {
 import { LinearGradient } from "expo-linear-gradient";
 import { Ionicons } from "@expo/vector-icons";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
-import {
-  type RootStackParamList,
-  type Team,
-  type PendingInvite,
-  NavigationEnum,
-} from "../../types/navigation";
+import { NavigationEnum, type RootStackParamList } from "../../types/navigation";
+import type { Team, PendingInvite } from "../../types/team";
 import { useTeams } from "../../context/TeamsContext";
 import {
   ButtonAccept,

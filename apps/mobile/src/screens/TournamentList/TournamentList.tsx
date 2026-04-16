@@ -12,8 +12,8 @@ import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import {
   NavigationEnum,
   type RootStackParamList,
-  type Tournament,
 } from "../../types/navigation";
+import type { Tournament } from "../../types/tournament";
 import { fetchTournaments } from "../../api/tournaments";
 import { useAuth } from "../../context/AuthContext";
 import { styles } from "./TournamentList.styles";

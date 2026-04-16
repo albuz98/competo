@@ -1,9 +1,7 @@
 import { UserRole } from "../constants/user";
-import { MatchStats, PlayerCareerStats } from "./stats";
+import type { MatchStats, PlayerCareerStats } from "./stats";
 import { TournamentResult } from "../constants/tournament";
 import { AppUser } from "./team";
-
-export type PlayerCareerRole = "calciatore" | "portiere";
 
 export type OrganizerCollaborator = AppUser;
 
