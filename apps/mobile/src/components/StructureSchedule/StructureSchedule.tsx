@@ -12,9 +12,6 @@ import { ButtonBorderColored, ButtonGradient } from "../Button/Button";
 import { s } from "./StructureSchedule.styled";
 import { colors } from "../../theme/colors";
 import { Ionicons } from "@expo/vector-icons";
-import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { RootStackParamList } from "../../types";
-
 interface StructureScheduleProps {
   numberSteps: number;
   children: React.ReactNode;
@@ -25,11 +22,10 @@ interface StructureScheduleProps {
   generating: boolean;
   stepTitles: string[];
   isStepValid(): boolean;
-  navigation: NativeStackNavigationProp<
-    RootStackParamList,
-    "CreateTournamentSchedule",
-    undefined
-  >;
+  navigation: { goBack: () => void };
+  cancelTitle: string;
+  cancelMessage: string;
+  lastStepLabel: string;
 }
 
 export const StructureSchedule = ({
@@ -43,6 +39,9 @@ export const StructureSchedule = ({
   stepTitles,
   isStepValid,
   navigation,
+  cancelTitle,
+  cancelMessage,
+  lastStepLabel,
 }: StructureScheduleProps) => {
   function handleNext() {
     if (!validateStep()) return;
@@ -56,18 +55,14 @@ export const StructureSchedule = ({
   }
 
   function confirmCancel() {
-    Alert.alert(
-      "Annulla creazione",
-      "Sei sicuro di voler annullare la creazione del torneo?",
-      [
-        { text: "No", style: "cancel" },
-        {
-          text: "Sì, annulla",
-          style: "destructive",
-          onPress: () => navigation.goBack(),
-        },
-      ],
-    );
+    Alert.alert(cancelTitle, cancelMessage, [
+      { text: "No", style: "cancel" },
+      {
+        text: "Sì, annulla",
+        style: "destructive",
+        onPress: () => navigation.goBack(),
+      },
+    ]);
   }
 
   const headerSteps = Array.from({ length: numberSteps }, (_, i) => i + 1);
@@ -137,7 +132,7 @@ export const StructureSchedule = ({
               ]}
             >
               <Text style={s.btnNextText}>
-                {step === numberSteps ? "Crea" : "Avanti"}
+                {step === numberSteps ? lastStepLabel : "Avanti"}
               </Text>
             </ButtonGradient>
           </View>

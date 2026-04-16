@@ -20,18 +20,13 @@ import { renderStep4 } from "./steps/step4";
 import { renderStep5 } from "./steps/step5";
 import { STEP_TITLES_TOURNAMENT } from "../../constants/tournament";
 import { StructureSchedule } from "../../components/StructureSchedule/StructureSchedule";
+import { todayISO } from "../../functions/general";
 
 type Props = NativeStackScreenProps<
   RootStackParamList,
   "CreateTournamentSchedule"
 >;
 
-function todayISO(): string {
-  const d = new Date();
-  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
-}
-
-// ── Screen ────────────────────────────────────────────────────────────────────
 export default function CreateTournamentSchedule({ navigation }: Props) {
   const { user } = useAuth();
   const [step, setStep] = useState<number>(1);
@@ -107,7 +102,6 @@ export default function CreateTournamentSchedule({ navigation }: Props) {
     }
   }, [maxDaysNeeded, isSingleDay]);
 
-  // ── Validation ──────────────────────────────────────────────────────────────
   function validateStep(): boolean {
     if (step === 1 && !tournamentName.trim()) {
       Alert.alert("Nome mancante", "Inserisci il nome del torneo.");
@@ -245,7 +239,6 @@ export default function CreateTournamentSchedule({ navigation }: Props) {
     return true;
   }
 
-  // ── Main render ───────────────────────────────────────────────────────────
   return (
     <StructureSchedule
       numberSteps={5}
@@ -257,6 +250,9 @@ export default function CreateTournamentSchedule({ navigation }: Props) {
       stepTitles={STEP_TITLES_TOURNAMENT}
       isStepValid={isStepValid}
       navigation={navigation}
+      cancelTitle="Annulla creazione"
+      cancelMessage="Sei sicuro di voler annullare la creazione del torneo?"
+      lastStepLabel="Crea"
     >
       <ScrollView
         style={{ flex: 1 }}

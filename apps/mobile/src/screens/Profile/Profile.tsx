@@ -144,6 +144,13 @@ export default function Profile() {
       currentProfile?.role === UserRole.ORGANIZER
         ? (currentProfile as OrganizerProfileType)
         : null;
+    if (orgProfile?.pendingApproval) {
+      Alert.alert(
+        "Profilo in revisione",
+        "Non puoi modificare il profilo organizzatore fino all'approvazione da parte del team Competo.",
+      );
+      return;
+    }
     setForm({
       firstName: user?.firstName ?? "",
       lastName: user?.lastName ?? "",
@@ -685,7 +692,15 @@ export default function Profile() {
         >
           <View style={styles.headerModal}>
             <Text style={styles.headerModalText}>I tuoi profili</Text>
-            <Ionicons name="add" size={24} color={colors.primaryGradientMid} />
+            <Pressable
+              onPress={() => {
+                setChangeProfileModal(false);
+                navigation.navigate(NavigationEnum.CREATE_ORGANIZER_PROFILE);
+              }}
+              hitSlop={8}
+            >
+              <Ionicons name="add" size={24} color={colors.primaryGradientMid} />
+            </Pressable>
           </View>
           {user?.profiles && user.profiles.length > 0 ? (
             <View style={{ gap: 10 }}>

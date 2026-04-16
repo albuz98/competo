@@ -3,6 +3,7 @@ import {
   View,
   Text,
   ActivityIndicator,
+  Alert,
   Pressable,
   LayoutAnimation,
   Platform,
@@ -71,6 +72,19 @@ export const OrganizerProfile = ({
     useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const [expandedCollaborators, setExpandedCollaborators] = useState(false);
 
+  const isPending = selectedProfile?.pendingApproval === true;
+
+  const handleStartEditGuarded = () => {
+    if (isPending) {
+      Alert.alert(
+        "Profilo in revisione",
+        "Non puoi modificare il profilo organizzatore fino all'approvazione da parte del team Competo.",
+      );
+      return;
+    }
+    handleStartEdit();
+  };
+
   const handleOrgUpdateProfile = async (data: UpdateProfileData) => {
     if (data.avatarUrl !== undefined && selectedProfile) {
       updateOrgProfileData(selectedProfile.id, { avatarUrl: data.avatarUrl });
@@ -105,6 +119,27 @@ export const OrganizerProfile = ({
 
   return (
     <>
+      {/* ── Pending approval banner ──────────────────────── */}
+      {isPending && (
+        <View style={styles.pendingBanner}>
+          <Ionicons
+            name="time-outline"
+            size={20}
+            color={colors.primaryGradientMid}
+          />
+          <View style={styles.pendingBannerBody}>
+            <Text style={styles.pendingBannerTitle}>
+              Profilo in attesa di approvazione
+            </Text>
+            <Text style={styles.pendingBannerText}>
+              Il team Competo sta verificando i tuoi documenti. Riceverai una
+              notifica entro 24–48 ore. Fino all'approvazione non puoi
+              modificare il profilo né creare tornei.
+            </Text>
+          </View>
+        </View>
+      )}
+
       {/* ── Header card (avatar + nome org + modifica) ───── */}
       <HeaderCard
         user={user}
@@ -112,9 +147,9 @@ export const OrganizerProfile = ({
         displayName={selectedProfile?.orgName}
         subtitle={getProfileSubtitle(selectedProfile, user)}
         saving={saving}
-        edit={edit}
+        edit={edit && !isPending}
         updateProfile={handleOrgUpdateProfile}
-        handleStartEdit={handleStartEdit}
+        handleStartEdit={handleStartEditGuarded}
         hideName
       >
         {/* Campi modificabili in edit mode */}
@@ -127,7 +162,7 @@ export const OrganizerProfile = ({
       </HeaderCard>
 
       {/* ── Collaboratori (visualizzazione) ─────────────── */}
-      {edit && selectedProfile?.isCreator && (
+      {edit && !isPending && selectedProfile?.isCreator && (
         <>
           <Pressable
             onPress={toggleCollaborators}
@@ -212,7 +247,7 @@ export const OrganizerProfile = ({
       )}
 
       {/* ── Crea nuovo torneo ────────────────────────────── */}
-      {!edit && (
+      {!edit && !isPending && (
         <View style={{ marginVertical: 20 }}>
           <ButtonGeneric
             style={styles.createTeamCard}

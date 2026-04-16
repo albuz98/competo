@@ -5,6 +5,7 @@ import { MONTHS } from "../../constants/generals";
 import { ITEM_H } from "./constants";
 import { ButtonGeneric } from "../Button/Button";
 import { ModalViewer, ModalViewerRef } from "../Modal/Modal";
+import { daysInMonth, parseISO, toISO } from "../../functions/general";
 
 export interface DatePickerModalProps {
   visible: boolean;
@@ -12,31 +13,6 @@ export interface DatePickerModalProps {
   minDate: string; // YYYY-MM-DD
   onConfirm: (iso: string) => void;
   onCancel: () => void;
-}
-
-export function daysInMonth(year: number, month: number): number {
-  return new Date(year, month + 1, 0).getDate();
-}
-
-export function parseISO(iso: string): {
-  year: number;
-  month: number;
-  day: number;
-} {
-  const today = new Date();
-  if (/^\d{4}-\d{2}-\d{2}$/.test(iso)) {
-    const [y, m, d] = iso.split("-").map(Number);
-    return { year: y, month: m - 1, day: d };
-  }
-  return {
-    year: today.getFullYear(),
-    month: today.getMonth(),
-    day: today.getDate(),
-  };
-}
-
-export function toISO(year: number, month: number, day: number): string {
-  return `${year}-${String(month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
 }
 
 export function DatePickerModal({

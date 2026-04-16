@@ -1,0 +1,221 @@
+import { StyleSheet } from "react-native";
+import { colors } from "../../theme/colors";
+
+export const s = StyleSheet.create({
+  scroll: { paddingHorizontal: 16, paddingTop: 20, paddingBottom: 32 },
+
+  sectionTitle: {
+    fontSize: 20,
+    fontWeight: "800",
+    color: colors.dark,
+    marginBottom: 4,
+  },
+  sectionSub: {
+    fontSize: 13,
+    color: colors.placeholder,
+    marginBottom: 20,
+    lineHeight: 18,
+  },
+  sectionLabel: {
+    fontSize: 11,
+    fontWeight: "700",
+    color: colors.grayDark,
+    textTransform: "uppercase",
+    letterSpacing: 0.8,
+    marginBottom: 8,
+    marginTop: 16,
+  },
+
+  // Option cards (entity type selector)
+  optionCard: {
+    backgroundColor: colors.white,
+    borderRadius: 14,
+    padding: 16,
+    marginBottom: 10,
+    borderWidth: 1.5,
+    borderColor: colors.disabled,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 12,
+  },
+  optionCardSelected: {
+    borderColor: colors.primary,
+    backgroundColor: colors.primarySelectedBg,
+  },
+  optionCardIcon: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: colors.gray,
+  },
+  optionCardIconSelected: { backgroundColor: colors.primaryGradientMid },
+  optionCardBody: { flex: 1 },
+  optionCardTitle: { fontSize: 14, fontWeight: "700", color: colors.dark },
+  optionCardSub: {
+    fontSize: 11,
+    color: colors.placeholder,
+    marginTop: 2,
+    lineHeight: 15,
+  },
+  optionCardCheck: {
+    width: 22,
+    height: 22,
+    borderRadius: 11,
+    borderWidth: 2,
+    borderColor: colors.disabled,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  optionCardCheckSelected: {
+    backgroundColor: colors.primaryGradientMid,
+    borderColor: colors.primaryGradientMid,
+  },
+
+  // Sport chips
+  chipsRow: { flexDirection: "row", flexWrap: "wrap", gap: 8, marginBottom: 8 },
+  chip: {
+    paddingHorizontal: 14,
+    paddingVertical: 8,
+    borderRadius: 20,
+    backgroundColor: colors.white,
+    borderWidth: 1.5,
+    borderColor: colors.disabled,
+  },
+  chipSelected: {
+    backgroundColor: colors.primarySelectedBg,
+    borderColor: colors.primary,
+  },
+  chipText: { fontSize: 13, fontWeight: "600", color: colors.placeholder },
+  chipTextSelected: { color: colors.primary },
+
+  // Stepper row
+  fieldRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    backgroundColor: colors.white,
+    borderRadius: 12,
+    paddingHorizontal: 16,
+    paddingVertical: 14,
+    borderWidth: 1,
+    borderColor: colors.disabled,
+    marginBottom: 8,
+  },
+  fieldLabel: { flex: 1, fontSize: 14, fontWeight: "600", color: colors.dark },
+  fieldSub: { fontSize: 11, color: colors.placeholder, marginTop: 2 },
+  stepperRow: { flexDirection: "row", alignItems: "center", gap: 12 },
+  stepperBtn: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: colors.gray,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  stepperVal: { fontSize: 16, fontWeight: "700", color: colors.dark, minWidth: 28, textAlign: "center" },
+
+  // PDF/document picker
+  pdfPickerBtn: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 10,
+    backgroundColor: colors.white,
+    borderRadius: 12,
+    paddingHorizontal: 16,
+    paddingVertical: 14,
+    borderWidth: 1.5,
+    borderColor: colors.disabled,
+    borderStyle: "dashed",
+  },
+  pdfPickerText: { fontSize: 14, color: colors.grayDark, fontWeight: "500" },
+  pdfRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 10,
+    backgroundColor: colors.white,
+    borderRadius: 12,
+    paddingHorizontal: 16,
+    paddingVertical: 13,
+    borderWidth: 1,
+    borderColor: colors.primary,
+  },
+  pdfFileName: { flex: 1, fontSize: 13, color: colors.dark, fontWeight: "600" },
+
+  // Info / warning box
+  infoBox: {
+    flexDirection: "row",
+    gap: 10,
+    backgroundColor: "#FFF8F5",
+    borderRadius: 12,
+    padding: 14,
+    borderWidth: 1,
+    borderColor: "#fed7aa",
+    marginTop: 8,
+    marginBottom: 16,
+  },
+  infoBoxText: { flex: 1, fontSize: 12, color: "#78350f", lineHeight: 18 },
+
+  noteBox: {
+    flexDirection: "row",
+    gap: 10,
+    backgroundColor: "#f0f9ff",
+    borderRadius: 12,
+    padding: 14,
+    borderWidth: 1,
+    borderColor: "#bae6fd",
+    marginTop: 8,
+    marginBottom: 16,
+  },
+  noteBoxText: { flex: 1, fontSize: 12, color: "#0c4a6e", lineHeight: 18 },
+
+  // Consent checkboxes
+  checkRow: {
+    flexDirection: "row",
+    alignItems: "flex-start",
+    gap: 12,
+    backgroundColor: colors.white,
+    borderRadius: 12,
+    padding: 14,
+    borderWidth: 1,
+    borderColor: colors.disabled,
+    marginBottom: 8,
+  },
+  checkBox: {
+    width: 22,
+    height: 22,
+    borderRadius: 6,
+    borderWidth: 2,
+    borderColor: colors.disabled,
+    alignItems: "center",
+    justifyContent: "center",
+    marginTop: 1,
+  },
+  checkBoxChecked: {
+    backgroundColor: colors.primary,
+    borderColor: colors.primary,
+  },
+  checkText: { flex: 1, fontSize: 13, color: colors.dark, lineHeight: 19 },
+  checkLink: { color: colors.primary, fontWeight: "700" },
+
+  // Summary card (step 6)
+  summaryCard: {
+    backgroundColor: colors.white,
+    borderRadius: 14,
+    padding: 16,
+    borderWidth: 1,
+    borderColor: colors.disabled,
+    marginBottom: 16,
+    gap: 10,
+  },
+  summaryRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "flex-start",
+    gap: 8,
+  },
+  summaryKey: { fontSize: 12, color: colors.placeholder, fontWeight: "600", flex: 1 },
+  summaryVal: { fontSize: 13, color: colors.dark, fontWeight: "700", flex: 2, textAlign: "right" },
+  summaryDivider: { height: 1, backgroundColor: colors.gray },
+});

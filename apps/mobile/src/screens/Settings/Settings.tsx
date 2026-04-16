@@ -35,10 +35,6 @@ export default function Settings() {
     Alert.alert("Autenticazione a due fattori", "Funzionalità in arrivo.");
   };
 
-  const handleOrganize = () => {
-    Alert.alert("Vuoi organizzare un torneo?", "Funzionalità in arrivo.");
-  };
-
   const handleLogout = () => {
     logout();
     navigation.reset({ index: 0, routes: [{ name: "ChoseAccess" }] });
@@ -97,7 +93,12 @@ export default function Settings() {
           {!isAlreadyOrganizer && (
             <>
               <View style={styles.divider} />
-              <Pressable style={styles.row} onPress={handleOrganize}>
+              <Pressable
+                style={styles.row}
+                onPress={() =>
+                  navigation.navigate(NavigationEnum.CREATE_ORGANIZER_PROFILE)
+                }
+              >
                 <View style={[styles.rowIcon, { backgroundColor: "#fef9c3" }]}>
                   <Ionicons name="trophy-outline" size={20} color="#ca8a04" />
                 </View>

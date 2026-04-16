@@ -11,7 +11,7 @@ export const styles = StyleSheet.create({
     paddingVertical: 14,
     fontSize: 15,
     borderWidth: 1,
-    borderColor: colors.grayOpacized,
+    borderColor: colors.opacized,
   },
   inputWithIcon: {
     paddingRight: 50,

@@ -42,6 +42,7 @@ interface AuthContextType {
   updateProfile: (data: UpdateProfileData) => Promise<void>;
   updateOrgProfileData: (profileId: string, updates: Partial<OrganizerProfile>) => void;
   addCollaborator: (profileId: string, appUser: AppUser) => void;
+  addOrganizerProfile: (orgName: string) => void;
 }
 
 const AuthContext = createContext<AuthContextType | null>(null);
@@ -142,6 +143,25 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     });
   };
 
+  const addOrganizerProfile = (orgName: string) => {
+    setUser((prev) => {
+      if (!prev) return prev;
+      const newProfile: OrganizerProfile = {
+        id: `org-${Date.now()}`,
+        role: UserRole.ORGANIZER,
+        orgName,
+        isCreator: true,
+        collaborators: [],
+        pendingApproval: true,
+      };
+      return {
+        ...prev,
+        profiles: [...(prev.profiles ?? []), newProfile],
+        currentProfileId: newProfile.id,
+      };
+    });
+  };
+
   const updateOrgProfileData = (
     profileId: string,
     updates: Partial<OrganizerProfile>,
@@ -201,6 +221,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         updateProfile,
         updateOrgProfileData,
         addCollaborator,
+        addOrganizerProfile,
       }}
     >
       {children}

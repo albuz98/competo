@@ -199,28 +199,48 @@ export const s = StyleSheet.create({
   infoBox: {
     flexDirection: "row",
     gap: 10,
-    backgroundColor: "#FFF8F5",
+    backgroundColor: colors.infoBg,
     borderRadius: 12,
     padding: 14,
     borderWidth: 1,
-    borderColor: "#fed7aa",
+    borderColor: colors.infoBorder,
     marginTop: 8,
     marginBottom: 16,
   },
-  infoBoxText: { flex: 1, fontSize: 12, color: "#78350f", lineHeight: 18 },
+  infoBoxText: {
+    flex: 1,
+    fontSize: 12,
+    color: colors.infoText,
+    lineHeight: 18,
+  },
 
   warningBox: {
     flexDirection: "row",
     gap: 10,
-    backgroundColor: "#fffbeb",
+    backgroundColor: colors.warningBg,
     borderRadius: 12,
     padding: 14,
     borderWidth: 1,
-    borderColor: "#fcd34d",
+    borderColor: colors.warningBorder,
     marginTop: 8,
     marginBottom: 16,
   },
-  warningBoxText: { flex: 1, fontSize: 12, color: "#92400e", lineHeight: 18 },
+  warningBoxText: {
+    flex: 1,
+    fontSize: 12,
+    color: colors.warningText,
+    lineHeight: 18,
+  },
+
+  sectionLabel: {
+    fontSize: 11,
+    fontWeight: "700",
+    color: colors.grayDark,
+    textTransform: "uppercase",
+    letterSpacing: 0.8,
+    marginBottom: 8,
+    marginTop: 16,
+  },
 
   // PDF picker
   pdfPickerBtn: {

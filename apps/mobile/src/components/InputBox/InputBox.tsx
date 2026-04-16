@@ -65,7 +65,7 @@ export const InputBox = ({
           isError && styles.inputError,
           (secureTextEntry || deleteText) && styles.inputWithIcon,
           {
-            backgroundColor: isDark ? colors.opacized : colors.white,
+            backgroundColor: isDark ? colors.opacizedBgInput : colors.white,
             color: isDark ? colors.white : colors.black,
           },
         ]}

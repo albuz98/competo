@@ -182,4 +182,31 @@ export const styles = StyleSheet.create({
     color: colors.placeholder,
     marginTop: 2,
   },
+
+  // Pending approval banner
+  pendingBanner: {
+    flexDirection: "row",
+    alignItems: "flex-start",
+    gap: 10,
+    backgroundColor: colors.warningBg,
+    borderRadius: 14,
+    padding: 14,
+    marginHorizontal: 16,
+    marginTop: 12,
+    marginBottom: 4,
+    borderWidth: 1.5,
+    borderColor: colors.warningBorder,
+  },
+  pendingBannerBody: { flex: 1 },
+  pendingBannerTitle: {
+    fontSize: 13,
+    fontWeight: "700",
+    color: colors.warningText,
+    marginBottom: 3,
+  },
+  pendingBannerText: {
+    fontSize: 12,
+    color: colors.warningText,
+    lineHeight: 17,
+  },
 });

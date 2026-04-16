@@ -10,6 +10,7 @@ import MainTabNavigator from "./MainTabNavigator/MainTabNavigator";
 import { useAuth } from "../context/AuthContext";
 import CreateTeam from "../screens/CreateTeam/CreateTeam";
 import CreateTournamentSchedule from "../screens/CreateTournamentSchedule/CreateTournamentSchedule";
+import CreateOrganizerProfile from "../screens/CreateOrganizerProfile/CreateOrganizerProfile";
 import TournamentScheduleResult from "../screens/TournamentScheduleResult/TournamentScheduleResult";
 import ForgotPassword from "../screens/ForgotPassword/ForgotPassword";
 import InviteCollaborators from "../screens/InviteCollaborators/InviteCollaborators";
@@ -162,6 +163,11 @@ export default function AppNavigator() {
         <Stack.Screen
           name={NavigationEnum.SETTINGS}
           component={Settings}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name={NavigationEnum.CREATE_ORGANIZER_PROFILE}
+          component={CreateOrganizerProfile}
           options={{ headerShown: false }}
         />
       </Stack.Navigator>

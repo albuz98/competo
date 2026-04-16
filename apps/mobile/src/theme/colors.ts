@@ -12,6 +12,7 @@ export const colors = {
   disabled: "#e2e8f0",
   disabledBg: "#f8fafc",
   opacized: "rgba(0,0,0,0.25)",
+  opacizedBgInput: "rgba(0, 0, 0, 0.15)",
   black: "#000",
   white: "#fff",
   transparent: "transparent",
@@ -31,6 +32,12 @@ export const colors = {
   gold: "#ffd700",
   silver: "#c0c0c0",
   bronze: "#CD7F32",
+  infoBorder: "#fed7aa",
+  infoBg: "#FFF8F5",
+  infoText: "#78350f",
+  warningBg: "#fffbeb",
+  warningBorder: "#fcd34d",
+  warningText: "#92400e",
 } as const;
 
 export const colorGradient = [

@@ -17,6 +17,7 @@ import {
 } from "../../../components/Button/Button";
 import { DatePickerModal } from "../../../components/DatePicker/DatePicker";
 import { sizesEnum } from "../../../theme/dimension";
+import { todayISO } from "../../../functions/general";
 
 interface renderStep5Props {
   isSingleDay: boolean;
@@ -199,11 +200,6 @@ export function renderStep5({
   const endTimeStr = `${endHour % 24}:${String(endMin).padStart(2, "0")}`;
   const spansNextDay = endTotalMins >= 24 * 60;
 
-  const todayISO = (() => {
-    const d = new Date();
-    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
-  })();
-
   // The minimum allowed date for finalDayDate is the day after startDate
   const finalDayMin = (() => {
     if (/^\d{4}-\d{2}-\d{2}$/.test(startDate)) {
@@ -211,7 +207,7 @@ export function renderStep5({
       d.setDate(d.getDate() + 1);
       return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
     }
-    return todayISO;
+    return todayISO.toString();
   })();
 
   return (
@@ -226,7 +222,9 @@ export function renderStep5({
               ? finalDayDate
               : ""
         }
-        minDate={activeDateField === "finalDayDate" ? finalDayMin : todayISO}
+        minDate={
+          activeDateField === "finalDayDate" ? finalDayMin : todayISO.toString()
+        }
         onConfirm={handlePickerConfirm}
         onCancel={handlePickerCancel}
       />
