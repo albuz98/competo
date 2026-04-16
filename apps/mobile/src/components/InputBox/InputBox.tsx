@@ -34,6 +34,7 @@ interface InputBoxProps {
   textContentType?: inputTextContentType;
   returnKeyType?: ReturnKeyTypeOptions;
   isError?: boolean;
+  isBorderless?: boolean;
 }
 
 export const InputBox = ({
@@ -54,6 +55,7 @@ export const InputBox = ({
   returnKeyType,
   onSubmitEditing,
   isError,
+  isBorderless = false,
 }: InputBoxProps) => {
   const [hidden, setHidden] = useState(true);
 
@@ -65,6 +67,8 @@ export const InputBox = ({
           isError && styles.inputError,
           (secureTextEntry || deleteText) && styles.inputWithIcon,
           {
+            borderWidth: isBorderless ? 0 : 1,
+            borderColor: isBorderless ? colors.transparent : colors.disabled,
             backgroundColor: isDark ? colors.opacizedBgInput : colors.white,
             color: isDark ? colors.white : colors.black,
           },

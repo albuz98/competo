@@ -17,7 +17,6 @@ export const styles = StyleSheet.create({
   },
   dragZone: {
     paddingBottom: 4,
-    paddingTop: 8,
   },
   modalHandle: {
     width: 36,

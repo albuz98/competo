@@ -170,7 +170,8 @@ export function DatePickerModal({
       ref={modalRef}
       isOpen={visible}
       onClose={handleClose}
-      padding={0}
+      paddingTop={24}
+      paddingHorizontal={0}
       paddingBottom={32}
       withKeyboardAvoid={false}
     >

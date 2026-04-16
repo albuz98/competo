@@ -72,8 +72,9 @@ export function renderStep4({
             keyboardType="number-pad"
             placeholder=""
             isDark={false}
+            isBorderless
           />
-          <Text style={(s.numberInputSuffix, { color: "black" })}>min</Text>
+          <Text style={s.numberInputSuffix}>min</Text>
         </View>
       </View>
 
@@ -86,6 +87,7 @@ export function renderStep4({
             keyboardType="number-pad"
             placeholder=""
             isDark={false}
+            isBorderless
           />
           <Text style={s.numberInputSuffix}>min</Text>
         </View>
@@ -100,6 +102,7 @@ export function renderStep4({
             keyboardType="number-pad"
             placeholder=""
             isDark={false}
+            isBorderless
           />
           <Text style={s.numberInputSuffix}>min</Text>
         </View>

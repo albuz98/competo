@@ -10,8 +10,6 @@ export const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 14,
     fontSize: 15,
-    borderWidth: 1,
-    borderColor: colors.opacized,
   },
   inputWithIcon: {
     paddingRight: 50,
