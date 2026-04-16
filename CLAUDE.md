@@ -58,22 +58,39 @@ npm run web         # starts the web app (apps/web)
 ```
 src/
 ├── types/
-│   ├── index.ts            # All TypeScript types and RootStackParamList
+│   ├── index.ts            # Re-exports; RootStackParamList lives here
+│   ├── user.ts             # User, UserProfile discriminated union, PlayerProfile, OrganizerProfile
+│   ├── auth.ts             # LoginCredentials, RegisterCredentials, UpdateProfileData
+│   ├── team.ts             # Team, TeamMember, PendingInvite, AppUser, TeamRole
+│   ├── tournament.ts       # Tournament, MyTournament, TournamentRegisteredTeam, TeamRegistrationStatus
+│   ├── organizer.ts        # OrganizerOnboardingData, EntityType, LegalForm
 │   └── components.ts       # Shared component prop types
+├── constants/
+│   ├── user.ts             # UserRole enum (PLAYER | ORGANIZER)
+│   ├── tournament.ts       # PHASES, SINGLE_FORMATS, KO_FORMATS, STEP_TITLES_TOURNAMENT, GAMES, SPORT_EMOJI
+│   └── organizer.ts        # STEP_TITLES_ORGANIZER, ENTITY_TYPES, LEGAL_FORMS (with labels/icons)
 ├── theme/
-│   └── colors.ts           # Brand color constants (import instead of hardcoding hex)
+│   ├── colors.ts           # Brand color constants (import instead of hardcoding hex)
+│   └── dimension.ts        # sizesEnum (small/medium/big), button/text padding presets, CARD_GRADIENTS
+├── lib/
+│   ├── queryClient.ts      # TanStack Query client (staleTime: 2 min, retry: 2, refetchOnWindowFocus: false)
+│   └── queryKeys.ts        # Centralized query key factory — always use these, never inline key strings
+├── utils/
+│   └── tournamentGenerator.ts  # Pure functions: generateSchedule(), computeStandings(), GeneratorConfig/Output types
 ├── mock/data.ts            # Faker-based mock generators (tournaments, teams, users)
 ├── api/
 │   ├── config.ts           # isMocking flag, apiFetch helper
+│   ├── mockFlags.ts        # Per-endpoint mock overrides (IS_MOCKING_LOGIN, IS_MOCKING_FETCH_TOURNAMENTS, …)
 │   ├── auth.ts             # Login, register, fetchProfile, updateProfile, registerPushToken
 │   ├── tournaments.ts      # Tournaments CRUD + MyTournament cache + fetchNearbyTournaments
 │   ├── teams.ts            # Teams CRUD + mock cache
-│   └── favorites.ts        # Favorites CRUD (fetchFavorites, addFavorite, removeFavorite)
+│   ├── favorites.ts        # Favorites CRUD (fetchFavorites, addFavorite, removeFavorite)
+│   └── searchLocation.ts   # Nominatim (OpenStreetMap) location search → Suggestion[] with lat/lng
 ├── context/
-│   ├── AuthContext.tsx     # User session, login/logout, updateProfile; bootstrapping (true until stored token resolved); location, updateLocation, clearError
-│   ├── TeamsContext.tsx    # Teams list, create/addMember/removeMember
+│   ├── AuthContext.tsx     # User session, login/logout, updateProfile; bootstrapping; profile switching
+│   ├── TeamsContext.tsx    # Teams list, create/addMember/removeMember; backed by useQuery/useMutation
 │   ├── NotificationsContext.tsx  # In-app notification list + addNotification
-│   └── FavoritesContext.tsx      # Tournament bookmarks — loads from API on login, persists on add/remove
+│   └── FavoritesContext.tsx      # Tournament bookmarks; optimistic updates via setQueryData
 ├── hooks/
 │   ├── useNotificationSetup.ts      # No-op on non-iOS
 │   └── useNotificationSetup.ios.ts  # iOS notification setup
@@ -84,23 +101,30 @@ src/
 │   │   └── MainTabNavigator.styles.ts
 │   └── navigationRef.ts             # Global navigation ref for use outside components
 ├── components/             # Shared UI components (each in their own subdirectory)
-│   ├── AuthLayout/         # Wrapper layout for auth screens
-│   ├── AuthErrorBox/       # Inline error display for auth forms
-│   ├── Avatar/             # User avatar display component
-│   ├── Button/             # Brand button component
-│   ├── CompetoLogo/        # App logo
-│   ├── DividerAccess/      # Divider for auth screens
-│   ├── InputBox/           # Styled text input
-│   ├── OnboardingCarousel/ # Onboarding slides carousel
-│   └── TabBar/             # Custom bottom tab bar component
+│   ├── AuthLayout/
+│   ├── AuthErrorBox/
+│   ├── Avatar/
+│   ├── Button/
+│   ├── CompetoLogo/
+│   ├── DividerAccess/
+│   ├── InputBox/
+│   ├── OnboardingCarousel/
+│   └── TabBar/
 └── screens/                # Each screen in its own subdirectory: Screen/Screen.tsx + Screen/Screen.styles.ts
     ├── Home/               # Feed: I Tuoi Tornei + Esplora + map
     ├── Explore/            # Tournament discovery with map
     ├── Favorites/          # Bookmarked tournaments
-    ├── Profile/            # User profile + teams section
+    ├── Profile/            # User profile + teams section + profile switcher
     ├── TournamentDetail/   # Tournament info + sign-up CTA
     ├── TournamentList/     # Tournament list view (not yet wired into navigation)
     ├── MyTournamentDetail/ # Bracket/groups live viewer (registered participant)
+    ├── CreateTournamentSchedule/  # Multi-step tournament creation wizard (5 steps)
+    ├── TournamentScheduleResult/  # Generated schedule preview
+    ├── OrganizerProfile/          # View-only organizer profile
+    ├── CreateOrganizerProfile/    # 5-step organizer onboarding form
+    ├── InviteCollaborators/       # Add collaborators to organizer profile
+    ├── TournamentHistory/         # Past tournaments list
+    ├── Settings/
     ├── TeamSelect/         # Team picker modal (before payment)
     ├── Payment/            # Card payment form
     ├── Teams/              # Full teams list
@@ -119,16 +143,89 @@ src/
 ## Provider hierarchy (`App.tsx`)
 
 ```tsx
-<AuthProvider>
-  <TeamsProvider>
-    <NotificationsProvider>
-      <FavoritesProvider>
-        <AppNavigator />
-      </FavoritesProvider>
-    </NotificationsProvider>
-  </TeamsProvider>
-</AuthProvider>
+<QueryClientProvider client={queryClient}>
+  <AuthProvider>
+    <TeamsProvider>
+      <NotificationsProvider>
+        <FavoritesProvider>
+          <AppNavigator />
+        </FavoritesProvider>
+      </NotificationsProvider>
+    </TeamsProvider>
+  </AuthProvider>
+</QueryClientProvider>
 ```
+
+---
+
+## React Query (TanStack Query)
+
+The app uses `@tanstack/react-query` for all async data fetching. The client is configured in `src/lib/queryClient.ts`.
+
+**Query keys** are centralized in `src/lib/queryKeys.ts` — always use these factory functions, never inline key strings:
+
+```ts
+queryKeys.tournaments()          // ['tournaments']
+queryKeys.myTournaments()        // ['myTournaments']
+queryKeys.teams()                // ['teams']
+queryKeys.pendingInvites()       // ['pendingInvites']
+queryKeys.sentInvites(teamId)    // ['sentInvites', teamId]
+queryKeys.favorites()            // ['favorites']
+queryKeys.userSearch(query)      // ['userSearch', query]
+```
+
+**Per-context usage**:
+- `AuthContext` — `useMutation` for login/register/updateProfile; `qc.clear()` on logout to wipe all cached data
+- `TeamsContext` — `useQuery` for teams and pending invites; `useMutation` for create/invite/remove/role operations
+- `FavoritesContext` — `useQuery` to load favorites; optimistic updates via `qc.setQueryData` before firing the API call
+- `MyTournamentDetail` — `useQuery` for tournament data; `useMutation` for `activateTournament`
+- `Payment` — `useMutation` for `signUpForTournament`
+
+### Mock granular overrides
+
+`src/api/mockFlags.ts` exports per-endpoint flags (e.g. `IS_MOCKING_LOGIN`, `IS_MOCKING_FETCH_TOURNAMENTS`). Set individual flags to `false` to hit the real API for that endpoint even when the global `isMocking` is `true`. This is the preferred way to test partial integrations during development.
+
+---
+
+## User profile system
+
+`User` has a `profiles: UserProfile[]` array and a `currentProfileId` pointer. `UserProfile` is a discriminated union:
+
+```ts
+type UserProfile = PlayerProfile | OrganizerProfile;
+// discriminant: profile.role (UserRole.PLAYER | UserRole.ORGANIZER)
+```
+
+`AuthContext` exposes:
+- `currentProfile` — computed from `user.profiles.find(p => p.id === user.currentProfileId)` (falls back to index 0)
+- `switchProfile(profileId)` — updates `currentProfileId`
+- `addOrganizerProfile(orgName)` — creates a new `OrganizerProfile` and switches to it
+- `updateOrgProfileData(profileId, updates)` — partial update of any `OrganizerProfile` field
+- `addCollaborator(profileId, appUser)` — adds a collaborator to an organizer profile (deduplicates by id)
+
+`OrganizerProfile` fields: `orgName`, `isCreator`, `collaborators: AppUser[]`, `pendingApproval: boolean`.
+
+---
+
+## Tournament creation wizard
+
+`CreateTournamentSchedule` is a 5-step form driven by `STEP_TITLES_TOURNAMENT` in `src/constants/tournament.ts`. Formats and phases:
+
+- **Phases**: `SINGLE` (one format end-to-end) | `MULTI` (groups phase → knockout phase)
+- **Single formats**: `ROUND_ROBIN` | `KNOCKOUT` | `DOUBLE_ELIMINATION`
+- **KO formats** (second phase in MULTI): same three options
+
+`src/utils/tournamentGenerator.ts` contains the pure scheduling logic (`generateSchedule`, `computeStandings`). Key types: `GeneratorConfig`, `GeneratorOutput`, `GeneratorParticipant`, `GeneratorGroup`, `ScheduledMatch`.
+
+`TournamentScheduleResult` shows the generated bracket/schedule before the organizer confirms.
+
+### Organizer onboarding (`CreateOrganizerProfile`)
+
+Five steps defined in `src/constants/organizer.ts` `STEP_TITLES_ORGANIZER`:
+1. Identity → 2. Sede & Contatti → 3. Dati Legali → 4. Documenti → 5. Consensi
+
+`EntityType` enum: `asd | ssd | societa | azienda | comune | privato | altro`
+`LegalForm` enum: `associazione | srl | srls | spa | cooperativa | ditta_individuale | ente_pubblico | nessuna`
 
 ---
 
@@ -147,7 +244,14 @@ Initial route is `ChoseAccess` when logged out, `MainTabs` when a persisted toke
 | `ForgotPassword`            | ForgotPassword          |                                                                           |
 | `TournamentDetail`          | TournamentDetail        | `tournamentId`, `justRegistered?`                                         |
 | `MyTournamentDetail`        | MyTournamentDetail      | `tournamentId`                                                            |
-| `OrganizerTournamentDetail` | _(not yet implemented)_ | `tournamentId` — in `RootStackParamList` types but screen not yet created |
+| `OrganizerTournamentDetail` | _(not yet implemented)_ | `tournamentId` — route defined, screen not yet created |
+| `CreateTournamentSchedule`  | CreateTournamentSchedule | multi-step wizard |
+| `TournamentScheduleResult`  | TournamentScheduleResult | generated schedule preview |
+| `OrganizerProfile`          | OrganizerProfile        | view-only |
+| `CreateOrganizerProfile`    | CreateOrganizerProfile  | 5-step onboarding |
+| `InviteCollaborators`       | InviteCollaborators     | `profileId` |
+| `TournamentHistory`         | TournamentHistory       | |
+| `Settings`                  | Settings                | |
 | `TeamSelect`                | TeamSelect              | Modal; `tournamentId`, `entryFee`, `tournamentName`                       |
 | `Payment`                   | Payment                 | `tournamentId`, `entryFee`, `tournamentName`, `teamId?`, `teamName?`      |
 | `Teams`                     | Teams                   |                                                                           |
@@ -236,6 +340,8 @@ return getMockTeamCache(); // ✗ aliasing
 - **Gradient headers**: `<LinearGradient colors={colorGradient}>` (or `[colors.primary, colors.primaryGradientEnd]`)
 - **Screen background**: `colors.gray` (`#f1f5f9`)
 - **Text hierarchy**: `colors.dark` (primary) · `colors.placeholder` (secondary) · `colors.grayDark` (muted)
+- **Card gradients**: `CARD_GRADIENTS` in `src/theme/dimension.ts` — array of 6 color-pair tuples for card backgrounds; cycle through these instead of picking ad-hoc colors
+- **Button sizes**: `sizesEnum` in `src/theme/dimension.ts` provides `small | medium | big` presets with matching padding and font sizes
 - **Style files are collocated** with their screen/component: `src/screens/Home/Home.styles.ts`, `src/components/Button/Button.styles.ts`. Never inline `StyleSheet.create` in screen files.
 - Each style file uses a named export matching the original variable (e.g. `export const tds`, `export const s`, `export const bStyles`). Dimension/layout constants used in both the stylesheet and JSX (e.g. `BIG_W`, `CARD_WIDTH`, bracket constants) are also exported from the style file.
 - `MyTournamentDetail.styles.ts` exports bracket layout constants: `CARD_H`, `CARD_W`, `COL_GAP`, `SLOT_H`, `LABEL_H`, `LINE_W`, `LINE_COLOR`.
