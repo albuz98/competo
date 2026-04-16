@@ -1,20 +1,21 @@
 import { isMocking, apiFetch } from "./config";
 import { mockFlags } from "./mockFlags";
-import {
-  generateTournaments,
-  generateTournament,
-  generateMyTournaments,
-  generateMyTournament,
-  generateOrganizerTournamentDetail,
-} from "../mock/data";
 import { generateTournament as generateTournamentOutput } from "../utils/tournamentGenerator";
 import type {
-  Tournament,
-  MyTournament,
-  OrganizerTournamentDetail,
   CreateTournamentPayload,
   GeneratorOutput,
-} from "../types/navigation";
+  MyTournament,
+  OrganizerTournamentDetail,
+  Tournament,
+} from "../types/tournament";
+import {
+  generateMyTournament,
+  generateMyTournaments,
+  generateTournament,
+  generateTournaments,
+} from "../mock/tournaments";
+import { generateOrganizerTournamentDetail } from "../mock/profile";
+import { TeamRegistrationStatus } from "../constants/tournament";
 
 // Persistent mock store so data stays consistent across navigation
 let mockCache: Tournament[] | null = null;
@@ -218,7 +219,7 @@ export async function approveTeam(
     const t = getOrganizerCache().get(tournamentId);
     const team = t?.registeredTeams.find((r) => r.id === teamId);
     if (team) {
-      team.status = "accepted";
+      team.status = TeamRegistrationStatus.ACCEPTED;
       team.paymentDeadline = new Date(
         Date.now() + 7 * 24 * 60 * 60 * 1000,
       ).toISOString();
@@ -239,7 +240,7 @@ export async function rejectTeam(
     await new Promise((r) => setTimeout(r, 400));
     const t = getOrganizerCache().get(tournamentId);
     const team = t?.registeredTeams.find((r) => r.id === teamId);
-    if (team) team.status = "rejected";
+    if (team) team.status = TeamRegistrationStatus.REJECTED;
     return;
   }
   return apiFetch<void>(

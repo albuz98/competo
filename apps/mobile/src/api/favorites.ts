@@ -1,6 +1,6 @@
+import { Tournament } from "../types/tournament";
 import { isMocking, apiFetch } from "./config";
 import { mockFlags } from "./mockFlags";
-import type { Tournament } from "../types/navigation";
 
 // Module-level cache for mock mode (mirrors what the real DB would store per user).
 let mockFavoritesCache: Tournament[] = [];

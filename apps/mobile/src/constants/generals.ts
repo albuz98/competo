@@ -51,3 +51,5 @@ export type inputTextContentType =
   | "creditCardSecurityCode";
 
 export type textAutoCapitalize = "none" | "sentences" | "words" | "characters";
+
+export const GAMES = ["Calcio", "Calcio a 7", "Calcio a 5"];

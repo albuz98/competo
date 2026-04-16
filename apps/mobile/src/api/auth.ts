@@ -1,11 +1,8 @@
+import { mockProfile } from "../mock/profile";
+import { LoginCredentials, RegisterCredentials } from "../types/auth";
+import { User } from "../types/user";
 import { isMocking, apiFetch } from "./config";
 import { mockFlags } from "./mockFlags";
-import { mockProfile } from "../mock/data";
-import type {
-  LoginCredentials,
-  RegisterCredentials,
-  User,
-} from "../types/navigation";
 
 // Reload the authenticated user from the server (e.g. on app restart with a stored token).
 // In mock mode returns the editable mockProfile object from src/mock/data.ts.

@@ -1,4 +1,4 @@
-import { Suggestion } from "../types/navigation";
+import { Suggestion } from "../types/location";
 
 export async function searchNominatim(query: string): Promise<Suggestion[]> {
   const url = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(query)}&format=json&limit=5`;

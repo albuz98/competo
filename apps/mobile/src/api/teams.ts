@@ -1,17 +1,13 @@
+import { TeamRole } from "../constants/team";
+import {
+  generateTeams,
+  generateAppUsers,
+  generateTeamMember,
+} from "../mock/team";
+import { Team, AppUser, PendingInvite } from "../types/team";
 import { isMocking, apiFetch } from "./config";
 import { mockFlags } from "./mockFlags";
 import { faker } from "@faker-js/faker";
-import {
-  generateTeams,
-  generateTeamMember,
-  generateAppUsers,
-} from "../mock/data";
-import type {
-  Team,
-  AppUser,
-  PendingInvite,
-  TeamRole,
-} from "../types/navigation";
 
 let mockTeamCache: Team[] | null = null;
 let mockUsersCache: AppUser[] | null = null;
@@ -85,8 +81,8 @@ export async function createTeam(
     }
     await new Promise((r) => setTimeout(r, 400));
     const rep = representative
-      ? { ...representative, role: "representative" as const }
-      : generateTeamMember("representative");
+      ? { ...representative, role: TeamRole.REPRESENTATIVE }
+      : generateTeamMember(TeamRole.REPRESENTATIVE);
     const newTeam: Team = {
       id: faker.string.uuid(),
       name,
@@ -228,7 +224,7 @@ export async function acceptInvite(
             firstName: invite.fromFirstName,
             lastName: invite.fromLastName,
             username: `${invite.fromFirstName.toLowerCase()}`,
-            role: "representative" as const,
+            role: TeamRole.REPRESENTATIVE,
           },
         ],
         createdAt: invite.createdAt,
@@ -236,7 +232,7 @@ export async function acceptInvite(
       getMockTeamCache().push(team);
     }
     if (!team.members.find((m) => m.id === currentUser.id)) {
-      team.members.push({ ...currentUser, role: "calciatore" as const });
+      team.members.push({ ...currentUser, role: TeamRole.PLAYER });
     }
     pendingInviteCache = invites.filter((i) => i.id !== inviteId);
     return;
@@ -291,17 +287,17 @@ export async function updateMemberRole(
     if (!team) throw new Error("Squadra non trovata");
     const member = team.members.find((m) => m.id === memberId);
     if (!member) throw new Error("Membro non trovato");
-    if (member.role === "representative")
+    if (member.role === TeamRole.REPRESENTATIVE)
       throw new Error("Non puoi cambiare il ruolo del rappresentante");
-    if (newRole === "allenatore") {
+    if (newRole === TeamRole.COACH) {
       const existing = team.members.find(
-        (m) => m.role === "allenatore" && m.id !== memberId,
+        (m) => m.role === TeamRole.COACH && m.id !== memberId,
       );
       if (existing) throw new Error("La squadra ha già un allenatore");
     }
-    if (newRole === "portiere") {
+    if (newRole === TeamRole.GOLKEEPER) {
       const existing = team.members.find(
-        (m) => m.role === "portiere" && m.id !== memberId,
+        (m) => m.role === TeamRole.GOLKEEPER && m.id !== memberId,
       );
       if (existing) throw new Error("La squadra ha già un portiere");
     }

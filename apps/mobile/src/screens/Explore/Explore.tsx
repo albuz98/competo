@@ -14,9 +14,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useAuth } from "../../context/AuthContext";
-import { generateTournaments } from "../../mock/data";
 import {
-  type Tournament,
   type RootStackParamList,
   NavigationEnum,
 } from "../../types/navigation";
@@ -30,6 +28,8 @@ import {
 } from "../../components/Button/Button";
 import { colors } from "../../theme/colors";
 import { ModalViewer } from "../../components/Modal/Modal";
+import { generateTournaments } from "../../mock/tournaments";
+import { Tournament } from "../../types/tournament";
 
 const DEFAULT = { lat: 45.4642, lng: 9.19 }; // Milan fallback
 const RADIUS_OPTIONS = [5, 10, 20, 50];

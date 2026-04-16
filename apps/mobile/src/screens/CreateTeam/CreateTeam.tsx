@@ -17,7 +17,6 @@ import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { NavigationEnum, RootStackParamList } from "../../types/navigation";
 import { useTeams } from "../../context/TeamsContext";
 import { cs } from "./CreateTeam.styles";
-import { GAMES } from "../../mock/data";
 import {
   ButtonBorderColored,
   ButtonFullColored,
@@ -25,6 +24,7 @@ import {
 } from "../../components/Button/Button";
 import { sizesEnum } from "../../theme/dimension";
 import { colors } from "../../theme/colors";
+import { GAMES } from "../../constants/generals";
 
 type Props = NativeStackScreenProps<RootStackParamList, "CreateTeam">;
 

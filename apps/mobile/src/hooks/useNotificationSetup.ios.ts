@@ -4,10 +4,10 @@ import * as Location from "expo-location";
 import { navigationRef } from "../navigation/navigationRef";
 import { useNotifications } from "../context/NotificationsContext";
 import { useAuth } from "../context/AuthContext";
-import { generateTournament } from "../mock/data";
 import { addToMockCache } from "../api/tournaments";
 import { registerPushToken } from "../api/auth";
 import { NavigationEnum } from "../types/navigation";
+import { generateTournament } from "../mock/tournaments";
 
 function haversineKm(lat1: number, lng1: number, lat2: number, lng2: number) {
   const R = 6371;

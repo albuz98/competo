@@ -15,14 +15,11 @@ import type { BottomTabNavigationProp } from "@react-navigation/bottom-tabs";
 import type { CompositeNavigationProp } from "@react-navigation/native";
 import type {
   RootStackParamList,
-  Tournament,
   MainTabParamList,
 } from "../../types/navigation";
 import { NavigationEnum } from "../../types/navigation";
 import { useAuth } from "../../context/AuthContext";
-import { generateTournaments } from "../../mock/data";
 import { getMyTournamentsCache } from "../../api/tournaments";
-import type { MyTournament } from "../../types/navigation";
 import { styles, BIG_W, BIG_H, SMALL_W } from "../../screens/Home/Home.styles";
 import {
   ButtonFullColored,
@@ -32,6 +29,8 @@ import { sizesEnum } from "../../theme/dimension";
 import { colors } from "../../theme/colors";
 import { CARD_GRADIENTS, SPORT_EMOJI } from "../../constants/generals";
 import { InputBoxSearch } from "../../components/InputBoxSearch/InputBoxSearch";
+import { generateTournaments } from "../../mock/tournaments";
+import { MyTournament, Tournament } from "../../types/tournament";
 
 type HomeNavProp = CompositeNavigationProp<
   BottomTabNavigationProp<MainTabParamList, "Home">,
