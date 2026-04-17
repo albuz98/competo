@@ -32,7 +32,7 @@ import {
   ButtonBack,
   ButtonFullColored,
   ButtonIcon,
-} from "../../components/Button/Button";
+} from "../../components/core/Button/Button";
 import { colorGradient, colors } from "../../theme/colors";
 
 type Props = NativeStackScreenProps<RootStackParamList, "TournamentDetail">;
@@ -136,11 +136,19 @@ export default function TournamentDetail({ route, navigation }: Props) {
   // Side-effects that run once the tournament data is loaded
   useEffect(() => {
     if (!tournament) return;
-    if ((tournament.isRegistered || tournament.status === "completed") && isFavorite(tournament.id)) {
+    if (
+      (tournament.isRegistered || tournament.status === "completed") &&
+      isFavorite(tournament.id)
+    ) {
       removeFavorite(tournament.id);
     }
-    const spotsAvail = tournament.maxParticipants - tournament.currentParticipants;
-    if (spotsAvail > 0 && isFavorite(tournament.id) && wasAddedWhenFull(tournament.id)) {
+    const spotsAvail =
+      tournament.maxParticipants - tournament.currentParticipants;
+    if (
+      spotsAvail > 0 &&
+      isFavorite(tournament.id) &&
+      wasAddedWhenFull(tournament.id)
+    ) {
       addNotification({
         title: "Posto disponibile!",
         body: `Si è liberato un posto nel torneo "${tournament.name}". Iscriviti ora!`,
@@ -205,7 +213,9 @@ export default function TournamentDetail({ route, navigation }: Props) {
     return (
       <View style={styles.center}>
         <Text style={styles.errorText}>
-          {queryError instanceof Error ? queryError.message : "Torneo non trovato"}
+          {queryError instanceof Error
+            ? queryError.message
+            : "Torneo non trovato"}
         </Text>
       </View>
     );
@@ -231,11 +241,14 @@ export default function TournamentDetail({ route, navigation }: Props) {
     year: "numeric",
   });
 
-  const spotsLeft = displayTournament.maxParticipants - displayTournament.currentParticipants;
+  const spotsLeft =
+    displayTournament.maxParticipants - displayTournament.currentParticipants;
   const isFull = spotsLeft <= 0;
   const isCompleted = displayTournament.status === "completed";
   const fillPercent = Math.min(
-    (displayTournament.currentParticipants / displayTournament.maxParticipants) * 100,
+    (displayTournament.currentParticipants /
+      displayTournament.maxParticipants) *
+      100,
     100,
   );
 
@@ -308,7 +321,9 @@ export default function TournamentDetail({ route, navigation }: Props) {
                   size={13}
                   color={colors.white}
                 />
-                <Text style={styles.chipText}>{displayTournament.prizePool}</Text>
+                <Text style={styles.chipText}>
+                  {displayTournament.prizePool}
+                </Text>
               </View>
               <View style={styles.chip}>
                 <Ionicons
@@ -317,7 +332,8 @@ export default function TournamentDetail({ route, navigation }: Props) {
                   color={colors.white}
                 />
                 <Text style={styles.chipText}>
-                  {displayTournament.currentParticipants}/{displayTournament.maxParticipants}
+                  {displayTournament.currentParticipants}/
+                  {displayTournament.maxParticipants}
                 </Text>
               </View>
               <View style={styles.chip}>
@@ -375,7 +391,9 @@ export default function TournamentDetail({ route, navigation }: Props) {
 
           {/* Description */}
           <SectionCard title="Descrizione">
-            <Text style={styles.description}>{displayTournament.description}</Text>
+            <Text style={styles.description}>
+              {displayTournament.description}
+            </Text>
           </SectionCard>
 
           {/* Rules */}

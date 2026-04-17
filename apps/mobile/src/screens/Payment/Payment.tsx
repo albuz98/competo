@@ -20,9 +20,12 @@ import { useMutation } from "@tanstack/react-query";
 import { useAuth } from "../../context/AuthContext";
 import { signUpForTournament } from "../../api/tournaments";
 import { styles } from "./Payment.styles";
-import { ButtonFullColored, ButtonIcon } from "../../components/Button/Button";
+import {
+  ButtonFullColored,
+  ButtonIcon,
+} from "../../components/core/Button/Button";
 import { colorGradient, colors } from "../../theme/colors";
-import { InputBox } from "../../components/InputBox/InputBox";
+import { InputBox } from "../../components/core/InputBox/InputBox";
 
 type Props = NativeStackScreenProps<RootStackParamList, "Payment">;
 

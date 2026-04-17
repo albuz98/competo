@@ -14,7 +14,7 @@ import type { Tournament } from "../../types/tournament";
 import { UserRole } from "../../constants/user";
 import { useFavorites } from "../../context/FavoritesContext";
 import { useAuth } from "../../context/AuthContext";
-import { ButtonGeneric, ButtonIcon } from "../../components/Button/Button";
+import { ButtonGeneric, ButtonIcon } from "../../components/core/Button/Button";
 import { colors } from "../../theme/colors";
 
 type Nav = NativeStackNavigationProp<RootStackParamList>;

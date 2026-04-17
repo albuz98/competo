@@ -6,17 +6,17 @@ import {
   type RootStackParamList,
 } from "../../types/navigation";
 import { useAuth } from "../../context/AuthContext";
-import CompetoLogo from "../../components/CompetoLogo/CompetoLogo";
-import AuthErrorBox from "../../components/AuthErrorBox/AuthErrorBox";
-import AuthLayout from "../../components/AuthLayout/AuthLayout";
+import CompetoLogo from "../../components/core/CompetoLogo/CompetoLogo";
+import AuthErrorBox from "../../components/core/AuthErrorBox/AuthErrorBox";
+import AuthLayout from "../../components/core/AuthLayout/AuthLayout";
 import { styles } from "./Login.styles";
-import { DividerAccess } from "../../components/DividerAccess/DividerAccess";
+import { DividerAccess } from "../../components/core/DividerAccess/DividerAccess";
 import {
   ButtonBorderColored,
   ButtonFullColored,
   ButtonLink,
-} from "../../components/Button/Button";
-import { InputBox } from "../../components/InputBox/InputBox";
+} from "../../components/core/Button/Button";
+import { InputBox } from "../../components/core/InputBox/InputBox";
 
 type Props = NativeStackScreenProps<RootStackParamList, "Login">;
 

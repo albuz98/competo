@@ -9,7 +9,7 @@ import {
   TournamentFormat,
   TournamentPhaseKind,
 } from "../../../constants/tournament";
-import { ButtonGeneric } from "../../../components/Button/Button";
+import { ButtonGeneric } from "../../../components/core/Button/Button";
 
 interface renderStep2Props {
   phaseKind: TournamentPhaseKind;

@@ -24,11 +24,11 @@ import { styles, BIG_W, BIG_H, SMALL_W } from "../../screens/Home/Home.styles";
 import {
   ButtonFullColored,
   ButtonGeneric,
-} from "../../components/Button/Button";
+} from "../../components/core/Button/Button";
 import { sizesEnum } from "../../theme/dimension";
 import { colors } from "../../theme/colors";
 import { CARD_GRADIENTS, SPORT_EMOJI } from "../../constants/generals";
-import { InputBoxSearch } from "../../components/InputBoxSearch/InputBoxSearch";
+import { InputBoxSearch } from "../../components/core/InputBoxSearch/InputBoxSearch";
 import { generateTournaments } from "../../mock/tournaments";
 import { MyTournament, Tournament } from "../../types/tournament";
 

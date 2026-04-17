@@ -1,8 +1,8 @@
 import { Text, TouchableOpacity, View } from "react-native";
 import { s } from "../CreateTournamentSchedule.styles";
 import { colors } from "../../../theme/colors";
-import LocationSearch from "../../../components/LocationSearch/LocationSearch";
-import { InputBox } from "../../../components/InputBox/InputBox";
+import LocationSearch from "../../../components/core/LocationSearch/LocationSearch";
+import { InputBox } from "../../../components/core/InputBox/InputBox";
 import * as DocumentPicker from "expo-document-picker";
 import { Ionicons } from "@expo/vector-icons";
 import Feather from "@expo/vector-icons/Feather";

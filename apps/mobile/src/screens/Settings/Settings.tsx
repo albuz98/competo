@@ -10,7 +10,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { useAuth } from "../../context/AuthContext";
 import { NavigationEnum, RootStackParamList } from "../../types/navigation";
 import { colors } from "../../theme/colors";
-import { ButtonBack } from "../../components/Button/Button";
+import { ButtonBack } from "../../components/core/Button/Button";
 import { styles } from "./Settings.styles";
 import { UserRole } from "../../constants/user";
 
@@ -44,7 +44,15 @@ export default function Settings() {
   return (
     <SafeAreaView style={styles.root} edges={["top"]}>
       <View style={styles.header}>
-        <ButtonBack handleBtn={() => navigation.goBack()} isArrowBack={false} />
+        <ButtonBack
+          handleBtn={() =>
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            (navigation as any).navigate(NavigationEnum.MAIN_TABS, {
+              screen: NavigationEnum.PROFILE,
+            })
+          }
+          isArrowBack={false}
+        />
         <Text style={styles.headerTitle}>Impostazioni</Text>
         <View style={styles.headerSpacer} />
       </View>

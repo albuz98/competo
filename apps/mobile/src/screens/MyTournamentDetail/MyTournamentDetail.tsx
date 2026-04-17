@@ -28,8 +28,11 @@ import {
   LINE_W,
   LINE_COLOR,
 } from "./MyTournamentDetail.styles";
-import { ButtonBack, ButtonFullColored } from "../../components/Button/Button";
-import { TabBar } from "../../components/TabBar/TabBar";
+import {
+  ButtonBack,
+  ButtonFullColored,
+} from "../../components/core/Button/Button";
+import { TabBar } from "../../components/core/TabBar/TabBar";
 
 type Props = NativeStackScreenProps<RootStackParamList, "MyTournamentDetail">;
 

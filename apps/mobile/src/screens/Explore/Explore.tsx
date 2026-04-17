@@ -25,9 +25,9 @@ import {
   ButtonGeneric,
   ButtonIcon,
   ButtonSelectable,
-} from "../../components/Button/Button";
+} from "../../components/core/Button/Button";
 import { colors } from "../../theme/colors";
-import { ModalViewer } from "../../components/Modal/Modal";
+import { ModalViewer } from "../../components/core/Modal/Modal";
 import { generateTournaments } from "../../mock/tournaments";
 import { Tournament } from "../../types/tournament";
 

@@ -21,7 +21,7 @@ import { styles } from "./TournamentList.styles";
 import {
   ButtonFullColored,
   ButtonGeneric,
-} from "../../components/Button/Button";
+} from "../../components/core/Button/Button";
 import { colors } from "../../theme/colors";
 import { queryKeys } from "../../lib/queryKeys";
 
@@ -138,9 +138,16 @@ export default function TournamentListScreen() {
     return (
       <View style={styles.center}>
         <Text style={styles.errorText}>
-          {error instanceof Error ? error.message : "Failed to load tournaments"}
+          {error instanceof Error
+            ? error.message
+            : "Failed to load tournaments"}
         </Text>
-        <ButtonFullColored text="Retry" handleBtn={() => { void refetch(); }} />
+        <ButtonFullColored
+          text="Retry"
+          handleBtn={() => {
+            void refetch();
+          }}
+        />
       </View>
     );
   }

@@ -18,11 +18,11 @@ import {
   ButtonBack,
   ButtonFullColored,
   ButtonIcon,
-} from "../../components/Button/Button";
+} from "../../components/core/Button/Button";
 import { sizesEnum } from "../../theme/dimension";
-import { TabBar } from "../../components/TabBar/TabBar";
+import { TabBar } from "../../components/core/TabBar/TabBar";
 import { colors } from "../../theme/colors";
-import { InputBoxSearch } from "../../components/InputBoxSearch/InputBoxSearch";
+import { InputBoxSearch } from "../../components/core/InputBoxSearch/InputBoxSearch";
 import { AppUser, Team } from "../../types/team";
 
 type Props = NativeStackScreenProps<RootStackParamList, "InvitePlayers">;

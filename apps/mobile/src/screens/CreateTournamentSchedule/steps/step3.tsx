@@ -2,7 +2,7 @@ import { View, Text } from "react-native";
 import { s } from "../CreateTournamentSchedule.styles";
 import { Ionicons } from "@expo/vector-icons";
 import { colors } from "../../../theme/colors";
-import { Stepper } from "../../../components/Stepper/Stepper";
+import { Stepper } from "../../../components/core/Stepper/Stepper";
 import { estimateTotalMatches } from "../../../functions/tournamet";
 import {
   TournamentFormat,

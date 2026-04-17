@@ -6,12 +6,15 @@ import { NavigationEnum, RootStackParamList } from "../../types/navigation";
 import { useMutation } from "@tanstack/react-query";
 import { forgotPassword } from "../../api/auth";
 import { styles } from "./ForgotPassword.styles";
-import AuthLayout from "../../components/AuthLayout/AuthLayout";
-import AuthErrorBox from "../../components/AuthErrorBox/AuthErrorBox";
-import CompetoLogo from "../../components/CompetoLogo/CompetoLogo";
-import { ButtonFullColored, ButtonLink } from "../../components/Button/Button";
+import AuthLayout from "../../components/core/AuthLayout/AuthLayout";
+import AuthErrorBox from "../../components/core/AuthErrorBox/AuthErrorBox";
+import CompetoLogo from "../../components/core/CompetoLogo/CompetoLogo";
+import {
+  ButtonFullColored,
+  ButtonLink,
+} from "../../components/core/Button/Button";
 import { colors } from "../../theme/colors";
-import { InputBox } from "../../components/InputBox/InputBox";
+import { InputBox } from "../../components/core/InputBox/InputBox";
 
 type Props = NativeStackScreenProps<RootStackParamList, "ForgotPassword">;
 

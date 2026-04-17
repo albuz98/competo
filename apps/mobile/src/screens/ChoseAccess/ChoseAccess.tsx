@@ -5,12 +5,12 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { styles } from "./ChoseAccess.styles";
 import { LinearGradient } from "expo-linear-gradient";
 import { colorGradientReverse } from "../../theme/colors";
-import OnboardingCarousel from "../../components/OnboardingCarousel/OnboardingCarousel";
-import CompetoLogo from "../../components/CompetoLogo/CompetoLogo";
+import OnboardingCarousel from "../../components/core/OnboardingCarousel/OnboardingCarousel";
+import CompetoLogo from "../../components/core/CompetoLogo/CompetoLogo";
 import {
   ButtonBorderColored,
   ButtonFullColored,
-} from "../../components/Button/Button";
+} from "../../components/core/Button/Button";
 
 type Props = NativeStackScreenProps<RootStackParamList, "ChoseAccess">;
 

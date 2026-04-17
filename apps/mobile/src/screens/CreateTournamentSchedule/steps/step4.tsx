@@ -1,9 +1,9 @@
 import { View, Text } from "react-native";
-import { Stepper } from "../../../components/Stepper/Stepper";
+import { Stepper } from "../../../components/core/Stepper/Stepper";
 import { Ionicons } from "@expo/vector-icons";
 import { s } from "../CreateTournamentSchedule.styles";
 import { colors } from "../../../theme/colors";
-import { InputBox } from "../../../components/InputBox/InputBox";
+import { InputBox } from "../../../components/core/InputBox/InputBox";
 
 interface renderStep4Props {
   numFields: number;

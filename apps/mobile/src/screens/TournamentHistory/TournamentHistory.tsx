@@ -10,7 +10,7 @@ import type { RootStackParamList } from "../../types/navigation";
 import { TournamentResult } from "../../constants/tournament";
 import { useAuth } from "../../context/AuthContext";
 import { colors } from "../../theme/colors";
-import { ButtonIcon } from "../../components/Button/Button";
+import { ButtonIcon } from "../../components/core/Button/Button";
 import { ths } from "./TournamentHistory.styles";
 import { RESULT_CONFIG } from "../../constants/tournament";
 

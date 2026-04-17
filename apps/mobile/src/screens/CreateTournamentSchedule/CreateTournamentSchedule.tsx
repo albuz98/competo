@@ -20,7 +20,7 @@ import {
   TournamentFormat,
   TournamentPhaseKind,
 } from "../../constants/tournament";
-import { StructureSchedule } from "../../components/StructureSchedule/StructureSchedule";
+import { StructureSchedule } from "../../components/core/StructureSchedule/StructureSchedule";
 import { todayISO } from "../../functions/general";
 import {
   CreateTournamentPayload,
@@ -37,7 +37,7 @@ export default function CreateTournamentSchedule({ navigation }: Props) {
   const [step, setStep] = useState<number>(1);
   const createMutation = useMutation({
     mutationFn: (payload: CreateTournamentPayload) =>
-      createTournament(payload, user?.token ?? ''),
+      createTournament(payload, user?.token ?? ""),
     onSuccess: () => {
       navigation.replace(NavigationEnum.TOURNAMENT_SCHEDULE_RESULT);
     },
@@ -193,32 +193,32 @@ export default function CreateTournamentSchedule({ navigation }: Props) {
       phaseKind === "multi" ? knockoutFormat : undefined,
     );
     const cappedPerDay = Math.min(
-        Math.max(maxMatchesPerDay, numFields),
-        Math.max(numFields, mInfo.total - 1),
-      );
+      Math.max(maxMatchesPerDay, numFields),
+      Math.max(numFields, mInfo.total - 1),
+    );
 
-      const config = {
-        tournamentName: tournamentName.trim(),
-        description: description.trim(),
-        location: location.trim(),
-        participants,
-        phaseKind,
-        format,
-        multiKnockoutFormat: phaseKind === "multi" ? knockoutFormat : undefined,
-        numGroups: phaseKind === "multi" ? effGroups : undefined,
-        numFields,
-        matchDurationMinutes: matchDuration,
-        restMinutes,
-        travelMinutes,
-        startDate,
-        startHour,
-        playDays: isSingleDay ? [0, 1, 2, 3, 4, 5, 6] : playDays,
-        maxMatchesPerDayPerTeam: isSingleDay ? 999 : cappedPerDay,
-        maxMatchesPerDay: isSingleDay ? undefined : cappedPerDay,
-        hasFinalDay: isSingleDay ? false : hasFinalDay,
-        finalDayDate: !isSingleDay && hasFinalDay ? finalDayDate : undefined,
-        singleDay: isSingleDay,
-      };
+    const config = {
+      tournamentName: tournamentName.trim(),
+      description: description.trim(),
+      location: location.trim(),
+      participants,
+      phaseKind,
+      format,
+      multiKnockoutFormat: phaseKind === "multi" ? knockoutFormat : undefined,
+      numGroups: phaseKind === "multi" ? effGroups : undefined,
+      numFields,
+      matchDurationMinutes: matchDuration,
+      restMinutes,
+      travelMinutes,
+      startDate,
+      startHour,
+      playDays: isSingleDay ? [0, 1, 2, 3, 4, 5, 6] : playDays,
+      maxMatchesPerDayPerTeam: isSingleDay ? 999 : cappedPerDay,
+      maxMatchesPerDay: isSingleDay ? undefined : cappedPerDay,
+      hasFinalDay: isSingleDay ? false : hasFinalDay,
+      finalDayDate: !isSingleDay && hasFinalDay ? finalDayDate : undefined,
+      singleDay: isSingleDay,
+    };
 
     const payload: CreateTournamentPayload = {
       config,
@@ -227,10 +227,27 @@ export default function CreateTournamentSchedule({ navigation }: Props) {
       regulationUri: regulationFileUri ?? undefined,
     };
     createMutation.mutate(payload);
-  }, [numTeams, format, phaseKind, effGroups, knockoutFormat, numFields,
-      matchDuration, restMinutes, travelMinutes, startDate, startHour,
-      isSingleDay, playDays, hasFinalDay, finalDayDate, locationLat,
-      locationLng, regulationFileUri, createMutation]);
+  }, [
+    numTeams,
+    format,
+    phaseKind,
+    effGroups,
+    knockoutFormat,
+    numFields,
+    matchDuration,
+    restMinutes,
+    travelMinutes,
+    startDate,
+    startHour,
+    isSingleDay,
+    playDays,
+    hasFinalDay,
+    finalDayDate,
+    locationLat,
+    locationLng,
+    regulationFileUri,
+    createMutation,
+  ]);
 
   function isStepValid(): boolean {
     if (step === 1) {

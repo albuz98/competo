@@ -2,8 +2,8 @@ import React from "react";
 import { Text } from "react-native";
 import { s } from "../CreateOrganizerProfile.styles";
 import { colors } from "../../../theme/colors";
-import { InputBox } from "../../../components/InputBox/InputBox";
-import LocationSearch from "../../../components/LocationSearch/LocationSearch";
+import { InputBox } from "../../../components/core/InputBox/InputBox";
+import LocationSearch from "../../../components/core/LocationSearch/LocationSearch";
 
 interface Step2Props {
   address: string;
@@ -38,7 +38,8 @@ export function renderStep2({
     <>
       <Text style={s.sectionTitle}>Sede e Contatti</Text>
       <Text style={s.sectionSub}>
-        Indica dove opera la tua organizzazione e come i partecipanti possono contattarti.
+        Indica dove opera la tua organizzazione e come i partecipanti possono
+        contattarti.
       </Text>
 
       <Text style={s.sectionLabel}>
@@ -58,7 +59,8 @@ export function renderStep2({
       />
 
       <Text style={s.sectionLabel}>
-        Email pubblica di contatto <Text style={{ color: colors.primary }}>*</Text>
+        Email pubblica di contatto{" "}
+        <Text style={{ color: colors.primary }}>*</Text>
       </Text>
       <InputBox
         value={contactEmail}

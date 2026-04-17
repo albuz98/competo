@@ -3,7 +3,7 @@ import { Text, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { s } from "../CreateOrganizerProfile.styles";
 import { colors } from "../../../theme/colors";
-import { InputBox } from "../../../components/InputBox/InputBox";
+import { InputBox } from "../../../components/core/InputBox/InputBox";
 import { LegalForm } from "../../../types/organizer";
 import { LEGAL_FORMS } from "../../../constants/organizer";
 

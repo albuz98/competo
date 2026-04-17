@@ -7,7 +7,7 @@ import {
 } from "../../types/navigation";
 import { useAuth } from "../../context/AuthContext";
 import { s } from "./CreateOrganizerProfile.styles";
-import { StructureSchedule } from "../../components/StructureSchedule/StructureSchedule";
+import { StructureSchedule } from "../../components/core/StructureSchedule/StructureSchedule";
 import { renderStep1 } from "./steps/step1";
 import { renderStep2 } from "./steps/step2";
 import { renderStep3 } from "./steps/step3";

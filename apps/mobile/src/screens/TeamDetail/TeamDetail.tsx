@@ -15,7 +15,10 @@ import {
 import { LinearGradient } from "expo-linear-gradient";
 import { Ionicons } from "@expo/vector-icons";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { NavigationEnum, type RootStackParamList } from "../../types/navigation";
+import {
+  NavigationEnum,
+  type RootStackParamList,
+} from "../../types/navigation";
 import type { TeamMember } from "../../types/team";
 import { TeamRole } from "../../constants/team";
 import { useTeams } from "../../context/TeamsContext";
@@ -28,7 +31,7 @@ import {
   ButtonGeneric,
   ButtonIcon,
   ButtonLink,
-} from "../../components/Button/Button";
+} from "../../components/core/Button/Button";
 
 type Props = NativeStackScreenProps<RootStackParamList, "TeamDetail">;
 
@@ -388,7 +391,7 @@ export default function TeamDetail({ route, navigation }: Props) {
             <Text style={[tds.modalBody, { marginBottom: 20 }]}>
               {roleTarget?.firstName} {roleTarget?.lastName}
             </Text>
-            {([TeamRole.PLAYER, TeamRole.GOLKEEPER, TeamRole.COACH]).map(
+            {[TeamRole.PLAYER, TeamRole.GOLKEEPER, TeamRole.COACH].map(
               (role) => {
                 if (role === TeamRole.REPRESENTATIVE) return null;
                 const isCurrent = roleTarget?.role === role;

@@ -21,7 +21,7 @@ import {
   ButtonBorderColored,
   ButtonFullColored,
   ButtonIcon,
-} from "../../components/Button/Button";
+} from "../../components/core/Button/Button";
 import { sizesEnum } from "../../theme/dimension";
 import { colors } from "../../theme/colors";
 import { GAMES } from "../../constants/generals";

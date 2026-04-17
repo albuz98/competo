@@ -3,7 +3,7 @@ import { Text, TouchableOpacity, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { s } from "../CreateOrganizerProfile.styles";
 import { colors } from "../../../theme/colors";
-import { InputBox } from "../../../components/InputBox/InputBox";
+import { InputBox } from "../../../components/core/InputBox/InputBox";
 import { EntityType } from "../../../types/organizer";
 import { ENTITY_TYPES } from "../../../constants/organizer";
 

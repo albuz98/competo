@@ -9,12 +9,12 @@ import { estimateTotalMatches } from "../../../functions/tournamet";
 import { s } from "../CreateTournamentSchedule.styles";
 import { Ionicons } from "@expo/vector-icons";
 import { colors } from "../../../theme/colors";
-import { Stepper } from "../../../components/Stepper/Stepper";
+import { Stepper } from "../../../components/core/Stepper/Stepper";
 import {
   ButtonBorderColored,
   ButtonGeneric,
-} from "../../../components/Button/Button";
-import { DatePickerModal } from "../../../components/DatePicker/DatePicker";
+} from "../../../components/core/Button/Button";
+import { DatePickerModal } from "../../../components/core/DatePicker/DatePicker";
 import { sizesEnum } from "../../../theme/dimension";
 import { todayISO } from "../../../functions/general";
 import { TournametNumberPartecipants } from "../../../types/tournament";

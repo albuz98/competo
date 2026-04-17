@@ -10,7 +10,7 @@ import {
 } from "../../context/NotificationsContext";
 import { NavigationEnum, RootStackParamList } from "../../types/navigation";
 import { styles } from "./Notifications.styles";
-import { ButtonGeneric, ButtonLink } from "../../components/Button/Button";
+import { ButtonGeneric, ButtonLink } from "../../components/core/Button/Button";
 import { colors } from "../../theme/colors";
 
 function formatDate(iso: string) {
