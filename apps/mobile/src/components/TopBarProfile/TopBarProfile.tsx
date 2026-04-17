@@ -25,10 +25,6 @@ export const TopBarProfile = ({
   currentProfile,
   navigation,
 }: TopBarProfileProps) => {
-  console.log("🚀 --------------------------------🚀");
-  console.log("🚀 > TopBarProfile > edit:", edit);
-  console.log("🚀 --------------------------------🚀");
-
   const handleOpenSettings = () => {
     navigation.navigate(NavigationEnum.SETTINGS);
   };

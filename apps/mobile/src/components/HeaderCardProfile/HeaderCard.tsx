@@ -40,10 +40,6 @@ export const HeaderCardProfile = ({
   updateProfile,
   handleStartEdit,
 }: HeaderCardProps) => {
-  console.log("🚀 ------------------------------------🚀");
-  console.log("🚀 > HeaderCardProfile > edit:", edit);
-  console.log("🚀 ------------------------------------🚀");
-
   const [qrOpen, setQrOpen] = useState(false);
 
   const profileName = displayName ?? user?.username ?? "";
