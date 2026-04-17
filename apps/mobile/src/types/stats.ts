@@ -1,4 +1,4 @@
-import { PlayerCareerRole } from "./user";
+export type PlayerCareerRole = "calciatore" | "portiere";
 
 export interface PlayerStats {
   goals: number;

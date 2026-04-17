@@ -14,14 +14,10 @@ import {
   ButtonLink,
 } from "../../../../components/Button/Button";
 import { LinearGradient } from "expo-linear-gradient";
-import {
-  NavigationEnum,
-  type MyTournament,
-  type OrganizerProfile as OrganizerProfileType,
-  type RootStackParamList,
-  type UpdateProfileData,
-  type User,
-} from "../../../../types/navigation";
+import { NavigationEnum, type RootStackParamList } from "../../../../types/navigation";
+import type { MyTournament } from "../../../../types/tournament";
+import type { OrganizerProfile as OrganizerProfileType, User } from "../../../../types/user";
+import type { UpdateProfileData } from "../../../../types/auth";
 import { colorGradient, colors } from "../../../../theme/colors";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";

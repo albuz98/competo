@@ -4,15 +4,15 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { LinearGradient } from "expo-linear-gradient";
 import { Ionicons } from "@expo/vector-icons";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
+import type { RootStackParamList } from "../../types/navigation";
 import type {
-  RootStackParamList,
   MyTournament,
   TournamentStructure,
   TournamentMatch,
   TournamentGroup,
   TournamentBracket,
   TournamentTeam,
-} from "../../types/navigation";
+} from "../../types/tournament";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { fetchMyTournament, activateTournament } from "../../api/tournaments";
 import { queryKeys } from "../../lib/queryKeys";
@@ -428,7 +428,7 @@ export default function MyTournamentDetailScreen({ route, navigation }: Props) {
 
   const { data: tournament, isLoading: loading } = useQuery({
     queryKey: queryKeys.myTournament(tournamentId),
-    queryFn: () => fetchMyTournament(tournamentId, user?.token ?? ''),
+    queryFn: () => fetchMyTournament(tournamentId, user?.token ?? ""),
     enabled: !!user,
   });
 
@@ -448,10 +448,12 @@ export default function MyTournamentDetailScreen({ route, navigation }: Props) {
   }, [isGenerated]);
 
   const activateMutation = useMutation({
-    mutationFn: (id: string) => activateTournament(id, user?.token ?? ''),
+    mutationFn: (id: string) => activateTournament(id, user?.token ?? ""),
     onSuccess: (_data, id) => {
-      qc.setQueryData<MyTournament>(queryKeys.myTournament(id), (old: MyTournament | undefined) =>
-        old ? { ...old, isGenerated: true } : old,
+      qc.setQueryData<MyTournament>(
+        queryKeys.myTournament(id),
+        (old: MyTournament | undefined) =>
+          old ? { ...old, isGenerated: true } : old,
       );
       setIsGenerated(true);
     },

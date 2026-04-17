@@ -15,12 +15,9 @@ import {
 import { LinearGradient } from "expo-linear-gradient";
 import { Ionicons } from "@expo/vector-icons";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
-import {
-  NavigationEnum,
-  type RootStackParamList,
-  type TeamMember,
-  type TeamRole,
-} from "../../types/navigation";
+import { NavigationEnum, type RootStackParamList } from "../../types/navigation";
+import type { TeamMember } from "../../types/team";
+import { TeamRole } from "../../constants/team";
 import { useTeams } from "../../context/TeamsContext";
 import { useAuth } from "../../context/AuthContext";
 import { colorGradient, colors } from "../../theme/colors";
@@ -36,17 +33,17 @@ import {
 type Props = NativeStackScreenProps<RootStackParamList, "TeamDetail">;
 
 const ROLE_LABEL: Record<string, string> = {
-  representative: "Rappresentante",
-  calciatore: "Calciatore",
-  allenatore: "Allenatore",
-  portiere: "Portiere",
+  [TeamRole.REPRESENTATIVE]: "Rappresentante",
+  [TeamRole.PLAYER]: "Calciatore",
+  [TeamRole.COACH]: "Allenatore",
+  [TeamRole.GOLKEEPER]: "Portiere",
 };
 
 const HAS_JERSEY: Record<string, boolean> = {
-  representative: true,
-  calciatore: true,
-  portiere: true,
-  allenatore: false,
+  [TeamRole.REPRESENTATIVE]: true,
+  [TeamRole.PLAYER]: true,
+  [TeamRole.GOLKEEPER]: true,
+  [TeamRole.COACH]: false,
 };
 
 function MemberRow({
@@ -391,13 +388,13 @@ export default function TeamDetail({ route, navigation }: Props) {
             <Text style={[tds.modalBody, { marginBottom: 20 }]}>
               {roleTarget?.firstName} {roleTarget?.lastName}
             </Text>
-            {(["calciatore", "portiere", "allenatore"] as TeamRole[]).map(
+            {([TeamRole.PLAYER, TeamRole.GOLKEEPER, TeamRole.COACH]).map(
               (role) => {
-                if (role === "representative") return null;
+                if (role === TeamRole.REPRESENTATIVE) return null;
                 const isCurrent = roleTarget?.role === role;
                 const isOccupied =
                   !isCurrent &&
-                  (role === "allenatore" || role === "portiere") &&
+                  (role === TeamRole.COACH || role === TeamRole.GOLKEEPER) &&
                   team?.members.some(
                     (m: TeamMember) =>
                       m.role === role && m.id !== roleTarget?.id,
