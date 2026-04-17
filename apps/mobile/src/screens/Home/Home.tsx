@@ -247,7 +247,7 @@ export default function Home() {
           {MY_PARTICIPANT_TOURNAMENTS.length > 0 && (
             <>
               <Text style={[styles.sectionTitle, { marginTop: 20 }]}>
-                I tuoi tornei
+                Tornei in corso
               </Text>
               <ScrollView
                 horizontal
