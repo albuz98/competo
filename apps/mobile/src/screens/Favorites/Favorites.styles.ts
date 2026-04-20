@@ -1,55 +1,101 @@
-import { StyleSheet } from 'react-native';
+import { StyleSheet, Dimensions } from "react-native";
+import { colors } from "../../theme/colors";
+
+const { width: SW } = Dimensions.get("window");
+export const CARD_W = SW - 32;
+export const CARD_H = 200;
+export const CARD_IMG_H = 160;
 
 export const pf = StyleSheet.create({
-  root: { flex: 1, backgroundColor: '#fff' },
+  root: { flex: 1, backgroundColor: colors.white },
   header: {
     fontSize: 22,
-    fontWeight: '800',
-    color: '#1e293b',
+    fontWeight: "800",
+    color: colors.dark,
     paddingHorizontal: 16,
     paddingTop: 16,
     paddingBottom: 8,
-    backgroundColor: '#fff',
+    backgroundColor: colors.white,
   },
-  center: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: 32 },
-  emptyTitle: { fontSize: 17, fontWeight: '700', color: '#94a3b8', marginTop: 16 },
-  emptySubtitle: { fontSize: 13, color: '#cbd5e1', textAlign: 'center', marginTop: 8, lineHeight: 20 },
+  center: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    padding: 32,
+  },
+  emptyTitle: {
+    fontSize: 17,
+    fontWeight: "700",
+    color: colors.grayDark,
+    marginTop: 16,
+  },
+  emptySubtitle: {
+    fontSize: 13,
+    color: "#cbd5e1",
+    textAlign: "center",
+    marginTop: 8,
+    lineHeight: 20,
+  },
 
-  card: {
-    backgroundColor: '#fff',
-    borderRadius: 16,
-    padding: 16,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.06,
-    shadowRadius: 8,
-    elevation: 2,
-    borderWidth: 1,
-    borderColor: '#f1f5f9',
-  },
-  cardHeader: { flexDirection: 'row', alignItems: 'flex-start', gap: 8, marginBottom: 12 },
-  cardHeaderLeft: { flex: 1 },
-  cardGame: {
-    fontSize: 11,
-    fontWeight: '700',
-    color: '#E8601A',
-    textTransform: 'uppercase',
-    letterSpacing: 0.8,
-    marginBottom: 4,
-  },
-  cardName: { fontSize: 16, fontWeight: '800', color: '#1e293b', lineHeight: 22 },
   bookmarkBtn: {
-    width: 34,
-    height: 34,
-    borderRadius: 17,
-    backgroundColor: '#FFF0E6',
-    alignItems: 'center',
-    justifyContent: 'center',
+    position: "absolute",
+    top: 10,
+    right: 10,
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: "rgba(255,255,255,0.85)",
+    alignItems: "center",
+    justifyContent: "center",
   },
-  cardFooter: { flexDirection: 'row', alignItems: 'center', gap: 10, flexWrap: 'wrap' },
-  statusBadge: { borderRadius: 20, paddingHorizontal: 10, paddingVertical: 4 },
-  statusText: { fontSize: 11, fontWeight: '700' },
-  metaRow: { flexDirection: 'row', alignItems: 'center', gap: 3 },
-  metaText: { fontSize: 12, color: '#94a3b8', maxWidth: 100 },
-  entryFee: { marginLeft: 'auto' as any, fontSize: 13, fontWeight: '800', color: '#1e293b' },
+
+  cardMetaItem: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 4,
+  },
+  cardFee: {
+    fontSize: 13,
+    fontWeight: "800",
+    color: colors.dark,
+    marginLeft: "auto" as any,
+  },
+
+  bigCard: { borderRadius: 18, overflow: "hidden" },
+  bigCardGradient: { flex: 1, justifyContent: "flex-end" },
+  bigCardDecor: {
+    position: "absolute",
+    right: -30,
+    top: -30,
+    width: 150,
+    height: 150,
+    borderRadius: 75,
+    backgroundColor: colors.darkOpacized,
+  },
+  bigCardEmoji: {
+    position: "absolute",
+    top: "50%",
+    alignSelf: "center",
+    fontSize: 56,
+    marginTop: -40,
+  },
+  bigCardOverlay: {
+    backgroundColor: colors.grayOpacized,
+    borderRadius: 12,
+    margin: 10,
+    padding: 10,
+  },
+  bigCardName: {
+    fontSize: 12,
+    fontWeight: "800",
+    color: colors.dark,
+    letterSpacing: 0.2,
+  },
+  bigCardLocation: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginTop: 4,
+    gap: 2,
+  },
+  bigCardLocationText: { fontSize: 11, color: colors.dark },
 });

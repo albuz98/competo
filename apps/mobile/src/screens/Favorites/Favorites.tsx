@@ -1,11 +1,12 @@
 import React from "react";
 import { View, Text, FlatList, StatusBar } from "react-native";
-import { pf } from "./Favorites.styles";
+import { pf, CARD_W, CARD_H } from "./Favorites.styles";
 import {
   SafeAreaView,
   useSafeAreaInsets,
 } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
+import { LinearGradient } from "expo-linear-gradient";
 import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import type { RootStackParamList } from "../../types/navigation";
@@ -16,84 +17,95 @@ import { useFavorites } from "../../context/FavoritesContext";
 import { useAuth } from "../../context/AuthContext";
 import { ButtonGeneric, ButtonIcon } from "../../components/core/Button/Button";
 import { colors } from "../../theme/colors";
+import { CARD_GRADIENTS, SPORT_EMOJI } from "../../constants/generals";
 
 type Nav = NativeStackNavigationProp<RootStackParamList>;
 
-const STATUS_LABEL: Record<string, string> = {
-  upcoming: "In arrivo",
-  ongoing: "In corso",
-  completed: "Terminato",
-};
-const STATUS_COLOR: Record<string, string> = {
-  upcoming: colors.purpleBlue,
-  ongoing: colors.success,
-  completed: colors.grayDark,
-};
-
 function TournamentCard({
   item,
+  index,
   onPress,
   onRemove,
 }: {
   item: Tournament;
+  index: number;
   onPress: () => void;
   onRemove: () => void;
 }) {
+  const colorsGrad = CARD_GRADIENTS[index % CARD_GRADIENTS.length];
+  const emoji = SPORT_EMOJI[item.game] ?? "🏆";
+  const date = new Date(item.startDate).toLocaleDateString("it-IT", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "2-digit",
+  });
+
   return (
-    <ButtonGeneric style={pf.card} handleBtn={onPress}>
-      <View style={pf.cardHeader}>
-        <View style={pf.cardHeaderLeft}>
-          <Text style={pf.cardGame}>{item.game}</Text>
-          <Text style={pf.cardName} numberOfLines={2}>
-            {item.name}
-          </Text>
-        </View>
+    <ButtonGeneric
+      style={[pf.bigCard, { width: CARD_W, height: CARD_H }]}
+      handleBtn={onPress}
+    >
+      <LinearGradient colors={colorsGrad} style={pf.bigCardGradient}>
+        <View style={pf.bigCardDecor} />
+        <Text style={pf.bigCardEmoji}>{emoji}</Text>
         <ButtonIcon
           handleBtn={onRemove}
           style={pf.bookmarkBtn}
           icon={
             <Ionicons
               name="bookmark"
-              size={20}
+              size={18}
               color={colors.primaryGradientMid}
             />
           }
         />
-      </View>
-      <View style={pf.cardFooter}>
-        <View
-          style={[
-            pf.statusBadge,
-            { backgroundColor: STATUS_COLOR[item.status] + "22" },
-          ]}
-        >
-          <Text style={[pf.statusText, { color: STATUS_COLOR[item.status] }]}>
-            {STATUS_LABEL[item.status]}
+        <View style={pf.bigCardOverlay}>
+          <Text style={pf.bigCardName} numberOfLines={1}>
+            {item.name.toUpperCase()} – {date}
           </Text>
+          <View style={pf.bigCardLocation}>
+            <View style={pf.cardMetaItem}>
+              <Ionicons name="location-sharp" size={11} color={colors.dark} />
+              <Text style={pf.bigCardLocationText} numberOfLines={1}>
+                {item.location}
+              </Text>
+            </View>
+            <Text style={pf.cardFee}>{item.entryFee}</Text>
+          </View>
         </View>
-        <View style={pf.metaRow}>
-          <Ionicons
-            name="people-outline"
-            size={12}
-            color={colors.placeholder}
-          />
-          <Text style={pf.metaText}>
-            {item.currentParticipants}/{item.maxParticipants}
-          </Text>
-        </View>
-        <View style={pf.metaRow}>
-          <Ionicons
-            name="location-outline"
-            size={12}
-            color={colors.placeholder}
-          />
-          <Text style={pf.metaText} numberOfLines={1}>
-            {item.location}
-          </Text>
-        </View>
-        <Text style={pf.entryFee}>{item.entryFee}</Text>
-      </View>
+      </LinearGradient>
     </ButtonGeneric>
+    // <ButtonGeneric style={[pf.card, { width: CARD_W }]} handleBtn={onPress}>
+    //   {/* ── Gradient image area ── */}
+    //   <LinearGradient colors={colorsGrad} style={pf.cardImage}>
+    //     <View style={pf.cardDecor} />
+    //     <Text style={pf.cardEmoji}>{emoji}</Text>
+    // <ButtonIcon
+    //   handleBtn={onRemove}
+    //   style={pf.bookmarkBtn}
+    //   icon={
+    //     <Ionicons name="bookmark" size={18} color={colors.primaryGradientMid} />
+    //   }
+    // />
+    //   </LinearGradient>
+
+    //   {/* ── Info box ── */}
+    //   <View style={pf.cardBody}>
+    //     <Text style={pf.cardGame}>{item.game}</Text>
+    //     <Text style={pf.cardName} numberOfLines={2}>
+    //       {item.name}
+    //     </Text>
+    //     <View style={pf.cardMeta}>
+    //       <View style={pf.cardMetaItem}>
+    //         <Ionicons name="location-outline" size={13} color={colors.placeholder} />
+    //         <Text style={pf.cardMetaText} numberOfLines={1}>
+    //           {item.location}
+    //         </Text>
+    //       </View>
+    //       <Text style={pf.cardFee}>{item.entryFee}</Text>
+    //     </View>
+    //   </View>
+    // </ButtonGeneric>
   );
 }
 
@@ -132,12 +144,13 @@ export default function Favorites() {
           contentContainerStyle={{
             padding: 16,
             paddingBottom: insets.bottom + 20,
-            gap: 12,
+            gap: 16,
           }}
           showsVerticalScrollIndicator={false}
-          renderItem={({ item }) => (
+          renderItem={({ item, index }) => (
             <TournamentCard
               item={item}
+              index={index}
               onPress={() =>
                 navigation.navigate(NavigationEnum.TOURNAMENT_DETAIL, {
                   tournamentId: item.id,
