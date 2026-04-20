@@ -15,9 +15,12 @@ import { renderStep3 } from "./steps/step3";
 import { estimateTotalMatches } from "../../functions/tournamet";
 import { renderStep4 } from "./steps/step4";
 import { renderStep5 } from "./steps/step5";
+import { renderStepRegolamento } from "./steps/stepRegolamento";
 import {
   STEP_TITLES_TOURNAMENT,
+  SportRegulation,
   TournamentFormat,
+  TournamentGender,
   TournamentPhaseKind,
 } from "../../constants/tournament";
 import { StructureSchedule } from "../../components/core/StructureSchedule/StructureSchedule";
@@ -56,14 +59,23 @@ export default function CreateTournamentSchedule({ navigation }: Props) {
   const [location, setLocation] = useState("");
   const [locationLat, setLocationLat] = useState<number | undefined>(undefined);
   const [locationLng, setLocationLng] = useState<number | undefined>(undefined);
+  const [tournamentCost, setTournamentCost] = useState("");
+  const [insuranceCost, setInsuranceCost] = useState("");
+
+  // Step 2: Regolamento
   const [regulationFileName, setRegulationFileName] = useState<string | null>(
     null,
   );
   const [regulationFileUri, setRegulationFileUri] = useState<string | null>(
     null,
   );
+  const [sportRegulation, setSportRegulation] =
+    useState<SportRegulation | null>(null);
+  const [gender, setGender] = useState<TournamentGender>(
+    TournamentGender.MASCHILE,
+  );
 
-  // Step 2: Structure (chosen first)
+  // Step 3: Structure
   const [phaseKind, setPhaseKind] = useState<TournamentPhaseKind>(
     TournamentPhaseKind.SINGLE,
   );
@@ -74,7 +86,7 @@ export default function CreateTournamentSchedule({ navigation }: Props) {
     TournamentFormat.KNOCKOUT,
   );
 
-  // Step 3: Participants (informed by structure)
+  // Step 4: Participants (informed by structure)
   const [numTeams, setNumTeams] = useState(8);
   const [numGroups, setNumGroups] = useState(2);
 
@@ -82,13 +94,13 @@ export default function CreateTournamentSchedule({ navigation }: Props) {
   const maxGroups = Math.max(2, Math.floor(numTeams / 2));
   const effGroups = phaseKind === "multi" ? Math.min(numGroups, maxGroups) : 1;
 
-  // Step 4: Logistics
+  // Step 5: Logistics
   const [numFields, setNumFields] = useState(2);
   const [matchDuration, setMatchDuration] = useState(45);
   const [restMinutes, setRestMinutes] = useState(15);
   const [travelMinutes, setTravelMinutes] = useState(10);
 
-  // Step 5: Calendar
+  // Step 6: Calendar
   const [isSingleDay, setIsSingleDay] = useState(true);
   const [startDate, setStartDate] = useState(todayISO());
   const [startHour, setStartHour] = useState(9);
@@ -134,11 +146,18 @@ export default function CreateTournamentSchedule({ navigation }: Props) {
       Alert.alert("Luogo mancante", "Inserisci il luogo del torneo.");
       return false;
     }
-    if (step === 3 && numTeams < 2) {
+    if (step === 2 && !sportRegulation) {
+      Alert.alert(
+        "Regolamento sportivo mancante",
+        "Seleziona il regolamento sportivo del torneo.",
+      );
+      return false;
+    }
+    if (step === 4 && numTeams < 2) {
       Alert.alert("Partecipanti insufficienti", "Servono almeno 2 squadre.");
       return false;
     }
-    if (step === 5) {
+    if (step === 6) {
       if (!/^\d{4}-\d{2}-\d{2}$/.test(startDate)) {
         Alert.alert(
           "Data non valida",
@@ -225,6 +244,10 @@ export default function CreateTournamentSchedule({ navigation }: Props) {
       lat: locationLat,
       lng: locationLng,
       regulationUri: regulationFileUri ?? undefined,
+      tournamentCost: tournamentCost ? parseFloat(tournamentCost) : undefined,
+      insuranceCost: insuranceCost ? parseFloat(insuranceCost) : undefined,
+      sportRegulation: sportRegulation ?? undefined,
+      gender,
     };
     createMutation.mutate(payload);
   }, [
@@ -246,6 +269,10 @@ export default function CreateTournamentSchedule({ navigation }: Props) {
     locationLat,
     locationLng,
     regulationFileUri,
+    tournamentCost,
+    insuranceCost,
+    sportRegulation,
+    gender,
     createMutation,
   ]);
 
@@ -253,10 +280,13 @@ export default function CreateTournamentSchedule({ navigation }: Props) {
     if (step === 1) {
       return tournamentName.trim().length > 0 && location.trim().length > 0;
     }
-    if (step === 4) {
-      return matchDuration > 0 && numFields > 0;
+    if (step === 2) {
+      return sportRegulation !== null;
     }
     if (step === 5) {
+      return matchDuration > 0 && numFields > 0;
+    }
+    if (step === 6) {
       if (!/^\d{4}-\d{2}-\d{2}$/.test(startDate)) return false;
       if (!isSingleDay) {
         if (playDays.length === 0) return false;
@@ -273,7 +303,7 @@ export default function CreateTournamentSchedule({ navigation }: Props) {
 
   return (
     <StructureSchedule
-      numberSteps={5}
+      numberSteps={6}
       handleGenerate={handleGenerate}
       validateStep={validateStep}
       step={step}
@@ -304,11 +334,22 @@ export default function CreateTournamentSchedule({ navigation }: Props) {
             setLocationLng,
             locationLat,
             locationLng,
+            tournamentCost,
+            setTournamentCost,
+            insuranceCost,
+            setInsuranceCost,
+          })}
+        {step === 2 &&
+          renderStepRegolamento({
             regulationFileName,
             setRegulationFileName,
             setRegulationFileUri,
+            sportRegulation,
+            setSportRegulation,
+            gender,
+            setGender,
           })}
-        {step === 2 &&
+        {step === 3 &&
           renderStep2({
             phaseKind,
             setPhaseKind,
@@ -317,7 +358,7 @@ export default function CreateTournamentSchedule({ navigation }: Props) {
             knockoutFormat,
             setKnockoutFormat,
           })}
-        {step === 3 &&
+        {step === 4 &&
           renderStep3({
             numTeams,
             setNumGroups,
@@ -328,7 +369,7 @@ export default function CreateTournamentSchedule({ navigation }: Props) {
             knockoutFormat,
             maxGroups,
           })}
-        {step === 4 &&
+        {step === 5 &&
           renderStep4({
             numFields,
             setNumFields,
@@ -340,7 +381,7 @@ export default function CreateTournamentSchedule({ navigation }: Props) {
             restMinutes,
             travelMinutes,
           })}
-        {step === 5 &&
+        {step === 6 &&
           renderStep5({
             isSingleDay,
             setIsSingleDay,

@@ -278,6 +278,79 @@ export const s = StyleSheet.create({
     fontWeight: "600",
   },
 
+  // Cost boxes (step 1)
+  costRow: { gap: 8, marginBottom: 4 },
+  costBox: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: colors.white,
+    borderRadius: 12,
+    paddingHorizontal: 14,
+    paddingVertical: 12,
+    borderWidth: 1,
+    borderColor: colors.disabled,
+    gap: 10,
+  },
+  costIconWrap: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: colors.gray,
+  },
+  costBody: { flex: 1 },
+  costLabel: { fontSize: 14, fontWeight: "600", color: colors.dark },
+  costSub: { fontSize: 11, color: colors.placeholder, marginTop: 1 },
+  costInput: { width: 70, textAlign: "right" },
+  costCurrency: {
+    fontSize: 15,
+    fontWeight: "700",
+    color: colors.grayDark,
+    marginLeft: -4,
+  },
+
+  // Download button (sport regulation cards)
+  downloadBtn: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 4,
+    paddingHorizontal: 8,
+    paddingVertical: 5,
+    borderRadius: 8,
+    backgroundColor: colors.gray,
+    marginRight: 6,
+  },
+  downloadBtnText: {
+    fontSize: 11,
+    fontWeight: "600",
+    color: colors.purpleBlue,
+  },
+
+  // Gender selector (step regolamento)
+  genderRow: { flexDirection: "row", gap: 8 },
+  genderCard: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 6,
+    paddingVertical: 16,
+    borderRadius: 12,
+    backgroundColor: colors.white,
+    borderWidth: 1.5,
+    borderColor: colors.disabled,
+  },
+  genderCardSelected: {
+    borderColor: colors.primary,
+    backgroundColor: colors.primarySelectedBg,
+  },
+  genderCardText: {
+    fontSize: 12,
+    fontWeight: "700",
+    color: colors.placeholder,
+  },
+  genderCardTextSelected: { color: colors.primary },
+
   // numberInputRow reduced height
   numberInputRow: {
     flexDirection: "row",

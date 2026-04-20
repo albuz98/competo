@@ -1,11 +1,9 @@
-import { Text, TouchableOpacity, View } from "react-native";
+import { Text, TextInput, View } from "react-native";
 import { s } from "../CreateTournamentSchedule.styles";
 import { colors } from "../../../theme/colors";
 import LocationSearch from "../../../components/core/LocationSearch/LocationSearch";
 import { InputBox } from "../../../components/core/InputBox/InputBox";
-import * as DocumentPicker from "expo-document-picker";
 import { Ionicons } from "@expo/vector-icons";
-import Feather from "@expo/vector-icons/Feather";
 
 interface renderStep1Props {
   tournamentName: string;
@@ -18,9 +16,10 @@ interface renderStep1Props {
   setLocationLng: React.Dispatch<React.SetStateAction<number | undefined>>;
   locationLat: number | undefined;
   locationLng: number | undefined;
-  regulationFileName: string | null;
-  setRegulationFileName: React.Dispatch<React.SetStateAction<string | null>>;
-  setRegulationFileUri: React.Dispatch<React.SetStateAction<string | null>>;
+  tournamentCost: string;
+  setTournamentCost: React.Dispatch<React.SetStateAction<string>>;
+  insuranceCost: string;
+  setInsuranceCost: React.Dispatch<React.SetStateAction<string>>;
 }
 
 export function renderStep1({
@@ -34,26 +33,11 @@ export function renderStep1({
   setLocationLng,
   locationLat,
   locationLng,
-  regulationFileName,
-  setRegulationFileName,
-  setRegulationFileUri,
+  tournamentCost,
+  setTournamentCost,
+  insuranceCost,
+  setInsuranceCost,
 }: renderStep1Props) {
-  async function pickPdf() {
-    const result = await DocumentPicker.getDocumentAsync({
-      type: "application/pdf",
-      copyToCacheDirectory: false,
-    });
-    if (result.canceled) return;
-    const asset = result.assets[0];
-    setRegulationFileName(asset.name);
-    setRegulationFileUri(asset.uri);
-  }
-
-  function clearPdf() {
-    setRegulationFileName(null);
-    setRegulationFileUri(null);
-  }
-
   return (
     <>
       <Text style={s.sectionTitle}>Info Torneo</Text>
@@ -97,31 +81,49 @@ export function renderStep1({
         }}
       />
 
-      <Text style={s.sectionLabel}>Regolamento</Text>
-      {regulationFileName ? (
-        <View style={s.pdfRow}>
-          <Ionicons
-            name="document-text-outline"
-            size={18}
-            color={colors.primary}
+      <Text style={s.sectionLabel}>Costi</Text>
+      <View style={s.costRow}>
+        <View style={s.costBox}>
+          <View style={s.costIconWrap}>
+            <Ionicons name="card-outline" size={16} color={colors.primary} />
+          </View>
+          <View style={s.costBody}>
+            <Text style={s.costLabel}>Costo iscrizione</Text>
+            <Text style={s.costSub}>Per squadra</Text>
+          </View>
+          <TextInput
+            value={tournamentCost}
+            onChangeText={setTournamentCost}
+            placeholder="0"
+            placeholderTextColor={colors.placeholder}
+            keyboardType="decimal-pad"
+            style={s.costInput}
           />
-          <Text style={s.pdfFileName} numberOfLines={1}>
-            {regulationFileName}
-          </Text>
-          <TouchableOpacity onPress={clearPdf} hitSlop={8}>
-            <Feather name="x" size={18} color={colors.placeholder} />
-          </TouchableOpacity>
+          <Text style={s.costCurrency}>€</Text>
         </View>
-      ) : (
-        <TouchableOpacity style={s.pdfPickerBtn} onPress={pickPdf}>
-          <Ionicons
-            name="cloud-upload-outline"
-            size={18}
-            color={colors.grayDark}
+        <View style={s.costBox}>
+          <View style={s.costIconWrap}>
+            <Ionicons
+              name="shield-checkmark-outline"
+              size={16}
+              color={colors.success}
+            />
+          </View>
+          <View style={s.costBody}>
+            <Text style={s.costLabel}>Assicurazione</Text>
+            <Text style={s.costSub}>Per componente</Text>
+          </View>
+          <TextInput
+            value={insuranceCost}
+            onChangeText={setInsuranceCost}
+            placeholder="0"
+            placeholderTextColor={colors.placeholder}
+            keyboardType="decimal-pad"
+            style={s.costInput}
           />
-          <Text style={s.pdfPickerText}>Carica regolamento (solo PDF)</Text>
-        </TouchableOpacity>
-      )}
+          <Text style={s.costCurrency}>€</Text>
+        </View>
+      </View>
     </>
   );
 }

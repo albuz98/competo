@@ -93,8 +93,68 @@ export const KO_FORMATS: {
 
 export const DAY_LABELS = ["D", "L", "M", "M", "G", "V", "S"];
 
+export enum SportRegulation {
+  CALCIO_5 = "calcio_5",
+  KING_LEAGUE = "king_league",
+  FUTSAL = "futsal",
+  CALCIO_11 = "calcio_11",
+}
+
+export enum TournamentGender {
+  MASCHILE = "maschile",
+  FEMMINILE = "femminile",
+  MISTO = "misto",
+}
+
+export const SPORT_REGULATIONS: {
+  value: SportRegulation;
+  label: string;
+  icon: string;
+  downloadUrl: string;
+}[] = [
+  {
+    value: SportRegulation.CALCIO_5,
+    label: "Calcio a 5",
+    icon: "football-outline",
+    downloadUrl: "https://example.com/regolamento-calcio-a-5.pdf",
+  },
+  {
+    value: SportRegulation.KING_LEAGUE,
+    label: "King League",
+    icon: "trophy-outline",
+    downloadUrl: "https://example.com/regolamento-king-league.pdf",
+  },
+  {
+    value: SportRegulation.FUTSAL,
+    label: "Futsal",
+    icon: "flash-outline",
+    downloadUrl: "https://example.com/regolamento-futsal.pdf",
+  },
+  {
+    value: SportRegulation.CALCIO_11,
+    label: "Calcio a 11",
+    icon: "people-outline",
+    downloadUrl: "https://example.com/regolamento-calcio-a-11.pdf",
+  },
+];
+
+export const TOURNAMENT_GENDERS: {
+  value: TournamentGender;
+  label: string;
+  icon: string;
+}[] = [
+  { value: TournamentGender.MASCHILE, label: "Maschile", icon: "man-outline" },
+  {
+    value: TournamentGender.FEMMINILE,
+    label: "Femminile",
+    icon: "woman-outline",
+  },
+  { value: TournamentGender.MISTO, label: "Misto", icon: "people-outline" },
+];
+
 export const STEP_TITLES_TOURNAMENT = [
   "Info Torneo",
+  "Regolamento",
   "Struttura",
   "Partecipanti",
   "Logistica",

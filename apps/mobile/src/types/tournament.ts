@@ -80,6 +80,10 @@ export interface CreateTournamentPayload {
   lat?: number;
   lng?: number;
   regulationUri?: string;
+  tournamentCost?: number;
+  insuranceCost?: number;
+  sportRegulation?: string;
+  gender?: string;
 }
 
 export interface TournametNumberPartecipants {
