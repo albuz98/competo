@@ -233,9 +233,9 @@ export function InputBoxSearch<T>({
               )}
 
               {showEmpty && (
-                <Text style={[s.emptyText, s.resultsModalSpacing]}>
-                  {emptyMessage}
-                </Text>
+                <View style={s.emptyWrap}>
+                  <Text style={s.emptyText}>{emptyMessage}</Text>
+                </View>
               )}
             </View>
           </View>

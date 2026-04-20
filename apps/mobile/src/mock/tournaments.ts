@@ -8,6 +8,7 @@ import {
   TournamentTeam,
 } from "../types/tournament";
 import { GAMES } from "../constants/generals";
+import { TournamentGender } from "../constants/tournament";
 
 const STATUSES = ["upcoming", "ongoing", "completed"] as const;
 
@@ -66,6 +67,11 @@ export function generateTournament(id?: string): Tournament {
       `${faker.location.city()}, ${faker.location.country()}`,
     ]),
     entryFee: faker.helpers.arrayElement(["Free", "$10", "$25", "$50", "$100"]),
+    gender: faker.helpers.arrayElement([
+      TournamentGender.MALE,
+      TournamentGender.FEMALE,
+      TournamentGender.OTHER,
+    ]),
     organizer: faker.company.name(),
     rules: Array.from({ length: faker.number.int({ min: 3, max: 6 }) }, () =>
       faker.lorem.sentence(),

@@ -52,7 +52,6 @@ export const s = StyleSheet.create({
     fontSize: 13,
     color: colors.placeholder,
     textAlign: "center",
-    paddingVertical: 10,
   },
 
   // ── Overlay (modal) mode styles ──────────────────────────────────────────
@@ -70,6 +69,14 @@ export const s = StyleSheet.create({
     color: colors.placeholder,
   },
   resultsModalSpacing: {
+    marginTop: 12,
+  },
+
+  emptyWrap: {
+    backgroundColor: colors.white,
+    borderRadius: 12,
+    paddingHorizontal: 16,
+    paddingVertical: 30,
     marginTop: 12,
   },
 });

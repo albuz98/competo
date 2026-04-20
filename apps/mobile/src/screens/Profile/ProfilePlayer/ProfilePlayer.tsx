@@ -14,19 +14,13 @@ import {
   ButtonGeneric,
   ButtonLink,
 } from "../../../components/core/Button/Button";
-import { Gender, PlayerProfile } from "../../../types/user";
+import { Gender, GENDER_OPTIONS, PlayerProfile } from "../../../types/user";
 import { LinearGradient } from "expo-linear-gradient";
 import { InputBoxRow } from "../../../components/core/InputBoxRow/InputBoxRow";
 import { HeaderCardProfile } from "../../../components/HeaderCardProfile/HeaderCard";
 import { pStyles } from "./ProfilePlayer.styled";
 import { RESULT_CONFIG, TournamentResult } from "../../../constants/tournament";
 import { styles } from "../Profile.styles";
-
-const GENDER_OPTIONS: { value: Gender; label: string }[] = [
-  { value: Gender.MALE, label: "Maschio" },
-  { value: Gender.FEMALE, label: "Femmina" },
-  { value: Gender.OTHER, label: "Non definito" },
-];
 
 interface ProfilePlayerProps {
   currentProfile: PlayerProfile | null;

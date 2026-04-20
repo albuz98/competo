@@ -101,9 +101,9 @@ export enum SportRegulation {
 }
 
 export enum TournamentGender {
-  MASCHILE = "maschile",
-  FEMMINILE = "femminile",
-  MISTO = "misto",
+  MALE = "maschile",
+  FEMALE = "femminile",
+  OTHER = "misto",
 }
 
 export const SPORT_REGULATIONS: {
@@ -143,13 +143,13 @@ export const TOURNAMENT_GENDERS: {
   label: string;
   icon: string;
 }[] = [
-  { value: TournamentGender.MASCHILE, label: "Maschile", icon: "man-outline" },
+  { value: TournamentGender.MALE, label: "Maschile", icon: "man-outline" },
   {
-    value: TournamentGender.FEMMINILE,
+    value: TournamentGender.FEMALE,
     label: "Femminile",
     icon: "woman-outline",
   },
-  { value: TournamentGender.MISTO, label: "Misto", icon: "people-outline" },
+  { value: TournamentGender.OTHER, label: "Misto", icon: "people-outline" },
 ];
 
 export const STEP_TITLES_TOURNAMENT = [

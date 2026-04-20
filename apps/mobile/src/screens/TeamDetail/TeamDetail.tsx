@@ -242,7 +242,7 @@ export default function TeamDetail({ route, navigation }: Props) {
               <Text style={tds.teamName}>{team.name}</Text>
               <View style={tds.sportChip}>
                 <Ionicons
-                  name="shield-checkmark"
+                  name="football"
                   size={12}
                   color={colors.white}
                 />

@@ -3,6 +3,7 @@ import {
   TournamentPhaseKind,
   TournamentFormat,
   TeamRegistrationStatus,
+  TournamentGender,
 } from "../constants/tournament";
 import { PlayerStats } from "./stats";
 
@@ -133,6 +134,7 @@ export interface Tournament {
   entryFee: string;
   organizer: string;
   rules: string[];
+  gender?: TournamentGender;
   isRegistered?: boolean;
   lat?: number;
   lng?: number;

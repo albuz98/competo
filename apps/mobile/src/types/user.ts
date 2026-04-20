@@ -25,6 +25,12 @@ export const GENDER_ICONS: Record<
   [Gender.OTHER]: "male-female",
 };
 
+export const GENDER_OPTIONS: { value: Gender; label: string }[] = [
+  { value: Gender.MALE, label: "Maschio" },
+  { value: Gender.FEMALE, label: "Femmina" },
+  { value: Gender.OTHER, label: "Non definito" },
+];
+
 export type OrganizerCollaborator = AppUser;
 
 export type PlayerProfile = {
