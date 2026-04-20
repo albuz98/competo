@@ -1,12 +1,11 @@
 import React from "react";
 import { ModalViewer } from "../core/Modal/Modal";
-import { View, Text, Pressable } from "react-native";
-import { colors } from "../../theme/colors";
+import { View, Text, Pressable, Image } from "react-native";
+import { colors, colorGradient } from "../../theme/colors";
 import { NavigationEnum } from "../../types/navigation";
-import { Avatar } from "../core/Avatar/Avatar";
 import { UserRole } from "../../constants/user";
-import { sizesEnum } from "../../theme/dimension";
 import { Ionicons } from "@expo/vector-icons";
+import { LinearGradient } from "expo-linear-gradient";
 import { User, UserProfile } from "../../types/user";
 import { styles } from "./ModalSwitchProfile.styled";
 
@@ -28,6 +27,43 @@ export const ModalSwitchProfile = ({
   const handleSwitchProfile = (profile: UserProfile) => {
     switchProfile(profile.id);
     setChangeProfileModal(false);
+  };
+
+  const renderProfileAvatar = (profile: UserProfile) => {
+    const avatarUrl =
+      profile.role === UserRole.PLAYER
+        ? profile.avatarUrl ?? user.avatarUrl
+        : profile.avatarUrl;
+
+    if (avatarUrl) {
+      return (
+        <Image
+          source={{ uri: avatarUrl }}
+          style={{ width: 40, height: 40, borderRadius: 20 }}
+        />
+      );
+    }
+
+    return (
+      <LinearGradient
+        colors={colorGradient}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 0 }}
+        style={{
+          width: 40,
+          height: 40,
+          borderRadius: 20,
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
+        <Ionicons
+          name={profile.role === UserRole.ORGANIZER ? "business" : "person"}
+          size={20}
+          color={colors.white}
+        />
+      </LinearGradient>
+    );
   };
 
   return (
@@ -63,17 +99,7 @@ export const ModalSwitchProfile = ({
                 },
               ]}
             >
-              <Avatar
-                user={
-                  profile.role === UserRole.PLAYER
-                    ? {
-                        ...profile,
-                        avatarUrl: profile.avatarUrl ?? user.avatarUrl,
-                      }
-                    : profile
-                }
-                dimension={sizesEnum.small}
-              />
+              {renderProfileAvatar(profile)}
               <View style={{ flex: 1, marginLeft: 12 }}>
                 <Text
                   style={{
