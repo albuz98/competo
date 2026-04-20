@@ -30,6 +30,7 @@ export type RootStackParamList = {
   TournamentHistory: undefined;
   Settings: undefined;
   CreateOrganizerProfile: undefined;
+  ChangePassword: undefined;
 };
 
 export type MainTabParamList = {
@@ -67,4 +68,5 @@ export enum NavigationEnum {
   TOURNAMENT_HISTORY = "TournamentHistory",
   SETTINGS = "Settings",
   CREATE_ORGANIZER_PROFILE = "CreateOrganizerProfile",
+  CHANGE_PASSWORD = "ChangePassword",
 }

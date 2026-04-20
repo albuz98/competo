@@ -1,10 +1,10 @@
-import React, { useRef, useCallback, useState, useEffect } from "react";
+import React, { useCallback, useState, useEffect } from "react";
 import { useFocusEffect, useRoute } from "@react-navigation/native";
 import type { RouteProp } from "@react-navigation/native";
 import {
   Text,
   Alert,
-  ScrollView,
+  View,
   KeyboardAvoidingView,
   Platform,
 } from "react-native";
@@ -67,19 +67,9 @@ export default function Profile() {
     });
   }, [edit]);
 
-  const scrollRef = useRef<ScrollView>(null);
-  const savedScrollY = useRef(0);
-
   useFocusEffect(
     useCallback(() => {
       setEdit(false);
-      const y = savedScrollY.current;
-      if (y > 0) {
-        setTimeout(
-          () => scrollRef.current?.scrollTo({ y, animated: false }),
-          50,
-        );
-      }
       if (user) refreshTeams();
     }, [user?.id]),
   );
@@ -116,22 +106,6 @@ export default function Profile() {
   };
 
   const handleSave = async () => {
-    const passwordChanged = form.password.length > 0;
-    if (passwordChanged && form.password.length < 6) {
-      Alert.alert(
-        "Password troppo corta",
-        "La password deve essere almeno 6 caratteri.",
-      );
-      return;
-    }
-    if (passwordChanged && form.password !== form.confirmPassword) {
-      Alert.alert(
-        "Password non coincidono",
-        "Le password inserite non corrispondono.",
-      );
-      return;
-    }
-
     // Salva campi organizzatore
     if (
       currentProfile?.role === UserRole.ORGANIZER &&
@@ -145,8 +119,7 @@ export default function Profile() {
       form.lastName !== (user?.lastName ?? "") ||
       form.username !== (user?.username ?? "") ||
       form.location !== (user?.location ?? "") ||
-      form.dateOfBirth !== (user?.dateOfBirth ?? "") ||
-      (passwordChanged && form.password.length >= 6);
+      form.dateOfBirth !== (user?.dateOfBirth ?? "");
 
     if (hasChanges) {
       if (form.location && form.location !== (user?.location ?? "")) {
@@ -165,12 +138,10 @@ export default function Profile() {
         lastName: form.lastName,
         username: form.username,
         location: form.location,
-        ...(form.password ? { password: form.password } : {}),
       });
       setSaving(false);
     }
     setEdit(false);
-    navigation.navigate(NavigationEnum.SETTINGS);
   };
 
   if (!user) {
@@ -194,16 +165,7 @@ export default function Profile() {
           currentProfile={currentProfile}
           navigation={navigation}
         />
-        <ScrollView
-          ref={scrollRef}
-          showsVerticalScrollIndicator={false}
-          contentContainerStyle={styles.scroll}
-          keyboardShouldPersistTaps="handled"
-          scrollEventThrottle={16}
-          onScroll={(e) => {
-            savedScrollY.current = e.nativeEvent.contentOffset.y;
-          }}
-        >
+        <View style={{ flex: 1 }}>
           {isOrganizerProfile ? (
             <ProfileOrganizer
               currentProfile={currentProfile}
@@ -218,7 +180,7 @@ export default function Profile() {
               edit={edit}
             />
           )}
-        </ScrollView>
+        </View>
         <ModalSwitchProfile
           changeProfileModal={changeProfileModal}
           setChangeProfileModal={setChangeProfileModal}

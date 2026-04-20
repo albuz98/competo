@@ -133,4 +133,28 @@ export const styles = StyleSheet.create({
     fontSize: 12,
     color: colors.placeholder,
   },
+
+  changePasswordBtn: {
+    marginHorizontal: 16,
+    borderRadius: 16,
+    shadowColor: colors.black,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.07,
+    shadowRadius: 8,
+    elevation: 3,
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    backgroundColor: colors.white,
+    marginTop: 12,
+  },
+  changePasswordText: {
+    fontSize: 16,
+    fontWeight: "600",
+    color: colors.dark,
+    marginRight: 6,
+  },
 });

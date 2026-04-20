@@ -209,4 +209,22 @@ export const oStyles = StyleSheet.create({
     color: colors.warningText,
     lineHeight: 17,
   },
+  changePasswordBtn: {
+    marginHorizontal: 16,
+    borderRadius: 16,
+    shadowColor: colors.black,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.07,
+    shadowRadius: 8,
+    elevation: 3,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
+  changePasswordText: {
+    fontSize: 13,
+    fontWeight: "600",
+    color: colors.primary,
+    marginRight: 6,
+  },
 });

@@ -26,6 +26,7 @@ import TournamentDetail from "../screens/TournamentDetail/TournamentDetail";
 import TournamentHistoryScreen from "../screens/TournamentHistory/TournamentHistory";
 import Settings from "../screens/Settings/Settings";
 import { colors } from "../theme/colors";
+import { ChangePassword } from "../screens/ChangePassword/ChangePassword";
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -168,6 +169,11 @@ export default function AppNavigator() {
         <Stack.Screen
           name={NavigationEnum.CREATE_ORGANIZER_PROFILE}
           component={CreateOrganizerProfile}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name={NavigationEnum.CHANGE_PASSWORD}
+          component={ChangePassword}
           options={{ headerShown: false }}
         />
       </Stack.Navigator>

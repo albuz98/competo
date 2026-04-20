@@ -41,8 +41,6 @@ export default function ProfilePlayer({
     username: "",
     location: "",
     dateOfBirth: "",
-    password: "",
-    confirmPassword: "",
   });
   const navigation =
     useNavigation<NativeStackNavigationProp<RootStackParamList>>();
@@ -82,8 +80,6 @@ export default function ProfilePlayer({
         username: user?.username ?? "",
         location: user?.location ?? "",
         dateOfBirth: user?.dateOfBirth ?? "",
-        password: "",
-        confirmPassword: "",
       });
     }
   }, [edit]);
@@ -145,37 +141,8 @@ export default function ProfilePlayer({
               label="Posizione"
               value={form.location}
               onChangeText={(v) => setForm((f) => ({ ...f, location: v }))}
+              isLast
             />
-            <InputBoxRow
-              label="Password"
-              placeholder="Lascia vuoto per non modificare"
-              value={form.password}
-              onChangeText={(v) => setForm((f) => ({ ...f, password: v }))}
-              secureTextEntry
-              isLast={form.password.length === 0}
-              error={
-                form.password.length > 0 && form.password.length < 6
-                  ? "La password è troppo corta"
-                  : undefined
-              }
-            />
-            {form.password.length > 0 && (
-              <InputBoxRow
-                label="Conferma password"
-                value={form.confirmPassword}
-                onChangeText={(v) =>
-                  setForm((f) => ({ ...f, confirmPassword: v }))
-                }
-                secureTextEntry
-                isLast
-                error={
-                  form.confirmPassword.length > 0 &&
-                  form.password !== form.confirmPassword
-                    ? "Le password non coincidono"
-                    : undefined
-                }
-              />
-            )}
           </View>
         </HeaderCardProfile>
 

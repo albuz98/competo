@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { ActivityIndicator, Alert, View, Text } from "react-native";
+import { ActivityIndicator, Alert, View, Text, Pressable } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
 import QRCode from "react-native-qrcode-svg";
@@ -12,6 +12,10 @@ import { AvatarData, Avatar } from "../core/Avatar/Avatar";
 import { ButtonIcon, ButtonBorderColored } from "../core/Button/Button";
 import { ModalViewer } from "../core/Modal/Modal";
 import { styles } from "./HeaderCard.styled";
+import SimpleLineIcons from "@expo/vector-icons/SimpleLineIcons";
+import { RootStackParamList } from "../../types/navigation";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { useNavigation } from "@react-navigation/native";
 
 interface HeaderCardProps {
   user: User | null;
@@ -41,6 +45,8 @@ export const HeaderCardProfile = ({
   handleStartEdit,
 }: HeaderCardProps) => {
   const [qrOpen, setQrOpen] = useState(false);
+  const navigation =
+    useNavigation<NativeStackNavigationProp<RootStackParamList>>();
 
   const profileName = displayName ?? user?.username ?? "";
   const qrValue = `https://competo.app/u/${user?.username ?? "user"}`;
@@ -157,6 +163,15 @@ export const HeaderCardProfile = ({
           </View>
         )}
       </View>
+
+      {edit && (
+        <Pressable onPress={() => navigation.navigate("ChangePassword")}>
+          <View style={styles.changePasswordBtn}>
+            <Text style={styles.changePasswordText}>Cambia password</Text>
+            <SimpleLineIcons name="arrow-right" size={20} color="black" />
+          </View>
+        </Pressable>
+      )}
 
       {/* ── QR Modal ─────────────────────────────────────────── */}
       <ModalViewer
