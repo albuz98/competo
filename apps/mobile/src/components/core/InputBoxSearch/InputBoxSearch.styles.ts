@@ -13,7 +13,7 @@ export const s = StyleSheet.create({
     paddingVertical: 14,
     fontSize: 15,
     borderWidth: 1,
-    borderColor: colors.opacized,
+    borderColor: colors.disabled,
     gap: 10,
   },
   inputRowError: {

@@ -20,7 +20,11 @@ interface LocationSearchProps {
   setLocation: React.Dispatch<React.SetStateAction<string>>;
 }
 
-type Mode = "search" | "preview" | "done";
+enum Mode {
+  SEARCH = "search",
+  PREVIEW = "preview",
+  DONE = "done",
+}
 
 export default function LocationSearch({
   initialValue = "",
@@ -41,22 +45,22 @@ export default function LocationSearch({
         : null,
     );
   const [mode, setMode] = useState<Mode>(
-    isConfirmed && initialValue ? "done" : "search",
+    isConfirmed && initialValue ? Mode.DONE : Mode.SEARCH,
   );
 
   const handleSelectSuggestion = (suggestion: Suggestion) => {
     setSelectedSuggestion(suggestion);
-    setMode("preview");
+    setMode(Mode.PREVIEW);
   };
 
   const handleChange = () => {
-    setMode("search");
+    setMode(Mode.SEARCH);
     setSelectedSuggestion(null);
   };
 
   const handleConfirm = () => {
     if (!selectedSuggestion) return;
-    setMode("done");
+    setMode(Mode.DONE);
     onConfirm(
       selectedSuggestion.displayName,
       selectedSuggestion.lat,
@@ -65,13 +69,13 @@ export default function LocationSearch({
   };
 
   const handleClearDone = () => {
-    setMode("search");
+    setMode(Mode.SEARCH);
     setSelectedSuggestion(null);
     setLocation("");
   };
 
   // ── Preview: map + confirm/change buttons ───────────────────────────────────
-  if (mode === "preview" && selectedSuggestion) {
+  if (mode === Mode.PREVIEW && selectedSuggestion) {
     return (
       <View style={ls.container}>
         <View style={ls.selectedAddressBox}>

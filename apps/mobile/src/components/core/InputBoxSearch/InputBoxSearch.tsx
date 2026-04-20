@@ -19,43 +19,22 @@ import { s } from "./InputBoxSearch.styles";
 
 interface InputBoxSearchProps<T> {
   placeholder?: string;
-  /** Pre-fills the input on mount */
   defaultValue?: string;
-  /** Async function that receives the trimmed query and returns results */
   onSearch: (query: string) => Promise<T[]>;
-  /** Render each result item; call onPress to notify the parent */
   renderResult: (
     item: T,
     index: number,
     onPress: () => void,
   ) => React.ReactNode;
-  /** Called when the user taps a result */
   onSelect?: (item: T) => void;
-  /** Called on every query change (including clear) */
   onQueryChange?: (query: string) => void;
-  /** Show the orange gradient icon bubble on the left (like in Home). Default: plain search icon */
   gradientIcon?: boolean;
-  /** Debounce delay in ms. Default: 500 */
   debounceMs?: number;
-  /** Minimum characters before the search fires. Default: 1 */
   minChars?: number;
-  /** Dark-mode background (like InputBox). Default: false (white) */
   isDark?: boolean;
-  /** Highlight input border in red */
   isError?: boolean;
-  /** Message shown when the search returns no results */
   emptyMessage?: string;
-  /**
-   * Overlay mode: renders a fake (non-interactive) bar; tapping it opens a
-   * transparent full-screen Modal that contains the real input + results.
-   * The Modal covers the tab bar too. Default: false (inline rendering).
-   */
   overlayDropdown?: boolean;
-  /**
-   * Extra top spacing inside the Modal search area, in addition to safe-area
-   * insets. Should match the marginTop of the wrapping View in the screen.
-   * Default: 20
-   */
   modalTopSpacing?: number;
 }
 
@@ -78,18 +57,15 @@ export function InputBoxSearch<T>({
   const insets = useSafeAreaInsets();
 
   const [query, setQuery] = useState(defaultValue ?? "");
-  // debouncedQuery is what actually drives the useQuery
   const [debouncedQuery, setDebouncedQuery] = useState(
     defaultValue?.trim() ?? "",
   );
   const [modalVisible, setModalVisible] = useState(false);
 
-  // Unique key per component instance so different search boxes don't share cache
   const instanceId = useRef(
     `ibsearch-${Math.random().toString(36).slice(2)}`,
   ).current;
 
-  // Debounce: update debouncedQuery after the user stops typing
   useEffect(() => {
     const trimmed = query.trim();
     if (trimmed.length < minChars) {
