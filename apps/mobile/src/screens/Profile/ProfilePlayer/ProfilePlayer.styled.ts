@@ -163,4 +163,49 @@ export const pStyles = StyleSheet.create({
     fontWeight: "700",
     color: colors.dark,
   },
+
+  // ── Gender selector ────────────────────────────────────────────
+  genderRow: {
+    paddingHorizontal: 16,
+    paddingVertical: 10,
+  },
+  genderLabel: {
+    fontSize: 11,
+    color: colors.placeholder,
+    textTransform: "uppercase",
+    letterSpacing: 0.5,
+    marginBottom: 8,
+  },
+  genderOptions: {
+    flexDirection: "row",
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: colors.primary,
+    overflow: "hidden",
+  },
+  genderOption: {
+    flex: 1,
+    paddingVertical: 8,
+    alignItems: "center",
+    backgroundColor: colors.white,
+    borderRightWidth: 1,
+    borderRightColor: colors.primary,
+  },
+  genderOptionFirst: {
+    borderLeftWidth: 0,
+  },
+  genderOptionLast: {
+    borderRightWidth: 0,
+  },
+  genderOptionSelected: {
+    backgroundColor: colors.primary,
+  },
+  genderOptionText: {
+    fontSize: 13,
+    fontWeight: "600",
+    color: colors.primary,
+  },
+  genderOptionTextSelected: {
+    color: colors.white,
+  },
 });

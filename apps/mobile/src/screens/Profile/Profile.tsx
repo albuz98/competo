@@ -25,6 +25,7 @@ import {
 import { styles } from "./Profile.styles";
 import { styles as tabStyles } from "../../navigation/MainTabNavigator/MainTabNavigator.styles";
 import { UserRole } from "../../constants/user";
+import { Gender } from "../../types/user";
 import { TopBarProfile } from "../../components/TopBarProfile/TopBarProfile";
 import ProfileOrganizer from "./ProfileOrganizer/ProfileOrganizer";
 import ProfilePlayer from "./ProfilePlayer/ProfilePlayer";
@@ -47,6 +48,7 @@ export default function Profile() {
     username: "",
     location: "",
     dateOfBirth: "",
+    gender: Gender.OTHER,
     password: "",
     confirmPassword: "",
     orgName: "",
@@ -98,6 +100,7 @@ export default function Profile() {
       username: user?.username ?? "",
       location: user?.location ?? "",
       dateOfBirth: user?.dateOfBirth ?? "",
+      gender: user?.gender ?? Gender.OTHER,
       password: "",
       confirmPassword: "",
       orgName: orgProfile?.orgName ?? "",
@@ -119,7 +122,8 @@ export default function Profile() {
       form.lastName !== (user?.lastName ?? "") ||
       form.username !== (user?.username ?? "") ||
       form.location !== (user?.location ?? "") ||
-      form.dateOfBirth !== (user?.dateOfBirth ?? "");
+      form.dateOfBirth !== (user?.dateOfBirth ?? "") ||
+      form.gender !== (user?.gender ?? "");
 
     if (hasChanges) {
       if (form.location && form.location !== (user?.location ?? "")) {
@@ -138,6 +142,7 @@ export default function Profile() {
         lastName: form.lastName,
         username: form.username,
         location: form.location,
+        gender: (form.gender as Gender) || undefined,
       });
       setSaving(false);
     }
@@ -178,6 +183,8 @@ export default function Profile() {
               currentProfile={currentProfile}
               saving={saving}
               edit={edit}
+              gender={form.gender}
+              onGenderChange={(g) => setForm((f) => ({ ...f, gender: g }))}
             />
           )}
         </View>

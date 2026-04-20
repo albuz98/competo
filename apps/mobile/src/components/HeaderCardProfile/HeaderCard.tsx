@@ -5,6 +5,7 @@ import * as ImagePicker from "expo-image-picker";
 import QRCode from "react-native-qrcode-svg";
 import { formatDateOfBirth } from "../../functions/general";
 import { colors } from "../../theme/colors";
+import { Gender, GENDER_ICONS, GENDER_LABELS } from "../../types/user";
 import { sizesEnum } from "../../theme/dimension";
 import { UpdateProfileData } from "../../types/auth";
 import { User } from "../../types/user";
@@ -24,6 +25,7 @@ interface HeaderCardProps {
   subtitle?: string;
   hideName?: boolean;
   dateOfBirth?: string;
+  gender?: Gender;
   saving: boolean;
   children: React.ReactNode;
   edit: boolean;
@@ -38,6 +40,7 @@ export const HeaderCardProfile = ({
   subtitle,
   hideName = false,
   dateOfBirth,
+  gender,
   saving,
   children,
   edit,
@@ -120,6 +123,16 @@ export const HeaderCardProfile = ({
                   <Text style={styles.infoText}>
                     {formatDateOfBirth(dateOfBirth)}
                   </Text>
+                </View>
+              ) : null}
+              {gender ? (
+                <View style={styles.infoRow}>
+                  <Ionicons
+                    name={GENDER_ICONS[gender]}
+                    size={13}
+                    color={colors.primary}
+                  />
+                  <Text style={styles.infoText}>{GENDER_LABELS[gender]}</Text>
                 </View>
               ) : null}
             </View>

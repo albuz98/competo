@@ -1,6 +1,6 @@
 import { mockProfile } from "../mock/profile";
 import { LoginCredentials, RegisterCredentials } from "../types/auth";
-import { User } from "../types/user";
+import { Gender, User } from "../types/user";
 import { isMocking, apiFetch } from "./config";
 import { mockFlags } from "./mockFlags";
 
@@ -46,6 +46,7 @@ export async function updateProfile(
     lastName?: string;
     username?: string;
     location?: string;
+    gender?: Gender;
     password?: string;
     avatarUrl?: string;
   },
@@ -61,6 +62,7 @@ export async function updateProfile(
       ...(data.lastName !== undefined ? { lastName: data.lastName } : {}),
       ...(data.username ? { username: data.username } : {}),
       ...(data.location !== undefined ? { location: data.location } : {}),
+      ...(data.gender !== undefined ? { gender: data.gender } : {}),
       ...(data.avatarUrl !== undefined ? { avatarUrl: data.avatarUrl } : {}),
     };
   }

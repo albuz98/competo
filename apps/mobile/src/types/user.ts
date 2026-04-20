@@ -1,7 +1,29 @@
 import { UserRole } from "../constants/user";
 import type { MatchStats, PlayerCareerStats } from "./stats";
 import { TournamentResult } from "../constants/tournament";
+import { Ionicons } from "@expo/vector-icons";
 import { AppUser } from "./team";
+
+export enum Gender {
+  MALE = "maschio",
+  FEMALE = "femmina",
+  OTHER = "non_definito",
+}
+
+export const GENDER_LABELS: Record<Gender, string> = {
+  [Gender.MALE]: "Maschio",
+  [Gender.FEMALE]: "Femmina",
+  [Gender.OTHER]: "Non definito",
+};
+
+export const GENDER_ICONS: Record<
+  Gender,
+  React.ComponentProps<typeof Ionicons>["name"]
+> = {
+  [Gender.MALE]: "male",
+  [Gender.FEMALE]: "female",
+  [Gender.OTHER]: "male-female",
+};
 
 export type OrganizerCollaborator = AppUser;
 
@@ -37,6 +59,7 @@ export interface User {
   token: string;
   dateOfBirth?: string;
   location?: string;
+  gender?: Gender;
   avatarUrl?: string;
   matchStats?: MatchStats;
   playedTournaments?: PlayedTournamentRecord[];

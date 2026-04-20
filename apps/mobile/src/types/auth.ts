@@ -1,3 +1,5 @@
+import { Gender } from "./user";
+
 export interface LoginCredentials {
   email: string;
   password: string;
@@ -17,6 +19,7 @@ export interface UpdateProfileData {
   lastName?: string;
   username?: string;
   location?: string;
+  gender?: Gender;
   password?: string;
   avatarUrl?: string;
 }

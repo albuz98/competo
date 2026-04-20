@@ -1,6 +1,6 @@
 import React, { useRef, useCallback, useState, useEffect } from "react";
 import { useFocusEffect } from "@react-navigation/native";
-import { View, Text, ScrollView } from "react-native";
+import { View, Text, ScrollView, TouchableOpacity } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
@@ -14,7 +14,7 @@ import {
   ButtonGeneric,
   ButtonLink,
 } from "../../../components/core/Button/Button";
-import { PlayerProfile } from "../../../types/user";
+import { Gender, PlayerProfile } from "../../../types/user";
 import { LinearGradient } from "expo-linear-gradient";
 import { InputBoxRow } from "../../../components/core/InputBoxRow/InputBoxRow";
 import { HeaderCardProfile } from "../../../components/HeaderCardProfile/HeaderCard";
@@ -22,16 +22,26 @@ import { pStyles } from "./ProfilePlayer.styled";
 import { RESULT_CONFIG, TournamentResult } from "../../../constants/tournament";
 import { styles } from "../Profile.styles";
 
+const GENDER_OPTIONS: { value: Gender; label: string }[] = [
+  { value: Gender.MALE, label: "Maschio" },
+  { value: Gender.FEMALE, label: "Femmina" },
+  { value: Gender.OTHER, label: "Non definito" },
+];
+
 interface ProfilePlayerProps {
   currentProfile: PlayerProfile | null;
   saving: boolean;
   edit: boolean;
+  gender: Gender | null;
+  onGenderChange: (g: Gender) => void;
 }
 
 export default function ProfilePlayer({
   currentProfile,
   saving,
   edit,
+  gender,
+  onGenderChange,
 }: ProfilePlayerProps) {
   const { user, updateProfile } = useAuth();
   const { refreshTeams } = useTeams();
@@ -111,6 +121,7 @@ export default function ProfilePlayer({
           user={user}
           subtitle={user.location}
           dateOfBirth={user.dateOfBirth}
+          gender={user.gender}
           saving={saving}
           edit={edit}
           updateProfile={updateProfile}
@@ -141,8 +152,39 @@ export default function ProfilePlayer({
               label="Posizione"
               value={form.location}
               onChangeText={(v) => setForm((f) => ({ ...f, location: v }))}
-              isLast
             />
+            <View style={pStyles.genderRow}>
+              <Text style={pStyles.genderLabel}>Sesso</Text>
+              <View style={pStyles.genderOptions}>
+                {GENDER_OPTIONS.map((opt, idx) => {
+                  const selected = gender === opt.value;
+                  const isFirst = idx === 0;
+                  const isLast = idx === GENDER_OPTIONS.length - 1;
+                  return (
+                    <TouchableOpacity
+                      key={opt.value}
+                      style={[
+                        pStyles.genderOption,
+                        selected && pStyles.genderOptionSelected,
+                        isFirst && pStyles.genderOptionFirst,
+                        isLast && pStyles.genderOptionLast,
+                      ]}
+                      onPress={() => onGenderChange(opt.value)}
+                      activeOpacity={0.7}
+                    >
+                      <Text
+                        style={[
+                          pStyles.genderOptionText,
+                          selected && pStyles.genderOptionTextSelected,
+                        ]}
+                      >
+                        {opt.label}
+                      </Text>
+                    </TouchableOpacity>
+                  );
+                })}
+              </View>
+            </View>
           </View>
         </HeaderCardProfile>
 
