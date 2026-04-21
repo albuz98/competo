@@ -12,7 +12,7 @@ export const styles = StyleSheet.create({
   scroll: { paddingBottom: 100, paddingTop: 8 },
   scrollFiltered: {
     paddingBottom: 100,
-    paddingTop: 8,
+    paddingTop: 4,
     flexGrow: 1,
     justifyContent: "flex-start",
   },
@@ -89,8 +89,8 @@ export const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     marginHorizontal: 16,
-    marginTop: 20,
-    marginBottom: 10,
+    marginTop: 12,
+    marginBottom: 8,
     gap: 10,
   },
   searchInputWrap: {
@@ -123,19 +123,21 @@ export const styles = StyleSheet.create({
   },
   chipsBar: {
     marginHorizontal: 16,
-    marginBottom: 8,
+    marginBottom: 4,
   },
   chipsBarContent: {
     flexDirection: "row",
     alignItems: "center",
     gap: 6,
     paddingRight: 4,
+    paddingVertical: 5,
   },
   activeChip: {
+    display: "flex",
     flexDirection: "row",
     alignItems: "center",
+    height: 28,
     gap: 4,
-    paddingVertical: 5,
     paddingLeft: 10,
     paddingRight: 7,
     borderRadius: 20,
@@ -147,6 +149,7 @@ export const styles = StyleSheet.create({
     fontSize: 12,
     fontWeight: "600",
     color: colors.primaryGradientMid,
+    alignSelf: "center",
   },
   activeChipClose: {
     width: 16,
@@ -157,7 +160,10 @@ export const styles = StyleSheet.create({
     justifyContent: "center",
   },
   clearBtn: {
-    paddingVertical: 5,
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center",
+    height: 28,
     paddingHorizontal: 10,
     borderRadius: 20,
     backgroundColor: colors.gray,

@@ -7,6 +7,8 @@ interface RangeSliderProps {
   minValue: number;
   maxValue: number;
   onChange: (min: number, max: number) => void;
+  onDragStart?: () => void;
+  onDragEnd?: () => void;
 }
 
 function formatPrice(price: number): string {
@@ -22,6 +24,8 @@ export function RangeSlider({
   minValue,
   maxValue,
   onChange,
+  onDragStart,
+  onDragEnd,
 }: RangeSliderProps) {
   const trackWidthRef = useRef(0);
   const leftXRef = useRef(0);
@@ -30,6 +34,10 @@ export function RangeSlider({
   const startRightX = useRef(0);
   const onChangeRef = useRef(onChange);
   onChangeRef.current = onChange;
+  const onDragStartRef = useRef(onDragStart);
+  onDragStartRef.current = onDragStart;
+  const onDragEndRef = useRef(onDragEnd);
+  onDragEndRef.current = onDragEnd;
 
   const leftThumbX = useRef(new Animated.Value(0)).current;
   const rightThumbX = useRef(new Animated.Value(0)).current;
@@ -67,6 +75,7 @@ export function RangeSlider({
       onStartShouldSetPanResponder: () => true,
       onPanResponderGrant: () => {
         startLeftX.current = leftXRef.current;
+        onDragStartRef.current?.();
       },
       onPanResponderMove: (_, { dx }) => {
         const tw = trackWidthRef.current;
@@ -85,6 +94,7 @@ export function RangeSlider({
           Math.round((leftXRef.current / tw) * PRICE_MAX),
           Math.round((rightXRef.current / tw) * PRICE_MAX),
         );
+        onDragEndRef.current?.();
       },
     }),
   ).current;
@@ -94,6 +104,7 @@ export function RangeSlider({
       onStartShouldSetPanResponder: () => true,
       onPanResponderGrant: () => {
         startRightX.current = rightXRef.current;
+        onDragStartRef.current?.();
       },
       onPanResponderMove: (_, { dx }) => {
         const tw = trackWidthRef.current;
@@ -112,6 +123,7 @@ export function RangeSlider({
           Math.round((leftXRef.current / tw) * PRICE_MAX),
           Math.round((rightXRef.current / tw) * PRICE_MAX),
         );
+        onDragEndRef.current?.();
       },
     }),
   ).current;

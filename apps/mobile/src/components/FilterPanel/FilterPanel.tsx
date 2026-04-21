@@ -40,6 +40,7 @@ export function FilterPanel({
   const panX = useRef(new Animated.Value(SW)).current;
   const overlayOpacity = useRef(new Animated.Value(0)).current;
   const [draft, setDraft] = useState<FilterState>(filters);
+  const [scrollEnabled, setScrollEnabled] = useState(true);
 
   useEffect(() => {
     if (visible) {
@@ -130,6 +131,7 @@ export function FilterPanel({
             style={fps.scroll}
             contentContainerStyle={fps.scrollContent}
             showsVerticalScrollIndicator={false}
+            scrollEnabled={scrollEnabled}
           >
             <Text style={fps.sectionLabel}>Sport</Text>
             <View style={fps.chipsRow}>
@@ -185,6 +187,8 @@ export function FilterPanel({
               onChange={(min, max) =>
                 setDraft((d) => ({ ...d, minPrice: min, maxPrice: max }))
               }
+              onDragStart={() => setScrollEnabled(false)}
+              onDragEnd={() => setScrollEnabled(true)}
             />
 
             <View style={fps.divider} />
