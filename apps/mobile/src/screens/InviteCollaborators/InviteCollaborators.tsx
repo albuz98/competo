@@ -26,7 +26,7 @@ import {
 import { sizesEnum } from "../../theme/dimension";
 import { TabBar } from "../../components/core/TabBar/TabBar";
 import { colors } from "../../theme/colors";
-import { RootStackParamList } from "../../types/navigation";
+import { NavigationEnum, RootStackParamList } from "../../types/navigation";
 import { AppUser } from "../../types/team";
 import { OrganizerProfile, UserRole } from "../../types/user";
 
@@ -148,7 +148,13 @@ export default function InviteCollaborators({ route, navigation }: Props) {
         {/* Header */}
         <View style={ic.header}>
           <ButtonBack
-            handleBtn={() => navigation.goBack()}
+            handleBtn={() =>
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              (navigation as any).navigate(NavigationEnum.MAIN_TABS, {
+                screen: NavigationEnum.PROFILE,
+                params: { startEdit: true },
+              })
+            }
             isArrowBack={false}
           />
           <Text style={ic.headerTitle}>Invita collaboratori</Text>

@@ -146,6 +146,7 @@ export default function Profile() {
       setSaving(false);
     }
     setEdit(false);
+    navigation.navigate(NavigationEnum.SETTINGS);
   };
 
   if (!user) {

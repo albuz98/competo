@@ -6,16 +6,19 @@ import {
   KeyboardAvoidingView,
   Platform,
 } from "react-native";
-import { ButtonBack, ButtonLink } from "../../components/core/Button/Button";
+import { ButtonLink } from "../../components/core/Button/Button";
 import { InputBoxRow } from "../../components/core/InputBoxRow/InputBoxRow";
 import { useNavigation } from "@react-navigation/native";
+import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { styles } from "./ChangePassword.styled";
 import { colors } from "../../theme/colors";
 import { useAuth } from "../../context/AuthContext";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { NavigationEnum, RootStackParamList } from "../../types/navigation";
 
 export const ChangePassword = () => {
-  const navigation = useNavigation();
+  const navigation =
+    useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const [saving, setSaving] = useState(false);
   const [form, setForm] = useState({
     password: "",
@@ -23,9 +26,17 @@ export const ChangePassword = () => {
   });
   const { updateProfile } = useAuth();
 
+  const goBackToEditProfile = () => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (navigation as any).navigate(NavigationEnum.MAIN_TABS, {
+      screen: NavigationEnum.PROFILE,
+      params: { startEdit: true },
+    });
+  };
+
   const handleSave = async () => {
     if (form.password.length === 0) {
-      navigation.goBack();
+      goBackToEditProfile();
       return;
     }
     if (form.password.length < 6) {
@@ -46,7 +57,7 @@ export const ChangePassword = () => {
     setSaving(true);
     await updateProfile({ password: form.password });
     setSaving(false);
-    navigation.goBack();
+    goBackToEditProfile();
   };
 
   return (
