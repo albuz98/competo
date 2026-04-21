@@ -5,7 +5,7 @@ import * as ImagePicker from "expo-image-picker";
 import QRCode from "react-native-qrcode-svg";
 import { formatDateOfBirth } from "../../functions/general";
 import { colors } from "../../theme/colors";
-import { Gender, GENDER_ICONS, GENDER_LABELS } from "../../types/user";
+import { Gender } from "../../types/user";
 import { sizesEnum } from "../../theme/dimension";
 import { UpdateProfileData } from "../../types/auth";
 import { User } from "../../types/user";
@@ -17,6 +17,7 @@ import SimpleLineIcons from "@expo/vector-icons/SimpleLineIcons";
 import { RootStackParamList } from "../../types/navigation";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useNavigation } from "@react-navigation/native";
+import { GENDER_ICONS, GENDER_LABELS } from "../../constants/user";
 
 interface HeaderCardProps {
   user: User | null;
