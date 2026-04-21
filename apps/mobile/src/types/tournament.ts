@@ -146,6 +146,7 @@ export interface Tournament {
   isRegistered?: boolean;
   lat?: number;
   lng?: number;
+  logoUrl?: string;
 }
 
 export interface TournamentTeam {

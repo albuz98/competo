@@ -330,4 +330,11 @@ export const styles = StyleSheet.create({
   },
   smallCardRow: { flexDirection: "row", alignItems: "center", marginBottom: 2 },
   smallCardMeta: { fontSize: 10, color: colors.placeholder, flex: 1 },
+
+  tournamentLogo: {
+    backgroundColor: colors.white,
+    alignItems: "center",
+    justifyContent: "center",
+    overflow: "hidden",
+  },
 });

@@ -35,6 +35,7 @@ const NOUNS = [
 export function generateTournament(id?: string): Tournament {
   const status = faker.helpers.arrayElement(STATUSES);
   const maxParticipants = faker.helpers.arrayElement([8, 16, 32, 64, 128]);
+  const hasLogo = faker.datatype.boolean();
 
   const currentParticipants =
     status === "upcoming"
@@ -77,6 +78,7 @@ export function generateTournament(id?: string): Tournament {
       faker.lorem.sentence(),
     ),
     isRegistered: false,
+    logoUrl: hasLogo ? faker.image.avatar() : undefined,
   };
 }
 

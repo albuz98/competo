@@ -7,7 +7,6 @@ import {
   TouchableOpacity,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { LinearGradient } from "expo-linear-gradient";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
@@ -20,14 +19,8 @@ import type {
 import { NavigationEnum } from "../../types/navigation";
 import { useAuth } from "../../context/AuthContext";
 import { getMyTournamentsCache } from "../../api/tournaments";
-import { styles, BIG_W, BIG_H, SMALL_W } from "../../screens/Home/Home.styles";
-import {
-  ButtonFullColored,
-  ButtonGeneric,
-} from "../../components/core/Button/Button";
-import { sizesEnum } from "../../theme/dimension";
+import { styles } from "../../screens/Home/Home.styles";
 import { colors } from "../../theme/colors";
-import { CARD_GRADIENTS, SPORT_EMOJI } from "../../constants/generals";
 import { TOURNAMENT_GENDERS } from "../../constants/tournament";
 import { InputBoxSearch } from "../../components/core/InputBoxSearch/InputBoxSearch";
 import { generateTournaments } from "../../mock/tournaments";
@@ -35,6 +28,9 @@ import { MyTournament, Tournament } from "../../types/tournament";
 import { FilterPanel } from "../../components/FilterPanel/FilterPanel";
 import { FilterState, SortOption } from "../../types/filters";
 import { PRICE_MAX } from "../../constants/filters";
+import { VerticalCard } from "../../components/core/VerticalCard/VerticalCard";
+import { BigCard } from "../../components/core/BigCard/BigCard";
+import { SmallCard } from "../../components/core/SmallCard/SmallCard";
 
 type HomeNavProp = CompositeNavigationProp<
   BottomTabNavigationProp<MainTabParamList, "Home">,
@@ -138,6 +134,10 @@ function getActiveChips(filters: FilterState): ActiveChip[] {
 }
 
 function removeChip(filters: FilterState, key: string): FilterState {
+  if (key === "price") {
+    return { ...filters, minPrice: 0, maxPrice: PRICE_MAX };
+  }
+
   const colonIdx = key.indexOf(":");
   const type = key.slice(0, colonIdx);
   const value = key.slice(colonIdx + 1);
@@ -150,186 +150,11 @@ function removeChip(filters: FilterState, key: string): FilterState {
         ...filters,
         genders: filters.genders.filter((g) => (g as string) !== value),
       };
-    case "price":
-      return { ...filters, minPrice: 0, maxPrice: PRICE_MAX };
     case "sort":
       return { ...filters, sortBy: null };
     default:
       return filters;
   }
-}
-
-// ─── Big card (I Tuoi Tornei) ────────────────────────────────────────────────
-function BigCard({
-  tournament,
-  index,
-  onPress,
-}: {
-  tournament: Tournament;
-  index: number;
-  onPress: () => void;
-}) {
-  const colorsGrad = CARD_GRADIENTS[index % CARD_GRADIENTS.length];
-  const emoji = SPORT_EMOJI[tournament.game] ?? "🏆";
-  const date = new Date(tournament.startDate).toLocaleDateString("it-IT", {
-    day: "2-digit",
-    month: "2-digit",
-  });
-
-  return (
-    <ButtonGeneric
-      style={[styles.bigCard, { width: BIG_W, height: BIG_H }]}
-      handleBtn={onPress}
-    >
-      <LinearGradient colors={colorsGrad} style={styles.bigCardGradient}>
-        <View style={styles.bigCardDecor} />
-        <Text style={styles.bigCardEmoji}>{emoji}</Text>
-        <View style={styles.bigCardOverlay}>
-          <Text style={styles.bigCardName} numberOfLines={1}>
-            {tournament.name.toUpperCase()} – {date}
-          </Text>
-          <View style={styles.bigCardLocation}>
-            <Ionicons
-              name="location-sharp"
-              size={11}
-              color={colors.placeholder}
-            />
-            <Text style={styles.bigCardLocationText} numberOfLines={1}>
-              {tournament.location}
-            </Text>
-          </View>
-        </View>
-      </LinearGradient>
-    </ButtonGeneric>
-  );
-}
-
-// ─── Small card (Consigliati) ────────────────────────────────────────────────
-function SmallCard({
-  tournament,
-  index,
-  onPress,
-}: {
-  tournament: Tournament;
-  index: number;
-  onPress: () => void;
-}) {
-  const colorsGrad = CARD_GRADIENTS[(index + 2) % CARD_GRADIENTS.length];
-  const emoji = SPORT_EMOJI[tournament.game] ?? "🏆";
-  const date = new Date(tournament.startDate).toLocaleDateString("it-IT", {
-    day: "2-digit",
-    month: "2-digit",
-  });
-
-  return (
-    <View style={[styles.smallCard, { width: SMALL_W }]}>
-      <LinearGradient colors={colorsGrad} style={styles.smallCardTop}>
-        <Text style={styles.smallCardEmoji}>{emoji}</Text>
-      </LinearGradient>
-      <View style={styles.smallCardBody}>
-        <Text style={styles.smallCardName} numberOfLines={1}>
-          {tournament.game.toUpperCase()} – {date}
-        </Text>
-        <View style={styles.smallCardRow}>
-          <Ionicons
-            name="location-sharp"
-            size={10}
-            color={colors.placeholder}
-          />
-          <Text style={styles.smallCardMeta} numberOfLines={1}>
-            {" "}
-            {tournament.location}
-          </Text>
-        </View>
-        <View style={styles.smallCardRow}>
-          <Ionicons
-            name="people-outline"
-            size={10}
-            color={colors.placeholder}
-          />
-          <Text style={styles.smallCardMeta}>
-            {" "}
-            {tournament.currentParticipants}/{tournament.maxParticipants}{" "}
-            squadre
-          </Text>
-        </View>
-        <View style={styles.smallCardRow}>
-          <Ionicons name="cash-outline" size={10} color={colors.placeholder} />
-          <Text style={styles.smallCardMeta}> {tournament.entryFee}</Text>
-        </View>
-        <View style={styles.smallCardRow}>
-          <Ionicons
-            name="trophy-outline"
-            size={10}
-            color={colors.placeholder}
-          />
-          <Text style={styles.smallCardMeta}> {tournament.prizePool}</Text>
-        </View>
-        <ButtonFullColored
-          text="VEDI ALTRO"
-          handleBtn={onPress}
-          size={sizesEnum.small}
-          isColored
-        />
-      </View>
-    </View>
-  );
-}
-
-// ─── Vertical card (risultati filtrati) ──────────────────────────────────────
-function VerticalCard({
-  tournament,
-  index,
-  onPress,
-}: {
-  tournament: Tournament;
-  index: number;
-  onPress: () => void;
-}) {
-  const colorsGrad = CARD_GRADIENTS[index % CARD_GRADIENTS.length];
-  const emoji = SPORT_EMOJI[tournament.game] ?? "🏆";
-  const date = new Date(tournament.startDate).toLocaleDateString("it-IT", {
-    day: "2-digit",
-    month: "2-digit",
-  });
-
-  return (
-    <ButtonGeneric style={styles.vCard} handleBtn={onPress}>
-      <LinearGradient colors={colorsGrad} style={styles.vCardGradient}>
-        <Text style={styles.vCardEmoji}>{emoji}</Text>
-        <View style={styles.vCardContent}>
-          <Text style={styles.vCardName} numberOfLines={1}>
-            {tournament.name}
-          </Text>
-          <View style={styles.vCardRow}>
-            <Ionicons
-              name="location-sharp"
-              size={12}
-              color={colors.grayOpacized}
-            />
-            <Text style={styles.vCardMeta} numberOfLines={1}>
-              {tournament.location}
-            </Text>
-          </View>
-          <View style={styles.vCardRow}>
-            <Ionicons
-              name="cash-outline"
-              size={12}
-              color={colors.grayOpacized}
-            />
-            <Text style={styles.vCardMeta}>
-              {tournament.entryFee} · {date}
-            </Text>
-          </View>
-        </View>
-        <Ionicons
-          name="chevron-forward"
-          size={18}
-          color={colors.grayOpacized}
-        />
-      </LinearGradient>
-    </ButtonGeneric>
-  );
 }
 
 // ─── Search fn ───────────────────────────────────────────────────────────────
