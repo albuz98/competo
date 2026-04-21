@@ -34,6 +34,14 @@ export interface GeneratorConfig {
   singleDay?: boolean; // if true, no end-of-day cutoff
 }
 
+enum TournamentPhase {
+  MAIN = "main",
+  GROUPS = "groups",
+  KNOCKOUT = "knockout",
+  LOSERS = "losers",
+  FINAL = "final",
+}
+
 export interface ScheduledMatch {
   id: string;
   homeTeam: string;
@@ -42,7 +50,7 @@ export interface ScheduledMatch {
   startTime: string; // ISO
   endTime: string; // ISO
   round: number;
-  phase: "main" | "groups" | "knockout" | "losers" | "final";
+  phase: TournamentPhase;
   isBye: boolean;
   roundLabel: string;
 }

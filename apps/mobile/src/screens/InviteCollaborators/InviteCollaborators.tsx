@@ -26,10 +26,9 @@ import {
 import { sizesEnum } from "../../theme/dimension";
 import { TabBar } from "../../components/core/TabBar/TabBar";
 import { colors } from "../../theme/colors";
-import { UserRole } from "../../constants/user";
 import { RootStackParamList } from "../../types/navigation";
 import { AppUser } from "../../types/team";
-import { OrganizerProfile } from "../../types/user";
+import { OrganizerProfile, UserRole } from "../../types/user";
 
 type Props = NativeStackScreenProps<RootStackParamList, "InviteCollaborators">;
 type Tab = "cerca" | "condividi";

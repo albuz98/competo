@@ -4,10 +4,9 @@ import { ButtonIcon, ButtonLink } from "../core/Button/Button";
 import { colors } from "../../theme/colors";
 import Entypo from "@expo/vector-icons/Entypo";
 import { Ionicons } from "@expo/vector-icons";
-import { UserRole } from "../../constants/user";
 import { NavigationEnum, RootStackParamList } from "../../types/navigation";
 import { styles } from "./TopBarPropfile.styled";
-import { UserProfile } from "../../types/user";
+import { UserProfile, UserRole } from "../../types/user";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
 interface TopBarProfileProps {

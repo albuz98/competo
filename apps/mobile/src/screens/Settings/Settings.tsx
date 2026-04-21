@@ -12,7 +12,7 @@ import { NavigationEnum, RootStackParamList } from "../../types/navigation";
 import { colors } from "../../theme/colors";
 import { ButtonBack } from "../../components/core/Button/Button";
 import { styles } from "./Settings.styles";
-import { UserRole } from "../../constants/user";
+import { UserRole } from "../../types/user";
 
 export default function Settings() {
   const navigation =

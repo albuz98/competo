@@ -10,9 +10,8 @@ import {
   TournamentPlayer,
   TournamentRegisteredTeam,
 } from "../types/tournament";
-import { UserRole } from "../constants/user";
 import { PlayerStats } from "../types/stats";
-import { User } from "../types/user";
+import { User, UserRole } from "../types/user";
 
 export const mockProfile: User = {
   id: "mock-user-001",

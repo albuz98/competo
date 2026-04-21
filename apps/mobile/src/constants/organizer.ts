@@ -15,43 +15,43 @@ export const ENTITY_TYPES: {
   icon: string;
 }[] = [
   {
-    value: "asd",
+    value: EntityType.ASD,
     label: "ASD",
     sub: "Associazione Sportiva Dilettantistica",
     icon: "people-outline",
   },
   {
-    value: "ssd",
+    value: EntityType.SSD,
     label: "SSD",
     sub: "Società Sportiva Dilettantistica (srl)",
     icon: "business-outline",
   },
   {
-    value: "societa",
+    value: EntityType.SOCIETY,
     label: "Società sportiva",
     sub: "Società sportiva professionistica",
     icon: "trophy-outline",
   },
   {
-    value: "azienda",
+    value: EntityType.AGENCY,
     label: "Azienda privata",
     sub: "Azienda che organizza eventi sportivi",
     icon: "briefcase-outline",
   },
   {
-    value: "comune",
+    value: EntityType.MUNICIPAL,
     label: "Comune",
     sub: "Ente pubblico locale o istituzione municipale",
     icon: "flag-outline",
   },
   {
-    value: "privato",
+    value: EntityType.PRIVATE,
     label: "Privato",
     sub: "Organizzatore individuale",
     icon: "person-outline",
   },
   {
-    value: "altro",
+    value: EntityType.OTHER,
     label: "Altro",
     sub: "Ente o forma giuridica non elencata",
     icon: "ellipsis-horizontal-circle-outline",
@@ -59,18 +59,28 @@ export const ENTITY_TYPES: {
 ];
 
 export const LEGAL_FORMS: { value: LegalForm; label: string }[] = [
-  { value: "associazione", label: "Associazione" },
-  { value: "srl", label: "S.r.l." },
-  { value: "srls", label: "S.r.l.s." },
-  { value: "spa", label: "S.p.A." },
-  { value: "cooperativa", label: "Cooperativa" },
-  { value: "ditta_individuale", label: "Ditta individuale" },
-  { value: "ente_pubblico", label: "Ente pubblico" },
-  { value: "nessuna", label: "Nessuna (privato)" },
+  { value: LegalForm.ASSOCIATION, label: "Associazione" },
+  { value: LegalForm.SRL, label: "S.r.l." },
+  { value: LegalForm.SRLS, label: "S.r.l.s." },
+  { value: LegalForm.SPA, label: "S.p.A." },
+  { value: LegalForm.COOPERATIVE, label: "Cooperativa" },
+  { value: LegalForm.INDIVIDUAL_BUSINESS, label: "Ditta individuale" },
+  { value: LegalForm.PUBLIC_ENTITY, label: "Ente pubblico" },
+  { value: LegalForm.NONE, label: "Nessuna (privato)" },
 ];
 
 export const PDF_URLS = {
   terms: "https://competo.app/legal/termini-organizzatori.pdf",
   privacy: "https://competo.app/legal/privacy-policy.pdf",
   conduct: "https://competo.app/legal/codice-condotta-organizzatori.pdf",
+};
+
+export const ENTITY_LABELS: Record<EntityType, string> = {
+  [EntityType.ASD]: "ASD",
+  [EntityType.SSD]: "SSD",
+  [EntityType.SOCIETY]: "Società sportiva",
+  [EntityType.AGENCY]: "Azienda privata",
+  [EntityType.MUNICIPAL]: "Comune",
+  [EntityType.PRIVATE]: "Privato",
+  [EntityType.OTHER]: "Altro",
 };

@@ -14,13 +14,12 @@ import {
   updateProfile as apiUpdateProfile,
   fetchProfile,
 } from "../api/auth";
-import { OrganizerProfile, User, UserProfile } from "../types/user";
+import { OrganizerProfile, User, UserProfile, UserRole } from "../types/user";
 import {
   LoginCredentials,
   RegisterCredentials,
   UpdateProfileData,
 } from "../types/auth";
-import { UserRole } from "../constants/user";
 import { AppUser } from "../types/team";
 
 const TOKEN_KEY = "authToken";

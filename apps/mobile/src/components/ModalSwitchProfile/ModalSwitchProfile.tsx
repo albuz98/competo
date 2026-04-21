@@ -3,10 +3,9 @@ import { ModalViewer } from "../core/Modal/Modal";
 import { View, Text, Pressable, Image } from "react-native";
 import { colors, colorGradient } from "../../theme/colors";
 import { NavigationEnum } from "../../types/navigation";
-import { UserRole } from "../../constants/user";
 import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
-import { User, UserProfile } from "../../types/user";
+import { User, UserProfile, UserRole } from "../../types/user";
 import { styles } from "./ModalSwitchProfile.styled";
 
 interface ModalSwitchProfileProps {
@@ -32,7 +31,7 @@ export const ModalSwitchProfile = ({
   const renderProfileAvatar = (profile: UserProfile) => {
     const avatarUrl =
       profile.role === UserRole.PLAYER
-        ? profile.avatarUrl ?? user.avatarUrl
+        ? (profile.avatarUrl ?? user.avatarUrl)
         : profile.avatarUrl;
 
     if (avatarUrl) {

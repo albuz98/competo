@@ -15,18 +15,14 @@ import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useAuth } from "../../../context/AuthContext";
 import { useTeams } from "../../../context/TeamsContext";
-import {
-  RootStackParamList,
-  NavigationEnum,
-} from "../../../types/navigation";
+import { RootStackParamList, NavigationEnum } from "../../../types/navigation";
 import { colorGradient, colors } from "../../../theme/colors";
 import { styles as tabStyles } from "../../../navigation/MainTabNavigator/MainTabNavigator.styles";
 import { sizesEnum } from "../../../theme/dimension";
 import { useQuery } from "@tanstack/react-query";
 import { fetchMyTournaments } from "../../../api/tournaments";
 import { queryKeys } from "../../../lib/queryKeys";
-import { UserRole } from "../../../constants/user";
-import { OrganizerProfile, UserProfile } from "../../../types/user";
+import { OrganizerProfile, UserProfile, UserRole } from "../../../types/user";
 import { UpdateProfileData } from "../../../types/auth";
 import { styles } from "../Profile.styles";
 import {

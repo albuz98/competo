@@ -1,28 +1,20 @@
-export type EntityType =
-  | "asd"
-  | "ssd"
-  | "societa"
-  | "azienda"
-  | "comune"
-  | "privato"
-  | "altro";
+export enum EntityType {
+  ASD = "asd",
+  SSD = "ssd",
+  SOCIETY = "societa",
+  AGENCY = "azienda",
+  MUNICIPAL = "comune",
+  PRIVATE = "privato",
+  OTHER = "altro",
+}
 
-export type LegalForm =
-  | "associazione"
-  | "srl"
-  | "srls"
-  | "spa"
-  | "cooperativa"
-  | "ditta_individuale"
-  | "ente_pubblico"
-  | "nessuna";
-
-export const ENTITY_LABELS: Record<EntityType, string> = {
-  asd: "ASD",
-  ssd: "SSD",
-  societa: "Società sportiva",
-  azienda: "Azienda privata",
-  comune: "Comune",
-  privato: "Privato",
-  altro: "Altro",
-};
+export enum LegalForm {
+  ASSOCIATION = "associazione",
+  SRL = "srl",
+  SRLS = "srls",
+  SPA = "spa",
+  COOPERATIVE = "cooperativa",
+  INDIVIDUAL_BUSINESS = "ditta_individuale",
+  PUBLIC_ENTITY = "ente_pubblico",
+  NONE = "nessuna",
+}

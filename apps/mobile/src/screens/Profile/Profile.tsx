@@ -24,8 +24,7 @@ import {
 } from "../../types/navigation";
 import { styles } from "./Profile.styles";
 import { styles as tabStyles } from "../../navigation/MainTabNavigator/MainTabNavigator.styles";
-import { UserRole } from "../../constants/user";
-import { Gender } from "../../types/user";
+import { Gender, UserRole } from "../../types/user";
 import { TopBarProfile } from "../../components/TopBarProfile/TopBarProfile";
 import ProfileOrganizer from "./ProfileOrganizer/ProfileOrganizer";
 import ProfilePlayer from "./ProfilePlayer/ProfilePlayer";

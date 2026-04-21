@@ -12,12 +12,12 @@ import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import type { RootStackParamList } from "../../types/navigation";
 import { NavigationEnum } from "../../types/navigation";
 import type { Tournament } from "../../types/tournament";
-import { UserRole } from "../../constants/user";
 import { useFavorites } from "../../context/FavoritesContext";
 import { useAuth } from "../../context/AuthContext";
 import { ButtonGeneric, ButtonIcon } from "../../components/core/Button/Button";
 import { colors } from "../../theme/colors";
 import { CARD_GRADIENTS, SPORT_EMOJI } from "../../constants/generals";
+import { UserRole } from "../../types/user";
 
 type Nav = NativeStackNavigationProp<RootStackParamList>;
 
@@ -75,37 +75,6 @@ function TournamentCard({
         </View>
       </LinearGradient>
     </ButtonGeneric>
-    // <ButtonGeneric style={[pf.card, { width: CARD_W }]} handleBtn={onPress}>
-    //   {/* ── Gradient image area ── */}
-    //   <LinearGradient colors={colorsGrad} style={pf.cardImage}>
-    //     <View style={pf.cardDecor} />
-    //     <Text style={pf.cardEmoji}>{emoji}</Text>
-    // <ButtonIcon
-    //   handleBtn={onRemove}
-    //   style={pf.bookmarkBtn}
-    //   icon={
-    //     <Ionicons name="bookmark" size={18} color={colors.primaryGradientMid} />
-    //   }
-    // />
-    //   </LinearGradient>
-
-    //   {/* ── Info box ── */}
-    //   <View style={pf.cardBody}>
-    //     <Text style={pf.cardGame}>{item.game}</Text>
-    //     <Text style={pf.cardName} numberOfLines={2}>
-    //       {item.name}
-    //     </Text>
-    //     <View style={pf.cardMeta}>
-    //       <View style={pf.cardMetaItem}>
-    //         <Ionicons name="location-outline" size={13} color={colors.placeholder} />
-    //         <Text style={pf.cardMetaText} numberOfLines={1}>
-    //           {item.location}
-    //         </Text>
-    //       </View>
-    //       <Text style={pf.cardFee}>{item.entryFee}</Text>
-    //     </View>
-    //   </View>
-    // </ButtonGeneric>
   );
 }
 

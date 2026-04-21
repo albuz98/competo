@@ -1,0 +1,141 @@
+import { StyleSheet } from "react-native";
+import { colors } from "../../theme/colors";
+
+export const fps = StyleSheet.create({
+  overlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: colors.opacized,
+  },
+  panel: {
+    position: "absolute",
+    right: 0,
+    top: 0,
+    bottom: 0,
+    width: "100%",
+    backgroundColor: colors.white,
+    shadowColor: colors.black,
+    shadowOffset: { width: 0, height: -2 },
+    shadowOpacity: 0.15,
+    shadowRadius: 12,
+    elevation: 10,
+  },
+  header: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingHorizontal: 20,
+    paddingBottom: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.disabled,
+  },
+  headerTitle: {
+    fontSize: 18,
+    fontWeight: "800",
+    color: colors.dark,
+  },
+  closeBtn: {
+    width: 34,
+    height: 34,
+    borderRadius: 17,
+    backgroundColor: colors.gray,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  scroll: {
+    flex: 1,
+  },
+  scrollContent: {
+    paddingHorizontal: 20,
+    paddingBottom: 24,
+  },
+  sectionLabel: {
+    fontSize: 11,
+    fontWeight: "700",
+    color: colors.placeholder,
+    textTransform: "uppercase",
+    letterSpacing: 0.7,
+    marginTop: 20,
+    marginBottom: 10,
+  },
+  chipsRow: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: 8,
+  },
+  chip: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 5,
+    paddingVertical: 7,
+    paddingHorizontal: 12,
+    borderRadius: 20,
+    borderWidth: 1.5,
+    borderColor: colors.disabled,
+    backgroundColor: colors.disabledBg,
+  },
+  chipActive: {
+    borderColor: colors.primaryGradientMid,
+    backgroundColor: colors.primarySelectedBg,
+  },
+  chipText: {
+    fontSize: 13,
+    fontWeight: "600",
+    color: colors.placeholder,
+  },
+  chipTextActive: {
+    color: colors.primaryGradientMid,
+  },
+  divider: {
+    height: 1,
+    backgroundColor: colors.disabled,
+    marginTop: 20,
+  },
+  sortOption: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingVertical: 13,
+    paddingHorizontal: 14,
+    borderRadius: 12,
+    borderWidth: 1.5,
+    borderColor: colors.disabled,
+    backgroundColor: colors.disabledBg,
+    marginBottom: 8,
+  },
+  sortOptionActive: {
+    borderColor: colors.primaryGradientMid,
+    backgroundColor: colors.primarySelectedBg,
+  },
+  sortOptionLeft: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+  },
+  sortOptionText: {
+    fontSize: 14,
+    fontWeight: "600",
+    color: colors.placeholder,
+  },
+  sortOptionTextActive: {
+    color: colors.primaryGradientMid,
+  },
+  footer: {
+    paddingHorizontal: 20,
+    paddingTop: 16,
+    borderTopWidth: 1,
+    borderTopColor: colors.disabled,
+  },
+  applyBtn: {
+    backgroundColor: colors.primary,
+    borderRadius: 14,
+    paddingVertical: 15,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  applyBtnText: {
+    color: colors.white,
+    fontSize: 15,
+    fontWeight: "800",
+    letterSpacing: 0.3,
+  },
+});
