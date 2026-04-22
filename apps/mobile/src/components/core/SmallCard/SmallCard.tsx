@@ -1,11 +1,11 @@
 import { View, Text } from "react-native";
-import { CARD_GRADIENTS, SPORT_EMOJI } from "../../../constants/generals";
+import { SPORT_EMOJI } from "../../../constants/generals";
 import { Tournament } from "../../../types/tournament";
 import { LinearGradient } from "expo-linear-gradient";
 import { ButtonFullColored } from "../Button/Button";
 import { sizesEnum } from "../../../theme/dimension";
 import { Ionicons } from "@expo/vector-icons";
-import { colors } from "../../../theme/colors";
+import { colorGradient, colors } from "../../../theme/colors";
 import { Logo } from "../Logo/Logo";
 import { SMALL_W } from "../../../screens/Home/Home.styles";
 import { styles } from "./SmallCard.styled";
@@ -17,7 +17,7 @@ interface SmallCardProps {
 }
 
 export function SmallCard({ tournament, index, onPress }: SmallCardProps) {
-  const colorsGrad = CARD_GRADIENTS[(index + 2) % CARD_GRADIENTS.length];
+  // const colorsGrad = CARD_GRADIENTS[(index + 2) % CARD_GRADIENTS.length];
   const emoji = SPORT_EMOJI[tournament.game] ?? "🏆";
   const date = new Date(tournament.startDate).toLocaleDateString("it-IT", {
     day: "2-digit",
@@ -26,13 +26,25 @@ export function SmallCard({ tournament, index, onPress }: SmallCardProps) {
 
   return (
     <View style={[styles.smallCard, { width: SMALL_W }]}>
-      <LinearGradient colors={colorsGrad} style={styles.smallCardTop}>
-        <Logo
-          logoUrl={tournament.logoUrl}
-          emoji={emoji}
-          circleSize={70}
-          fontSize={44}
-        />
+      <LinearGradient colors={colorGradient} style={styles.smallCardTop}>
+        <View
+          style={{
+            backgroundColor: "rgba(255,255,255,0.2)",
+            width: SMALL_W,
+            height: SMALL_W * 0.85,
+            alignItems: "center",
+            justifyContent: "center",
+            borderTopLeftRadius: 16,
+            borderTopRightRadius: 16,
+          }}
+        >
+          <Logo
+            logoUrl={tournament.logoUrl}
+            emoji={emoji}
+            circleSize={70}
+            fontSize={44}
+          />
+        </View>
       </LinearGradient>
       <View style={styles.smallCardBody}>
         <Text style={styles.smallCardName} numberOfLines={1}>

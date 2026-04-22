@@ -12,8 +12,6 @@ export const styles = StyleSheet.create({
     flex: 1,
     flexDirection: "row",
     alignItems: "center",
-    paddingHorizontal: 16,
-    gap: 14,
   },
   vCardEmoji: {
     fontSize: 34,

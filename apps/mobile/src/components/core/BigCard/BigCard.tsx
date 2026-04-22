@@ -7,7 +7,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { View, Text } from "react-native";
 import { Logo } from "../Logo/Logo";
 import { styles } from "./BigCard.styled";
-import { colors } from "../../../theme/colors";
+import { colorGradient, colors } from "../../../theme/colors";
 
 interface BigCardProps {
   tournament: Tournament;
@@ -28,28 +28,39 @@ export function BigCard({ tournament, index, onPress }: BigCardProps) {
       style={[styles.bigCard, { width: BIG_W, height: BIG_H }]}
       handleBtn={onPress}
     >
-      <LinearGradient colors={colorsGrad} style={styles.bigCardGradient}>
-        <View style={styles.bigCardDecor} />
-        <Logo
-          logoUrl={tournament.logoUrl}
-          emoji={emoji}
-          circleSize={75}
-          fontSize={56}
-          style={styles.bigCardEmoji}
-        />
-        <View style={styles.bigCardOverlay}>
-          <Text style={styles.bigCardName} numberOfLines={1}>
-            {tournament.name.toUpperCase()} – {date}
-          </Text>
-          <View style={styles.bigCardLocation}>
-            <Ionicons
-              name="location-sharp"
-              size={11}
-              color={colors.placeholder}
-            />
-            <Text style={styles.bigCardLocationText} numberOfLines={1}>
-              {tournament.location}
+      <LinearGradient colors={colorGradient} style={styles.bigCardGradient}>
+        <View
+          style={{
+            backgroundColor: "rgba(255,255,255,0.2)",
+            width: BIG_W,
+            height: BIG_H,
+            justifyContent: "flex-end",
+            borderTopLeftRadius: 16,
+            borderTopRightRadius: 16,
+          }}
+        >
+          <View style={styles.bigCardDecor} />
+          <Logo
+            logoUrl={tournament.logoUrl}
+            emoji={emoji}
+            circleSize={75}
+            fontSize={56}
+            style={styles.bigCardEmoji}
+          />
+          <View style={styles.bigCardOverlay}>
+            <Text style={styles.bigCardName} numberOfLines={1}>
+              {tournament.name.toUpperCase()} – {date}
             </Text>
+            <View style={styles.bigCardLocation}>
+              <Ionicons
+                name="location-sharp"
+                size={11}
+                color={colors.placeholder}
+              />
+              <Text style={styles.bigCardLocationText} numberOfLines={1}>
+                {tournament.location}
+              </Text>
+            </View>
           </View>
         </View>
       </LinearGradient>
