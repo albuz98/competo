@@ -85,6 +85,45 @@ export function tournamentModeToConfig(mode: TournamentMode): {
 
 export const DAY_LABELS = ["D", "L", "M", "M", "G", "V", "S"];
 
+export enum FinalDayRound {
+  QUARTI = "quarti",
+  SEMIFINALI = "semifinali",
+  TERZO_POSTO = "terzo_posto",
+  FINALE = "finale",
+}
+
+export const FINAL_DAY_ROUNDS: {
+  value: FinalDayRound;
+  label: string;
+  sub: string;
+  minTeams: number;
+}[] = [
+  {
+    value: FinalDayRound.QUARTI,
+    label: "Quarti di finale",
+    sub: "8 squadre rimaste",
+    minTeams: 8,
+  },
+  {
+    value: FinalDayRound.SEMIFINALI,
+    label: "Semifinali",
+    sub: "4 squadre rimaste",
+    minTeams: 4,
+  },
+  {
+    value: FinalDayRound.TERZO_POSTO,
+    label: "3° posto",
+    sub: "Finale per il bronzo",
+    minTeams: 4,
+  },
+  {
+    value: FinalDayRound.FINALE,
+    label: "Finale",
+    sub: "Partita conclusiva",
+    minTeams: 2,
+  },
+];
+
 export enum SportRegulation {
   CALCIO_5 = "calcio_5",
   KING_LEAGUE = "king_league",

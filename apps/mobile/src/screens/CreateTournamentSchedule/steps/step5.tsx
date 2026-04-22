@@ -2,6 +2,8 @@ import React from "react";
 import { TouchableOpacity, View, Text, Alert, Switch } from "react-native";
 import {
   DAY_LABELS,
+  FINAL_DAY_ROUNDS,
+  FinalDayRound,
   TournamentFormat,
   TournamentPhaseKind,
 } from "../../../constants/tournament";
@@ -19,6 +21,67 @@ import { sizesEnum } from "../../../theme/dimension";
 import { todayISO } from "../../../functions/general";
 import { TournametNumberPartecipants } from "../../../types/tournament";
 
+// Ordered list of all final day rounds (earliest first)
+const ROUND_ORDER: FinalDayRound[] = [
+  FinalDayRound.QUARTI,
+  FinalDayRound.SEMIFINALI,
+  FinalDayRound.TERZO_POSTO,
+  FinalDayRound.FINALE,
+];
+
+// Matches played in each round
+const ROUND_MATCHES: Record<FinalDayRound, number> = {
+  [FinalDayRound.QUARTI]: 4,
+  [FinalDayRound.SEMIFINALI]: 2,
+  [FinalDayRound.TERZO_POSTO]: 1,
+  [FinalDayRound.FINALE]: 1,
+};
+
+function getIncludedRounds(startRound: FinalDayRound): FinalDayRound[] {
+  return ROUND_ORDER.slice(ROUND_ORDER.indexOf(startRound));
+}
+
+function computeFinalDayDuration(
+  startRound: FinalDayRound,
+  numFields: number,
+  matchDuration: number,
+  timeBetween: number,
+): { totalMatches: number; subRounds: number; durationMins: number } {
+  const included = getIncludedRounds(startRound);
+
+  // TERZO_POSTO and FINALE are played at the same stage — they can run in
+  // parallel if there are enough fields, so count them as one combined slot.
+  const groups: FinalDayRound[][] = [];
+  for (const r of included) {
+    const isFinishingRound =
+      r === FinalDayRound.TERZO_POSTO || r === FinalDayRound.FINALE;
+    const lastGroup = groups[groups.length - 1];
+    if (
+      isFinishingRound &&
+      lastGroup?.some(
+        (x) => x === FinalDayRound.TERZO_POSTO || x === FinalDayRound.FINALE,
+      )
+    ) {
+      lastGroup.push(r);
+    } else {
+      groups.push([r]);
+    }
+  }
+
+  let totalMatches = 0;
+  let subRounds = 0;
+  for (const group of groups) {
+    const groupMatches = group.reduce((sum, r) => sum + ROUND_MATCHES[r], 0);
+    totalMatches += groupMatches;
+    subRounds += Math.ceil(groupMatches / numFields);
+  }
+
+  const durationMins =
+    subRounds > 0 ? (subRounds - 1) * (matchDuration + timeBetween) + matchDuration : 0;
+
+  return { totalMatches, subRounds, durationMins };
+}
+
 interface renderStep5Props {
   isSingleDay: boolean;
   setIsSingleDay: React.Dispatch<React.SetStateAction<boolean>>;
@@ -34,6 +97,12 @@ interface renderStep5Props {
   setHasFinalDay: React.Dispatch<React.SetStateAction<boolean>>;
   finalDayDate: string;
   setFinalDayDate: React.Dispatch<React.SetStateAction<string>>;
+  finalDayHour: number;
+  setFinalDayHour: React.Dispatch<React.SetStateAction<number>>;
+  finalDayStartRound: FinalDayRound | null;
+  setFinalDayStartRound: React.Dispatch<
+    React.SetStateAction<FinalDayRound | null>
+  >;
   maxDaysNeeded: number;
   effectiveMatchesPerDay: number;
   matchInfoDerived: TournametNumberPartecipants;
@@ -42,7 +111,9 @@ interface renderStep5Props {
   phaseKind: TournamentPhaseKind;
   effGroups: number;
   matchDuration: number;
+  finaleMatchDuration: number;
   travelMinutes: number;
+  finaleTravelMinutes: number;
   restMinutes: number;
   numFields: number;
   // Date picker modal control
@@ -67,6 +138,10 @@ export function renderStep5({
   setHasFinalDay,
   finalDayDate,
   setFinalDayDate,
+  finalDayHour,
+  setFinalDayHour,
+  finalDayStartRound,
+  setFinalDayStartRound,
   maxDaysNeeded,
   effectiveMatchesPerDay,
   matchInfoDerived,
@@ -76,8 +151,10 @@ export function renderStep5({
   effGroups,
   numFields,
   matchDuration,
-  restMinutes,
+  finaleMatchDuration,
   travelMinutes,
+  finaleTravelMinutes,
+  restMinutes,
   activeDateField,
   setActiveDateField,
 }: renderStep5Props) {
@@ -136,9 +213,9 @@ export function renderStep5({
   }
 
   function estimateSubRounds(
-    numTeams: number,
-    format: TournamentFormat,
-    phaseKind: TournamentPhaseKind,
+    teams: number,
+    fmt: TournamentFormat,
+    pk: TournamentPhaseKind,
     fields: number,
     numGroups: number,
   ): number {
@@ -147,20 +224,20 @@ export function renderStep5({
       const eff = n % 2 === 0 ? n : n + 1;
       return (eff - 1) * c(eff / 2 / fields);
     }
-    if (phaseKind === "multi") {
-      const effGroups = Math.max(1, numGroups);
-      const tpg = Math.ceil(numTeams / effGroups);
+    if (pk === "multi") {
+      const eg = Math.max(1, numGroups);
+      const tpg = Math.ceil(teams / eg);
       const eff = tpg % 2 === 0 ? tpg : tpg + 1;
-      const matchesPerGlobalRound = effGroups * (eff / 2);
+      const matchesPerGlobalRound = eg * (eff / 2);
       const groupSubRounds = (eff - 1) * c(matchesPerGlobalRound / fields);
-      const advancing = Math.min(effGroups * 2, numTeams);
+      const advancing = Math.min(eg * 2, teams);
       return groupSubRounds + koSubRounds(advancing, fields);
     }
-    switch (format) {
+    switch (fmt) {
       case "round-robin":
-        return rrSR(numTeams);
+        return rrSR(teams);
       case "knockout":
-        return koSubRounds(numTeams, fields);
+        return koSubRounds(teams, fields);
     }
     return 0;
   }
@@ -196,6 +273,29 @@ export function renderStep5({
     }
     return todayISO.toString();
   })();
+
+  // Final day duration estimate (use finale match settings for the knockout phase)
+  const finalDayStats =
+    hasFinalDay && finalDayStartRound
+      ? computeFinalDayDuration(
+          finalDayStartRound,
+          numFields,
+          phaseKind === TournamentPhaseKind.MULTI
+            ? finaleMatchDuration
+            : matchDuration,
+          phaseKind === TournamentPhaseKind.MULTI
+            ? finaleTravelMinutes
+            : travelMinutes,
+        )
+      : null;
+
+  const finalDayEndMins = finalDayStats
+    ? finalDayHour * 60 + finalDayStats.durationMins
+    : 0;
+  const finalDayEndStr = finalDayStats
+    ? `${Math.floor(finalDayEndMins / 60) % 24}:${String(finalDayEndMins % 60).padStart(2, "0")}`
+    : "";
+  const finalDaySpansNextDay = finalDayEndMins >= 24 * 60;
 
   return (
     <>
@@ -415,7 +515,7 @@ export function renderStep5({
             <View>
               <Text style={s.toggleLabel}>Final Day dedicato</Text>
               <Text style={s.toggleSub}>
-                Quarti, semifinale e finale in un giorno dedicato
+                Seleziona da quale turno inizia il Final Day
               </Text>
             </View>
             <Switch
@@ -432,7 +532,7 @@ export function renderStep5({
           {hasFinalDay && (
             <>
               <Text style={s.sectionLabel}>Data Final Day</Text>
-              <View style={s.numberInputRow}>
+              <View style={[s.numberInputRow, { paddingVertical: 8 }]}>
                 <Text style={s.fieldLabel}>Giorno Final Day</Text>
                 <ButtonBorderColored
                   text={finalDayDate}
@@ -449,25 +549,143 @@ export function renderStep5({
                   size={sizesEnum.medium}
                 />
               </View>
-              <View
-                style={[
-                  s.infoBox,
-                  {
-                    backgroundColor: colors.blueBg,
-                    borderColor: colors.lightBlue,
-                  },
-                ]}
-              >
-                <Ionicons
-                  name="calendar-outline"
-                  size={18}
-                  color={colors.blue}
+
+              <View style={s.fieldRow}>
+                <View style={s.optionCardBody}>
+                  <Text style={s.fieldLabel}>Orario inizio Final Day</Text>
+                  <Text style={s.fieldSub}>Prima partita del Final Day</Text>
+                </View>
+                <Stepper
+                  value={finalDayHour}
+                  min={6}
+                  max={22}
+                  onChange={setFinalDayHour}
+                  fmt={(h) => `${h}:00`}
                 />
-                <Text style={[s.infoBoxText, { color: colors.darkBlue }]}>
-                  Quarti di finale, semifinali e finale si giocheranno il giorno
-                  selezionato.
-                </Text>
               </View>
+
+              <Text style={s.sectionLabel}>Turno di partenza</Text>
+              <Text style={[s.fieldSub, { marginBottom: 10 }]}>
+                Seleziona da quale turno inizia il Final Day. Tutti i turni
+                successivi saranno inclusi automaticamente.
+              </Text>
+
+              {FINAL_DAY_ROUNDS.map((round) => {
+                const isStart = finalDayStartRound === round.value;
+                const includedRounds = finalDayStartRound
+                  ? getIncludedRounds(finalDayStartRound)
+                  : [];
+                const isIncluded =
+                  !isStart && includedRounds.includes(round.value);
+
+                return (
+                  <TouchableOpacity
+                    key={round.value}
+                    style={[
+                      s.optionCard,
+                      {
+                        flexDirection: "row",
+                        alignItems: "center",
+                        marginBottom: 8,
+                        paddingHorizontal: 14,
+                        paddingVertical: 12,
+                        gap: 12,
+                      },
+                      isStart && s.optionCardSelected,
+                      isIncluded && {
+                        borderColor: colors.primaryGradientEnd,
+                        backgroundColor: colors.primarySelectedBg,
+                        opacity: 0.75,
+                      },
+                    ]}
+                    onPress={() =>
+                      setFinalDayStartRound(
+                        isStart ? null : round.value,
+                      )
+                    }
+                  >
+                    <Ionicons
+                      name={
+                        isStart
+                          ? "radio-button-on"
+                          : isIncluded
+                            ? "checkmark-circle-outline"
+                            : "radio-button-off"
+                      }
+                      size={22}
+                      color={
+                        isStart
+                          ? colors.primary
+                          : isIncluded
+                            ? colors.primaryGradientEnd
+                            : colors.placeholder
+                      }
+                    />
+                    <View style={{ flex: 1 }}>
+                      <Text
+                        style={[
+                          s.optionCardTitle,
+                          isStart && { color: colors.primary },
+                          isIncluded && { color: colors.primaryGradientMid },
+                        ]}
+                      >
+                        {round.label}
+                        {isIncluded ? "  ✓ incluso" : ""}
+                      </Text>
+                      <Text style={s.fieldSub}>{round.sub}</Text>
+                    </View>
+                  </TouchableOpacity>
+                );
+              })}
+
+              {/* Final day duration estimate */}
+              {finalDayStats && (
+                <View
+                  style={[
+                    s.infoBox,
+                    {
+                      backgroundColor: colors.primarySelectedBg,
+                      borderColor: colors.primary,
+                      marginTop: 8,
+                    },
+                  ]}
+                >
+                  <Ionicons
+                    name="time-outline"
+                    size={22}
+                    color={colors.primary}
+                  />
+                  <View style={{ flex: 1, gap: 4 }}>
+                    <Text
+                      style={[
+                        s.infoBoxText,
+                        { color: colors.dark, fontWeight: "700", fontSize: 15 },
+                      ]}
+                    >
+                      Fine stimata: {finalDayEndStr}
+                      {finalDaySpansNextDay ? " (+1 giorno)" : ""}
+                    </Text>
+                    <Text style={[s.infoBoxText, { color: colors.placeholder }]}>
+                      {finalDayStats.totalMatches} partite ·{" "}
+                      {formatDuration(finalDayStats.durationMins)} · su{" "}
+                      {numFields} camp{numFields === 1 ? "o" : "i"}
+                    </Text>
+                  </View>
+                </View>
+              )}
+              {finalDaySpansNextDay && (
+                <View style={s.warningBox}>
+                  <Ionicons
+                    name="warning-outline"
+                    size={18}
+                    color={colors.primaryGradientMid}
+                  />
+                  <Text style={s.warningBoxText}>
+                    Il Final Day supera la mezzanotte. Anticipa l'orario o
+                    aumenta i campi.
+                  </Text>
+                </View>
+              )}
             </>
           )}
 

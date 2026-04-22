@@ -4,6 +4,7 @@ import {
   TournamentFormat,
   TeamRegistrationStatus,
   TournamentGender,
+  FinalDayRound,
 } from "../constants/tournament";
 import { PlayerStats } from "./stats";
 
@@ -31,6 +32,8 @@ export interface GeneratorConfig {
   maxMatchesPerDay?: number; // total matches per day across all fields
   hasFinalDay: boolean;
   finalDayDate?: string; // YYYY-MM-DD — exact date for quarters/semis/final when hasFinalDay
+  finalDayHour?: number; // start hour for the final day (6-22)
+  finalDayStartRound?: FinalDayRound; // first round on the final day; all subsequent rounds are included
   singleDay?: boolean; // if true, no end-of-day cutoff
 }
 

@@ -17,6 +17,7 @@ import { renderStep4 } from "./steps/step4";
 import { renderStep5 } from "./steps/step5";
 import { renderStepRegolamento } from "./steps/stepRegolamento";
 import {
+  FinalDayRound,
   STEP_TITLES_TOURNAMENT,
   SportRegulation,
   TournamentGender,
@@ -120,6 +121,9 @@ export default function CreateTournamentSchedule({ navigation }: Props) {
   const [maxMatchesPerDay, setMaxMatchesPerDay] = useState(2);
   const [hasFinalDay, setHasFinalDay] = useState(false);
   const [finalDayDate, setFinalDayDate] = useState(todayISO());
+  const [finalDayHour, setFinalDayHour] = useState(9);
+  const [finalDayStartRound, setFinalDayStartRound] =
+    useState<FinalDayRound | null>(FinalDayRound.SEMIFINALI);
   const [activeDateField, setActiveDateField] = useState<
     "startDate" | "finalDayDate" | null
   >(null);
@@ -241,6 +245,11 @@ export default function CreateTournamentSchedule({ navigation }: Props) {
       maxMatchesPerDay: isSingleDay ? undefined : cappedPerDay,
       hasFinalDay: isSingleDay ? false : hasFinalDay,
       finalDayDate: !isSingleDay && hasFinalDay ? finalDayDate : undefined,
+      finalDayHour: !isSingleDay && hasFinalDay ? finalDayHour : undefined,
+      finalDayStartRound:
+        !isSingleDay && hasFinalDay && finalDayStartRound
+          ? finalDayStartRound
+          : undefined,
       singleDay: isSingleDay,
     };
 
@@ -272,6 +281,8 @@ export default function CreateTournamentSchedule({ navigation }: Props) {
     playDays,
     hasFinalDay,
     finalDayDate,
+    finalDayHour,
+    finalDayStartRound,
     locationLat,
     locationLng,
     regulationFileUri,
@@ -417,6 +428,10 @@ export default function CreateTournamentSchedule({ navigation }: Props) {
             setHasFinalDay,
             finalDayDate,
             setFinalDayDate,
+            finalDayHour,
+            setFinalDayHour,
+            finalDayStartRound,
+            setFinalDayStartRound,
             maxDaysNeeded,
             effectiveMatchesPerDay,
             matchInfoDerived,
@@ -426,8 +441,10 @@ export default function CreateTournamentSchedule({ navigation }: Props) {
             effGroups,
             numFields,
             matchDuration: gironiMatchDuration,
+            finaleMatchDuration,
             restMinutes: 0,
             travelMinutes: gironiTimeBetween,
+            finaleTravelMinutes: finaleTimeBetween,
             activeDateField,
             setActiveDateField,
           })}
