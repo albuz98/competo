@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, FlatList, StatusBar } from "react-native";
+import { View, Text, FlatList, StatusBar, ImageBackground } from "react-native";
 import { pf, CARD_W, CARD_H } from "./Favorites.styles";
 import {
   SafeAreaView,
@@ -40,40 +40,56 @@ function TournamentCard({
     year: "2-digit",
   });
 
+  const inner = (
+    <View style={pf.whiteOverlay}>
+      <View style={pf.bigCardDecor} />
+      <Text style={pf.bigCardEmoji}>{emoji}</Text>
+      <ButtonIcon
+        handleBtn={onRemove}
+        style={pf.bookmarkBtn}
+        icon={
+          <Ionicons
+            name="bookmark"
+            size={18}
+            color={colors.primaryGradientMid}
+          />
+        }
+      />
+      <View style={pf.bigCardOverlay}>
+        <Text style={pf.bigCardName} numberOfLines={1}>
+          {item.name.toUpperCase()} – {date}
+        </Text>
+        <View style={pf.bigCardLocation}>
+          <View style={pf.cardMetaItem}>
+            <Ionicons name="location-sharp" size={11} color={colors.dark} />
+            <Text style={pf.bigCardLocationText} numberOfLines={1}>
+              {item.location}
+            </Text>
+          </View>
+          <Text style={pf.cardFee}>{item.entryFee}</Text>
+        </View>
+      </View>
+    </View>
+  );
+
   return (
     <ButtonGeneric
       style={[pf.bigCard, { width: CARD_W, height: CARD_H }]}
       handleBtn={onPress}
     >
-      <LinearGradient colors={colorsGrad} style={pf.bigCardGradient}>
-        <View style={pf.bigCardDecor} />
-        <Text style={pf.bigCardEmoji}>{emoji}</Text>
-        <ButtonIcon
-          handleBtn={onRemove}
-          style={pf.bookmarkBtn}
-          icon={
-            <Ionicons
-              name="bookmark"
-              size={18}
-              color={colors.primaryGradientMid}
-            />
-          }
-        />
-        <View style={pf.bigCardOverlay}>
-          <Text style={pf.bigCardName} numberOfLines={1}>
-            {item.name.toUpperCase()} – {date}
-          </Text>
-          <View style={pf.bigCardLocation}>
-            <View style={pf.cardMetaItem}>
-              <Ionicons name="location-sharp" size={11} color={colors.dark} />
-              <Text style={pf.bigCardLocationText} numberOfLines={1}>
-                {item.location}
-              </Text>
-            </View>
-            <Text style={pf.cardFee}>{item.entryFee}</Text>
-          </View>
-        </View>
-      </LinearGradient>
+      {item.imageUrl ? (
+        <ImageBackground
+          source={{ uri: item.imageUrl }}
+          style={pf.bigCardGradient}
+          resizeMode="cover"
+        >
+          {inner}
+        </ImageBackground>
+      ) : (
+        <LinearGradient colors={colorsGrad} style={pf.bigCardGradient}>
+          {inner}
+        </LinearGradient>
+      )}
     </ButtonGeneric>
   );
 }

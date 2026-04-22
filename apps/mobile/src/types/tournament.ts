@@ -147,6 +147,7 @@ export interface Tournament {
   lat?: number;
   lng?: number;
   logoUrl?: string;
+  imageUrl?: string;
 }
 
 export interface TournamentTeam {

@@ -1,6 +1,6 @@
 import { LinearGradient } from "expo-linear-gradient";
 import { ButtonGeneric } from "../Button/Button";
-import { View, Text } from "react-native";
+import { View, Text, ImageBackground } from "react-native";
 import { Tournament } from "../../../types/tournament";
 import { CARD_GRADIENTS, SPORT_EMOJI } from "../../../constants/generals";
 import { Ionicons } from "@expo/vector-icons";
@@ -27,61 +27,66 @@ export function VerticalCard({
     month: "2-digit",
   });
 
-  return (
-    <ButtonGeneric style={styles.vCard} handleBtn={onPress}>
-      <LinearGradient colors={colorGradient} style={styles.vCardGradient}>
-        <View
-          style={{
-            backgroundColor: "rgba(255,255,255,0.1)",
-            width: "100%",
-            height: SMALL_W,
-            display: "flex",
-            flexDirection: "row",
-            alignItems: "center",
-            gap: 10,
-            justifyContent: "flex-end",
-            borderRadius: 16,
-            paddingHorizontal: 16,
-          }}
-        >
-          <Logo
-            logoUrl={tournament.logoUrl}
-            emoji={emoji}
-            circleSize={50}
-            fontSize={34}
-          />
-          <View style={styles.vCardContent}>
-            <Text style={styles.vCardName} numberOfLines={1}>
-              {tournament.name}
-            </Text>
-            <View style={styles.vCardRow}>
-              <Ionicons
-                name="location-sharp"
-                size={12}
-                color={colors.grayOpacized}
-              />
-              <Text style={styles.vCardMeta} numberOfLines={1}>
-                {tournament.location}
-              </Text>
-            </View>
-            <View style={styles.vCardRow}>
-              <Ionicons
-                name="cash-outline"
-                size={12}
-                color={colors.grayOpacized}
-              />
-              <Text style={styles.vCardMeta}>
-                {tournament.entryFee} · {date}
-              </Text>
-            </View>
-          </View>
+  const inner = (
+    <View
+      style={{
+        backgroundColor: "rgba(0,0,0,0.2)",
+        width: "100%",
+        height: SMALL_W,
+        flexDirection: "row",
+        alignItems: "center",
+        gap: 10,
+        justifyContent: "flex-end",
+        borderRadius: 16,
+        paddingHorizontal: 16,
+      }}
+    >
+      <Logo
+        logoUrl={tournament.logoUrl}
+        emoji={emoji}
+        circleSize={50}
+        fontSize={34}
+      />
+      <View style={styles.vCardContent}>
+        <Text style={styles.vCardName} numberOfLines={1}>
+          {tournament.name}
+        </Text>
+        <View style={styles.vCardRow}>
           <Ionicons
-            name="chevron-forward"
-            size={18}
+            name="location-sharp"
+            size={12}
             color={colors.grayOpacized}
           />
+          <Text style={styles.vCardMeta} numberOfLines={1}>
+            {tournament.location}
+          </Text>
         </View>
-      </LinearGradient>
+        <View style={styles.vCardRow}>
+          <Ionicons name="cash-outline" size={12} color={colors.grayOpacized} />
+          <Text style={styles.vCardMeta}>
+            {tournament.entryFee} · {date}
+          </Text>
+        </View>
+      </View>
+      <Ionicons name="chevron-forward" size={18} color={colors.grayOpacized} />
+    </View>
+  );
+
+  return (
+    <ButtonGeneric style={styles.vCard} handleBtn={onPress}>
+      {tournament.imageUrl ? (
+        <ImageBackground
+          source={{ uri: tournament.imageUrl }}
+          style={styles.vCardGradient}
+          resizeMode="cover"
+        >
+          {inner}
+        </ImageBackground>
+      ) : (
+        <LinearGradient colors={colorGradient} style={styles.vCardGradient}>
+          {inner}
+        </LinearGradient>
+      )}
     </ButtonGeneric>
   );
 }

@@ -1,5 +1,5 @@
-import { View, Text } from "react-native";
-import { SPORT_EMOJI } from "../../../constants/generals";
+import { View, Text, ImageBackground } from "react-native";
+import { CARD_GRADIENTS, SPORT_EMOJI } from "../../../constants/generals";
 import { Tournament } from "../../../types/tournament";
 import { LinearGradient } from "expo-linear-gradient";
 import { ButtonFullColored } from "../Button/Button";
@@ -17,35 +17,49 @@ interface SmallCardProps {
 }
 
 export function SmallCard({ tournament, index, onPress }: SmallCardProps) {
-  // const colorsGrad = CARD_GRADIENTS[(index + 2) % CARD_GRADIENTS.length];
+  const colorsGrad = CARD_GRADIENTS[(index + 2) % CARD_GRADIENTS.length];
   const emoji = SPORT_EMOJI[tournament.game] ?? "🏆";
   const date = new Date(tournament.startDate).toLocaleDateString("it-IT", {
     day: "2-digit",
     month: "2-digit",
   });
 
+  const topInner = (
+    <View
+      style={{
+        backgroundColor: "rgba(0,0,0,0.2)",
+        width: SMALL_W,
+        height: SMALL_W * 0.85,
+        alignItems: "center",
+        justifyContent: "center",
+        borderTopLeftRadius: 16,
+        borderTopRightRadius: 16,
+      }}
+    >
+      <Logo
+        logoUrl={tournament.logoUrl}
+        emoji={emoji}
+        circleSize={70}
+        fontSize={44}
+      />
+    </View>
+  );
+
   return (
     <View style={[styles.smallCard, { width: SMALL_W }]}>
-      <LinearGradient colors={colorGradient} style={styles.smallCardTop}>
-        <View
-          style={{
-            backgroundColor: "rgba(255,255,255,0.2)",
-            width: SMALL_W,
-            height: SMALL_W * 0.85,
-            alignItems: "center",
-            justifyContent: "center",
-            borderTopLeftRadius: 16,
-            borderTopRightRadius: 16,
-          }}
+      {tournament.imageUrl ? (
+        <ImageBackground
+          source={{ uri: tournament.imageUrl }}
+          style={styles.smallCardTop}
+          resizeMode="cover"
         >
-          <Logo
-            logoUrl={tournament.logoUrl}
-            emoji={emoji}
-            circleSize={70}
-            fontSize={44}
-          />
-        </View>
-      </LinearGradient>
+          {topInner}
+        </ImageBackground>
+      ) : (
+        <LinearGradient colors={colorGradient} style={styles.smallCardTop}>
+          {topInner}
+        </LinearGradient>
+      )}
       <View style={styles.smallCardBody}>
         <Text style={styles.smallCardName} numberOfLines={1}>
           {tournament.game.toUpperCase()} – {date}

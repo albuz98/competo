@@ -63,6 +63,11 @@ export const pf = StyleSheet.create({
 
   bigCard: { borderRadius: 18, overflow: "hidden" },
   bigCardGradient: { flex: 1, justifyContent: "flex-end" },
+  whiteOverlay: {
+    flex: 1,
+    justifyContent: "flex-end",
+    backgroundColor: "rgba(0,0,0,0.2)",
+  },
   bigCardDecor: {
     position: "absolute",
     right: -30,
