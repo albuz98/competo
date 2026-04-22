@@ -10,7 +10,11 @@ export enum TournamentResult {
 export enum TournamentFormat {
   ROUND_ROBIN = "round-robin",
   KNOCKOUT = "knockout",
-  DOUBLE_ELIMINATION = "double-elimination",
+}
+
+export enum TournamentPhaseKind {
+  SINGLE = "single",
+  MULTI = "multi",
 }
 
 export enum TeamRegistrationStatus {
@@ -20,76 +24,64 @@ export enum TeamRegistrationStatus {
   PAID = "paid",
 }
 
-export enum TournamentPhaseKind {
-  SINGLE = "single",
-  MULTI = "multi",
+export enum TournamentMode {
+  CAMPIONATO = "campionato",
+  ELIMINAZIONE_DIRETTA = "eliminazione-diretta",
+  GIRONI_FASE_FINALE = "gironi-fase-finale",
 }
 
-export const PHASES: {
-  value: TournamentPhaseKind;
+export const TOURNAMENT_MODES: {
+  value: TournamentMode;
   label: string;
   sub: string;
   icon: string;
 }[] = [
   {
-    value: TournamentPhaseKind.SINGLE,
-    label: "Fase Unica",
-    sub: "Un solo formato per tutto il torneo",
-    icon: "arrow-forward-circle-outline",
+    value: TournamentMode.CAMPIONATO,
+    label: "Campionato",
+    sub: "Ogni squadra affronta tutte le altre. C'è sia andata che ritorno. V=3, P=1, S=0",
+    icon: "refresh-circle-outline",
   },
   {
-    value: TournamentPhaseKind.MULTI,
-    label: "Multi-fase",
-    sub: "Gironi (girone all'italiana) poi fase ad eliminazione",
+    value: TournamentMode.ELIMINAZIONE_DIRETTA,
+    label: "Eliminazione Diretta",
+    sub: "Le squadre perdenti sono eliminate direttamente dal torneo.",
+    icon: "trophy-outline",
+  },
+  {
+    value: TournamentMode.GIRONI_FASE_FINALE,
+    label: "Gironi + Fase Finale",
+    sub: "Fase a gironi, poi i migliori si sfidano in eliminazione diretta",
     icon: "git-merge-outline",
   },
 ];
 
-export const SINGLE_FORMATS: {
-  value: TournamentFormat;
-  label: string;
-  sub: string;
-  icon: string;
-}[] = [
-  {
-    value: TournamentFormat.ROUND_ROBIN,
-    label: "Girone all'italiana",
-    sub: "Ogni squadra affronta tutte le altre. V=3, P=1, S=0",
-    icon: "refresh-circle-outline",
-  },
-  {
-    value: TournamentFormat.KNOCKOUT,
-    label: "Eliminazione Diretta",
-    sub: "Sconfitti eliminati. Seeding automatico (1ª vs ultima)",
-    icon: "trophy-outline",
-  },
-  {
-    value: TournamentFormat.DOUBLE_ELIMINATION,
-    label: "Doppia Eliminazione",
-    sub: "Torneo A + Torneo B (Ultima Chance). Reset finale possibile",
-    icon: "repeat-outline",
-  },
-];
-
-export const KO_FORMATS: {
-  value: TournamentFormat;
-  label: string;
-  sub: string;
-  icon: string;
-}[] = [
-  {
-    value: TournamentFormat.KNOCKOUT,
-    label: "Eliminazione Diretta",
-    sub: "Sconfitti eliminati al primo errore. Seeding automatico",
-    icon: "trophy-outline",
-  },
-  {
-    value: TournamentFormat.DOUBLE_ELIMINATION,
-    label: "Doppia Eliminazione",
-    sub: "Torneo A + Torneo B (Ultima Chance). Reset finale possibile",
-    icon: "repeat-outline",
-  },
-];
+export function tournamentModeToConfig(mode: TournamentMode): {
+  phaseKind: TournamentPhaseKind;
+  format: TournamentFormat;
+  knockoutFormat: TournamentFormat;
+} {
+  switch (mode) {
+    case TournamentMode.CAMPIONATO:
+      return {
+        phaseKind: TournamentPhaseKind.SINGLE,
+        format: TournamentFormat.ROUND_ROBIN,
+        knockoutFormat: TournamentFormat.KNOCKOUT,
+      };
+    case TournamentMode.ELIMINAZIONE_DIRETTA:
+      return {
+        phaseKind: TournamentPhaseKind.SINGLE,
+        format: TournamentFormat.KNOCKOUT,
+        knockoutFormat: TournamentFormat.KNOCKOUT,
+      };
+    case TournamentMode.GIRONI_FASE_FINALE:
+      return {
+        phaseKind: TournamentPhaseKind.MULTI,
+        format: TournamentFormat.ROUND_ROBIN,
+        knockoutFormat: TournamentFormat.KNOCKOUT,
+      };
+  }
+}
 
 export const DAY_LABELS = ["D", "L", "M", "M", "G", "V", "S"];
 
@@ -120,7 +112,7 @@ export const SPORT_REGULATIONS: {
   },
   {
     value: SportRegulation.KING_LEAGUE,
-    label: "King League",
+    label: "Kings League",
     icon: "trophy-outline",
     downloadUrl: "https://example.com/regolamento-king-league.pdf",
   },

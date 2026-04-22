@@ -16,7 +16,6 @@ interface renderStep3Props {
   numTeams: number;
   format: TournamentFormat;
   phaseKind: TournamentPhaseKind;
-  knockoutFormat: TournamentFormat;
   maxGroups: number;
 }
 
@@ -27,7 +26,6 @@ export function renderStep3({
   numTeams,
   format,
   phaseKind,
-  knockoutFormat,
   maxGroups,
 }: renderStep3Props) {
   const teamsPerGroup = Math.ceil(numTeams / effGroups);
@@ -39,7 +37,6 @@ export function renderStep3({
     format,
     phaseKind,
     effGroups,
-    phaseKind === "multi" ? knockoutFormat : undefined,
   );
 
   return (

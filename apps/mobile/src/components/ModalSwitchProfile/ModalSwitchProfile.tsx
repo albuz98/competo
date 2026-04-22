@@ -2,11 +2,13 @@ import React from "react";
 import { ModalViewer } from "../core/Modal/Modal";
 import { View, Text, Pressable, Image } from "react-native";
 import { colors, colorGradient } from "../../theme/colors";
-import { NavigationEnum } from "../../types/navigation";
+import { NavigationEnum, RootStackParamList } from "../../types/navigation";
 import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import { User, UserProfile, UserRole } from "../../types/user";
 import { styles } from "./ModalSwitchProfile.styled";
+import { useNavigation } from "@react-navigation/native";
+import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
 interface ModalSwitchProfileProps {
   changeProfileModal: boolean;
@@ -23,6 +25,9 @@ export const ModalSwitchProfile = ({
   user,
   currentProfile,
 }: ModalSwitchProfileProps) => {
+  const navigation =
+    useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+
   const handleSwitchProfile = (profile: UserProfile) => {
     switchProfile(profile.id);
     setChangeProfileModal(false);

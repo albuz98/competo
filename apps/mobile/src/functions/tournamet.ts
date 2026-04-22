@@ -6,7 +6,6 @@ export function estimateTotalMatches(
   format: TournamentFormat,
   phaseKind: TournamentPhaseKind,
   numGroups: number,
-  koFormat?: TournamentFormat,
 ): TournametNumberPartecipants {
   if (phaseKind === "multi") {
     const effGroups = Math.max(1, numGroups);
@@ -19,8 +18,7 @@ export function estimateTotalMatches(
       if (count >= 2) groupMatches += (count * (count - 1)) / 2;
     }
     const advancing = Math.min(effGroups * 2, numTeams);
-    const koMatches =
-      koFormat === "double-elimination" ? advancing * 2 - 1 : advancing - 1;
+    const koMatches = advancing - 1;
     return {
       total: groupMatches + koMatches,
       groups: groupMatches,
@@ -37,8 +35,6 @@ export function estimateTotalMatches(
     }
     case "knockout":
       return { total: numTeams - 1, groups: 0, knockout: numTeams - 1 };
-    case "double-elimination":
-      return { total: numTeams * 2 - 1, groups: 0, knockout: numTeams * 2 - 1 };
   }
 
   return { total: 0, groups: 0, knockout: 0 };

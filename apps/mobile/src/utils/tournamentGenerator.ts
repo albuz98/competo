@@ -5,6 +5,7 @@ import {
   GeneratorGroup,
   TeamSchedule,
   StandingsEntry,
+  TournamentPhase,
 } from "../types/tournament";
 
 const BYE = "Bye (Pausa)";
@@ -76,7 +77,7 @@ function roundRobinPairs(teams: string[], phaseLabel: string): MatchSpec[][] {
       round.push({
         home: isBye && away === BYE ? home : home,
         away: isBye && home === BYE ? away : away,
-        phase: "main",
+        phase: TournamentPhase.MAIN,
         roundLabel: `${phaseLabel}Turno ${r + 1}`,
         isBye,
       });
@@ -108,7 +109,7 @@ function knockoutPairs(teams: string[], phaseLabel: string): MatchSpec[][] {
       r1.push({
         home: playingInR1[i],
         away: playingInR1[playingInR1.length - 1 - i],
-        phase: "knockout",
+        phase: TournamentPhase.KNOCKOUT,
         roundLabel: "", // assigned after
         isBye: false,
       });
@@ -125,7 +126,8 @@ function knockoutPairs(teams: string[], phaseLabel: string): MatchSpec[][] {
       rN.push({
         home: "TBD",
         away: "TBD",
-        phase: matchCount === 1 ? "final" : "knockout",
+        phase:
+          matchCount === 1 ? TournamentPhase.FINAL : TournamentPhase.KNOCKOUT,
         roundLabel: "", // assigned after
         isBye: false,
       });
@@ -139,58 +141,6 @@ function knockoutPairs(teams: string[], phaseLabel: string): MatchSpec[][] {
   for (let i = 0; i < totalRounds; i++) {
     const label = phaseLabel + knockoutRoundLabel(i, totalRounds);
     rounds[i] = rounds[i].map((m) => ({ ...m, roundLabel: label }));
-  }
-
-  return rounds;
-}
-
-// ── Double elimination ────────────────────────────────────────────────────────
-
-function doubleEliminationPairs(teams: string[]): MatchSpec[][] {
-  const winnersRounds = knockoutPairs(teams, "Torneo A - ");
-  const N = teams.length;
-  const rounds: MatchSpec[][] = [];
-
-  // Interleave winners bracket with losers bracket
-  for (let i = 0; i < winnersRounds.length - 1; i++) {
-    // Winners bracket round
-    rounds.push(winnersRounds[i]);
-
-    // Losers bracket round feeds from this winners round
-    const numLosersMatches = Math.max(
-      1,
-      Math.floor(winnersRounds[i].length / 2),
-    );
-    const lRound: MatchSpec[] = [];
-    for (let j = 0; j < numLosersMatches; j++) {
-      lRound.push({
-        home: "TBD",
-        away: "TBD",
-        phase: "losers",
-        roundLabel: `Torneo B - Turno ${i + 1}`,
-        isBye: false,
-      });
-    }
-    rounds.push(lRound);
-  }
-
-  // Last winners bracket round (final of winners bracket)
-  rounds.push(winnersRounds[winnersRounds.length - 1]);
-
-  // Grand Final (losers winner vs winners winner, possible reset)
-  rounds.push([
-    {
-      home: "Vincitore A",
-      away: "Vincitore B",
-      phase: "final",
-      roundLabel: "Grande Finale (reset possibile)",
-      isBye: false,
-    },
-  ]);
-
-  // Warn if < 4 teams
-  if (N < 4) {
-    // Double elimination with fewer than 4 teams degrades gracefully
   }
 
   return rounds;
@@ -415,7 +365,7 @@ export function generateTournament(config: GeneratorConfig): GeneratorOutput {
       const label = numGroups === 1 ? "Girone - " : `Girone ${letter} - `;
       groupRoundsData.push(
         roundRobinPairs(withBye, label).map((r) =>
-          r.map((m) => ({ ...m, phase: "groups" as const })),
+          r.map((m) => ({ ...m, phase: TournamentPhase.GROUPS })),
         ),
       );
     }
@@ -448,10 +398,7 @@ export function generateTournament(config: GeneratorConfig): GeneratorOutput {
     ];
     const koTeams = allKoLabels.slice(0, advancingCount);
 
-    const koRounds =
-      config.multiKnockoutFormat === "double-elimination"
-        ? doubleEliminationPairs(koTeams)
-        : knockoutPairs(koTeams, "");
+    const koRounds = knockoutPairs(koTeams, "");
     rounds = [...groupsRounds, ...koRounds];
   } else {
     switch (config.format) {
@@ -463,9 +410,6 @@ export function generateTournament(config: GeneratorConfig): GeneratorOutput {
       }
       case "knockout":
         rounds = knockoutPairs(realTeams, "");
-        break;
-      case "double-elimination":
-        rounds = doubleEliminationPairs(realTeams);
         break;
       default:
         rounds = [];

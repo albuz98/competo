@@ -19,9 +19,9 @@ import { renderStepRegolamento } from "./steps/stepRegolamento";
 import {
   STEP_TITLES_TOURNAMENT,
   SportRegulation,
-  TournamentFormat,
   TournamentGender,
-  TournamentPhaseKind,
+  TournamentMode,
+  tournamentModeToConfig,
 } from "../../constants/tournament";
 import { StructureSchedule } from "../../components/core/StructureSchedule/StructureSchedule";
 import { todayISO } from "../../functions/general";
@@ -71,20 +71,14 @@ export default function CreateTournamentSchedule({ navigation }: Props) {
   );
   const [sportRegulation, setSportRegulation] =
     useState<SportRegulation | null>(null);
-  const [gender, setGender] = useState<TournamentGender>(
-    TournamentGender.MASCHILE,
-  );
+  const [gender, setGender] = useState<TournamentGender>(TournamentGender.MALE);
 
   // Step 3: Structure
-  const [phaseKind, setPhaseKind] = useState<TournamentPhaseKind>(
-    TournamentPhaseKind.SINGLE,
+  const [tournamentMode, setTournamentMode] = useState<TournamentMode>(
+    TournamentMode.CAMPIONATO,
   );
-  const [format, setFormat] = useState<TournamentFormat>(
-    TournamentFormat.ROUND_ROBIN,
-  );
-  const [knockoutFormat, setKnockoutFormat] = useState<TournamentFormat>(
-    TournamentFormat.KNOCKOUT,
-  );
+  const { phaseKind, format, knockoutFormat } =
+    tournamentModeToConfig(tournamentMode);
 
   // Step 4: Participants (informed by structure)
   const [numTeams, setNumTeams] = useState(8);
@@ -118,7 +112,6 @@ export default function CreateTournamentSchedule({ navigation }: Props) {
     format,
     phaseKind,
     effGroups,
-    phaseKind === "multi" ? knockoutFormat : undefined,
   );
   const maxPerDayCapDerived = Math.max(numFields, matchInfoDerived.total - 1);
   const effectiveMatchesPerDay = Math.min(
@@ -204,13 +197,7 @@ export default function CreateTournamentSchedule({ navigation }: Props) {
       name: `Squadra ${i + 1}`,
     }));
 
-    const mInfo = estimateTotalMatches(
-      numTeams,
-      format,
-      phaseKind,
-      effGroups,
-      phaseKind === "multi" ? knockoutFormat : undefined,
-    );
+    const mInfo = estimateTotalMatches(numTeams, format, phaseKind, effGroups);
     const cappedPerDay = Math.min(
       Math.max(maxMatchesPerDay, numFields),
       Math.max(numFields, mInfo.total - 1),
@@ -351,12 +338,8 @@ export default function CreateTournamentSchedule({ navigation }: Props) {
           })}
         {step === 3 &&
           renderStep2({
-            phaseKind,
-            setPhaseKind,
-            format,
-            setFormat,
-            knockoutFormat,
-            setKnockoutFormat,
+            tournamentMode,
+            setTournamentMode,
           })}
         {step === 4 &&
           renderStep3({
@@ -366,7 +349,6 @@ export default function CreateTournamentSchedule({ navigation }: Props) {
             effGroups,
             format,
             phaseKind,
-            knockoutFormat,
             maxGroups,
           })}
         {step === 5 &&
@@ -403,7 +385,6 @@ export default function CreateTournamentSchedule({ navigation }: Props) {
             numTeams,
             format,
             phaseKind,
-            knockoutFormat,
             effGroups,
             numFields,
             matchDuration,

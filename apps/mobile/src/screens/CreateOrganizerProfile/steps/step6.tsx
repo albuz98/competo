@@ -3,8 +3,8 @@ import { Text, TouchableOpacity, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { s } from "../CreateOrganizerProfile.styles";
 import { colors } from "../../../theme/colors";
-import { ENTITY_LABELS, EntityType } from "../../../types/organizer";
-import { PDF_URLS } from "../../../constants/organizer";
+import { EntityType } from "../../../types/organizer";
+import { ENTITY_LABELS, PDF_URLS } from "../../../constants/organizer";
 import { openPdf } from "../../../functions/general";
 
 interface Step6Props {

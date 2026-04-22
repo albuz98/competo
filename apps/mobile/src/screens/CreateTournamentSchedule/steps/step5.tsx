@@ -40,7 +40,6 @@ interface renderStep5Props {
   numTeams: number;
   format: TournamentFormat;
   phaseKind: TournamentPhaseKind;
-  knockoutFormat: TournamentFormat;
   effGroups: number;
   matchDuration: number;
   travelMinutes: number;
@@ -74,7 +73,6 @@ export function renderStep5({
   numTeams,
   format,
   phaseKind,
-  knockoutFormat,
   effGroups,
   numFields,
   matchDuration,
@@ -143,15 +141,11 @@ export function renderStep5({
     phaseKind: TournamentPhaseKind,
     fields: number,
     numGroups: number,
-    koFormat?: TournamentFormat,
   ): number {
     const c = Math.ceil;
     function rrSR(n: number): number {
       const eff = n % 2 === 0 ? n : n + 1;
       return (eff - 1) * c(eff / 2 / fields);
-    }
-    function deSR(n: number): number {
-      return koSubRounds(n, fields) * 2 + 1;
     }
     if (phaseKind === "multi") {
       const effGroups = Math.max(1, numGroups);
@@ -160,19 +154,13 @@ export function renderStep5({
       const matchesPerGlobalRound = effGroups * (eff / 2);
       const groupSubRounds = (eff - 1) * c(matchesPerGlobalRound / fields);
       const advancing = Math.min(effGroups * 2, numTeams);
-      const koSub =
-        koFormat === "double-elimination"
-          ? deSR(advancing)
-          : koSubRounds(advancing, fields);
-      return groupSubRounds + koSub;
+      return groupSubRounds + koSubRounds(advancing, fields);
     }
     switch (format) {
       case "round-robin":
         return rrSR(numTeams);
       case "knockout":
         return koSubRounds(numTeams, fields);
-      case "double-elimination":
-        return deSR(numTeams);
     }
     return 0;
   }
@@ -183,14 +171,12 @@ export function renderStep5({
     phaseKind,
     numFields,
     effGroups,
-    phaseKind === "multi" ? knockoutFormat : undefined,
   );
   const matchInfo5 = estimateTotalMatches(
     numTeams,
     format,
     phaseKind,
     effGroups,
-    phaseKind === "multi" ? knockoutFormat : undefined,
   );
   const maxPerDayCap = Math.max(numFields, matchInfo5.total - 1);
   const slot = matchDuration + restMinutes + travelMinutes;

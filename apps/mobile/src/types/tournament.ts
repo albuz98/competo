@@ -34,7 +34,7 @@ export interface GeneratorConfig {
   singleDay?: boolean; // if true, no end-of-day cutoff
 }
 
-enum TournamentPhase {
+export enum TournamentPhase {
   MAIN = "main",
   GROUPS = "groups",
   KNOCKOUT = "knockout",
