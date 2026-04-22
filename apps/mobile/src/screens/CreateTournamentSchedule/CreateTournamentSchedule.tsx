@@ -21,6 +21,7 @@ import {
   SportRegulation,
   TournamentGender,
   TournamentMode,
+  TournamentPhaseKind,
   tournamentModeToConfig,
 } from "../../constants/tournament";
 import { StructureSchedule } from "../../components/core/StructureSchedule/StructureSchedule";
@@ -90,9 +91,26 @@ export default function CreateTournamentSchedule({ navigation }: Props) {
 
   // Step 5: Logistics
   const [numFields, setNumFields] = useState(2);
-  const [matchDuration, setMatchDuration] = useState(45);
-  const [restMinutes, setRestMinutes] = useState(15);
-  const [travelMinutes, setTravelMinutes] = useState(10);
+
+  // Gironi phase match settings
+  const [gironiTwoHalves, setGironiTwoHalves] = useState(false);
+  const [gironiHalfDuration, setGironiHalfDuration] = useState(45);
+  const [gironiHalfBreak, setGironiHalfBreak] = useState(5);
+  const [gironiTimeBetween, setGironiTimeBetween] = useState(15);
+
+  // Fase finale match settings
+  const [finaleTwoHalves, setFinaleTwoHalves] = useState(false);
+  const [finaleHalfDuration, setFinaleHalfDuration] = useState(45);
+  const [finaleHalfBreak, setFinaleHalfBreak] = useState(5);
+  const [finaleTimeBetween, setFinaleTimeBetween] = useState(15);
+
+  // Derived: total match duration per phase
+  const gironiMatchDuration = gironiTwoHalves
+    ? gironiHalfDuration * 2 + gironiHalfBreak
+    : gironiHalfDuration;
+  const finaleMatchDuration = finaleTwoHalves
+    ? finaleHalfDuration * 2 + finaleHalfBreak
+    : finaleHalfDuration;
 
   // Step 6: Calendar
   const [isSingleDay, setIsSingleDay] = useState(true);
@@ -213,9 +231,9 @@ export default function CreateTournamentSchedule({ navigation }: Props) {
       multiKnockoutFormat: phaseKind === "multi" ? knockoutFormat : undefined,
       numGroups: phaseKind === "multi" ? effGroups : undefined,
       numFields,
-      matchDurationMinutes: matchDuration,
-      restMinutes,
-      travelMinutes,
+      matchDurationMinutes: gironiMatchDuration,
+      restMinutes: 0,
+      travelMinutes: gironiTimeBetween,
       startDate,
       startHour,
       playDays: isSingleDay ? [0, 1, 2, 3, 4, 5, 6] : playDays,
@@ -244,9 +262,10 @@ export default function CreateTournamentSchedule({ navigation }: Props) {
     effGroups,
     knockoutFormat,
     numFields,
-    matchDuration,
-    restMinutes,
-    travelMinutes,
+    gironiMatchDuration,
+    gironiTimeBetween,
+    finaleMatchDuration,
+    finaleTimeBetween,
     startDate,
     startHour,
     isSingleDay,
@@ -271,7 +290,11 @@ export default function CreateTournamentSchedule({ navigation }: Props) {
       return sportRegulation !== null;
     }
     if (step === 5) {
-      return matchDuration > 0 && numFields > 0;
+      return (
+        gironiHalfDuration > 0 &&
+        numFields > 0 &&
+        (phaseKind !== TournamentPhaseKind.MULTI || finaleHalfDuration > 0)
+      );
     }
     if (step === 6) {
       if (!/^\d{4}-\d{2}-\d{2}$/.test(startDate)) return false;
@@ -355,13 +378,28 @@ export default function CreateTournamentSchedule({ navigation }: Props) {
           renderStep4({
             numFields,
             setNumFields,
-            setMatchDuration,
-            setRestMinutes,
-            setTravelMinutes,
             numTeams,
-            matchDuration,
-            restMinutes,
-            travelMinutes,
+            phaseKind,
+            gironi: {
+              twoHalves: gironiTwoHalves,
+              setTwoHalves: setGironiTwoHalves,
+              halfDuration: gironiHalfDuration,
+              setHalfDuration: setGironiHalfDuration,
+              halfBreak: gironiHalfBreak,
+              setHalfBreak: setGironiHalfBreak,
+              timeBetween: gironiTimeBetween,
+              setTimeBetween: setGironiTimeBetween,
+            },
+            finale: {
+              twoHalves: finaleTwoHalves,
+              setTwoHalves: setFinaleTwoHalves,
+              halfDuration: finaleHalfDuration,
+              setHalfDuration: setFinaleHalfDuration,
+              halfBreak: finaleHalfBreak,
+              setHalfBreak: setFinaleHalfBreak,
+              timeBetween: finaleTimeBetween,
+              setTimeBetween: setFinaleTimeBetween,
+            },
           })}
         {step === 6 &&
           renderStep5({
@@ -387,145 +425,13 @@ export default function CreateTournamentSchedule({ navigation }: Props) {
             phaseKind,
             effGroups,
             numFields,
-            matchDuration,
-            restMinutes,
-            travelMinutes,
+            matchDuration: gironiMatchDuration,
+            restMinutes: 0,
+            travelMinutes: gironiTimeBetween,
             activeDateField,
             setActiveDateField,
           })}
       </ScrollView>
     </StructureSchedule>
-    // <SafeAreaView style={s.root} edges={["top"]}>
-    //   <View style={s.header}>
-    //     <TouchableOpacity style={s.headerSide} onPress={confirmCancel}>
-    //       <Ionicons name="chevron-back" size={24} color={colors.dark} />
-    //     </TouchableOpacity>
-    //     <Text style={s.headerTitle}>{STEP_TITLES[step - 1]}</Text>
-    //     <View style={s.headerSide} />
-    //   </View>
-
-    //   {renderStepIndicator()}
-
-    //   <KeyboardAvoidingView
-    //     style={{ flex: 1 }}
-    //     behavior={Platform.OS === "ios" ? "padding" : "height"}
-    //   >
-    // <ScrollView
-    //   style={{ flex: 1 }}
-    //   contentContainerStyle={s.scroll}
-    //   keyboardShouldPersistTaps="handled"
-    //   showsVerticalScrollIndicator={false}
-    // >
-    //   {step === 1 &&
-    //     renderStep1({
-    //       setTournamentName,
-    //       tournamentName,
-    //       description,
-    //       setDescription,
-    //       location,
-    //       setLocation,
-    //       setLocationLat,
-    //       setLocationLng,
-    //       locationLat,
-    //       locationLng,
-    //       regulationFileName,
-    //       setRegulationFileName,
-    //       setRegulationFileUri,
-    //     })}
-    //   {step === 2 &&
-    //     renderStep2({
-    //       phaseKind,
-    //       setPhaseKind,
-    //       format,
-    //       setFormat,
-    //       knockoutFormat,
-    //       setKnockoutFormat,
-    //     })}
-    //   {step === 3 &&
-    //     renderStep3({
-    //       numTeams,
-    //       setNumGroups,
-    //       setNumTeams,
-    //       effGroups,
-    //       format,
-    //       phaseKind,
-    //       knockoutFormat,
-    //       maxGroups,
-    //     })}
-    //   {step === 4 &&
-    //     renderStep4({
-    //       numFields,
-    //       setNumFields,
-    //       setMatchDuration,
-    //       setRestMinutes,
-    //       setTravelMinutes,
-    //       numTeams,
-    //       matchDuration,
-    //       restMinutes,
-    //       travelMinutes,
-    //     })}
-    //   {step === 5 &&
-    //     renderStep5({
-    //       isSingleDay,
-    //       setIsSingleDay,
-    //       startDate,
-    //       setStartDate,
-    //       startHour,
-    //       setStartHour,
-    //       playDays,
-    //       setPlayDays,
-    //       maxMatchesPerDay,
-    //       setMaxMatchesPerDay,
-    //       hasFinalDay,
-    //       setHasFinalDay,
-    //       finalDayDate,
-    //       setFinalDayDate,
-    //       maxDaysNeeded,
-    //       effectiveMatchesPerDay,
-    //       matchInfoDerived,
-    //       numTeams,
-    //       format,
-    //       phaseKind,
-    //       knockoutFormat,
-    //       effGroups,
-    //       numFields,
-    //       matchDuration,
-    //       restMinutes,
-    //       travelMinutes,
-    //       activeDateField,
-    //       setActiveDateField,
-    //     })}
-    // </ScrollView>
-
-    //     <SafeAreaView edges={["bottom"]}>
-    //       <View style={s.bottomNav}>
-    //         <ButtonBorderColored
-    //           isColored
-    //           handleBtn={handleBack}
-    //           text="Indietro"
-    //           fullColor={colors.grayDark}
-    //           isDisabled={step === 1}
-    //         />
-
-    //         <ButtonGradient
-    //           handleBtn={handleNext}
-    //           isDisabled={generating || !isStepValid()}
-    //           loading={generating}
-    //           isFullWidth
-    //           style={[
-    //             s.btnNext,
-    //             {
-    //               opacity: generating || !isStepValid() ? 0.5 : 1,
-    //             },
-    //           ]}
-    //         >
-    //           <Text style={s.btnNextText}>
-    //             {step === 5 ? "Crea" : "Avanti"}
-    //           </Text>
-    //         </ButtonGradient>
-    //       </View>
-    //     </SafeAreaView>
-    //   </KeyboardAvoidingView>
-    // </SafeAreaView>
   );
 }

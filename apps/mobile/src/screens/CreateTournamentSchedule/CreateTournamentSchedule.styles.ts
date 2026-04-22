@@ -351,6 +351,55 @@ export const s = StyleSheet.create({
   },
   genderCardTextSelected: { color: colors.primary },
 
+  // Phase settings section card
+  phaseSection: {
+    backgroundColor: colors.white,
+    borderRadius: 14,
+    borderWidth: 1,
+    borderLeftWidth: 4,
+    borderColor: colors.disabled,
+    marginBottom: 12,
+    overflow: "hidden",
+  },
+  phaseSectionHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+    paddingHorizontal: 16,
+    paddingVertical: 11,
+    backgroundColor: colors.gray,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.disabled,
+  },
+  phaseSectionTitle: {
+    fontSize: 12,
+    fontWeight: "700",
+    color: colors.dark,
+    textTransform: "uppercase",
+    letterSpacing: 0.8,
+  },
+
+  // Half-time toggle buttons (Tempo unico / 2 Tempi)
+  halfToggleRow: {
+    flexDirection: "row",
+    gap: 8,
+    marginBottom: 4,
+  },
+  halfToggleBtn: {
+    flex: 1,
+    paddingVertical: 9,
+    borderRadius: 10,
+    borderWidth: 1.5,
+    borderColor: colors.disabled,
+    alignItems: "center",
+    backgroundColor: colors.white,
+  },
+  halfToggleBtnText: {
+    fontSize: 13,
+    fontWeight: "600",
+    color: colors.placeholder,
+  },
+
   // numberInputRow reduced height
   numberInputRow: {
     flexDirection: "row",
