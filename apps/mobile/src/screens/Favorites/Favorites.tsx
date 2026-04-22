@@ -15,15 +15,14 @@ import type { Tournament } from "../../types/tournament";
 import { useFavorites } from "../../context/FavoritesContext";
 import { useAuth } from "../../context/AuthContext";
 import { ButtonGeneric, ButtonIcon } from "../../components/core/Button/Button";
-import { colors } from "../../theme/colors";
-import { CARD_GRADIENTS, SPORT_EMOJI } from "../../constants/generals";
+import { colorGradient, colors } from "../../theme/colors";
+import { SPORT_EMOJI } from "../../constants/generals";
 import { UserRole } from "../../types/user";
 
 type Nav = NativeStackNavigationProp<RootStackParamList>;
 
 function TournamentCard({
   item,
-  index,
   onPress,
   onRemove,
 }: {
@@ -32,7 +31,6 @@ function TournamentCard({
   onPress: () => void;
   onRemove: () => void;
 }) {
-  const colorsGrad = CARD_GRADIENTS[index % CARD_GRADIENTS.length];
   const emoji = SPORT_EMOJI[item.game] ?? "🏆";
   const date = new Date(item.startDate).toLocaleDateString("it-IT", {
     day: "2-digit",
@@ -86,7 +84,7 @@ function TournamentCard({
           {inner}
         </ImageBackground>
       ) : (
-        <LinearGradient colors={colorsGrad} style={pf.bigCardGradient}>
+        <LinearGradient colors={colorGradient} style={pf.bigCardGradient}>
           {inner}
         </LinearGradient>
       )}

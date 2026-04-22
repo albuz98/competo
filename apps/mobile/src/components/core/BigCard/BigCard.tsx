@@ -1,5 +1,5 @@
 import { LinearGradient } from "expo-linear-gradient";
-import { CARD_GRADIENTS, SPORT_EMOJI } from "../../../constants/generals";
+import { SPORT_EMOJI } from "../../../constants/generals";
 import { BIG_H, BIG_W } from "../../../screens/Home/Home.styles";
 import { Tournament } from "../../../types/tournament";
 import { ButtonGeneric } from "../Button/Button";
@@ -15,8 +15,7 @@ interface BigCardProps {
   onPress: () => void;
 }
 
-export function BigCard({ tournament, index, onPress }: BigCardProps) {
-  const colorsGrad = CARD_GRADIENTS[index % CARD_GRADIENTS.length];
+export function BigCard({ tournament, onPress }: BigCardProps) {
   const emoji = SPORT_EMOJI[tournament.game] ?? "🏆";
   const date = new Date(tournament.startDate).toLocaleDateString("it-IT", {
     day: "2-digit",

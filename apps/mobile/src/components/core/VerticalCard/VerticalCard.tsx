@@ -2,7 +2,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import { ButtonGeneric } from "../Button/Button";
 import { View, Text, ImageBackground } from "react-native";
 import { Tournament } from "../../../types/tournament";
-import { CARD_GRADIENTS, SPORT_EMOJI } from "../../../constants/generals";
+import { SPORT_EMOJI } from "../../../constants/generals";
 import { Ionicons } from "@expo/vector-icons";
 import { Logo } from "../Logo/Logo";
 import { styles } from "./VerticalCard.styled";
@@ -15,12 +15,7 @@ interface VerticalCardProps {
   onPress: () => void;
 }
 
-export function VerticalCard({
-  tournament,
-  index,
-  onPress,
-}: VerticalCardProps) {
-  const colorsGrad = CARD_GRADIENTS[index % CARD_GRADIENTS.length];
+export function VerticalCard({ tournament, onPress }: VerticalCardProps) {
   const emoji = SPORT_EMOJI[tournament.game] ?? "🏆";
   const date = new Date(tournament.startDate).toLocaleDateString("it-IT", {
     day: "2-digit",
@@ -52,23 +47,19 @@ export function VerticalCard({
           {tournament.name}
         </Text>
         <View style={styles.vCardRow}>
-          <Ionicons
-            name="location-sharp"
-            size={12}
-            color={colors.grayOpacized}
-          />
+          <Ionicons name="location-sharp" size={12} color={colors.white} />
           <Text style={styles.vCardMeta} numberOfLines={1}>
             {tournament.location}
           </Text>
         </View>
         <View style={styles.vCardRow}>
-          <Ionicons name="cash-outline" size={12} color={colors.grayOpacized} />
+          <Ionicons name="cash-outline" size={12} color={colors.white} />
           <Text style={styles.vCardMeta}>
             {tournament.entryFee} · {date}
           </Text>
         </View>
       </View>
-      <Ionicons name="chevron-forward" size={18} color={colors.grayOpacized} />
+      <Ionicons name="chevron-forward" size={18} color={colors.white} />
     </View>
   );
 

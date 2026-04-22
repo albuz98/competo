@@ -1,5 +1,5 @@
 import { View, Text, ImageBackground } from "react-native";
-import { CARD_GRADIENTS, SPORT_EMOJI } from "../../../constants/generals";
+import { SPORT_EMOJI } from "../../../constants/generals";
 import { Tournament } from "../../../types/tournament";
 import { LinearGradient } from "expo-linear-gradient";
 import { ButtonFullColored } from "../Button/Button";
@@ -16,8 +16,7 @@ interface SmallCardProps {
   onPress: () => void;
 }
 
-export function SmallCard({ tournament, index, onPress }: SmallCardProps) {
-  const colorsGrad = CARD_GRADIENTS[(index + 2) % CARD_GRADIENTS.length];
+export function SmallCard({ tournament, onPress }: SmallCardProps) {
   const emoji = SPORT_EMOJI[tournament.game] ?? "🏆";
   const date = new Date(tournament.startDate).toLocaleDateString("it-IT", {
     day: "2-digit",

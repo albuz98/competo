@@ -33,7 +33,7 @@ export const styles = StyleSheet.create({
   },
   vCardMeta: {
     fontSize: 12,
-    color: colors.grayOpacized,
+    color: colors.white,
     flex: 1,
   },
 });
