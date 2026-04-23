@@ -26,7 +26,7 @@ export function SmallCard({ tournament, onPress }: SmallCardProps) {
   const topInner = (
     <View
       style={{
-        backgroundColor: "rgba(0,0,0,0.2)",
+        backgroundColor: colors.opacized,
         width: SMALL_W,
         height: SMALL_W * 0.85,
         alignItems: "center",

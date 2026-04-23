@@ -1,8 +1,9 @@
 import React from "react";
-import { Modal, View, Text, TouchableOpacity } from "react-native";
+import { Modal, View, Text } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { colors } from "../../../theme/colors";
 import { styles } from "./Popup.styled";
+import { ButtonGeneric } from "../Button/Button";
 
 type PopupVariant = "neutral" | "warning";
 
@@ -40,7 +41,10 @@ export function Popup({
     >
       <View style={styles.overlay}>
         <View
-          style={[styles.card, isWarning ? styles.cardWarning : styles.cardNeutral]}
+          style={[
+            styles.card,
+            isWarning ? styles.cardWarning : styles.cardNeutral,
+          ]}
         >
           <View style={styles.header}>
             <Ionicons name={icon ?? defaultIcon} size={22} color={iconColor} />
@@ -63,26 +67,25 @@ export function Popup({
               </Text>
             </View>
           </View>
-          <View
-            style={[styles.divider, isWarning && styles.dividerWarning]}
-          />
-          <TouchableOpacity
+          <View style={[styles.divider, isWarning && styles.dividerWarning]} />
+          <ButtonGeneric
+            handleBtn={onClose}
             style={[
               styles.okButton,
               isWarning ? styles.okButtonWarning : styles.okButtonNeutral,
             ]}
-            onPress={onClose}
-            activeOpacity={0.75}
           >
             <Text
               style={[
                 styles.okButtonText,
-                isWarning ? styles.okButtonTextWarning : styles.okButtonTextNeutral,
+                isWarning
+                  ? styles.okButtonTextWarning
+                  : styles.okButtonTextNeutral,
               ]}
             >
               OK
             </Text>
-          </TouchableOpacity>
+          </ButtonGeneric>
         </View>
       </View>
     </Modal>

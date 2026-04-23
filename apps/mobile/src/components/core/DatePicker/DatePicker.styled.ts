@@ -9,7 +9,7 @@ export const dp = StyleSheet.create({
   },
   backdrop: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: "rgba(0,0,0,0.4)",
+    backgroundColor: colors.darkSemiOpacized,
   },
   sheet: {
     backgroundColor: colors.white,

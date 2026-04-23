@@ -3,7 +3,7 @@ import { colors } from "../../theme/colors";
 
 export const styles = StyleSheet.create({
   tabBar: {
-    backgroundColor: "#fff",
+    backgroundColor: colors.white,
     borderTopWidth: 0,
     height: 60,
     paddingBottom: 0,
@@ -16,7 +16,7 @@ export const styles = StyleSheet.create({
     marginRight: 10,
     position: "absolute",
     elevation: 10,
-    shadowColor: "#000",
+    shadowColor: colors.black,
     shadowRadius: 10,
     shadowOpacity: 0.2,
     shadowOffset: { width: 2, height: 2 },
@@ -32,7 +32,7 @@ export const styles = StyleSheet.create({
     marginBottom: 5,
   },
   iconActive: {
-    color: "#E8601A",
+    color: colors.primary,
   },
   badge: {
     position: "absolute",

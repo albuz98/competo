@@ -150,7 +150,11 @@ export function renderStep4({
       )}
 
       <View style={[s.infoBox, { marginTop: 20 }]}>
-        <Ionicons name="lock-closed-outline" size={18} color="#f97316" />
+        <Ionicons
+          name="lock-closed-outline"
+          size={18}
+          color={colors.primaryGradientMid}
+        />
         <Text style={s.infoBoxText}>
           I tuoi documenti sono trattati in modo sicuro e non sono mai condivisi
           pubblicamente. Vengono utilizzati esclusivamente per la verifica

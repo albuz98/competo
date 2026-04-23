@@ -37,7 +37,11 @@ export function renderStep3({
       </Text>
 
       <View style={s.infoBox}>
-        <Ionicons name="information-circle-outline" size={18} color="#f97316" />
+        <Ionicons
+          name="information-circle-outline"
+          size={18}
+          color={colors.primary}
+        />
         <Text style={s.infoBoxText}>
           Il codice fiscale o la P.IVA sono richiesti per poter ricevere i
           pagamenti delle iscrizioni ai tornei e per adempiere agli obblighi

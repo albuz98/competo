@@ -25,7 +25,7 @@ export function VerticalCard({ tournament, onPress }: VerticalCardProps) {
   const inner = (
     <View
       style={{
-        backgroundColor: "rgba(0,0,0,0.2)",
+        backgroundColor: colors.opacized,
         width: "100%",
         height: SMALL_W,
         flexDirection: "row",

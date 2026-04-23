@@ -56,7 +56,7 @@ export const s = StyleSheet.create({
 
   // ── Overlay (modal) mode styles ──────────────────────────────────────────
   dimOverlay: {
-    backgroundColor: "rgba(0,0,0,0.45)",
+    backgroundColor: colors.darkSemiOpacized,
   },
   modalSearchWrap: {
     paddingHorizontal: 16,

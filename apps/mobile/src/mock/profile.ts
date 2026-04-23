@@ -23,7 +23,6 @@ export const mockProfile: User = {
   dateOfBirth: "1990-05-15",
   location: "Milano, Italia",
   avatarUrl: undefined,
-
   matchStats: {
     matchesPlayed: 47,
     wins: 28,

@@ -153,28 +153,38 @@ export const s = StyleSheet.create({
   infoBox: {
     flexDirection: "row",
     gap: 10,
-    backgroundColor: "#FFF8F5",
+    backgroundColor: colors.infoBg,
     borderRadius: 12,
     padding: 14,
     borderWidth: 1,
-    borderColor: "#fed7aa",
+    borderColor: colors.infoBorder,
     marginTop: 8,
     marginBottom: 16,
   },
-  infoBoxText: { flex: 1, fontSize: 12, color: "#78350f", lineHeight: 18 },
+  infoBoxText: {
+    flex: 1,
+    fontSize: 12,
+    color: colors.infoText,
+    lineHeight: 18,
+  },
 
   noteBox: {
     flexDirection: "row",
     gap: 10,
-    backgroundColor: "#f0f9ff",
+    backgroundColor: colors.blueBg,
     borderRadius: 12,
     padding: 14,
     borderWidth: 1,
-    borderColor: "#bae6fd",
+    borderColor: colors.lightBlue,
     marginTop: 8,
     marginBottom: 16,
   },
-  noteBoxText: { flex: 1, fontSize: 12, color: "#0c4a6e", lineHeight: 18 },
+  noteBoxText: {
+    flex: 1,
+    fontSize: 12,
+    color: colors.darkBlue,
+    lineHeight: 18,
+  },
 
   // Consent checkboxes
   checkRow: {

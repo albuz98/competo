@@ -8,7 +8,7 @@ export const styles = StyleSheet.create({
   },
   overlayBackground: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    backgroundColor: colors.darkSemiOpacized,
   },
   card: {
     backgroundColor: "white",

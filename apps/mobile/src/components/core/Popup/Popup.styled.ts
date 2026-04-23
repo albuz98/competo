@@ -4,7 +4,7 @@ import { colors } from "../../../theme/colors";
 export const styles = StyleSheet.create({
   overlay: {
     flex: 1,
-    backgroundColor: "rgba(0,0,0,0.55)",
+    backgroundColor: colors.darkSemiOpacized,
     justifyContent: "center",
     alignItems: "center",
     paddingHorizontal: 32,
@@ -12,7 +12,7 @@ export const styles = StyleSheet.create({
   card: {
     width: "100%",
     borderRadius: 18,
-    padding: 18,
+    padding: 12,
     shadowColor: colors.black,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.12,
@@ -68,10 +68,13 @@ export const styles = StyleSheet.create({
     backgroundColor: colors.warningBorder,
   },
   okButton: {
-    alignSelf: "flex-end",
+    alignSelf: "center",
     paddingHorizontal: 24,
     paddingVertical: 9,
     borderRadius: 10,
+    width: "100%",
+    alignItems: "center",
+    display: "flex",
   },
   okButtonWarning: {
     backgroundColor: colors.warningBorder,

@@ -299,7 +299,7 @@ export const r = StyleSheet.create({
     borderBottomColor: colors.gray,
     alignItems: "center",
   },
-  standingsRowEven: { backgroundColor: "#fafbfc" },
+  standingsRowEven: { backgroundColor: colors.offWhite },
   standingsPos: {
     fontSize: 13,
     fontWeight: "800",
@@ -384,7 +384,7 @@ export const r = StyleSheet.create({
   groupCardCount: {
     fontSize: 12,
     fontWeight: "600",
-    color: "rgba(255,255,255,0.7)",
+    color: colors.grayOpacized,
     marginLeft: "auto",
   },
   groupTeamRow: {

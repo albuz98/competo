@@ -25,7 +25,7 @@ export function BigCard({ tournament, onPress }: BigCardProps) {
   const inner = (
     <View
       style={{
-        backgroundColor: "rgba(0,0,0,0.2)",
+        backgroundColor: colors.opacized,
         width: BIG_W,
         height: BIG_H,
         justifyContent: "flex-end",

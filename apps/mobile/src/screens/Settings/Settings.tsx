@@ -84,7 +84,9 @@ export default function Settings() {
           <View style={styles.divider} />
 
           <Pressable style={styles.row} onPress={handleTwoFactor}>
-            <View style={[styles.rowIcon, { backgroundColor: "#e0e7ff" }]}>
+            <View
+              style={[styles.rowIcon, { backgroundColor: colors.purpleBlueBg }]}
+            >
               <Ionicons
                 name="shield-checkmark-outline"
                 size={20}
@@ -108,8 +110,14 @@ export default function Settings() {
                   navigation.navigate(NavigationEnum.CREATE_ORGANIZER_PROFILE)
                 }
               >
-                <View style={[styles.rowIcon, { backgroundColor: "#fef9c3" }]}>
-                  <Ionicons name="trophy-outline" size={20} color="#ca8a04" />
+                <View
+                  style={[styles.rowIcon, { backgroundColor: colors.infoBg }]}
+                >
+                  <Ionicons
+                    name="trophy-outline"
+                    size={20}
+                    color={colors.infoText}
+                  />
                 </View>
                 <Text style={styles.rowText}>Vuoi organizzare un torneo?</Text>
                 <Ionicons
@@ -126,7 +134,9 @@ export default function Settings() {
 
         <View style={[styles.card, styles.cardDanger]}>
           <Pressable style={styles.row} onPress={handleLogout}>
-            <View style={[styles.rowIcon, { backgroundColor: "#fee2e2" }]}>
+            <View
+              style={[styles.rowIcon, { backgroundColor: colors.dangerBg }]}
+            >
               <Ionicons
                 name="log-out-outline"
                 size={20}

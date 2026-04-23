@@ -8,6 +8,7 @@ import { NavigationEnum, RootStackParamList } from "../../types/navigation";
 import { styles } from "./TopBarPropfile.styled";
 import { UserProfile, UserRole } from "../../types/user";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { useAuth } from "../../context/AuthContext";
 
 interface TopBarProfileProps {
   handleSave: () => void;
@@ -24,12 +25,18 @@ export const TopBarProfile = ({
   currentProfile,
   navigation,
 }: TopBarProfileProps) => {
+  const { user } = useAuth();
+
+  const hasMultipleProfile = user?.profiles?.length! > 1;
+
   const handleOpenSettings = () => {
     navigation.navigate(NavigationEnum.SETTINGS);
   };
 
   return (
-    <Pressable onPress={() => !edit && setChangeProfileModal(true)}>
+    <Pressable
+      onPress={() => hasMultipleProfile && !edit && setChangeProfileModal(true)}
+    >
       <View style={styles.header}>
         {!edit ? (
           <View style={styles.containerHeaderText}>
@@ -38,7 +45,9 @@ export const TopBarProfile = ({
                 ? currentProfile.orgName
                 : currentProfile?.username}
             </Text>
-            <Entypo name="chevron-down" size={20} color="black" />
+            {hasMultipleProfile && (
+              <Entypo name="chevron-down" size={20} color="black" />
+            )}
           </View>
         ) : (
           <Text style={styles.headerText}>Modifica profilo</Text>

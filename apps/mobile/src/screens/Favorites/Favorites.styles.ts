@@ -31,7 +31,7 @@ export const pf = StyleSheet.create({
   },
   emptySubtitle: {
     fontSize: 13,
-    color: "#cbd5e1",
+    color: colors.grayOpacized,
     textAlign: "center",
     marginTop: 8,
     lineHeight: 20,
@@ -44,7 +44,7 @@ export const pf = StyleSheet.create({
     width: 36,
     height: 36,
     borderRadius: 18,
-    backgroundColor: "rgba(255,255,255,0.85)",
+    backgroundColor: colors.grayOpacized,
     alignItems: "center",
     justifyContent: "center",
   },
@@ -66,7 +66,7 @@ export const pf = StyleSheet.create({
   whiteOverlay: {
     flex: 1,
     justifyContent: "flex-end",
-    backgroundColor: "rgba(0,0,0,0.2)",
+    backgroundColor: colors.opacized,
   },
   bigCardDecor: {
     position: "absolute",

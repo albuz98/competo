@@ -1,18 +1,21 @@
 export const colors = {
   // Brand
   primary: "#e64326",
+  primaryOpacized: "rgba(232,96,26,0.10)",
   primaryGradientMid: "#f2691a",
   primaryGradientMidOpacized: "#f2691abd",
   primaryGradientEnd: "#f89d00",
   primarySelectedBg: "#FFF0E6",
   placeholder: "#64748b",
   danger: "#d91a1a",
+  dangerBg: "#fee2e2",
   success: "#10b981",
   successBg: "#dcfce7",
   disabled: "#e2e8f0",
   disabledBg: "#f8fafc",
   opacized: "rgba(0,0,0,0.25)",
   opacizedBgInput: "rgba(0, 0, 0, 0.15)",
+  darkSemiOpacized: "rgba(0,0,0,0.5)",
   black: "#000",
   white: "#fff",
   transparent: "transparent",
@@ -25,6 +28,7 @@ export const colors = {
   blue: "#0284c7",
   lightBlue: "#7dd3fc",
   blueBg: "#f0f9ff",
+  purpleBlueBg: "#e0e7ff",
   grayDark: "#94a3b8",
   purple: "#8b5cf6",
   yellow: "#fef9c3",
@@ -38,6 +42,7 @@ export const colors = {
   warningBg: "#fffbeb",
   warningBorder: "#fcd34d",
   warningText: "#92400e",
+  offWhite: "#fafbfc",
 } as const;
 
 export const colorGradient = [

@@ -227,7 +227,7 @@ export default function Explore() {
           radius={exploraRadius * 1000}
           strokeColor={colors.danger}
           strokeWidth={2.5}
-          fillColor="rgba(232,96,26,0.10)"
+          fillColor={colors.primaryOpacized}
         />
 
         {/* Center pin */}
