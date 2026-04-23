@@ -13,7 +13,7 @@ export const s = StyleSheet.create({
   sectionSub: {
     fontSize: 13,
     color: colors.placeholder,
-    marginBottom: 20,
+    marginBottom: 10,
     lineHeight: 18,
   },
   sectionLabel: {
@@ -114,7 +114,13 @@ export const s = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  stepperVal: { fontSize: 16, fontWeight: "700", color: colors.dark, minWidth: 28, textAlign: "center" },
+  stepperVal: {
+    fontSize: 16,
+    fontWeight: "700",
+    color: colors.dark,
+    minWidth: 28,
+    textAlign: "center",
+  },
 
   // PDF/document picker
   pdfPickerBtn: {
@@ -215,7 +221,18 @@ export const s = StyleSheet.create({
     alignItems: "flex-start",
     gap: 8,
   },
-  summaryKey: { fontSize: 12, color: colors.placeholder, fontWeight: "600", flex: 1 },
-  summaryVal: { fontSize: 13, color: colors.dark, fontWeight: "700", flex: 2, textAlign: "right" },
+  summaryKey: {
+    fontSize: 12,
+    color: colors.placeholder,
+    fontWeight: "600",
+    flex: 1,
+  },
+  summaryVal: {
+    fontSize: 13,
+    color: colors.dark,
+    fontWeight: "700",
+    flex: 2,
+    textAlign: "right",
+  },
   summaryDivider: { height: 1, backgroundColor: colors.gray },
 });

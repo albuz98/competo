@@ -38,6 +38,9 @@ export const mockFlags = {
   IS_MOCKING_GET_SENT_INVITES: true,
   IS_MOCKING_UPDATE_MEMBER_ROLE: true,
 
+  // ─── Organizer ────────────────────────────────────────────────────────────
+  IS_MOCKING_SUBMIT_ORGANIZER_PROFILE: true,
+
   // ─── Favorites ────────────────────────────────────────────────────────────
   IS_MOCKING_FETCH_FAVORITES: true,
   IS_MOCKING_ADD_FAVORITE: true,

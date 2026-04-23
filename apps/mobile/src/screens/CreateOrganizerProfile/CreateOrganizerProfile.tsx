@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import { Alert, ScrollView } from "react-native";
+import { Popup } from "../../components/core/Popup/Popup";
+import { submitOrganizerProfile } from "../../api/organizer";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import {
   type RootStackParamList,
@@ -11,8 +13,8 @@ import { StructureSchedule } from "../../components/core/StructureSchedule/Struc
 import { renderStep1 } from "./steps/step1";
 import { renderStep2 } from "./steps/step2";
 import { renderStep3 } from "./steps/step3";
+import { renderStep4 } from "./steps/step4";
 import { renderStep5 } from "./steps/step5";
-import { renderStep6 } from "./steps/step6";
 import { EntityType, LegalForm } from "../../types/organizer";
 import { STEP_TITLES_ORGANIZER } from "../../constants/organizer";
 
@@ -22,9 +24,10 @@ type Props = NativeStackScreenProps<
 >;
 
 export default function CreateOrganizerProfile({ navigation }: Props) {
-  const { addOrganizerProfile } = useAuth();
+  const { addOrganizerProfile, user } = useAuth();
   const [step, setStep] = useState<number>(1);
   const [submitting, setSubmitting] = useState(false);
+  const [successPopup, setSuccessPopup] = useState(false);
 
   // Step 1: Identità
   const [orgName, setOrgName] = useState("");
@@ -148,14 +151,9 @@ export default function CreateOrganizerProfile({ navigation }: Props) {
   async function handleSubmit() {
     setSubmitting(true);
     try {
+      await submitOrganizerProfile(orgName.trim(), user?.token ?? "");
       addOrganizerProfile(orgName.trim());
-      navigation.replace(NavigationEnum.MAIN_TABS);
-      setTimeout(() => {
-        Alert.alert(
-          "Profilo inviato!",
-          "Il tuo profilo organizzatore è stato inviato per la verifica. Riceverai una notifica entro 24–48 ore.",
-        );
-      }, 300);
+      setSuccessPopup(true);
     } catch {
       Alert.alert("Errore", "Si è verificato un errore. Riprova.");
     } finally {
@@ -164,93 +162,106 @@ export default function CreateOrganizerProfile({ navigation }: Props) {
   }
 
   return (
-    <StructureSchedule
-      numberSteps={5}
-      handleGenerate={handleSubmit}
-      validateStep={validateStep}
-      step={step}
-      setStep={setStep}
-      generating={submitting}
-      stepTitles={STEP_TITLES_ORGANIZER}
-      isStepValid={isStepValid}
-      navigation={navigation}
-      cancelTitle="Annulla registrazione"
-      cancelMessage="Sei sicuro di voler annullare la creazione del profilo organizzatore?"
-      lastStepLabel="Invia"
-    >
-      <ScrollView
-        style={{ flex: 1 }}
-        contentContainerStyle={s.scroll}
-        keyboardShouldPersistTaps="handled"
-        showsVerticalScrollIndicator={false}
+    <>
+      <StructureSchedule
+        numberSteps={5}
+        handleGenerate={handleSubmit}
+        validateStep={validateStep}
+        step={step}
+        setStep={setStep}
+        generating={submitting}
+        stepTitles={STEP_TITLES_ORGANIZER}
+        isStepValid={isStepValid}
+        navigation={navigation}
+        cancelTitle="Annulla registrazione"
+        cancelMessage="Sei sicuro di voler annullare la creazione del profilo organizzatore?"
+        lastStepLabel="Invia"
       >
-        {step === 1 &&
-          renderStep1({
-            orgName,
-            setOrgName,
-            entityType,
-            setEntityType,
-            customEntityType,
-            setCustomEntityType,
-            description,
-            setDescription,
-          })}
-        {step === 2 &&
-          renderStep2({
-            address,
-            setAddress,
-            setAddressLat,
-            setAddressLng,
-            addressLat,
-            addressLng,
-            contactEmail,
-            setContactEmail,
-            phone,
-            setPhone,
-            website,
-            setWebsite,
-          })}
-        {step === 3 &&
-          renderStep3({
-            taxCode,
-            setTaxCode,
-            legalRepName,
-            setLegalRepName,
-            legalRepSurname,
-            setLegalRepSurname,
-            legalForm,
-            setLegalForm,
-          })}
-        {step === 4 &&
-          renderStep5({
-            entityType,
-            idDocFileName,
-            setIdDocFileName,
-            setIdDocUri,
-            orgDocFileName,
-            setOrgDocFileName,
-            setOrgDocUri,
-          })}
-        {step === 5 &&
-          renderStep6({
-            orgName,
-            entityType,
-            customEntityType,
-            address,
-            contactEmail,
-            taxCode,
-            legalRepName,
-            legalRepSurname,
-            idDocFileName,
-            orgDocFileName,
-            acceptTerms,
-            setAcceptTerms,
-            acceptPrivacy,
-            setAcceptPrivacy,
-            acceptConduct,
-            setAcceptConduct,
-          })}
-      </ScrollView>
-    </StructureSchedule>
+        <ScrollView
+          style={{ flex: 1 }}
+          contentContainerStyle={s.scroll}
+          keyboardShouldPersistTaps="handled"
+          showsVerticalScrollIndicator={false}
+        >
+          {step === 1 &&
+            renderStep1({
+              orgName,
+              setOrgName,
+              entityType,
+              setEntityType,
+              customEntityType,
+              setCustomEntityType,
+              description,
+              setDescription,
+            })}
+          {step === 2 &&
+            renderStep2({
+              address,
+              setAddress,
+              setAddressLat,
+              setAddressLng,
+              addressLat,
+              addressLng,
+              contactEmail,
+              setContactEmail,
+              phone,
+              setPhone,
+              website,
+              setWebsite,
+            })}
+          {step === 3 &&
+            renderStep3({
+              taxCode,
+              setTaxCode,
+              legalRepName,
+              setLegalRepName,
+              legalRepSurname,
+              setLegalRepSurname,
+              legalForm,
+              setLegalForm,
+            })}
+          {step === 4 &&
+            renderStep4({
+              entityType,
+              idDocFileName,
+              setIdDocFileName,
+              setIdDocUri,
+              orgDocFileName,
+              setOrgDocFileName,
+              setOrgDocUri,
+            })}
+          {step === 5 &&
+            renderStep5({
+              orgName,
+              entityType,
+              customEntityType,
+              address,
+              contactEmail,
+              taxCode,
+              legalRepName,
+              legalRepSurname,
+              idDocFileName,
+              orgDocFileName,
+              acceptTerms,
+              setAcceptTerms,
+              acceptPrivacy,
+              setAcceptPrivacy,
+              acceptConduct,
+              setAcceptConduct,
+            })}
+        </ScrollView>
+      </StructureSchedule>
+      <Popup
+        visible={successPopup}
+        onClose={() => {
+          setSuccessPopup(false);
+          navigation.replace(NavigationEnum.MAIN_TABS);
+        }}
+        title="Profilo inviato!"
+        message="Il tuo profilo organizzatore è stato inviato per la verifica. Riceverai una notifica entro 24–48 ore."
+        variant="warning"
+        icon="time-outline"
+      />
+    </>
   );
 }
