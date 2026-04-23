@@ -27,6 +27,7 @@ import TournamentHistoryScreen from "../screens/TournamentHistory/TournamentHist
 import Settings from "../screens/Settings/Settings";
 import { colors } from "../theme/colors";
 import { ChangePassword } from "../screens/ChangePassword/ChangePassword";
+import TwoFactorAuth from "../screens/TwoFactorAuth/TwoFactorAuth";
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -174,6 +175,11 @@ export default function AppNavigator() {
         <Stack.Screen
           name={NavigationEnum.CHANGE_PASSWORD}
           component={ChangePassword}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name={NavigationEnum.TWO_FACTOR_AUTH}
+          component={TwoFactorAuth}
           options={{ headerShown: false }}
         />
       </Stack.Navigator>

@@ -246,3 +246,88 @@ export const s = StyleSheet.create({
   },
   summaryDivider: { height: 1, backgroundColor: colors.gray },
 });
+
+export const ls = StyleSheet.create({
+  sendBtn: {
+    backgroundColor: colors.primary,
+    borderRadius: 12,
+    paddingVertical: 13,
+    alignItems: "center",
+    marginTop: 10,
+    marginBottom: 4,
+  },
+  sendBtnAlt: {
+    backgroundColor: colors.placeholder,
+  },
+  sendBtnText: {
+    fontSize: 14,
+    fontWeight: "700",
+    color: colors.white,
+  },
+
+  mockSmsBox: {
+    flexDirection: "row",
+    gap: 8,
+    backgroundColor: colors.blueBg,
+    borderRadius: 12,
+    padding: 12,
+    borderWidth: 1,
+    borderColor: colors.lightBlue,
+    marginTop: 12,
+    alignItems: "flex-start",
+  },
+  mockSmsText: {
+    flex: 1,
+    fontSize: 12,
+    color: colors.darkBlue,
+    lineHeight: 18,
+  },
+  mockSmsCode: {
+    fontWeight: "800",
+    fontSize: 13,
+    letterSpacing: 2,
+  },
+
+  verifyBtn: {
+    backgroundColor: colors.purpleBlue,
+    borderRadius: 12,
+    paddingVertical: 13,
+    alignItems: "center",
+    marginTop: 10,
+  },
+  verifyBtnText: {
+    fontSize: 14,
+    fontWeight: "700",
+    color: colors.white,
+  },
+
+  verifiedBox: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+    backgroundColor: colors.successBg,
+    borderRadius: 12,
+    padding: 13,
+    borderWidth: 1,
+    borderColor: colors.success,
+    marginBottom: 4,
+  },
+  verifiedText: {
+    fontSize: 13,
+    fontWeight: "600",
+    color: colors.success,
+  },
+
+  errorBox: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+    marginTop: 8,
+  },
+  errorText: {
+    flex: 1,
+    fontSize: 12,
+    color: colors.danger,
+    lineHeight: 17,
+  },
+});

@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, Alert, Pressable } from "react-native";
+import { View, Text, Pressable } from "react-native";
 import {
   SafeAreaView,
   useSafeAreaInsets,
@@ -33,7 +33,7 @@ export default function Settings() {
   };
 
   const handleTwoFactor = () => {
-    Alert.alert("Autenticazione a due fattori", "Funzionalità in arrivo.");
+    navigation.navigate(NavigationEnum.TWO_FACTOR_AUTH);
   };
 
   const handleLogout = () => {

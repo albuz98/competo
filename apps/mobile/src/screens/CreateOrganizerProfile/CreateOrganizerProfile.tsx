@@ -42,6 +42,10 @@ export default function CreateOrganizerProfile({ navigation }: Props) {
   const [contactEmail, setContactEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [website, setWebsite] = useState("");
+  const [phoneSent, setPhoneSent] = useState(false);
+  const [phoneVerified, setPhoneVerified] = useState(false);
+  const [mockPhoneCode, setMockPhoneCode] = useState("");
+  const [phoneCodeInput, setPhoneCodeInput] = useState("");
 
   // Step 3: Dati legali
   const [taxCode, setTaxCode] = useState("");
@@ -82,6 +86,17 @@ export default function CreateOrganizerProfile({ navigation }: Props) {
       }
       if (!contactEmail.trim() || !contactEmail.includes("@")) {
         Alert.alert("Email non valida", "Inserisci un indirizzo email valido.");
+        return false;
+      }
+      if (!phone.trim()) {
+        Alert.alert("Telefono mancante", "Inserisci il numero di telefono.");
+        return false;
+      }
+      if (!phoneVerified) {
+        Alert.alert(
+          "Telefono non verificato",
+          "Verifica il numero di telefono prima di continuare.",
+        );
         return false;
       }
     }
@@ -129,7 +144,11 @@ export default function CreateOrganizerProfile({ navigation }: Props) {
       );
     }
     if (step === 2)
-      return address.trim().length > 0 && contactEmail.includes("@");
+      return (
+        address.trim().length > 0 &&
+        contactEmail.includes("@") &&
+        phoneVerified
+      );
     if (step === 3)
       return (
         taxCode.trim().length > 0 &&
@@ -208,6 +227,14 @@ export default function CreateOrganizerProfile({ navigation }: Props) {
               setPhone,
               website,
               setWebsite,
+              phoneSent,
+              setPhoneSent,
+              phoneVerified,
+              setPhoneVerified,
+              mockPhoneCode,
+              setMockPhoneCode,
+              phoneCodeInput,
+              setPhoneCodeInput,
             })}
           {step === 3 &&
             renderStep3({

@@ -31,6 +31,7 @@ export type RootStackParamList = {
   Settings: undefined;
   CreateOrganizerProfile: undefined;
   ChangePassword: undefined;
+  TwoFactorAuth: undefined;
 };
 
 export type MainTabParamList = {
@@ -69,4 +70,5 @@ export enum NavigationEnum {
   SETTINGS = "Settings",
   CREATE_ORGANIZER_PROFILE = "CreateOrganizerProfile",
   CHANGE_PASSWORD = "ChangePassword",
+  TWO_FACTOR_AUTH = "TwoFactorAuth",
 }
