@@ -201,3 +201,17 @@ export const RESULT_CONFIG: Record<
   third: { label: "3° Posto", color: colors.bronze },
   eliminated: { label: "Eliminato", color: colors.grayDark },
 };
+
+export const ROUND_ORDER: FinalDayRound[] = [
+  FinalDayRound.QUARTI,
+  FinalDayRound.SEMIFINALI,
+  FinalDayRound.TERZO_POSTO,
+  FinalDayRound.FINALE,
+];
+
+export const ROUND_MATCHES: Record<FinalDayRound, number> = {
+  [FinalDayRound.QUARTI]: 4,
+  [FinalDayRound.SEMIFINALI]: 2,
+  [FinalDayRound.TERZO_POSTO]: 1,
+  [FinalDayRound.FINALE]: 1,
+};

@@ -4,6 +4,8 @@ import {
   DAY_LABELS,
   FINAL_DAY_ROUNDS,
   FinalDayRound,
+  ROUND_MATCHES,
+  ROUND_ORDER,
   TournamentFormat,
   TournamentPhaseKind,
 } from "../../../constants/tournament";
@@ -20,67 +22,6 @@ import { DatePickerModal } from "../../../components/core/DatePicker/DatePicker"
 import { sizesEnum } from "../../../theme/dimension";
 import { todayISO } from "../../../functions/general";
 import { TournametNumberPartecipants } from "../../../types/tournament";
-
-// Ordered list of all final day rounds (earliest first)
-const ROUND_ORDER: FinalDayRound[] = [
-  FinalDayRound.QUARTI,
-  FinalDayRound.SEMIFINALI,
-  FinalDayRound.TERZO_POSTO,
-  FinalDayRound.FINALE,
-];
-
-// Matches played in each round
-const ROUND_MATCHES: Record<FinalDayRound, number> = {
-  [FinalDayRound.QUARTI]: 4,
-  [FinalDayRound.SEMIFINALI]: 2,
-  [FinalDayRound.TERZO_POSTO]: 1,
-  [FinalDayRound.FINALE]: 1,
-};
-
-function getIncludedRounds(startRound: FinalDayRound): FinalDayRound[] {
-  return ROUND_ORDER.slice(ROUND_ORDER.indexOf(startRound));
-}
-
-function computeFinalDayDuration(
-  startRound: FinalDayRound,
-  numFields: number,
-  matchDuration: number,
-  timeBetween: number,
-): { totalMatches: number; subRounds: number; durationMins: number } {
-  const included = getIncludedRounds(startRound);
-
-  // TERZO_POSTO and FINALE are played at the same stage — they can run in
-  // parallel if there are enough fields, so count them as one combined slot.
-  const groups: FinalDayRound[][] = [];
-  for (const r of included) {
-    const isFinishingRound =
-      r === FinalDayRound.TERZO_POSTO || r === FinalDayRound.FINALE;
-    const lastGroup = groups[groups.length - 1];
-    if (
-      isFinishingRound &&
-      lastGroup?.some(
-        (x) => x === FinalDayRound.TERZO_POSTO || x === FinalDayRound.FINALE,
-      )
-    ) {
-      lastGroup.push(r);
-    } else {
-      groups.push([r]);
-    }
-  }
-
-  let totalMatches = 0;
-  let subRounds = 0;
-  for (const group of groups) {
-    const groupMatches = group.reduce((sum, r) => sum + ROUND_MATCHES[r], 0);
-    totalMatches += groupMatches;
-    subRounds += Math.ceil(groupMatches / numFields);
-  }
-
-  const durationMins =
-    subRounds > 0 ? (subRounds - 1) * (matchDuration + timeBetween) + matchDuration : 0;
-
-  return { totalMatches, subRounds, durationMins };
-}
 
 interface renderStep5Props {
   isSingleDay: boolean;
@@ -210,6 +151,50 @@ export function renderStep5({
       total += Math.ceil(rem / fields) || 1;
     }
     return total;
+  }
+  function getIncludedRounds(startRound: FinalDayRound): FinalDayRound[] {
+    return ROUND_ORDER.slice(ROUND_ORDER.indexOf(startRound));
+  }
+
+  function computeFinalDayDuration(
+    startRound: FinalDayRound,
+    numFields: number,
+    matchDuration: number,
+    timeBetween: number,
+  ): { totalMatches: number; subRounds: number; durationMins: number } {
+    const included = getIncludedRounds(startRound);
+
+    const groups: FinalDayRound[][] = [];
+    for (const r of included) {
+      const isFinishingRound =
+        r === FinalDayRound.TERZO_POSTO || r === FinalDayRound.FINALE;
+      const lastGroup = groups[groups.length - 1];
+      if (
+        isFinishingRound &&
+        lastGroup?.some(
+          (x) => x === FinalDayRound.TERZO_POSTO || x === FinalDayRound.FINALE,
+        )
+      ) {
+        lastGroup.push(r);
+      } else {
+        groups.push([r]);
+      }
+    }
+
+    let totalMatches = 0;
+    let subRounds = 0;
+    for (const group of groups) {
+      const groupMatches = group.reduce((sum, r) => sum + ROUND_MATCHES[r], 0);
+      totalMatches += groupMatches;
+      subRounds += Math.ceil(groupMatches / numFields);
+    }
+
+    const durationMins =
+      subRounds > 0
+        ? (subRounds - 1) * (matchDuration + timeBetween) + matchDuration
+        : 0;
+
+    return { totalMatches, subRounds, durationMins };
   }
 
   function estimateSubRounds(
@@ -599,9 +584,7 @@ export function renderStep5({
                       },
                     ]}
                     onPress={() =>
-                      setFinalDayStartRound(
-                        isStart ? null : round.value,
-                      )
+                      setFinalDayStartRound(isStart ? null : round.value)
                     }
                   >
                     <Ionicons
@@ -665,7 +648,9 @@ export function renderStep5({
                       Fine stimata: {finalDayEndStr}
                       {finalDaySpansNextDay ? " (+1 giorno)" : ""}
                     </Text>
-                    <Text style={[s.infoBoxText, { color: colors.placeholder }]}>
+                    <Text
+                      style={[s.infoBoxText, { color: colors.placeholder }]}
+                    >
                       {finalDayStats.totalMatches} partite ·{" "}
                       {formatDuration(finalDayStats.durationMins)} · su{" "}
                       {numFields} camp{numFields === 1 ? "o" : "i"}
