@@ -5,6 +5,7 @@ import {
   ScrollView,
   StatusBar,
   TouchableOpacity,
+  ActivityIndicator,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
@@ -176,13 +177,20 @@ export default function Home() {
   const [filterVisible, setFilterVisible] = useState(false);
   const [activeFilters, setActiveFilters] =
     useState<FilterState>(EMPTY_FILTERS);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [searchResults, setSearchResults] = useState<Tournament[]>([]);
+  const [searchHasSearched, setSearchHasSearched] = useState(false);
+  const [searchIsLoading, setSearchIsLoading] = useState(false);
+
+  const isSearchActive = searchQuery.trim().length >= 1;
 
   const hasActiveFilters =
-    activeFilters.games.length > 0 ||
-    activeFilters.genders.length > 0 ||
-    activeFilters.minPrice > 0 ||
-    activeFilters.maxPrice < PRICE_MAX ||
-    activeFilters.sortBy !== null;
+    !isSearchActive &&
+    (activeFilters.games.length > 0 ||
+      activeFilters.genders.length > 0 ||
+      activeFilters.minPrice > 0 ||
+      activeFilters.maxPrice < PRICE_MAX ||
+      activeFilters.sortBy !== null);
 
   const displayedTournaments = hasActiveFilters
     ? applyFilters(ALL_TOURNAMENTS, activeFilters)
@@ -232,31 +240,16 @@ export default function Home() {
             <InputBoxSearch<Tournament>
               placeholder="Cerca tornei..."
               gradientIcon
-              overlayDropdown
               onSearch={searchTournaments}
-              emptyMessage="Nessun torneo trovato"
-              onSelect={(t) => goToDetail(t.id)}
-              renderResult={(t, index, onPress) => (
-                <TouchableOpacity
-                  key={index}
-                  style={styles.searchResultItem}
-                  onPress={onPress}
-                >
-                  <Text style={styles.searchResultName} numberOfLines={1}>
-                    {t.name}
-                  </Text>
-                  <View style={styles.searchResultMeta}>
-                    <Ionicons
-                      name="location-outline"
-                      size={12}
-                      color={colors.placeholder}
-                    />
-                    <Text style={styles.searchResultLocation} numberOfLines={1}>
-                      {t.location}
-                    </Text>
-                  </View>
-                </TouchableOpacity>
-              )}
+              onQueryChange={(q) => {
+                setSearchQuery(q);
+                if (q.trim().length > 0) setActiveFilters(EMPTY_FILTERS);
+              }}
+              onResults={(results, hasSearched, isLoading) => {
+                setSearchResults(results as Tournament[]);
+                setSearchHasSearched(hasSearched);
+                setSearchIsLoading(isLoading);
+              }}
             />
           </View>
           <TouchableOpacity
@@ -310,10 +303,51 @@ export default function Home() {
         <ScrollView
           showsVerticalScrollIndicator={false}
           contentContainerStyle={
-            hasActiveFilters ? styles.scrollFiltered : styles.scroll
+            isSearchActive || hasActiveFilters
+              ? styles.scrollFiltered
+              : styles.scroll
           }
         >
-          {hasActiveFilters ? (
+          {isSearchActive ? (
+            /* ── Risultati ricerca ──────────────────── */
+            <>
+              {searchIsLoading ? (
+                <ActivityIndicator
+                  size="small"
+                  color={colors.primary}
+                  style={{ marginTop: 32 }}
+                />
+              ) : searchHasSearched && searchResults.length === 0 ? (
+                <View style={styles.filteredEmpty}>
+                  <Ionicons
+                    name="search-outline"
+                    size={40}
+                    color={colors.grayDark}
+                  />
+                  <Text style={styles.filteredEmptyText}>
+                    Nessun torneo corrisponde alla tua ricerca
+                  </Text>
+                </View>
+              ) : searchResults.length > 0 ? (
+                <>
+                  <Text style={styles.filteredHeader}>
+                    {searchResults.length}{" "}
+                    {searchResults.length === 1 ? "torneo" : "tornei"} trovati
+                  </Text>
+                  <View style={{ gap: 10 }}>
+                    {searchResults.map((t, i) => (
+                      <VerticalCard
+                        key={t.id}
+                        tournament={t}
+                        index={i}
+                        onPress={() => goToDetail(t.id)}
+                      />
+                    ))}
+                  </View>
+                </>
+              ) : null}
+            </>
+          ) : hasActiveFilters ? (
             /* ── Risultati filtrati ─────────────────── */
             <>
               <Text style={styles.filteredHeader}>

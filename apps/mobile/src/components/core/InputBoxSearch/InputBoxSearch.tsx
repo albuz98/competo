@@ -17,17 +17,20 @@ import { useQuery } from "@tanstack/react-query";
 import { colors, colorGradient } from "../../../theme/colors";
 import { s } from "./InputBoxSearch.styles";
 
+const EMPTY_RESULTS: never[] = [];
+
 interface InputBoxSearchProps<T> {
   placeholder?: string;
   defaultValue?: string;
   onSearch: (query: string) => Promise<T[]>;
-  renderResult: (
+  renderResult?: (
     item: T,
     index: number,
     onPress: () => void,
   ) => React.ReactNode;
   onSelect?: (item: T) => void;
   onQueryChange?: (query: string) => void;
+  onResults?: (results: T[], hasSearched: boolean, isLoading: boolean) => void;
   gradientIcon?: boolean;
   debounceMs?: number;
   minChars?: number;
@@ -45,6 +48,7 @@ export function InputBoxSearch<T>({
   renderResult,
   onSelect,
   onQueryChange,
+  onResults,
   gradientIcon = false,
   debounceMs = 500,
   minChars = 1,
@@ -77,17 +81,24 @@ export function InputBoxSearch<T>({
   }, [query, debounceMs, minChars]);
 
   const {
-    data: results = [],
+    data: results = EMPTY_RESULTS,
     isFetching: isSearching,
     isSuccess,
   } = useQuery({
     queryKey: [instanceId, debouncedQuery],
     queryFn: () => onSearch(debouncedQuery),
     enabled: debouncedQuery.length >= minChars,
-    staleTime: 30_000, // avoid redundant refetches for the same query
+    staleTime: 30_000,
   });
 
   const hasSearched = isSuccess && debouncedQuery.length >= minChars;
+
+  useEffect(() => {
+    if (!onResults) return;
+    onResults(results as T[], hasSearched, isSearching);
+    // onResults excluded from deps intentionally: EMPTY_RESULTS stable ref prevents the loop
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [results, hasSearched, isSearching]);
 
   const handleQueryChange = (text: string) => {
     setQuery(text);
@@ -222,7 +233,7 @@ export function InputBoxSearch<T>({
               </View>
 
               {/* Results — max 5 */}
-              {!isSearching && results.length > 0 && (
+              {!isSearching && results.length > 0 && renderResult && (
                 <View style={[s.resultsList, s.resultsModalSpacing]}>
                   {results
                     .slice(0, 5)
@@ -295,7 +306,7 @@ export function InputBoxSearch<T>({
         )}
       </View>
 
-      {!isSearching && results.length > 0 && (
+      {!onResults && !isSearching && results.length > 0 && renderResult && (
         <View style={s.resultsList}>
           {results.map((item, index) =>
             renderResult(item, index, () => handleSelect(item)),
@@ -303,7 +314,7 @@ export function InputBoxSearch<T>({
         </View>
       )}
 
-      {showEmpty && <Text style={s.emptyText}>{emptyMessage}</Text>}
+      {!onResults && showEmpty && <Text style={s.emptyText}>{emptyMessage}</Text>}
     </View>
   );
 }
