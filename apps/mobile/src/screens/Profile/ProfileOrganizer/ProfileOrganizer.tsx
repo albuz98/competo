@@ -18,11 +18,10 @@ import { useTeams } from "../../../context/TeamsContext";
 import { RootStackParamList, NavigationEnum } from "../../../types/navigation";
 import { colorGradient, colors } from "../../../theme/colors";
 import { styles as tabStyles } from "../../../navigation/MainTabNavigator/MainTabNavigator.styles";
-import { sizesEnum } from "../../../theme/dimension";
 import { useQuery } from "@tanstack/react-query";
 import { fetchMyTournaments } from "../../../api/tournaments";
 import { queryKeys } from "../../../lib/queryKeys";
-import { OrganizerProfile, UserProfile, UserRole } from "../../../types/user";
+import { OrganizerProfile, UserRole } from "../../../types/user";
 import { UpdateProfileData } from "../../../types/auth";
 import { styles } from "../Profile.styles";
 import {
@@ -34,7 +33,6 @@ import { HeaderCardProfile } from "../../../components/HeaderCardProfile/HeaderC
 import { InputBoxRow } from "../../../components/core/InputBoxRow/InputBoxRow";
 import { LinearGradient } from "expo-linear-gradient";
 import { ModalViewer } from "../../../components/core/Modal/Modal";
-import { Avatar } from "../../../components/core/Avatar/Avatar";
 
 interface ProfileOrganizerProps {
   currentProfile: OrganizerProfile | null;
@@ -49,8 +47,7 @@ export default function ProfileOrganizer({
   edit,
   setEdit,
 }: ProfileOrganizerProps) {
-  const { user, updateProfile, switchProfile, updateOrgProfileData } =
-    useAuth();
+  const { user, updateProfile, updateOrgProfileData } = useAuth();
   const { refreshTeams } = useTeams();
   const [form, setForm] = useState({
     orgName: "",
@@ -80,11 +77,6 @@ export default function ProfileOrganizer({
       enabled: !!user && isOrganizerProfile,
     });
   const orgTournaments = allMyTournaments.filter((t) => t.isOrganizer);
-
-  const handleSwitchProfile = (profile: UserProfile) => {
-    switchProfile(profile.id);
-    setChangeProfileModal(false);
-  };
 
   useFocusEffect(
     useCallback(() => {
@@ -444,79 +436,6 @@ export default function ProfileOrganizer({
             <Ionicons name="add" size={24} color={colors.primaryGradientMid} />
           </Pressable>
         </View>
-        {user?.profiles && user.profiles.length > 0 ? (
-          <View style={{ gap: 10 }}>
-            {user.profiles.map((profile) => (
-              <Pressable
-                key={profile.id}
-                onPress={() => handleSwitchProfile(profile)}
-                style={[
-                  styles.containerProfileModal,
-                  {
-                    borderColor:
-                      currentProfile?.id === profile.id
-                        ? colors.primary
-                        : colors.gray,
-                  },
-                ]}
-              >
-                <Avatar
-                  user={
-                    profile.role === UserRole.PLAYER
-                      ? {
-                          ...profile,
-                          avatarUrl: profile.avatarUrl ?? user.avatarUrl,
-                        }
-                      : profile
-                  }
-                  dimension={sizesEnum.small}
-                />
-                <View style={{ flex: 1, marginLeft: 12 }}>
-                  <Text
-                    style={{
-                      fontSize: 14,
-                      fontWeight: "700",
-                      color: colors.dark,
-                    }}
-                  >
-                    {profile.role === UserRole.ORGANIZER
-                      ? profile.orgName
-                      : profile.username}
-                  </Text>
-                  {countCollaborators > 0 && (
-                    <Text
-                      style={{
-                        fontSize: 12,
-                        color: colors.placeholder,
-                        marginTop: 2,
-                      }}
-                    >
-                      {`Collaboratori ${countCollaborators}`}
-                    </Text>
-                  )}
-                </View>
-                {currentProfile?.id === profile.id && (
-                  <Ionicons
-                    name="checkmark-circle"
-                    size={24}
-                    color={colors.primary}
-                  />
-                )}
-              </Pressable>
-            ))}
-          </View>
-        ) : (
-          <Text
-            style={{
-              fontSize: 14,
-              color: colors.placeholder,
-              textAlign: "center",
-              marginVertical: 20,
-            }}
-          >
-            Nessun profilo disponibile
-          </Text>
-        )}
       </ModalViewer>
     </View>
   );

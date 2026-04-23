@@ -11,6 +11,7 @@ import {
   View,
   KeyboardAvoidingView,
   Platform,
+  ScrollView,
 } from "react-native";
 import { styles } from "./Modal.styled";
 
@@ -19,6 +20,7 @@ interface ModalViewerProps {
   onClose: () => void;
   children: React.ReactNode;
   withKeyboardAvoid?: boolean;
+  scrollable?: boolean;
   paddingTop?: number;
   paddingHorizontal?: number;
   paddingBottom?: number;
@@ -35,6 +37,7 @@ export const ModalViewer = forwardRef<ModalViewerRef, ModalViewerProps>(
       onClose,
       children,
       withKeyboardAvoid = true,
+      scrollable = false,
       paddingTop = 24,
       paddingHorizontal = 24,
       paddingBottom = 40,
@@ -112,15 +115,24 @@ export const ModalViewer = forwardRef<ModalViewerRef, ModalViewerProps>(
             transform: [{ translateY: panY }],
             paddingTop,
             paddingHorizontal,
-            paddingBottom,
+            paddingBottom: scrollable ? 0 : paddingBottom,
           },
         ]}
-        {...modalPanResponder.panHandlers}
+        {...(!scrollable ? modalPanResponder.panHandlers : {})}
       >
-        <View style={styles.dragZone}>
+        <View style={styles.dragZone} {...(scrollable ? modalPanResponder.panHandlers : {})}>
           <View style={styles.modalHandle} />
         </View>
-        {children}
+        {scrollable ? (
+          <ScrollView
+            keyboardShouldPersistTaps="handled"
+            showsVerticalScrollIndicator={false}
+            nestedScrollEnabled
+            contentContainerStyle={{ paddingBottom }}
+          >
+            {children}
+          </ScrollView>
+        ) : children}
       </Animated.View>
     );
 

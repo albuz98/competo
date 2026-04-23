@@ -22,11 +22,7 @@ type Props = NativeStackScreenProps<RootStackParamList, "Register">;
 
 export default function Register({ navigation }: Props) {
   const { register, loading, error, clearError } = useAuth();
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
   const [username, setUsername] = useState("");
-  const [email, setEmail] = useState("");
-  const [dateOfBirth, setDateOfBirth] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
@@ -34,27 +30,11 @@ export default function Register({ navigation }: Props) {
     navigation.setOptions({ headerShown: false });
   }, [navigation]);
 
-  // Auto-format GG/MM/AAAA as the user types
-  const handleDateChange = (text: string) => {
-    const digits = text.replace(/\D/g, "").slice(0, 8);
-    let formatted = digits;
-    if (digits.length > 4)
-      formatted = `${digits.slice(0, 2)}/${digits.slice(2, 4)}/${digits.slice(4)}`;
-    else if (digits.length > 2)
-      formatted = `${digits.slice(0, 2)}/${digits.slice(2)}`;
-    setDateOfBirth(formatted);
-  };
-
-  const isDobValid = /^\d{2}\/\d{2}\/\d{4}$/.test(dateOfBirth);
-  const passwordMismatch =
-    confirmPassword.length > 5 && password !== confirmPassword;
+  const passwordTooShort = password.length > 0 && password.length < 6;
+  const passwordMismatch = confirmPassword.length > 0 && password !== confirmPassword;
 
   const isValid =
-    firstName.trim().length >= 2 &&
-    lastName.trim().length >= 2 &&
     username.length >= 3 &&
-    email.includes("@") &&
-    isDobValid &&
     password.length >= 6 &&
     password === confirmPassword;
 
@@ -63,11 +43,11 @@ export default function Register({ navigation }: Props) {
     clearError();
     try {
       await register({
-        firstName: firstName.trim(),
-        lastName: lastName.trim(),
+        firstName: "",
+        lastName: "",
         username,
-        email,
-        dateOfBirth,
+        email: "",
+        dateOfBirth: "",
         password,
       });
       navigation.replace(NavigationEnum.MAIN_TABS);
@@ -86,26 +66,6 @@ export default function Register({ navigation }: Props) {
 
       <DividerAccess />
 
-      <Text style={styles.label}>NOME</Text>
-      <InputBox
-        value={firstName}
-        onChangeText={setFirstName}
-        placeholder="Mario"
-        autoCapitalize="words"
-        returnKeyType="next"
-        autoCorrect={false}
-      />
-
-      <Text style={styles.label}>COGNOME</Text>
-      <InputBox
-        value={lastName}
-        onChangeText={setLastName}
-        placeholder="Rossi"
-        autoCapitalize="words"
-        returnKeyType="next"
-        autoCorrect={false}
-      />
-
       <Text style={styles.label}>USERNAME</Text>
       <InputBox
         value={username}
@@ -113,27 +73,6 @@ export default function Register({ navigation }: Props) {
         placeholder="mariorossi99"
         returnKeyType="next"
         autoCorrect={false}
-      />
-
-      <Text style={styles.label}>EMAIL</Text>
-      <InputBox
-        value={email}
-        onChangeText={setEmail}
-        placeholder="hello@gmail.com"
-        keyboardType="email-address"
-        autoComplete="email"
-        returnKeyType="next"
-      />
-
-      <Text style={styles.label}>DATA DI NASCITA</Text>
-      <InputBox
-        value={dateOfBirth}
-        onChangeText={handleDateChange}
-        placeholder="GG/MM/AAAA"
-        returnKeyType="next"
-        autoCorrect={false}
-        keyboardType="number-pad"
-        maxLength={10}
       />
 
       <Text style={styles.label}>PASSWORD</Text>
@@ -144,24 +83,29 @@ export default function Register({ navigation }: Props) {
         returnKeyType="next"
         secureTextEntry
         textContentType="oneTimeCode"
+        isError={passwordTooShort}
       />
-      {password.length < 6 && (
+      {passwordTooShort && (
         <Text style={styles.fieldError}>La password è troppo corta</Text>
       )}
 
-      <Text style={styles.label}>CONFERMA PASSWORD</Text>
-      <InputBox
-        value={confirmPassword}
-        onChangeText={setConfirmPassword}
-        placeholder="Ripeti la password"
-        returnKeyType="done"
-        secureTextEntry
-        textContentType="oneTimeCode"
-        onSubmitEditing={handleRegister}
-        isError={passwordMismatch}
-      />
-      {passwordMismatch && (
-        <Text style={styles.fieldError}>Le password non coincidono</Text>
+      {password.length > 0 && (
+        <>
+          <Text style={styles.label}>CONFERMA PASSWORD</Text>
+          <InputBox
+            value={confirmPassword}
+            onChangeText={setConfirmPassword}
+            placeholder="Ripeti la password"
+            returnKeyType="done"
+            secureTextEntry
+            textContentType="oneTimeCode"
+            onSubmitEditing={handleRegister}
+            isError={passwordMismatch}
+          />
+          {passwordMismatch && (
+            <Text style={styles.fieldError}>Le password non coincidono</Text>
+          )}
+        </>
       )}
 
       <ButtonFullColored

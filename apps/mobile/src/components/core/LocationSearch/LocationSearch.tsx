@@ -18,6 +18,7 @@ interface LocationSearchProps {
   isConfirmed?: boolean;
   onConfirm: (address: string, lat?: number, lng?: number) => void;
   setLocation: React.Dispatch<React.SetStateAction<string>>;
+  isRow?: boolean;
 }
 
 enum Mode {
@@ -33,6 +34,7 @@ export default function LocationSearch({
   isConfirmed = false,
   onConfirm,
   setLocation,
+  isRow,
 }: LocationSearchProps) {
   const [selectedSuggestion, setSelectedSuggestion] =
     useState<Suggestion | null>(
@@ -153,6 +155,7 @@ export default function LocationSearch({
         }}
         minChars={isMocking ? 1 : 3}
         emptyMessage="Nessun risultato trovato"
+        isRow={isRow}
         renderResult={(suggestion, index, onPress) => (
           <TouchableOpacity
             key={index}

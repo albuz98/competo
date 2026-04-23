@@ -1,5 +1,6 @@
 import React, { useEffect, useLayoutEffect } from "react";
 import {
+  Alert,
   View,
   Text,
   ScrollView,
@@ -194,6 +195,25 @@ export default function TournamentDetail({ route, navigation }: Props) {
   };
 
   const handleGoToPayment = () => {
+    const profileComplete = !!(user?.firstName && user?.lastName && user?.dateOfBirth);
+    if (!profileComplete) {
+      Alert.alert(
+        "Profilo incompleto",
+        "Per iscriverti a un torneo devi inserire nome, cognome e data di nascita nel tuo profilo.",
+        [
+          { text: "Annulla", style: "cancel" },
+          {
+            text: "Vai al profilo",
+            onPress: () =>
+              (navigation as any).navigate(NavigationEnum.MAIN_TABS, {
+                screen: NavigationEnum.PROFILE,
+                params: { startEdit: true },
+              }),
+          },
+        ],
+      );
+      return;
+    }
     navigation.navigate(NavigationEnum.TEAM_SELECT, {
       tournamentId: displayTournament.id,
       entryFee: displayTournament.entryFee,

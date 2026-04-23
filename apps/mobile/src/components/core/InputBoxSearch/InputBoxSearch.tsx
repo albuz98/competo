@@ -39,6 +39,7 @@ interface InputBoxSearchProps<T> {
   emptyMessage?: string;
   overlayDropdown?: boolean;
   modalTopSpacing?: number;
+  isRow?: boolean;
 }
 
 export function InputBoxSearch<T>({
@@ -57,6 +58,7 @@ export function InputBoxSearch<T>({
   emptyMessage,
   overlayDropdown = false,
   modalTopSpacing = 20,
+  isRow,
 }: InputBoxSearchProps<T>) {
   const insets = useSafeAreaInsets();
 
@@ -263,24 +265,27 @@ export function InputBoxSearch<T>({
           s.inputRow,
           isError && s.inputRowError,
           { backgroundColor: inputBg },
+          isRow ? s.rowStyle : s.boxStyle,
         ]}
       >
-        {gradientIcon ? (
-          <LinearGradient
-            colors={colorGradient}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 0 }}
-            style={s.gradientIconWrap}
-          >
-            <Ionicons name="search" size={15} color={colors.white} />
-          </LinearGradient>
-        ) : (
-          <Ionicons
-            name="search-outline"
-            size={18}
-            color={colors.placeholder}
-          />
-        )}
+        {!isRow ? (
+          gradientIcon ? (
+            <LinearGradient
+              colors={colorGradient}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 0 }}
+              style={s.gradientIconWrap}
+            >
+              <Ionicons name="search" size={15} color={colors.white} />
+            </LinearGradient>
+          ) : (
+            <Ionicons
+              name="search-outline"
+              size={18}
+              color={colors.placeholder}
+            />
+          )
+        ) : null}
 
         <TextInput
           style={[s.input, { color: isDark ? colors.white : colors.dark }]}
@@ -314,7 +319,9 @@ export function InputBoxSearch<T>({
         </View>
       )}
 
-      {!onResults && showEmpty && <Text style={s.emptyText}>{emptyMessage}</Text>}
+      {!onResults && showEmpty && (
+        <Text style={s.emptyText}>{emptyMessage}</Text>
+      )}
     </View>
   );
 }

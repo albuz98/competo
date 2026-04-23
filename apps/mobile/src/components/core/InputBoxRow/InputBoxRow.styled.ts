@@ -46,6 +46,10 @@ export const styles = StyleSheet.create({
   rowInputError: {
     borderBottomColor: colors.danger,
   },
+  rowInputDisabled: {
+    color: colors.placeholder,
+    borderBottomColor: colors.disabled,
+  },
   rowError: {
     color: colors.danger,
     fontSize: 12,

@@ -20,8 +20,9 @@ export const mockProfile: User = {
   username: "mario.rossi",
   email: "mario.rossi@example.com",
   token: "mock-token-abc123",
+  isEmailConfirmed: true,
   dateOfBirth: "1990-05-15",
-  location: "Milano, Italia",
+  location: undefined,
   avatarUrl: undefined,
   matchStats: {
     matchesPlayed: 47,

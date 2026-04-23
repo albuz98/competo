@@ -20,7 +20,6 @@ export const styles = StyleSheet.create({
   fieldError: {
     color: colors.danger,
     fontSize: 14,
-    marginTop: -12,
     marginBottom: 14,
     fontWeight: 800,
   },

@@ -8,13 +8,24 @@ export const s = StyleSheet.create({
   inputRow: {
     flexDirection: "row",
     alignItems: "center",
-    borderRadius: 12,
-    paddingHorizontal: 16,
     paddingVertical: 14,
     fontSize: 15,
+    gap: 10,
+  },
+  boxStyle: {
     borderWidth: 1,
     borderColor: colors.disabled,
-    gap: 10,
+    borderRadius: 12,
+    paddingHorizontal: 16,
+  },
+  rowStyle: {
+    fontSize: 14,
+    fontWeight: "600",
+    color: colors.black,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.primary,
+    paddingVertical: 2,
+    flex: 1,
   },
   inputRowError: {
     borderColor: colors.danger,

@@ -93,7 +93,7 @@ export async function register(
 ): Promise<User> {
   if (isMocking && mockFlags.IS_MOCKING_REGISTER) {
     await new Promise((r) => setTimeout(r, 800));
-    if (!credentials.username || !credentials.email || !credentials.password) {
+    if (!credentials.username || !credentials.password) {
       throw new Error("All fields are required");
     }
     return {

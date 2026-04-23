@@ -4,8 +4,8 @@ import {
   Text,
   ActivityIndicator,
   Animated,
-  TextInput,
 } from "react-native";
+import LocationSearch from "../../components/core/LocationSearch/LocationSearch";
 import MapView, { Circle, Marker } from "react-native-maps";
 import type { Region } from "react-native-maps";
 import * as Location from "expo-location";
@@ -68,7 +68,9 @@ export default function Explore() {
 
   // Edit modal state
   const [editModal, setEditModal] = useState(false);
-  const [modalLoc, setModalLoc] = useState("");
+  const [modalLocStr, setModalLocStr] = useState("");
+  const [modalLocCoords, setModalLocCoords] = useState<{ lat: number; lng: number } | null>(null);
+  const [modalLocKey, setModalLocKey] = useState(0);
   const [modalRadius, setModalRadius] = useState(10);
 
   // Flag to skip geocoding when recenter sets center directly
@@ -180,15 +182,22 @@ export default function Explore() {
   };
 
   const openEdit = () => {
-    setModalLoc(exploraLocation ?? "");
+    setModalLocStr(exploraLocation ?? "");
+    setModalLocCoords(null);
+    setModalLocKey((k) => k + 1);
     setModalRadius(exploraRadius);
     setEditModal(true);
-    // openModal()
   };
 
   const applyEdit = () => {
-    const trimmed = modalLoc.trim();
-    if (trimmed) setExploraLocation(trimmed);
+    const trimmed = modalLocStr.trim();
+    if (trimmed) {
+      if (modalLocCoords) {
+        skipGeocode.current = true;
+        setCenter(modalLocCoords);
+      }
+      setExploraLocation(trimmed);
+    }
     setExploraRadius(modalRadius);
     setEditModal(false);
   };
@@ -219,7 +228,7 @@ export default function Explore() {
         style={styles.map}
         initialRegion={region}
         region={region}
-        showsUserLocation
+        showsUserLocation={!exploraLocation}
         showsMyLocationButton={false}
       >
         <Circle
@@ -230,16 +239,18 @@ export default function Explore() {
           fillColor={colors.primaryOpacized}
         />
 
-        {/* Center pin */}
-        <Marker
-          coordinate={{ latitude: center.lat, longitude: center.lng }}
-          anchor={{ x: 0.5, y: 1 }}
-          zIndex={10}
-        >
-          <View style={styles.centerPin}>
-            <Ionicons name="location-sharp" size={20} color={colors.white} />
-          </View>
-        </Marker>
+        {/* Center pin — only for searched locations, not for current position */}
+        {!!exploraLocation && (
+          <Marker
+            coordinate={{ latitude: center.lat, longitude: center.lng }}
+            anchor={{ x: 0.5, y: 1 }}
+            zIndex={10}
+          >
+            <View style={styles.centerPin}>
+              <Ionicons name="location-sharp" size={20} color={colors.white} />
+            </View>
+          </Marker>
+        )}
 
         {tournaments.map((t) =>
           t.lat != null && t.lng != null ? (
@@ -378,37 +389,21 @@ export default function Explore() {
         }
         style={[styles.recenterBtn, { bottom: insets.bottom + 90 }]}
       />
-      <ModalViewer isOpen={editModal} onClose={() => setEditModal(false)}>
+      <ModalViewer isOpen={editModal} onClose={() => setEditModal(false)} scrollable>
         <Text style={styles.modalTitle}>Modifica area di ricerca</Text>
         <Text style={styles.modalLabel}>POSIZIONE</Text>
-        <View style={styles.modalInputRow}>
-          <Ionicons
-            name="location-outline"
-            size={18}
-            color={colors.primaryGradientMid}
-            style={{ marginRight: 8 }}
-          />
-          <TextInput
-            style={styles.modalInput}
-            value={modalLoc}
-            onChangeText={setModalLoc}
-            placeholder="Nome città"
-            placeholderTextColor={colors.placeholder}
-            returnKeyType="done"
-          />
-          {modalLoc.length > 0 && (
-            <ButtonIcon
-              icon={
-                <Ionicons
-                  name="close-circle"
-                  size={18}
-                  color={colors.grayDark}
-                />
-              }
-              handleBtn={() => setModalLoc("")}
-            />
-          )}
-        </View>
+        <LocationSearch
+          key={modalLocKey}
+          setLocation={setModalLocStr}
+          initialValue={modalLocStr}
+          isConfirmed={!!modalLocStr}
+          onConfirm={(address, lat, lng) => {
+            setModalLocStr(address);
+            if (lat !== undefined && lng !== undefined) {
+              setModalLocCoords({ lat, lng });
+            }
+          }}
+        />
 
         <Text style={styles.modalLabel}>RAGGIO DI RICERCA</Text>
         <View style={styles.radiusRow}>

@@ -1,4 +1,4 @@
-import React, { useCallback, useState, useEffect } from "react";
+import React, { useCallback, useState, useEffect, useRef } from "react";
 import { useFocusEffect, useRoute } from "@react-navigation/native";
 import type { RouteProp } from "@react-navigation/native";
 import {
@@ -47,7 +47,7 @@ export default function Profile() {
     username: "",
     location: "",
     dateOfBirth: "",
-    gender: Gender.OTHER,
+    gender: null as Gender | null,
     password: "",
     confirmPassword: "",
     orgName: "",
@@ -58,8 +58,13 @@ export default function Profile() {
   const insets = useSafeAreaInsets();
   const [changeProfileModal, setChangeProfileModal] = useState(false);
   const isOrganizerProfile = currentProfile?.role === UserRole.ORGANIZER;
+  const mounted = useRef(false);
 
   useEffect(() => {
+    if (!mounted.current) {
+      mounted.current = true;
+      return;
+    }
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (navigation as any).setOptions({
       tabBarStyle: edit
@@ -99,7 +104,7 @@ export default function Profile() {
       username: user?.username ?? "",
       location: user?.location ?? "",
       dateOfBirth: user?.dateOfBirth ?? "",
-      gender: user?.gender ?? Gender.OTHER,
+      gender: user?.gender ?? null,
       password: "",
       confirmPassword: "",
       orgName: orgProfile?.orgName ?? "",
@@ -141,7 +146,7 @@ export default function Profile() {
         lastName: form.lastName,
         username: form.username,
         location: form.location,
-        gender: (form.gender as Gender) || undefined,
+        gender: form.gender ?? undefined,
       });
       setSaving(false);
     }

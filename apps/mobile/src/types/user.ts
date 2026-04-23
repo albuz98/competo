@@ -49,6 +49,7 @@ export interface User {
   location?: string;
   gender?: Gender;
   avatarUrl?: string;
+  isEmailConfirmed?: boolean;
   matchStats?: MatchStats;
   playedTournaments?: PlayedTournamentRecord[];
   organizedTournaments?: OrganizedTournamentRecord[];

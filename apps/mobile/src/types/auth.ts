@@ -18,6 +18,7 @@ export interface UpdateProfileData {
   firstName?: string;
   lastName?: string;
   username?: string;
+  email?: string;
   location?: string;
   gender?: Gender;
   password?: string;

@@ -94,11 +94,13 @@ export const HeaderCardProfile = ({
           <View style={styles.infoSection}>
             {/* Testo info */}
             <View style={{ flex: 1 }}>
-              {!hideName && (
+              {!hideName && (displayName || user?.firstName || user?.lastName) && (
                 <View style={styles.infoRow}>
-                  <Ionicons name="person" size={13} color={colors.primary} />
+                  {(user?.firstName && user?.lastName) && (
+                    <Ionicons name="person" size={13} color={colors.primary} />
+                  )}
                   <Text style={styles.infoText}>
-                    {displayName ?? `${user?.firstName} ${user?.lastName}`}
+                    {displayName ?? `${user?.firstName ?? ""} ${user?.lastName ?? ""}`.trim()}
                   </Text>
                 </View>
               )}

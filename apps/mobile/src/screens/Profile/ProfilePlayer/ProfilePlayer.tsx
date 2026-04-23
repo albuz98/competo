@@ -1,6 +1,6 @@
 import React, { useRef, useCallback, useState, useEffect } from "react";
 import { useFocusEffect } from "@react-navigation/native";
-import { View, Text, ScrollView, TouchableOpacity } from "react-native";
+import { Alert, View, Text, ScrollView, TouchableOpacity } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
@@ -9,11 +9,13 @@ import { useAuth } from "../../../context/AuthContext";
 import { useTeams } from "../../../context/TeamsContext";
 import { RootStackParamList } from "../../../types/navigation";
 import { colorGradient, colors } from "../../../theme/colors";
-import { styles as tabStyles } from "../../../navigation/MainTabNavigator/MainTabNavigator.styles";
 import {
+  ButtonBorderColored,
+  ButtonFullColored,
   ButtonGeneric,
   ButtonLink,
 } from "../../../components/core/Button/Button";
+import LocationSearch from "../../../components/core/LocationSearch/LocationSearch";
 import { Gender, PlayerProfile } from "../../../types/user";
 import { LinearGradient } from "expo-linear-gradient";
 import { InputBoxRow } from "../../../components/core/InputBoxRow/InputBoxRow";
@@ -46,20 +48,55 @@ export default function ProfilePlayer({
     username: "",
     location: "",
     dateOfBirth: "",
+    email: "",
   });
+
+  const handleSetLocation: React.Dispatch<React.SetStateAction<string>> = (
+    v,
+  ) => {
+    setForm((f) => ({
+      ...f,
+      location: typeof v === "function" ? v(f.location) : v,
+    }));
+  };
+
+  const [sendingCode, setSendingCode] = useState(false);
+  const [codeSent, setCodeSent] = useState(false);
+  const [verificationCode, setVerificationCode] = useState("");
+  const [verifyingCode, setVerifyingCode] = useState(false);
+  const [emailVerified, setEmailVerified] = useState(false);
+
+  useEffect(() => {
+    setCodeSent(false);
+    setVerificationCode("");
+    setEmailVerified(false);
+  }, [form.email]);
+
+  const handleSendCode = async () => {
+    setSendingCode(true);
+    await new Promise((r) => setTimeout(r, 1000));
+    setSendingCode(false);
+    setCodeSent(true);
+  };
+
+  const handleVerifyCode = async () => {
+    setVerifyingCode(true);
+    await new Promise((r) => setTimeout(r, 800));
+    setVerifyingCode(false);
+    if (verificationCode === "123456") {
+      setEmailVerified(true);
+    } else {
+      Alert.alert(
+        "Codice non valido",
+        "Il codice inserito non è corretto. Riprova.",
+      );
+    }
+  };
+
   const navigation =
     useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const insets = useSafeAreaInsets();
   const { teams } = useTeams();
-
-  useEffect(() => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (navigation as any).setOptions({
-      tabBarStyle: edit
-        ? { display: "none" }
-        : [tabStyles.tabBar, { bottom: insets.bottom + 8 }],
-    });
-  }, [edit]);
 
   const scrollRef = useRef<ScrollView>(null);
   const savedScrollY = useRef(0);
@@ -85,6 +122,7 @@ export default function ProfilePlayer({
         username: user?.username ?? "",
         location: user?.location ?? "",
         dateOfBirth: user?.dateOfBirth ?? "",
+        email: user?.email ?? "",
       });
     }
   }, [edit]);
@@ -123,6 +161,12 @@ export default function ProfilePlayer({
         >
           <View style={styles.cardEditFields}>
             <InputBoxRow
+              label="Username"
+              value={form.username}
+              onChangeText={(v) => setForm((f) => ({ ...f, username: v }))}
+              disabled
+            />
+            <InputBoxRow
               label="Nome"
               value={form.firstName}
               onChangeText={(v) => setForm((f) => ({ ...f, firstName: v }))}
@@ -133,21 +177,74 @@ export default function ProfilePlayer({
               onChangeText={(v) => setForm((f) => ({ ...f, lastName: v }))}
             />
             <InputBoxRow
-              label="Username"
-              value={form.username}
-              onChangeText={(v) => setForm((f) => ({ ...f, username: v }))}
-            />
-            <InputBoxRow
               label="Data di nascita"
               value={form.dateOfBirth}
               keyboardType="number-pad"
               onChangeText={(v) => setForm((f) => ({ ...f, dateOfBirth: v }))}
             />
             <InputBoxRow
-              label="Posizione"
-              value={form.location}
-              onChangeText={(v) => setForm((f) => ({ ...f, location: v }))}
+              label="Email"
+              value={form.email}
+              keyboardType="email-address"
+              autoCorrect={false}
+              onChangeText={(v) => setForm((f) => ({ ...f, email: v }))}
             />
+            {form.email.length > 0 &&
+              !emailVerified &&
+              (!user.isEmailConfirmed || form.email !== user.email) && (
+                <View style={pStyles.sendCodeRow}>
+                  <ButtonBorderColored
+                    isColored
+                    handleBtn={handleSendCode}
+                    loading={sendingCode}
+                    text={codeSent ? "Riinvia codice" : "Invia codice conferma"}
+                  />
+                  {codeSent && (
+                    <>
+                      <InputBoxRow
+                        label="Codice di verifica"
+                        value={verificationCode}
+                        onChangeText={setVerificationCode}
+                        keyboardType="number-pad"
+                        maxLength={6}
+                        placeholder="123456"
+                      />
+                      <ButtonFullColored
+                        text="Conferma email"
+                        handleBtn={handleVerifyCode}
+                        isDisabled={
+                          verificationCode.length < 6 || verifyingCode
+                        }
+                        loading={verifyingCode}
+                        isColored
+                      />
+                    </>
+                  )}
+                </View>
+              )}
+            {emailVerified && (
+              <View style={pStyles.emailVerifiedRow}>
+                <Ionicons
+                  name="checkmark-circle"
+                  size={16}
+                  color={colors.success}
+                />
+                <Text style={pStyles.emailVerifiedText}>Email verificata</Text>
+              </View>
+            )}
+            <View style={pStyles.locationSection}>
+              <Text style={pStyles.locationLabel}>Posizione</Text>
+              <LocationSearch
+                key={`location-${edit}`}
+                setLocation={handleSetLocation}
+                initialValue={user?.location ?? ""}
+                isConfirmed={!!user?.location}
+                onConfirm={(address) =>
+                  setForm((f) => ({ ...f, location: address }))
+                }
+                isRow
+              />
+            </View>
             <View style={pStyles.genderRow}>
               <Text style={pStyles.genderLabel}>Sesso</Text>
               <View style={pStyles.genderOptions}>

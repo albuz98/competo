@@ -164,6 +164,38 @@ export const pStyles = StyleSheet.create({
     color: colors.dark,
   },
 
+  // ── Email verification ─────────────────────────────────────────
+  sendCodeRow: {
+    paddingHorizontal: 16,
+    paddingBottom: 10,
+    gap: 10,
+  },
+  emailVerifiedRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 6,
+    paddingHorizontal: 16,
+    paddingBottom: 10,
+  },
+  emailVerifiedText: {
+    fontSize: 13,
+    fontWeight: "600",
+    color: colors.success,
+  },
+
+  // ── Location search ────────────────────────────────────────────
+  locationSection: {
+    paddingHorizontal: 16,
+    paddingVertical: 10,
+  },
+  locationLabel: {
+    fontSize: 11,
+    color: colors.placeholder,
+    textTransform: "uppercase",
+    letterSpacing: 0.5,
+    marginBottom: 8,
+  },
+
   // ── Gender selector ────────────────────────────────────────────
   genderRow: {
     paddingHorizontal: 16,

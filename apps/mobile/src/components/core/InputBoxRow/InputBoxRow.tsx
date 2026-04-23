@@ -31,6 +31,7 @@ interface InputBoxProps {
   error?: string;
   label: string;
   isLast?: boolean;
+  disabled?: boolean;
 }
 
 export const InputBoxRow = ({
@@ -48,6 +49,7 @@ export const InputBoxRow = ({
   error,
   label,
   isLast,
+  disabled,
 }: InputBoxProps) => {
   const [hidden, setHidden] = useState(true);
 
@@ -61,6 +63,7 @@ export const InputBoxRow = ({
               styles.rowInput,
               secureTextEntry ? styles.rowInputWithIcon : undefined,
               error ? styles.rowInputError : undefined,
+              disabled ? styles.rowInputDisabled : undefined,
             ]}
             value={value}
             onChangeText={onChangeText}
@@ -74,6 +77,7 @@ export const InputBoxRow = ({
             maxLength={maxLength}
             returnKeyType={returnKeyType}
             onSubmitEditing={onSubmitEditing}
+            editable={!disabled}
           />
           {secureTextEntry && (
             <ButtonIcon
