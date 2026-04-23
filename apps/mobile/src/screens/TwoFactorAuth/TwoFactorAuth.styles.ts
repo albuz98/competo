@@ -19,9 +19,10 @@ export const styles = StyleSheet.create({
   headerSpacer: { width: 32 },
 
   content: {
-    flex: 1,
+    flexGrow: 1,
     paddingHorizontal: 16,
     paddingTop: 24,
+    paddingBottom: 40,
   },
 
   card: {
