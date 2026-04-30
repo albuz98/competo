@@ -60,8 +60,8 @@ export async function createTeam(
   token: string,
   representative?: {
     id: string;
-    firstName: string;
-    lastName: string;
+    first_name: string;
+    last_name: string;
     username: string;
   },
 ): Promise<Team> {
@@ -123,8 +123,8 @@ export async function inviteMember(
       teamName: team.name,
       sport: team.sport,
       fromUserId: rep?.id ?? "",
-      fromFirstName: rep?.firstName ?? "",
-      fromLastName: rep?.lastName ?? "",
+      fromFirstName: rep?.first_name ?? "",
+      fromLastName: rep?.last_name ?? "",
       toUserId: appUser.id,
       createdAt: new Date().toISOString(),
     });
@@ -172,8 +172,8 @@ export async function searchUsers(
     return all.filter(
       (u) =>
         u.username.toLowerCase().includes(q) ||
-        u.firstName.toLowerCase().includes(q) ||
-        u.lastName.toLowerCase().includes(q),
+        u.first_name.toLowerCase().includes(q) ||
+        u.last_name.toLowerCase().includes(q),
     );
   }
   return apiFetch<AppUser[]>(
@@ -200,8 +200,8 @@ export async function acceptInvite(
   inviteId: string,
   currentUser: {
     id: string;
-    firstName: string;
-    lastName: string;
+    first_name: string;
+    last_name: string;
     username: string;
   },
   token: string,
@@ -221,8 +221,8 @@ export async function acceptInvite(
         members: [
           {
             id: invite.fromUserId,
-            firstName: invite.fromFirstName,
-            lastName: invite.fromLastName,
+            first_name: invite.fromFirstName,
+            last_name: invite.fromLastName,
             username: `${invite.fromFirstName.toLowerCase()}`,
             role: TeamRole.REPRESENTATIVE,
           },
@@ -272,7 +272,11 @@ export async function getSentInvites(
       (i) => i.teamId === teamId && i.toUserId !== "__current__",
     );
   }
-  return apiFetch<PendingInvite[]>(`/teams/${encodeURIComponent(teamId)}/invites`, {}, token);
+  return apiFetch<PendingInvite[]>(
+    `/teams/${encodeURIComponent(teamId)}/invites`,
+    {},
+    token,
+  );
 }
 
 export async function updateMemberRole(

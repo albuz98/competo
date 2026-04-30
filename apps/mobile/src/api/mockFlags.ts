@@ -5,8 +5,8 @@
 
 export const mockFlags = {
   // ─── Auth ─────────────────────────────────────────────────────────────────
-  IS_MOCKING_LOGIN: true,
-  IS_MOCKING_REGISTER: true,
+  IS_MOCKING_LOGIN: false,
+  IS_MOCKING_REGISTER: false,
   IS_MOCKING_FORGOT_PASSWORD: true,
   IS_MOCKING_FETCH_PROFILE: true,
   IS_MOCKING_UPDATE_PROFILE: true,

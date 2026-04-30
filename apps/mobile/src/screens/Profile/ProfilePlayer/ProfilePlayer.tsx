@@ -25,12 +25,24 @@ import { RESULT_CONFIG, TournamentResult } from "../../../constants/tournament";
 import { styles } from "../Profile.styles";
 import { GENDER_OPTIONS } from "../../../constants/user";
 
+export interface PlayerFormRef {
+  first_name: string;
+  last_name: string;
+  username: string;
+  location: string;
+  birthdate: string;
+  email: string;
+  emailVerified: boolean;
+}
+
 interface ProfilePlayerProps {
   currentProfile: PlayerProfile | null;
   saving: boolean;
   edit: boolean;
   gender: Gender | null;
   onGenderChange: (g: Gender) => void;
+  onDirty?: () => void;
+  formRef?: React.MutableRefObject<PlayerFormRef>;
 }
 
 export default function ProfilePlayer({
@@ -39,17 +51,24 @@ export default function ProfilePlayer({
   edit,
   gender,
   onGenderChange,
+  onDirty,
+  formRef,
 }: ProfilePlayerProps) {
   const { user, updateProfile } = useAuth();
   const { refreshTeams } = useTeams();
   const [form, setForm] = useState({
-    firstName: "",
-    lastName: "",
+    first_name: "",
+    last_name: "",
     username: "",
     location: "",
-    dateOfBirth: "",
+    birthdate: "",
     email: "",
   });
+
+  const updateForm = (patch: Partial<typeof form>) => {
+    setForm((f) => ({ ...f, ...patch }));
+    onDirty?.();
+  };
 
   const handleSetLocation: React.Dispatch<React.SetStateAction<string>> = (
     v,
@@ -58,6 +77,7 @@ export default function ProfilePlayer({
       ...f,
       location: typeof v === "function" ? v(f.location) : v,
     }));
+    onDirty?.();
   };
 
   const [sendingCode, setSendingCode] = useState(false);
@@ -71,6 +91,12 @@ export default function ProfilePlayer({
     setVerificationCode("");
     setEmailVerified(false);
   }, [form.email]);
+
+  useEffect(() => {
+    if (formRef) {
+      formRef.current = { ...form, emailVerified };
+    }
+  }, [form, emailVerified]);
 
   const handleSendCode = async () => {
     setSendingCode(true);
@@ -117,11 +143,11 @@ export default function ProfilePlayer({
   useEffect(() => {
     if (edit) {
       setForm({
-        firstName: user?.firstName ?? "",
-        lastName: user?.lastName ?? "",
+        first_name: user?.first_name ?? "",
+        last_name: user?.last_name ?? "",
         username: user?.username ?? "",
         location: user?.location ?? "",
-        dateOfBirth: user?.dateOfBirth ?? "",
+        birthdate: user?.birthdate ?? "",
         email: user?.email ?? "",
       });
     }
@@ -153,7 +179,7 @@ export default function ProfilePlayer({
         <HeaderCardProfile
           user={user}
           subtitle={user.location}
-          dateOfBirth={user.dateOfBirth}
+          birthdate={user.birthdate}
           gender={user.gender}
           saving={saving}
           edit={edit}
@@ -163,31 +189,31 @@ export default function ProfilePlayer({
             <InputBoxRow
               label="Username"
               value={form.username}
-              onChangeText={(v) => setForm((f) => ({ ...f, username: v }))}
+              onChangeText={(v) => updateForm({ username: v })}
               disabled
             />
             <InputBoxRow
               label="Nome"
-              value={form.firstName}
-              onChangeText={(v) => setForm((f) => ({ ...f, firstName: v }))}
+              value={form.first_name}
+              onChangeText={(v) => updateForm({ first_name: v })}
             />
             <InputBoxRow
               label="Cognome"
-              value={form.lastName}
-              onChangeText={(v) => setForm((f) => ({ ...f, lastName: v }))}
+              value={form.last_name}
+              onChangeText={(v) => updateForm({ last_name: v })}
             />
             <InputBoxRow
               label="Data di nascita"
-              value={form.dateOfBirth}
+              value={form.birthdate}
               keyboardType="number-pad"
-              onChangeText={(v) => setForm((f) => ({ ...f, dateOfBirth: v }))}
+              onChangeText={(v) => updateForm({ birthdate: v })}
             />
             <InputBoxRow
               label="Email"
               value={form.email}
               keyboardType="email-address"
               autoCorrect={false}
-              onChangeText={(v) => setForm((f) => ({ ...f, email: v }))}
+              onChangeText={(v) => updateForm({ email: v })}
             />
             {form.email.length > 0 &&
               !emailVerified &&

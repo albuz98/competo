@@ -106,11 +106,11 @@ export interface TournametNumberPartecipants {
 
 export interface TournamentPlayer {
   id: string;
-  firstName: string;
-  lastName: string;
+  first_name: string;
+  last_name: string;
   username: string;
   avatarUrl?: string;
-  dateOfBirth?: string;
+  birthdate?: string;
   role: TeamRole;
   stats: PlayerStats;
 }

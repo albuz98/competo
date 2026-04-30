@@ -23,20 +23,20 @@ type Props = NativeStackScreenProps<RootStackParamList, "Login">;
 export default function Login({ navigation, route }: Props) {
   const { redirect, tournamentId } = route.params ?? {};
   const { login, loading, error, clearError } = useAuth();
-  const [email, setEmail] = useState("");
+  const [identifier, setIdentifier] = useState("");
   const [password, setPassword] = useState("");
 
   useLayoutEffect(() => {
     navigation.setOptions({ headerShown: false });
   }, [navigation]);
 
-  const isValid = email.includes("@") && password.length >= 1;
+  const isValid = identifier.length >= 1 && password.length >= 1;
 
   const handleLogin = async () => {
     if (!isValid) return;
     clearError();
     try {
-      await login({ email, password });
+      await login({ identifier, password });
       if (redirect === "tournament" && tournamentId) {
         navigation.replace(NavigationEnum.TOURNAMENT_DETAIL, { tournamentId });
       } else {
@@ -51,19 +51,16 @@ export default function Login({ navigation, route }: Props) {
     <AuthLayout onClose={() => navigation.replace(NavigationEnum.CHOSE_ACCESS)}>
       <Text style={styles.cardTitle}>Accedi</Text>
 
-      {error && <AuthErrorBox message={error} />}
-
       <ButtonBorderColored text={"Continua con Google"} handleBtn={() => {}} />
 
       <DividerAccess />
 
-      <Text style={styles.label}>EMAIL</Text>
+      <Text style={styles.label}>EMAIL O USERNAME</Text>
       <InputBox
-        value={email}
-        onChangeText={setEmail}
+        value={identifier}
+        onChangeText={setIdentifier}
         placeholder="hello@gmail.com"
-        keyboardType="email-address"
-        autoComplete="email"
+        autoCapitalize="none"
         returnKeyType="next"
       />
 
@@ -84,14 +81,19 @@ export default function Login({ navigation, route }: Props) {
         loading={loading}
       />
 
+      {error && <AuthErrorBox message={error} />}
+
       <ButtonLink
         text={"Forgot Password?"}
         handleBtn={() => navigation.navigate(NavigationEnum.FORGOT_PASSWORD)}
       />
 
       <ButtonLink
-        text={"Signup!"}
-        handleBtn={() => navigation.replace(NavigationEnum.REGISTER)}
+        text={"Non hai l'utenza? Registrati!"}
+        handleBtn={() => {
+          navigation.replace(NavigationEnum.REGISTER);
+          clearError();
+        }}
       />
 
       <CompetoLogo />

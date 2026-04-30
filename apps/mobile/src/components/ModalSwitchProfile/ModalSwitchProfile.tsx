@@ -116,7 +116,19 @@ export const ModalSwitchProfile = ({
                     ? profile.orgName
                     : profile.username}
                 </Text>
-                {(user?.location !== "" || user?.location !== undefined) && (
+                {profile.role === UserRole.PLAYER &&
+                  (user?.first_name || user?.last_name) && (
+                    <Text
+                      style={{
+                        fontSize: 12,
+                        color: colors.placeholder,
+                        marginTop: 2,
+                      }}
+                    >
+                      {`${user?.first_name ?? ""} ${user?.last_name ?? ""}`.trim()}
+                    </Text>
+                  )}
+                {profile.role === UserRole.ORGANIZER && (
                   <Text
                     style={{
                       fontSize: 12,
@@ -124,7 +136,7 @@ export const ModalSwitchProfile = ({
                       marginTop: 2,
                     }}
                   >
-                    {user?.location}
+                    {`${profile.collaborators?.length ?? 0} collaborator${(profile.collaborators?.length ?? 0) === 1 ? "e" : "i"}`}
                   </Text>
                 )}
               </View>

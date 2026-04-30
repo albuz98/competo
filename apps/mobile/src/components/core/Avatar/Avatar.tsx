@@ -8,8 +8,8 @@ import { sizesEnum } from "../../../theme/dimension";
 
 export interface AvatarData {
   avatarUrl?: string;
-  firstName?: string;
-  lastName?: string;
+  first_name?: string;
+  last_name?: string;
   orgName?: string;
 }
 
@@ -20,9 +20,13 @@ interface AvatarProps {
 
 export function Avatar({ user, dimension = sizesEnum.big }: AvatarProps) {
   const orgInitial = user?.orgName?.slice(0, 2).toUpperCase();
-  const firstInitial = user?.firstName?.[0]?.toUpperCase();
-  const lastInitial = user?.lastName?.[0]?.toUpperCase();
-  const initial = orgInitial || (firstInitial || lastInitial ? `${firstInitial ?? ""}${lastInitial ?? ""}` : null);
+  const firstInitial = user?.first_name?.[0]?.toUpperCase();
+  const lastInitial = user?.last_name?.[0]?.toUpperCase();
+  const initial =
+    orgInitial ||
+    (firstInitial || lastInitial
+      ? `${firstInitial ?? ""}${lastInitial ?? ""}`
+      : null);
   const size = dimension === sizesEnum.small ? 40 : 72;
   const sizeFont = dimension === sizesEnum.small ? 16 : 22;
   const iconSize = dimension === sizesEnum.small ? 22 : 38;
@@ -49,7 +53,11 @@ export function Avatar({ user, dimension = sizesEnum.big }: AvatarProps) {
               {initial}
             </Text>
           ) : (
-            <Ionicons name="person" size={iconSize} color="rgba(255,255,255,0.9)" />
+            <Ionicons
+              name="person"
+              size={iconSize}
+              color="rgba(255,255,255,0.9)"
+            />
           )}
         </LinearGradient>
       )}

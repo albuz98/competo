@@ -12,6 +12,7 @@ import { useAuth } from "../../context/AuthContext";
 
 interface TopBarProfileProps {
   handleSave: () => void;
+  handleDiscard: () => void;
   setChangeProfileModal: (open: boolean) => void;
   edit: boolean;
   currentProfile: UserProfile | null;
@@ -20,6 +21,7 @@ interface TopBarProfileProps {
 
 export const TopBarProfile = ({
   handleSave,
+  handleDiscard,
   setChangeProfileModal,
   edit,
   currentProfile,
@@ -50,7 +52,20 @@ export const TopBarProfile = ({
             )}
           </View>
         ) : (
-          <Text style={styles.headerText}>Modifica profilo</Text>
+          <View style={styles.containerHeaderText}>
+            <ButtonIcon
+              handleBtn={handleDiscard}
+              icon={
+                <Ionicons
+                  name="arrow-back"
+                  size={22}
+                  color={colors.dark}
+                />
+              }
+              style={styles.backBtn}
+            />
+            <Text style={styles.headerText}>Modifica profilo</Text>
+          </View>
         )}
         {edit ? (
           <ButtonLink

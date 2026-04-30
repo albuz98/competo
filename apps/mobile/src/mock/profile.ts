@@ -15,13 +15,13 @@ import { User, UserRole } from "../types/user";
 
 export const mockProfile: User = {
   id: "mock-user-001",
-  firstName: "Mario",
-  lastName: "Rossi",
+  first_name: "Mario",
+  last_name: "Rossi",
   username: "mario.rossi",
   email: "mario.rossi@example.com",
   token: "mock-token-abc123",
   isEmailConfirmed: true,
-  dateOfBirth: "1990-05-15",
+  birthdate: "1990-05-15",
   location: undefined,
   avatarUrl: undefined,
   matchStats: {
@@ -115,8 +115,8 @@ export const mockProfile: User = {
       username: "mario.rossi",
       avatarUrl: undefined,
       role: UserRole.PLAYER,
-      firstName: "Mario",
-      lastName: "Rossi",
+      first_name: "Mario",
+      last_name: "Rossi",
       careerStats: {
         playerRole: "calciatore" as const,
         goals: 24,
@@ -133,14 +133,14 @@ export const mockProfile: User = {
       collaborators: [
         {
           id: "collab-001",
-          firstName: "Luca",
-          lastName: "Ferrari",
+          first_name: "Luca",
+          last_name: "Ferrari",
           username: "luca.ferrari",
         },
         {
           id: "collab-002",
-          firstName: "Anna",
-          lastName: "Conti",
+          first_name: "Anna",
+          last_name: "Conti",
           username: "anna.conti",
         },
       ],
@@ -162,10 +162,10 @@ export function generateTournamentPlayer(
 ): TournamentPlayer {
   return {
     id: faker.string.uuid(),
-    firstName: faker.person.firstName(),
-    lastName: faker.person.lastName(),
+    first_name: faker.person.first_name(),
+    last_name: faker.person.last_name(),
     username: faker.internet.username(),
-    dateOfBirth: faker.date
+    birthdate: faker.date
       .birthdate({ min: 16, max: 40, mode: "age" })
       .toISOString()
       .slice(0, 10),

@@ -78,11 +78,11 @@ export function TeamsProvider({ children }: { children: ReactNode }) {
       const representative = user
         ? {
             id: user.id,
-            firstName: user.firstName ?? "",
-            lastName: user.lastName ?? "",
+            first_name: user.first_name ?? "",
+            last_name: user.last_name ?? "",
             username: user.username ?? "",
           }
-        : { id: "", firstName: "", lastName: "", username: "" };
+        : { id: "", first_name: "", last_name: "", username: "" };
       return apiCreateTeam(name, sport, user?.token ?? "", representative);
     },
     onSuccess: () => {
@@ -101,8 +101,8 @@ export function TeamsProvider({ children }: { children: ReactNode }) {
         teamName: team?.name ?? "",
         sport: team?.sport ?? "",
         fromUserId: user?.id ?? "",
-        fromFirstName: user?.firstName ?? "",
-        fromLastName: user?.lastName ?? "",
+        fromFirstName: user?.first_name ?? "",
+        fromLastName: user?.last_name ?? "",
         toUserId: appUser.id,
         createdAt: new Date().toISOString(),
       };
@@ -149,8 +149,8 @@ export function TeamsProvider({ children }: { children: ReactNode }) {
         inviteId,
         {
           id: user.id,
-          firstName: user.firstName ?? "",
-          lastName: user.lastName ?? "",
+          first_name: user.first_name ?? "",
+          last_name: user.last_name ?? "",
           username: user.username ?? "",
         },
         user.token,

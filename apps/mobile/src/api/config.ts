@@ -39,9 +39,13 @@ export async function apiFetch<T>(
   if (!response.ok) {
     const errorBody = await response.json().catch(() => null);
     // Expose only the user-facing message from the server; never raw internals
+    const serverMessage =
+      (typeof errorBody?.detail === 'string' && errorBody.detail) ||
+      (typeof errorBody?.message === 'string' && errorBody.message) ||
+      '';
     const safeMessage =
-      typeof errorBody?.message === 'string' && errorBody.message.length < 200
-        ? errorBody.message
+      serverMessage.length > 0 && serverMessage.length < 200
+        ? serverMessage
         : `Errore ${response.status}. Riprova più tardi.`;
     throw new Error(safeMessage);
   }

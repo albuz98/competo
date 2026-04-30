@@ -195,7 +195,11 @@ export default function TournamentDetail({ route, navigation }: Props) {
   };
 
   const handleGoToPayment = () => {
-    const profileComplete = !!(user?.firstName && user?.lastName && user?.dateOfBirth);
+    const profileComplete = !!(
+      user?.first_name &&
+      user?.last_name &&
+      user?.birthdate
+    );
     if (!profileComplete) {
       Alert.alert(
         "Profilo incompleto",

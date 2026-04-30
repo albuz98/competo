@@ -31,7 +31,8 @@ export default function Register({ navigation }: Props) {
   }, [navigation]);
 
   const passwordTooShort = password.length > 0 && password.length < 6;
-  const passwordMismatch = confirmPassword.length > 0 && password !== confirmPassword;
+  const passwordMismatch =
+    confirmPassword.length > 0 && password !== confirmPassword;
 
   const isValid =
     username.length >= 3 &&
@@ -43,11 +44,7 @@ export default function Register({ navigation }: Props) {
     clearError();
     try {
       await register({
-        firstName: "",
-        lastName: "",
         username,
-        email: "",
-        dateOfBirth: "",
         password,
       });
       navigation.replace(NavigationEnum.MAIN_TABS);
@@ -59,8 +56,6 @@ export default function Register({ navigation }: Props) {
   return (
     <AuthLayout onClose={() => navigation.replace(NavigationEnum.CHOSE_ACCESS)}>
       <Text style={styles.cardTitle}>Crea account</Text>
-
-      {error && <AuthErrorBox message={error} />}
 
       <ButtonBorderColored text={"Continua con Google"} handleBtn={() => {}} />
 
@@ -115,9 +110,14 @@ export default function Register({ navigation }: Props) {
         loading={loading}
       />
 
+      {error && <AuthErrorBox message={error} />}
+
       <ButtonLink
         text="Hai già un account? Accedi"
-        handleBtn={() => navigation.navigate(NavigationEnum.LOGIN, {})}
+        handleBtn={() => {
+          navigation.navigate(NavigationEnum.LOGIN, {});
+          clearError();
+        }}
       />
 
       <CompetoLogo />

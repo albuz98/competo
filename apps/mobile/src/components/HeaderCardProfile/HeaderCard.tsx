@@ -25,7 +25,7 @@ interface HeaderCardProps {
   displayName?: string;
   subtitle?: string;
   hideName?: boolean;
-  dateOfBirth?: string;
+  birthdate?: string;
   gender?: Gender;
   saving: boolean;
   children: React.ReactNode;
@@ -40,7 +40,7 @@ export const HeaderCardProfile = ({
   displayName,
   subtitle,
   hideName = false,
-  dateOfBirth,
+  birthdate,
   gender,
   saving,
   children,
@@ -93,14 +93,27 @@ export const HeaderCardProfile = ({
         {!edit && (
           <View style={styles.infoSection}>
             {/* Testo info */}
-            <View style={{ flex: 1 }}>
-              {!hideName && (displayName || user?.firstName || user?.lastName) && (
+            <View
+              style={{
+                flex: 1,
+                justifyContent:
+                  !hideName &&
+                  !displayName &&
+                  !user?.first_name &&
+                  !user?.last_name
+                    ? "center"
+                    : "flex-start",
+              }}
+            >
+              {!hideName && (
                 <View style={styles.infoRow}>
-                  {(user?.firstName && user?.lastName) && (
+                  {user?.first_name && user?.last_name && (
                     <Ionicons name="person" size={13} color={colors.primary} />
                   )}
                   <Text style={styles.infoText}>
-                    {displayName ?? `${user?.firstName ?? ""} ${user?.lastName ?? ""}`.trim()}
+                    {displayName ??
+                      (`${user?.first_name ?? ""} ${user?.last_name ?? ""}`.trim() ||
+                        (user?.username ?? ""))}
                   </Text>
                 </View>
               )}
@@ -116,7 +129,7 @@ export const HeaderCardProfile = ({
                   </Text>
                 </View>
               ) : null}
-              {dateOfBirth ? (
+              {birthdate ? (
                 <View style={styles.infoRow}>
                   <Ionicons
                     name="calendar-outline"
@@ -124,7 +137,7 @@ export const HeaderCardProfile = ({
                     color={colors.primary}
                   />
                   <Text style={styles.infoText}>
-                    {formatDateOfBirth(dateOfBirth)}
+                    {formatDateOfBirth(birthdate)}
                   </Text>
                 </View>
               ) : null}

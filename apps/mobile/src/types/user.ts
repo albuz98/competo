@@ -19,8 +19,8 @@ export type PlayerProfile = {
   id: string;
   role: UserRole.PLAYER;
   username: string;
-  firstName?: string;
-  lastName?: string;
+  first_name?: string;
+  last_name?: string;
   avatarUrl?: string;
   careerStats?: PlayerCareerStats;
 };
@@ -40,12 +40,12 @@ export type UserProfile = PlayerProfile | OrganizerProfile;
 
 export interface User {
   id: string;
-  firstName?: string;
-  lastName?: string;
+  first_name?: string;
+  last_name?: string;
   username: string;
   email: string;
   token: string;
-  dateOfBirth?: string;
+  birthdate?: string;
   location?: string;
   gender?: Gender;
   avatarUrl?: string;

@@ -1,25 +1,28 @@
 import { Gender } from "./user";
 
 export interface LoginCredentials {
-  email: string;
+  identifier: string;
   password: string;
 }
 
 export interface RegisterCredentials {
-  firstName: string;
-  lastName: string;
+  email?: string;
   username: string;
-  email: string;
   password: string;
-  dateOfBirth: string;
+  first_name?: string;
+  last_name?: string;
+  birthdate?: string;
+  gender?: string;
+  phone?: string;
 }
 
 export interface UpdateProfileData {
-  firstName?: string;
-  lastName?: string;
+  first_name?: string;
+  last_name?: string;
   username?: string;
   email?: string;
   location?: string;
+  birthdate?: string;
   gender?: Gender;
   password?: string;
   avatarUrl?: string;

@@ -50,7 +50,7 @@ function TeamCard({ team, onPress }: { team: Team; onPress: () => void }) {
         </Text>
         {representative && (
           <Text style={tss.teamRep} numberOfLines={1}>
-            Cap. {representative.firstName} {representative.lastName}
+            Cap. {representative.first_name} {representative.last_name}
           </Text>
         )}
       </View>

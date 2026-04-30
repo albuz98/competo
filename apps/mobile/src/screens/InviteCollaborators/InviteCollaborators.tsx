@@ -44,7 +44,7 @@ function UserRow({
   invited: boolean;
   onInvite: () => void;
 }) {
-  const initials = (user.firstName[0] ?? "") + (user.lastName[0] ?? "");
+  const initials = (user.first_name[0] ?? "") + (user.last_name[0] ?? "");
   return (
     <View style={ic.userRow}>
       <View style={ic.userAvatar}>
@@ -52,7 +52,7 @@ function UserRow({
       </View>
       <View style={{ flex: 1 }}>
         <Text style={ic.userName}>
-          {user.firstName} {user.lastName}
+          {user.first_name} {user.last_name}
         </Text>
         <Text style={ic.userUsername}>@{user.username}</Text>
       </View>
@@ -125,7 +125,7 @@ export default function InviteCollaborators({ route, navigation }: Props) {
     setAdded((prev) => new Set(prev).add(appUser.id));
     addNotification({
       title: "Collaboratore aggiunto",
-      body: `${appUser.firstName} ${appUser.lastName} è stato aggiunto come collaboratore di ${orgProfile?.orgName ?? ""}`,
+      body: `${appUser.first_name} ${appUser.last_name} è stato aggiunto come collaboratore di ${orgProfile?.orgName ?? ""}`,
       timestamp: new Date().toISOString(),
     });
   };

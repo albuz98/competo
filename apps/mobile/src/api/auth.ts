@@ -42,8 +42,8 @@ export async function forgotPassword(email: string): Promise<void> {
 
 export async function updateProfile(
   data: {
-    firstName?: string;
-    lastName?: string;
+    first_name?: string;
+    last_name?: string;
     username?: string;
     location?: string;
     gender?: Gender;
@@ -58,8 +58,8 @@ export async function updateProfile(
     if (!currentUser) throw new Error("Not authenticated");
     return {
       ...currentUser,
-      ...(data.firstName !== undefined ? { firstName: data.firstName } : {}),
-      ...(data.lastName !== undefined ? { lastName: data.lastName } : {}),
+      ...(data.first_name !== undefined ? { first_name: data.first_name } : {}),
+      ...(data.last_name !== undefined ? { last_name: data.last_name } : {}),
       ...(data.username ? { username: data.username } : {}),
       ...(data.location !== undefined ? { location: data.location } : {}),
       ...(data.gender !== undefined ? { gender: data.gender } : {}),
@@ -73,19 +73,30 @@ export async function updateProfile(
   );
 }
 
+interface AuthTokenResponse {
+  access_token: string;
+  refresh_token: string;
+  token_type: string;
+}
+
 export async function login(credentials: LoginCredentials): Promise<User> {
   if (isMocking && mockFlags.IS_MOCKING_LOGIN) {
     await new Promise((r) => setTimeout(r, 800));
-    if (!credentials.email || !credentials.password) {
-      throw new Error("Email and password are required");
+    if (!credentials.identifier || !credentials.password) {
+      throw new Error("Identifier and password are required");
     }
-    return { ...mockProfile, email: credentials.email };
+    return { ...mockProfile };
   }
 
-  return apiFetch<User>("/auth/login", {
-    method: "POST",
-    body: JSON.stringify(credentials),
-  });
+  const { access_token } = await apiFetch<AuthTokenResponse>(
+    "/api/v1/auth/login",
+    {
+      method: "POST",
+      body: JSON.stringify(credentials),
+    },
+  );
+  const userData = await fetchProfile(access_token);
+  return { ...userData, token: access_token };
 }
 
 export async function register(
@@ -98,16 +109,17 @@ export async function register(
     }
     return {
       ...mockProfile,
-      firstName: credentials.firstName,
-      lastName: credentials.lastName,
-      email: credentials.email,
       username: credentials.username,
-      dateOfBirth: credentials.dateOfBirth,
     };
   }
 
-  return apiFetch<User>("/auth/register", {
-    method: "POST",
-    body: JSON.stringify(credentials),
-  });
+  const { access_token } = await apiFetch<AuthTokenResponse>(
+    "/api/v1/auth/register",
+    {
+      method: "POST",
+      body: JSON.stringify(credentials),
+    },
+  );
+  const userData = await fetchProfile(access_token);
+  return { ...userData, token: access_token };
 }

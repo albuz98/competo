@@ -27,7 +27,7 @@ import { styles as tabStyles } from "../../navigation/MainTabNavigator/MainTabNa
 import { Gender, UserRole } from "../../types/user";
 import { TopBarProfile } from "../../components/TopBarProfile/TopBarProfile";
 import ProfileOrganizer from "./ProfileOrganizer/ProfileOrganizer";
-import ProfilePlayer from "./ProfilePlayer/ProfilePlayer";
+import ProfilePlayer, { PlayerFormRef } from "./ProfilePlayer/ProfilePlayer";
 import { ModalSwitchProfile } from "../../components/ModalSwitchProfile/ModalSwitchProfile";
 
 export default function Profile() {
@@ -42,11 +42,11 @@ export default function Profile() {
   const [edit, setEdit] = useState(false);
   const [saving, setSaving] = useState(false);
   const [form, setForm] = useState({
-    firstName: "",
-    lastName: "",
+    first_name: "",
+    last_name: "",
     username: "",
     location: "",
-    dateOfBirth: "",
+    birthdate: "",
     gender: null as Gender | null,
     password: "",
     confirmPassword: "",
@@ -57,8 +57,18 @@ export default function Profile() {
   const route = useRoute<RouteProp<MainTabParamList, NavigationEnum.PROFILE>>();
   const insets = useSafeAreaInsets();
   const [changeProfileModal, setChangeProfileModal] = useState(false);
+  const [isDirty, setIsDirty] = useState(false);
   const isOrganizerProfile = currentProfile?.role === UserRole.ORGANIZER;
   const mounted = useRef(false);
+  const playerFormRef = useRef<PlayerFormRef>({
+    first_name: "",
+    last_name: "",
+    username: "",
+    location: "",
+    birthdate: "",
+    email: "",
+    emailVerified: false,
+  });
 
   useEffect(() => {
     if (!mounted.current) {
@@ -99,21 +109,41 @@ export default function Profile() {
       return;
     }
     setForm({
-      firstName: user?.firstName ?? "",
-      lastName: user?.lastName ?? "",
+      first_name: user?.first_name ?? "",
+      last_name: user?.last_name ?? "",
       username: user?.username ?? "",
       location: user?.location ?? "",
-      dateOfBirth: user?.dateOfBirth ?? "",
+      birthdate: user?.birthdate ?? "",
       gender: user?.gender ?? null,
       password: "",
       confirmPassword: "",
       orgName: orgProfile?.orgName ?? "",
     });
+    setIsDirty(false);
     setEdit(true);
   };
 
+  const handleDiscard = () => {
+    const doDiscard = () => {
+      setEdit(false);
+      setIsDirty(false);
+      navigation.navigate(NavigationEnum.SETTINGS);
+    };
+    if (isDirty) {
+      Alert.alert(
+        "Modifiche non salvate",
+        "Sei sicuro di voler tornare indietro senza salvare?",
+        [
+          { text: "Annulla", style: "cancel" },
+          { text: "Sì", style: "destructive", onPress: doDiscard },
+        ],
+      );
+    } else {
+      doDiscard();
+    }
+  };
+
   const handleSave = async () => {
-    // Salva campi organizzatore
     if (
       currentProfile?.role === UserRole.ORGANIZER &&
       form.orgName !== currentProfile.orgName
@@ -121,35 +151,52 @@ export default function Profile() {
       updateOrgProfileData(currentProfile.id, { orgName: form.orgName });
     }
 
-    const hasChanges =
-      form.firstName !== (user?.firstName ?? "") ||
-      form.lastName !== (user?.lastName ?? "") ||
-      form.username !== (user?.username ?? "") ||
-      form.location !== (user?.location ?? "") ||
-      form.dateOfBirth !== (user?.dateOfBirth ?? "") ||
-      form.gender !== (user?.gender ?? "");
+    if (currentProfile?.role !== UserRole.ORGANIZER) {
+      const pf = playerFormRef.current;
+      const emailChanged = pf.email !== (user?.email ?? "");
 
-    if (hasChanges) {
-      if (form.location && form.location !== (user?.location ?? "")) {
-        const results = await Location.geocodeAsync(form.location);
-        if (results.length === 0) {
-          Alert.alert(
-            "Posizione non valida",
-            "Inserisci una città o un indirizzo esistente.",
-          );
-          return;
-        }
+      if (emailChanged && !pf.emailVerified) {
+        Alert.alert(
+          "Email non verificata",
+          "L'email non verrà aggiornata perché non è stata verificata. Le altre modifiche verranno salvate.",
+          [{ text: "OK" }],
+        );
       }
-      setSaving(true);
-      await updateProfile({
-        firstName: form.firstName,
-        lastName: form.lastName,
-        username: form.username,
-        location: form.location,
-        gender: form.gender ?? undefined,
-      });
-      setSaving(false);
+
+      const hasChanges =
+        pf.first_name !== (user?.first_name ?? "") ||
+        pf.last_name !== (user?.last_name ?? "") ||
+        pf.username !== (user?.username ?? "") ||
+        pf.location !== (user?.location ?? "") ||
+        pf.birthdate !== (user?.birthdate ?? "") ||
+        form.gender !== (user?.gender ?? null) ||
+        (emailChanged && pf.emailVerified);
+
+      if (hasChanges) {
+        if (pf.location && pf.location !== (user?.location ?? "")) {
+          const results = await Location.geocodeAsync(pf.location);
+          if (results.length === 0) {
+            Alert.alert(
+              "Posizione non valida",
+              "Inserisci una città o un indirizzo esistente.",
+            );
+            return;
+          }
+        }
+        setSaving(true);
+        await updateProfile({
+          first_name: pf.first_name,
+          last_name: pf.last_name,
+          username: pf.username,
+          location: pf.location,
+          birthdate: pf.birthdate,
+          gender: form.gender ?? undefined,
+          ...(emailChanged && pf.emailVerified ? { email: pf.email } : {}),
+        });
+        setSaving(false);
+      }
     }
+
     setEdit(false);
     navigation.navigate(NavigationEnum.SETTINGS);
   };
@@ -170,6 +217,7 @@ export default function Profile() {
       <SafeAreaView style={styles.root} edges={["top"]}>
         <TopBarProfile
           handleSave={handleSave}
+          handleDiscard={handleDiscard}
           setChangeProfileModal={setChangeProfileModal}
           edit={edit}
           currentProfile={currentProfile}
@@ -182,6 +230,7 @@ export default function Profile() {
               saving={saving}
               edit={edit}
               setEdit={setEdit}
+              onDirty={() => setIsDirty(true)}
             />
           ) : (
             <ProfilePlayer
@@ -189,7 +238,12 @@ export default function Profile() {
               saving={saving}
               edit={edit}
               gender={form.gender}
-              onGenderChange={(g) => setForm((f) => ({ ...f, gender: g }))}
+              onGenderChange={(g) => {
+                setForm((f) => ({ ...f, gender: g }));
+                setIsDirty(true);
+              }}
+              onDirty={() => setIsDirty(true)}
+              formRef={playerFormRef}
             />
           )}
         </View>

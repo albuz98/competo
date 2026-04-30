@@ -39,6 +39,7 @@ interface ProfileOrganizerProps {
   saving: boolean;
   edit: boolean;
   setEdit: (edit: boolean) => void;
+  onDirty?: () => void;
 }
 
 export default function ProfileOrganizer({
@@ -46,6 +47,7 @@ export default function ProfileOrganizer({
   saving,
   edit,
   setEdit,
+  onDirty,
 }: ProfileOrganizerProps) {
   const { user, updateProfile, updateOrgProfileData } = useAuth();
   const { refreshTeams } = useTeams();
@@ -221,7 +223,10 @@ export default function ProfileOrganizer({
           <InputBoxRow
             label="Nome organizzazione"
             value={form.orgName}
-            onChangeText={(v) => setForm((f) => ({ ...f, orgName: v }))}
+            onChangeText={(v) => {
+              setForm((f) => ({ ...f, orgName: v }));
+              onDirty?.();
+            }}
             isLast
           />
         </HeaderCardProfile>
@@ -271,12 +276,12 @@ export default function ProfileOrganizer({
                     >
                       <View style={oStyles.collaboratorAvatar}>
                         <Text style={oStyles.collaboratorAvatarText}>
-                          {collab.firstName.slice(0, 1).toUpperCase()}
+                          {collab.first_name.slice(0, 1).toUpperCase()}
                         </Text>
                       </View>
                       <View style={oStyles.collaboratorInfo}>
                         <Text style={oStyles.collaboratorName}>
-                          {collab.firstName} {collab.lastName}
+                          {collab.first_name} {collab.last_name}
                         </Text>
                         <Text style={oStyles.collaboratorUsername}>
                           @{collab.username}
