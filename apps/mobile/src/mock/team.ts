@@ -12,8 +12,8 @@ export function generateTeamMember(
     role === TeamRole.REPRESENTATIVE;
   return {
     id: faker.string.uuid(),
-    first_name: faker.person.first_name(),
-    last_name: faker.person.last_name(),
+    first_name: faker.person.firstName(),
+    last_name: faker.person.lastName(),
     username: faker.internet.username(),
     role,
     ...(hasJersey
@@ -54,8 +54,8 @@ export function generateTeams(count = 3): Team[] {
 export function generateAppUser(): AppUser {
   return {
     id: faker.string.uuid(),
-    first_name: faker.person.first_name(),
-    last_name: faker.person.last_name(),
+    first_name: faker.person.firstName(),
+    last_name: faker.person.lastName(),
     username: faker.internet.username(),
   };
 }

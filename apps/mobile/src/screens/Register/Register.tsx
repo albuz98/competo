@@ -66,6 +66,7 @@ export default function Register({ navigation }: Props) {
         value={username}
         onChangeText={setUsername}
         placeholder="mariorossi99"
+        autoCapitalize="none"
         returnKeyType="next"
         autoCorrect={false}
       />

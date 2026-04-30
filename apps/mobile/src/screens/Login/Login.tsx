@@ -59,7 +59,7 @@ export default function Login({ navigation, route }: Props) {
       <InputBox
         value={identifier}
         onChangeText={setIdentifier}
-        placeholder="hello@gmail.com"
+        placeholder="hello@gmail.com o mariorossi99"
         autoCapitalize="none"
         returnKeyType="next"
       />

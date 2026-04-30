@@ -162,8 +162,8 @@ export function generateTournamentPlayer(
 ): TournamentPlayer {
   return {
     id: faker.string.uuid(),
-    first_name: faker.person.first_name(),
-    last_name: faker.person.last_name(),
+    first_name: faker.person.firstName(),
+    last_name: faker.person.lastName(),
     username: faker.internet.username(),
     birthdate: faker.date
       .birthdate({ min: 16, max: 40, mode: "age" })
