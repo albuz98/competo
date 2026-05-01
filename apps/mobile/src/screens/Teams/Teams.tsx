@@ -99,8 +99,13 @@ function InviteCard({
 }
 
 export default function TeamsScreen({ navigation }: Props) {
-  const { teams, loading, pendingReceivedInvites, acceptInvite, rejectInvite } =
-    useTeams();
+  const {
+    teams,
+    loading,
+    pendingReceivedInvites,
+    acceptInvite,
+    declineInvite,
+  } = useTeams();
   const insets = useSafeAreaInsets();
 
   const handleAcceptInvite = async (inviteId: string) => {
@@ -113,7 +118,7 @@ export default function TeamsScreen({ navigation }: Props) {
 
   const handleRejectInvite = async (inviteId: string) => {
     try {
-      await rejectInvite(inviteId);
+      await declineInvite(inviteId);
     } catch {
       Alert.alert("Errore", "Impossibile rifiutare l'invito. Riprova.");
     }

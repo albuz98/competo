@@ -62,7 +62,7 @@ function MemberRow({
   onChangeRole: () => void;
   onEditJersey: () => void;
 }) {
-  const initials = (member.first_name[0] ?? "") + (member.last_name[0] ?? "");
+  const initials = (member.firstName[0] ?? "") + (member.lastName[0] ?? "");
   const isRep = member.role === "representative";
   const showJersey = HAS_JERSEY[member.role] === true;
 
@@ -86,7 +86,7 @@ function MemberRow({
       <View style={{ flex: 1 }}>
         <View style={tds.memberNameRow}>
           <Text style={tds.memberName}>
-            {member.first_name} {member.last_name}
+            {member.firstName} {member.lastName}
           </Text>
           {isRep && (
             <View style={tds.crownBadge}>
@@ -337,8 +337,8 @@ export default function TeamDetail({ route, navigation }: Props) {
             <View style={tds.modalAvatar}>
               <Text style={tds.modalAvatarText}>
                 {confirmTarget
-                  ? (confirmTarget.first_name[0] ?? "") +
-                    (confirmTarget.last_name[0] ?? "")
+                  ? (confirmTarget.firstName[0] ?? "") +
+                    (confirmTarget.lastName[0] ?? "")
                   : ""}
               </Text>
             </View>
@@ -346,7 +346,7 @@ export default function TeamDetail({ route, navigation }: Props) {
             <Text style={tds.modalBody}>
               Vuoi rimuovere{"\n"}
               <Text style={tds.modalMemberName}>
-                {confirmTarget?.first_name} {confirmTarget?.last_name}
+                {confirmTarget?.firstName} {confirmTarget?.lastName}
               </Text>
               {"\n"}dalla squadra?
             </Text>
@@ -385,7 +385,7 @@ export default function TeamDetail({ route, navigation }: Props) {
           <View style={tds.modalCard}>
             <Text style={tds.modalTitle}>Cambia ruolo</Text>
             <Text style={[tds.modalBody, { marginBottom: 20 }]}>
-              {roleTarget?.first_name} {roleTarget?.last_name}
+              {roleTarget?.firstName} {roleTarget?.lastName}
             </Text>
             {[TeamRole.PLAYER, TeamRole.GOLKEEPER, TeamRole.COACH].map(
               (role) => {
@@ -452,7 +452,7 @@ export default function TeamDetail({ route, navigation }: Props) {
           <View style={tds.modalCard}>
             <Text style={tds.modalTitle}>Numero di maglia</Text>
             <Text style={[tds.modalBody, { marginBottom: 16 }]}>
-              {jerseyTarget?.first_name} {jerseyTarget?.last_name}
+              {jerseyTarget?.firstName} {jerseyTarget?.lastName}
             </Text>
             <TextInput
               style={{

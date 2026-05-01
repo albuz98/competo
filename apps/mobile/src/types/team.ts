@@ -1,7 +1,7 @@
 import { TeamRole } from "../constants/team";
 
 export interface PendingInvite {
-  id: string;
+  id: number;
   teamId: string;
   teamName: string;
   sport: string;

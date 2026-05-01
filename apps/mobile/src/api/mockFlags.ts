@@ -15,6 +15,8 @@ export const mockFlags = {
   IS_MOCKING_REMOVE_FAVORITE: false,
 
   // ─── Teams ────────────────────────────────────────────────────────────────
+  IS_MOCKING_ACCEPT_INVITE: false,
+  IS_MOCKING_REJECT_INVITE: false,
   IS_MOCKING_CREATE_TEAM: true,
   IS_MOCKING_FETCH_USER_TEAMS: true,
 
@@ -42,8 +44,6 @@ export const mockFlags = {
   IS_MOCKING_REMOVE_MEMBER: true,
   IS_MOCKING_SEARCH_USERS: true,
   IS_MOCKING_GET_PENDING_INVITES: true,
-  IS_MOCKING_ACCEPT_INVITE: true,
-  IS_MOCKING_REJECT_INVITE: true,
   IS_MOCKING_GET_SENT_INVITES: true,
   IS_MOCKING_UPDATE_MEMBER_ROLE: true,
 

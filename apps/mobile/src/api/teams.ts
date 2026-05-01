@@ -31,7 +31,7 @@ function getMockPendingInvites(): PendingInvite[] {
   if (!pendingInviteCache) {
     pendingInviteCache = [
       {
-        id: "pending-invite-1",
+        id: 1,
         teamId: "external-team-1",
         teamName: "Milano United",
         sport: "Calcio",
@@ -118,7 +118,7 @@ export async function inviteMember(
       return; // already invited
     const rep = team.members.find((m) => m.role === "representative");
     getMockPendingInvites().push({
-      id: `invite-${Date.now()}-${appUser.id}`,
+      id: Number(appUser.id),
       teamId: team.id,
       teamName: team.name,
       sport: team.sport,
@@ -196,8 +196,45 @@ export async function getPendingInvites(
   return apiFetch<PendingInvite[]>("/teams/invites/pending", {}, token);
 }
 
+export async function updateMemberRole(
+  teamId: string,
+  memberId: string,
+  newRole: TeamRole,
+  token: string,
+): Promise<void> {
+  if (isMocking && mockFlags.IS_MOCKING_UPDATE_MEMBER_ROLE) {
+    await new Promise((r) => setTimeout(r, 300));
+    const team = getMockTeamCache().find((t) => t.id === teamId);
+    if (!team) throw new Error("Squadra non trovata");
+    const member = team.members.find((m) => m.id === memberId);
+    if (!member) throw new Error("Membro non trovato");
+    if (member.role === TeamRole.REPRESENTATIVE)
+      throw new Error("Non puoi cambiare il ruolo del rappresentante");
+    if (newRole === TeamRole.COACH) {
+      const existing = team.members.find(
+        (m) => m.role === TeamRole.COACH && m.id !== memberId,
+      );
+      if (existing) throw new Error("La squadra ha già un allenatore");
+    }
+    if (newRole === TeamRole.GOLKEEPER) {
+      const existing = team.members.find(
+        (m) => m.role === TeamRole.GOLKEEPER && m.id !== memberId,
+      );
+      if (existing) throw new Error("La squadra ha già un portiere");
+    }
+    member.role = newRole;
+    return;
+  }
+  return apiFetch<void>(
+    `/teams/${encodeURIComponent(teamId)}/members/${encodeURIComponent(memberId)}/role`,
+    { method: "PATCH", body: JSON.stringify({ role: newRole }) },
+    token,
+  );
+}
+
+//--------------------- IT'S OK ------------------------------
 export async function acceptInvite(
-  inviteId: string,
+  inviteId: number,
   currentUser: {
     id: string;
     firstName: string;
@@ -238,14 +275,14 @@ export async function acceptInvite(
     return;
   }
   return apiFetch<void>(
-    `/teams/invites/${encodeURIComponent(inviteId)}/accept`,
+    `/api/v1/teams/invitations/${encodeURIComponent(inviteId)}/accept`,
     { method: "POST" },
     token,
   );
 }
 
-export async function rejectInvite(
-  inviteId: string,
+export async function declineInvite(
+  inviteId: number,
   token: string,
 ): Promise<void> {
   if (isMocking && mockFlags.IS_MOCKING_REJECT_INVITE) {
@@ -256,61 +293,8 @@ export async function rejectInvite(
     return;
   }
   return apiFetch<void>(
-    `/teams/invites/${encodeURIComponent(inviteId)}/reject`,
+    `/api/v1/teams/invitations/${encodeURIComponent(inviteId)}/decline`,
     { method: "POST" },
-    token,
-  );
-}
-
-export async function getSentInvites(
-  teamId: string,
-  token: string,
-): Promise<PendingInvite[]> {
-  if (isMocking && mockFlags.IS_MOCKING_GET_SENT_INVITES) {
-    await new Promise((r) => setTimeout(r, 200));
-    return getMockPendingInvites().filter(
-      (i) => i.teamId === teamId && i.toUserId !== "__current__",
-    );
-  }
-  return apiFetch<PendingInvite[]>(
-    `/teams/${encodeURIComponent(teamId)}/invites`,
-    {},
-    token,
-  );
-}
-
-export async function updateMemberRole(
-  teamId: string,
-  memberId: string,
-  newRole: TeamRole,
-  token: string,
-): Promise<void> {
-  if (isMocking && mockFlags.IS_MOCKING_UPDATE_MEMBER_ROLE) {
-    await new Promise((r) => setTimeout(r, 300));
-    const team = getMockTeamCache().find((t) => t.id === teamId);
-    if (!team) throw new Error("Squadra non trovata");
-    const member = team.members.find((m) => m.id === memberId);
-    if (!member) throw new Error("Membro non trovato");
-    if (member.role === TeamRole.REPRESENTATIVE)
-      throw new Error("Non puoi cambiare il ruolo del rappresentante");
-    if (newRole === TeamRole.COACH) {
-      const existing = team.members.find(
-        (m) => m.role === TeamRole.COACH && m.id !== memberId,
-      );
-      if (existing) throw new Error("La squadra ha già un allenatore");
-    }
-    if (newRole === TeamRole.GOLKEEPER) {
-      const existing = team.members.find(
-        (m) => m.role === TeamRole.GOLKEEPER && m.id !== memberId,
-      );
-      if (existing) throw new Error("La squadra ha già un portiere");
-    }
-    member.role = newRole;
-    return;
-  }
-  return apiFetch<void>(
-    `/teams/${encodeURIComponent(teamId)}/members/${encodeURIComponent(memberId)}/role`,
-    { method: "PATCH", body: JSON.stringify({ role: newRole }) },
     token,
   );
 }

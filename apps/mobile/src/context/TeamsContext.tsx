@@ -13,7 +13,7 @@ import {
   removeMember as removeMemberAPI,
   getPendingInvites as getPendingInvitesAPI,
   acceptInvite as apiAcceptInvite,
-  rejectInvite as apiRejectInvite,
+  declineInvite as apiRejectInvite,
   updateMemberRole as updateMemberRoleAPI,
 } from "../api/teams";
 import { TeamRole } from "../constants/team";
@@ -28,8 +28,8 @@ interface TeamsContextType {
   createTeam: (name: string, sport: string) => Promise<Team>;
   addMember: (teamId: string, appUser: AppUser) => Promise<void>;
   removeMember: (teamId: string, memberId: string) => Promise<void>;
-  acceptInvite: (inviteId: string) => Promise<void>;
-  rejectInvite: (inviteId: string) => Promise<void>;
+  acceptInvite: (inviteId: number) => Promise<void>;
+  declineInvite: (inviteId: number) => Promise<void>;
   updateMemberRole: (
     teamId: string,
     memberId: string,
@@ -78,11 +78,11 @@ export function TeamsProvider({ children }: { children: ReactNode }) {
       const representative = user
         ? {
             id: user.id,
-            first_name: user.first_name ?? "",
-            last_name: user.last_name ?? "",
+            firstName: user.first_name ?? "",
+            lastName: user.last_name ?? "",
             username: user.username ?? "",
           }
-        : { id: "", first_name: "", last_name: "", username: "" };
+        : { id: "", firstName: "", lastName: "", username: "" };
       return apiCreateTeam(name, sport, user?.token ?? "", representative);
     },
     onSuccess: () => {
@@ -96,7 +96,7 @@ export function TeamsProvider({ children }: { children: ReactNode }) {
     onSuccess: (_, { teamId, appUser }) => {
       const team = teams.find((t) => t.id === teamId);
       const newInvite: PendingInvite = {
-        id: `invite-${Date.now()}-${appUser.id}`,
+        id: Number(appUser.id),
         teamId,
         teamName: team?.name ?? "",
         sport: team?.sport ?? "",
@@ -143,14 +143,14 @@ export function TeamsProvider({ children }: { children: ReactNode }) {
   });
 
   const acceptInviteMutation = useMutation({
-    mutationFn: (inviteId: string) => {
+    mutationFn: (inviteId: number) => {
       if (!user) return Promise.reject(new Error("Not authenticated"));
       return apiAcceptInvite(
         inviteId,
         {
           id: user.id,
-          first_name: user.first_name ?? "",
-          last_name: user.last_name ?? "",
+          firstName: user.first_name ?? "",
+          lastName: user.last_name ?? "",
           username: user.username ?? "",
         },
         user.token,
@@ -165,7 +165,7 @@ export function TeamsProvider({ children }: { children: ReactNode }) {
   });
 
   const rejectInviteMutation = useMutation({
-    mutationFn: (inviteId: string) => {
+    mutationFn: (inviteId: number) => {
       if (!user) return Promise.reject(new Error("Not authenticated"));
       return apiRejectInvite(inviteId, user.token);
     },
@@ -232,11 +232,11 @@ export function TeamsProvider({ children }: { children: ReactNode }) {
     return removeMemberMutation.mutateAsync({ teamId, memberId });
   };
 
-  const acceptInvite = async (inviteId: string): Promise<void> => {
+  const acceptInvite = async (inviteId: number): Promise<void> => {
     return acceptInviteMutation.mutateAsync(inviteId);
   };
 
-  const rejectInvite = async (inviteId: string): Promise<void> => {
+  const declineInvite = async (inviteId: number): Promise<void> => {
     return rejectInviteMutation.mutateAsync(inviteId);
   };
 
@@ -287,7 +287,7 @@ export function TeamsProvider({ children }: { children: ReactNode }) {
         addMember,
         removeMember,
         acceptInvite,
-        rejectInvite,
+        declineInvite,
         updateMemberRole,
         updateMemberJersey,
         getTeamById,

@@ -165,16 +165,17 @@ The app uses `@tanstack/react-query` for all async data fetching. The client is 
 **Query keys** are centralized in `src/lib/queryKeys.ts` — always use these factory functions, never inline key strings:
 
 ```ts
-queryKeys.tournaments()          // ['tournaments']
-queryKeys.myTournaments()        // ['myTournaments']
-queryKeys.teams()                // ['teams']
-queryKeys.pendingInvites()       // ['pendingInvites']
-queryKeys.sentInvites(teamId)    // ['sentInvites', teamId]
-queryKeys.favorites()            // ['favorites']
-queryKeys.userSearch(query)      // ['userSearch', query]
+queryKeys.tournaments(); // ['tournaments']
+queryKeys.myTournaments(); // ['myTournaments']
+queryKeys.teams(); // ['teams']
+queryKeys.pendingInvites(); // ['pendingInvites']
+queryKeys.sentInvites(teamId); // ['sentInvites', teamId]
+queryKeys.favorites(); // ['favorites']
+queryKeys.userSearch(query); // ['userSearch', query]
 ```
 
 **Per-context usage**:
+
 - `AuthContext` — `useMutation` for login/register/updateProfile; `qc.clear()` on logout to wipe all cached data
 - `TeamsContext` — `useQuery` for teams and pending invites; `useMutation` for create/invite/remove/role operations
 - `FavoritesContext` — `useQuery` to load favorites; optimistic updates via `qc.setQueryData` before firing the API call
@@ -197,6 +198,7 @@ type UserProfile = PlayerProfile | OrganizerProfile;
 ```
 
 `AuthContext` exposes:
+
 - `currentProfile` — computed from `user.profiles.find(p => p.id === user.currentProfileId)` (falls back to index 0)
 - `switchProfile(profileId)` — updates `currentProfileId`
 - `addOrganizerProfile(orgName)` — creates a new `OrganizerProfile` and switches to it
@@ -222,6 +224,7 @@ type UserProfile = PlayerProfile | OrganizerProfile;
 ### Organizer onboarding (`CreateOrganizerProfile`)
 
 Five steps defined in `src/constants/organizer.ts` `STEP_TITLES_ORGANIZER`:
+
 1. Identity → 2. Sede & Contatti → 3. Dati Legali → 4. Documenti → 5. Consensi
 
 `EntityType` enum: `asd | ssd | societa | azienda | comune | privato | altro`
@@ -235,30 +238,30 @@ Five steps defined in `src/constants/organizer.ts` `STEP_TITLES_ORGANIZER`:
 
 Initial route is `ChoseAccess` when logged out, `MainTabs` when a persisted token exists (resolved during `bootstrapping`).
 
-| Route                       | Screen                  | Notes                                                                     |
-| --------------------------- | ----------------------- | ------------------------------------------------------------------------- |
-| `ChoseAccess`               | ChoseAccess             | Entry screen for unauthenticated users                                    |
-| `MainTabs`                  | MainTabNavigator        | Initial route when authenticated                                          |
-| `Login`                     | Login                   | `redirect?: "tournament"`, `tournamentId?` — redirects after login        |
-| `Register`                  | Register                |                                                                           |
-| `ForgotPassword`            | ForgotPassword          |                                                                           |
-| `TournamentDetail`          | TournamentDetail        | `tournamentId`, `justRegistered?`                                         |
-| `MyTournamentDetail`        | MyTournamentDetail      | `tournamentId`                                                            |
-| `OrganizerTournamentDetail` | _(not yet implemented)_ | `tournamentId` — route defined, screen not yet created |
-| `CreateTournamentSchedule`  | CreateTournamentSchedule | multi-step wizard |
-| `TournamentScheduleResult`  | TournamentScheduleResult | generated schedule preview |
-| `OrganizerProfile`          | OrganizerProfile        | view-only |
-| `CreateOrganizerProfile`    | CreateOrganizerProfile  | 5-step onboarding |
-| `InviteCollaborators`       | InviteCollaborators     | `profileId` |
-| `TournamentHistory`         | TournamentHistory       | |
-| `Settings`                  | Settings                | |
-| `TeamSelect`                | TeamSelect              | Modal; `tournamentId`, `entryFee`, `tournamentName`                       |
-| `Payment`                   | Payment                 | `tournamentId`, `entryFee`, `tournamentName`, `teamId?`, `teamName?`      |
-| `Teams`                     | Teams                   |                                                                           |
-| `CreateTeam`                | CreateTeam              |                                                                           |
-| `TeamDetail`                | TeamDetail              | `teamId`                                                                  |
-| `InvitePlayers`             | InvitePlayers           | `teamId`                                                                  |
-| `Notifiche`                 | Notifications           |                                                                           |
+| Route                       | Screen                   | Notes                                                                |
+| --------------------------- | ------------------------ | -------------------------------------------------------------------- |
+| `ChoseAccess`               | ChoseAccess              | Entry screen for unauthenticated users                               |
+| `MainTabs`                  | MainTabNavigator         | Initial route when authenticated                                     |
+| `Login`                     | Login                    | `redirect?: "tournament"`, `tournamentId?` — redirects after login   |
+| `Register`                  | Register                 |                                                                      |
+| `ForgotPassword`            | ForgotPassword           |                                                                      |
+| `TournamentDetail`          | TournamentDetail         | `tournamentId`, `justRegistered?`                                    |
+| `MyTournamentDetail`        | MyTournamentDetail       | `tournamentId`                                                       |
+| `OrganizerTournamentDetail` | _(not yet implemented)_  | `tournamentId` — route defined, screen not yet created               |
+| `CreateTournamentSchedule`  | CreateTournamentSchedule | multi-step wizard                                                    |
+| `TournamentScheduleResult`  | TournamentScheduleResult | generated schedule preview                                           |
+| `OrganizerProfile`          | OrganizerProfile         | view-only                                                            |
+| `CreateOrganizerProfile`    | CreateOrganizerProfile   | 5-step onboarding                                                    |
+| `InviteCollaborators`       | InviteCollaborators      | `profileId`                                                          |
+| `TournamentHistory`         | TournamentHistory        |                                                                      |
+| `Settings`                  | Settings                 |                                                                      |
+| `TeamSelect`                | TeamSelect               | Modal; `tournamentId`, `entryFee`, `tournamentName`                  |
+| `Payment`                   | Payment                  | `tournamentId`, `entryFee`, `tournamentName`, `teamId?`, `teamName?` |
+| `Teams`                     | Teams                    |                                                                      |
+| `CreateTeam`                | CreateTeam               |                                                                      |
+| `TeamDetail`                | TeamDetail               | `teamId`                                                             |
+| `InvitePlayers`             | InvitePlayers            | `teamId`                                                             |
+| `Notifiche`                 | Notifications            |                                                                      |
 
 ### Bottom tabs (`MainTabParamList`)
 
@@ -309,7 +312,7 @@ When `isMocking = true` (default), all API functions return faker-generated data
 | `getPendingInvites`      | GET `/teams/invites/pending`                | teams.ts       |
 | `getSentInvites`         | GET `/teams/{id}/invites`                   | teams.ts       |
 | `acceptInvite`           | POST `/teams/invites/{id}/accept`           | teams.ts       |
-| `rejectInvite`           | POST `/teams/invites/{id}/reject`           | teams.ts       |
+| `declineInvite`          | POST `/teams/invites/{id}/reject`           | teams.ts       |
 | `searchUsers`            | GET `/users/search?q=`                      | teams.ts       |
 
 ### Mock cache pattern
@@ -358,7 +361,7 @@ return getMockTeamCache(); // ✗ aliasing
 
 ### Team management
 
-- `TeamsContext` provides: `createTeam`, `addMember`, `removeMember`, `getTeamById`, `refreshTeams`, `acceptInvite`, `rejectInvite`, `updateMemberRole`, plus state `pendingReceivedInvites` and `sentPendingInvites`
+- `TeamsContext` provides: `createTeam`, `addMember`, `removeMember`, `getTeamById`, `refreshTeams`, `acceptInvite`, `declineInvite`, `updateMemberRole`, plus state `pendingReceivedInvites` and `sentPendingInvites`
 - **Role-based**: only `representative` can invite or remove members; enforced in both `TeamDetail` and `InvitePlayers`
 - **Roles**: `TeamRole = 'representative' | 'calciatore' | 'allenatore' | 'portiere'`. Max 1 `allenatore` and 1 `portiere` per team; `representative` role is immutable
 - **Pending invites**: `inviteMember` creates a `PendingInvite` rather than directly adding to `team.members`. Members appear in the roster only after calling `acceptInvite`
