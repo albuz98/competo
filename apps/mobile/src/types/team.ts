@@ -2,20 +2,20 @@ import { TeamRole } from "../constants/team";
 
 export interface PendingInvite {
   id: number;
-  teamId: string;
+  teamId: number;
   teamName: string;
   sport: string;
-  fromUserId: string;
+  fromUserId: number;
   fromFirstName: string;
   fromLastName: string;
-  toUserId: string;
+  toUserId: number;
   createdAt: string;
 }
 
 export interface TeamMember {
-  id: string;
-  firstName: string;
-  lastName: string;
+  id: number;
+  firstName?: string;
+  lastName?: string;
   username: string;
   avatarUrl?: string;
   role: TeamRole;
@@ -23,7 +23,7 @@ export interface TeamMember {
 }
 
 export interface Team {
-  id: string;
+  id: number;
   name: string;
   sport: string;
   members: TeamMember[];
@@ -31,9 +31,9 @@ export interface Team {
 }
 
 export interface AppUser {
-  id: string;
-  firstName: string;
-  lastName: string;
+  id: number;
+  firstName?: string;
+  lastName?: string;
   username: string;
   avatarUrl?: string;
 }

@@ -72,7 +72,7 @@ export default function TeamSelect({ route, navigation }: Props) {
   const { tournamentId, entryFee, tournamentName } = route.params;
   const { teams, loading } = useTeams();
   const insets = useSafeAreaInsets();
-  const [selectedId, setSelectedId] = useState<string | null>(
+  const [selectedId, setSelectedId] = useState<number | null>(
     () => teams[0]?.id ?? null,
   );
 

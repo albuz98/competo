@@ -36,7 +36,9 @@ interface UseRowProps {
 }
 
 function UserRow({ user, alreadyMember, invited, onInvite }: UseRowProps) {
-  const initials = (user.first_name[0] ?? "") + (user.last_name[0] ?? "");
+  const initials =
+    (user.firstName ? user.firstName[0] : "") +
+    (user.lastName ? user.lastName[0] : "");
   return (
     <View style={ip.userRow}>
       <View style={ip.userAvatar}>
@@ -44,7 +46,7 @@ function UserRow({ user, alreadyMember, invited, onInvite }: UseRowProps) {
       </View>
       <View style={{ flex: 1 }}>
         <Text style={ip.userName}>
-          {user.first_name} {user.last_name}
+          {user.firstName} {user.lastName}
         </Text>
         <Text style={ip.userUsername}>@{user.username}</Text>
       </View>
@@ -78,7 +80,7 @@ export default function InvitePlayers({ route, navigation }: Props) {
 
   const [tab, setTab] = useState<Tab>("cerca");
   const [localQuery, setLocalQuery] = useState("");
-  const [invited, setInvited] = useState<Set<string>>(new Set());
+  const [invited, setInvited] = useState<Set<number>>(new Set());
 
   const team: Team | undefined = getTeamById(teamId);
   const memberIds = new Set(team?.members.map((m) => m.id) ?? []);
@@ -98,7 +100,7 @@ export default function InvitePlayers({ route, navigation }: Props) {
       setInvited((prev) => new Set(prev).add(appUser.id));
       addNotification({
         title: "Invito inviato",
-        body: `Hai invitato ${appUser.first_name} ${appUser.last_name} nella squadra ${team?.name ?? ""}. In attesa di conferma.`,
+        body: `Hai invitato ${appUser.firstName} ${appUser.lastName} nella squadra ${team?.name ?? ""}. In attesa di conferma.`,
         timestamp: new Date().toISOString(),
       });
       await Notifications.scheduleNotificationAsync({

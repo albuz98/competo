@@ -50,7 +50,7 @@ function TeamCard({ team, onPress }: { team: Team; onPress: () => void }) {
         </Text>
         {representative && (
           <Text style={tss.teamRep} numberOfLines={1}>
-            Cap. {representative.first_name} {representative.last_name}
+            Cap. {representative.firstName} {representative.lastName}
           </Text>
         )}
       </View>
@@ -108,7 +108,7 @@ export default function TeamsScreen({ navigation }: Props) {
   } = useTeams();
   const insets = useSafeAreaInsets();
 
-  const handleAcceptInvite = async (inviteId: string) => {
+  const handleAcceptInvite = async (inviteId: number) => {
     try {
       await acceptInvite(inviteId);
     } catch {
@@ -116,7 +116,7 @@ export default function TeamsScreen({ navigation }: Props) {
     }
   };
 
-  const handleRejectInvite = async (inviteId: string) => {
+  const handleRejectInvite = async (inviteId: number) => {
     try {
       await declineInvite(inviteId);
     } catch {

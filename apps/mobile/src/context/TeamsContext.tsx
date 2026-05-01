@@ -15,6 +15,8 @@ import {
   acceptInvite as apiAcceptInvite,
   declineInvite as apiRejectInvite,
   updateMemberRole as updateMemberRoleAPI,
+  deleteTeam as apiDeleteTeam,
+  leaveTeam as apiLeaveTeam,
 } from "../api/teams";
 import { TeamRole } from "../constants/team";
 import { Team, PendingInvite, AppUser } from "../types/team";
@@ -26,21 +28,23 @@ interface TeamsContextType {
   pendingReceivedInvites: PendingInvite[];
   sentPendingInvites: PendingInvite[];
   createTeam: (name: string, sport: string) => Promise<Team>;
-  addMember: (teamId: string, appUser: AppUser) => Promise<void>;
-  removeMember: (teamId: string, memberId: string) => Promise<void>;
+  addMember: (teamId: number, appUser: AppUser) => Promise<void>;
+  removeMember: (teamId: number, memberId: number) => Promise<void>;
   acceptInvite: (inviteId: number) => Promise<void>;
   declineInvite: (inviteId: number) => Promise<void>;
   updateMemberRole: (
-    teamId: string,
-    memberId: string,
+    teamId: number,
+    memberId: number,
     newRole: TeamRole,
   ) => Promise<void>;
   updateMemberJersey: (
-    teamId: string,
-    memberId: string,
+    teamId: number,
+    memberId: number,
     jerseyNumber: number | undefined,
   ) => void;
-  getTeamById: (id: string) => Team | undefined;
+  deleteTeam: (teamId: number) => Promise<void>;
+  leaveTeam: (teamId: number) => Promise<void>;
+  getTeamById: (id: number) => Team | undefined;
   refreshTeams: () => Promise<void>;
 }
 
@@ -82,7 +86,7 @@ export function TeamsProvider({ children }: { children: ReactNode }) {
             lastName: user.last_name ?? "",
             username: user.username ?? "",
           }
-        : { id: "", firstName: "", lastName: "", username: "" };
+        : { id: 0, firstName: "", lastName: "", username: "" };
       return apiCreateTeam(name, sport, user?.token ?? "", representative);
     },
     onSuccess: () => {
@@ -91,7 +95,7 @@ export function TeamsProvider({ children }: { children: ReactNode }) {
   });
 
   const inviteMemberMutation = useMutation({
-    mutationFn: ({ teamId, appUser }: { teamId: string; appUser: AppUser }) =>
+    mutationFn: ({ teamId, appUser }: { teamId: number; appUser: AppUser }) =>
       apiInviteMember(teamId, appUser, user?.token ?? ""),
     onSuccess: (_, { teamId, appUser }) => {
       const team = teams.find((t) => t.id === teamId);
@@ -100,7 +104,7 @@ export function TeamsProvider({ children }: { children: ReactNode }) {
         teamId,
         teamName: team?.name ?? "",
         sport: team?.sport ?? "",
-        fromUserId: user?.id ?? "",
+        fromUserId: user?.id ?? 0,
         fromFirstName: user?.first_name ?? "",
         fromLastName: user?.last_name ?? "",
         toUserId: appUser.id,
@@ -115,8 +119,8 @@ export function TeamsProvider({ children }: { children: ReactNode }) {
       teamId,
       memberId,
     }: {
-      teamId: string;
-      memberId: string;
+      teamId: number;
+      memberId: number;
     }) => {
       if (!user) return Promise.reject(new Error("Not authenticated"));
       return removeMemberAPI(teamId, memberId, user.token);
@@ -182,8 +186,8 @@ export function TeamsProvider({ children }: { children: ReactNode }) {
       memberId,
       newRole,
     }: {
-      teamId: string;
-      memberId: string;
+      teamId: number;
+      memberId: number;
       newRole: TeamRole;
     }) => {
       if (!user) return Promise.reject(new Error("Not authenticated"));
@@ -215,19 +219,61 @@ export function TeamsProvider({ children }: { children: ReactNode }) {
     },
   });
 
+  const deleteTeamMutation = useMutation({
+    mutationFn: (teamId: number) => {
+      if (!user) return Promise.reject(new Error("Not authenticated"));
+      return apiDeleteTeam(teamId, user.token);
+    },
+    onMutate: async (teamId) => {
+      await qc.cancelQueries({ queryKey: queryKeys.teams() });
+      const prev = qc.getQueryData<Team[]>(queryKeys.teams());
+      qc.setQueryData<Team[]>(queryKeys.teams(), (old = []) =>
+        old.filter((t) => t.id !== teamId),
+      );
+      return { prev };
+    },
+    onError: (_err, _vars, ctx) => {
+      if (ctx?.prev) qc.setQueryData(queryKeys.teams(), ctx.prev);
+    },
+    onSettled: () => {
+      qc.invalidateQueries({ queryKey: queryKeys.teams() });
+    },
+  });
+
+  const leaveTeamMutation = useMutation({
+    mutationFn: (teamId: number) => {
+      if (!user) return Promise.reject(new Error("Not authenticated"));
+      return apiLeaveTeam(teamId, user.id, user.token);
+    },
+    onMutate: async (teamId) => {
+      await qc.cancelQueries({ queryKey: queryKeys.teams() });
+      const prev = qc.getQueryData<Team[]>(queryKeys.teams());
+      qc.setQueryData<Team[]>(queryKeys.teams(), (old = []) =>
+        old.filter((t) => t.id !== teamId),
+      );
+      return { prev };
+    },
+    onError: (_err, _vars, ctx) => {
+      if (ctx?.prev) qc.setQueryData(queryKeys.teams(), ctx.prev);
+    },
+    onSettled: () => {
+      qc.invalidateQueries({ queryKey: queryKeys.teams() });
+    },
+  });
+
   // ─── Public API ───────────────────────────────────────────────────────────
 
   const createTeam = async (name: string, sport: string): Promise<Team> => {
     return createTeamMutation.mutateAsync({ name, sport });
   };
 
-  const addMember = async (teamId: string, appUser: AppUser): Promise<void> => {
+  const addMember = async (teamId: number, appUser: AppUser): Promise<void> => {
     return inviteMemberMutation.mutateAsync({ teamId, appUser });
   };
 
   const removeMember = async (
-    teamId: string,
-    memberId: string,
+    teamId: number,
+    memberId: number,
   ): Promise<void> => {
     return removeMemberMutation.mutateAsync({ teamId, memberId });
   };
@@ -241,8 +287,8 @@ export function TeamsProvider({ children }: { children: ReactNode }) {
   };
 
   const updateMemberRole = async (
-    teamId: string,
-    memberId: string,
+    teamId: number,
+    memberId: number,
     newRole: TeamRole,
   ): Promise<void> => {
     return updateMemberRoleMutation.mutateAsync({ teamId, memberId, newRole });
@@ -250,8 +296,8 @@ export function TeamsProvider({ children }: { children: ReactNode }) {
 
   // Jersey number is a local-only UI state — no API endpoint exists yet.
   const updateMemberJersey = (
-    teamId: string,
-    memberId: string,
+    teamId: number,
+    memberId: number,
     jerseyNumber: number | undefined,
   ) => {
     qc.setQueryData<Team[]>(queryKeys.teams(), (old = []) =>
@@ -268,7 +314,15 @@ export function TeamsProvider({ children }: { children: ReactNode }) {
     );
   };
 
-  const getTeamById = (id: string) => teams.find((t) => t.id === id);
+  const deleteTeam = async (teamId: number): Promise<void> => {
+    return deleteTeamMutation.mutateAsync(teamId);
+  };
+
+  const leaveTeam = async (teamId: number): Promise<void> => {
+    return leaveTeamMutation.mutateAsync(teamId);
+  };
+
+  const getTeamById = (id: number) => teams.find((t) => t.id === id);
 
   const refreshTeams = async () => {
     await qc.invalidateQueries({ queryKey: queryKeys.teams() });
@@ -290,6 +344,8 @@ export function TeamsProvider({ children }: { children: ReactNode }) {
         declineInvite,
         updateMemberRole,
         updateMemberJersey,
+        deleteTeam,
+        leaveTeam,
         getTeamById,
         refreshTeams,
       }}

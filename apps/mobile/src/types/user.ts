@@ -39,7 +39,7 @@ export type OrganizerProfile = {
 export type UserProfile = PlayerProfile | OrganizerProfile;
 
 export interface User {
-  id: string;
+  id: number;
   first_name?: string;
   last_name?: string;
   username: string;

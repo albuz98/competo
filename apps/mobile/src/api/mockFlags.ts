@@ -17,8 +17,9 @@ export const mockFlags = {
   // ─── Teams ────────────────────────────────────────────────────────────────
   IS_MOCKING_ACCEPT_INVITE: false,
   IS_MOCKING_REJECT_INVITE: false,
-  IS_MOCKING_CREATE_TEAM: true,
-  IS_MOCKING_FETCH_USER_TEAMS: true,
+  IS_MOCKING_SEARCH_USERS: false,
+  IS_MOCKING_INVITE_MEMBER: false,
+  IS_MOCKING_REMOVE_MEMBER: false,
 
   // ──────────────────────────────────────────────────────────────────────────
   IS_MOCKING_FORGOT_PASSWORD: true,
@@ -40,12 +41,13 @@ export const mockFlags = {
   IS_MOCKING_REMOVE_TEAM_FROM_TOURNAMENT: true,
 
   // ─── Teams ────────────────────────────────────────────────────────────────
-  IS_MOCKING_INVITE_MEMBER: true,
-  IS_MOCKING_REMOVE_MEMBER: true,
-  IS_MOCKING_SEARCH_USERS: true,
+  IS_MOCKING_CREATE_TEAM: true,
+  IS_MOCKING_FETCH_USER_TEAMS: true,
   IS_MOCKING_GET_PENDING_INVITES: true,
   IS_MOCKING_GET_SENT_INVITES: true,
   IS_MOCKING_UPDATE_MEMBER_ROLE: true,
+  IS_MOCKING_DELETE_TEAM: true,
+  IS_MOCKING_LEAVE_TEAM: true,
 
   // ─── Organizer ────────────────────────────────────────────────────────────
   IS_MOCKING_SUBMIT_ORGANIZER_PROFILE: true,

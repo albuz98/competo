@@ -62,7 +62,9 @@ function MemberRow({
   onChangeRole: () => void;
   onEditJersey: () => void;
 }) {
-  const initials = (member.firstName[0] ?? "") + (member.lastName[0] ?? "");
+  const initials =
+    (member.firstName ? member.firstName[0] : "") +
+    (member.lastName ? member.lastName[0] : "");
   const isRep = member.role === "representative";
   const showJersey = HAS_JERSEY[member.role] === true;
 
@@ -174,6 +176,8 @@ export default function TeamDetail({ route, navigation }: Props) {
     sentPendingInvites,
     updateMemberRole,
     updateMemberJersey,
+    deleteTeam,
+    leaveTeam,
   } = useTeams() as any;
   const { user } = useAuth();
   const insets = useSafeAreaInsets();
@@ -182,12 +186,15 @@ export default function TeamDetail({ route, navigation }: Props) {
   const [roleTarget, setRoleTarget] = useState<TeamMember | null>(null);
   const [jerseyTarget, setJerseyTarget] = useState<TeamMember | null>(null);
   const [jerseyInput, setJerseyInput] = useState("");
+  const [menuVisible, setMenuVisible] = useState(false);
+  const [confirmLeave, setConfirmLeave] = useState(false);
+  const [confirmDelete, setConfirmDelete] = useState(false);
 
   const isRep =
     team?.members.find((m: TeamMember) => m.id === user?.id)?.role ===
     "representative";
 
-  const handleRemoveMember = async (memberId: string) => {
+  const handleRemoveMember = async (memberId: number) => {
     try {
       await removeMember(teamId, memberId);
     } catch {
@@ -195,7 +202,7 @@ export default function TeamDetail({ route, navigation }: Props) {
     }
   };
 
-  const handleChangeRole = async (memberId: string, newRole: TeamRole) => {
+  const handleChangeRole = async (memberId: number, newRole: TeamRole) => {
     try {
       await updateMemberRole(teamId, memberId, newRole);
     } catch (e: any) {
@@ -234,6 +241,16 @@ export default function TeamDetail({ route, navigation }: Props) {
           <SafeAreaView edges={["top"]}>
             <View style={tds.headerTop}>
               <ButtonBack handleBtn={() => navigation.goBack()} />
+              <ButtonIcon
+                handleBtn={() => setMenuVisible(true)}
+                icon={
+                  <Ionicons
+                    name="ellipsis-vertical"
+                    size={22}
+                    color={colors.white}
+                  />
+                }
+              />
             </View>
             <View style={tds.headerBody}>
               <View style={tds.teamAvatarLarge}>
@@ -337,8 +354,10 @@ export default function TeamDetail({ route, navigation }: Props) {
             <View style={tds.modalAvatar}>
               <Text style={tds.modalAvatarText}>
                 {confirmTarget
-                  ? (confirmTarget.firstName[0] ?? "") +
-                    (confirmTarget.lastName[0] ?? "")
+                  ? (confirmTarget.firstName
+                      ? confirmTarget.firstName[0]
+                      : "") +
+                    (confirmTarget.lastName ? confirmTarget.lastName[0] : "")
                   : ""}
               </Text>
             </View>
@@ -437,6 +456,150 @@ export default function TeamDetail({ route, navigation }: Props) {
               text="Annulla"
               handleBtn={() => setRoleTarget(null)}
             />
+          </View>
+        </View>
+      </Modal>
+
+      {/* Three-dot dropdown menu */}
+      <Modal
+        visible={menuVisible}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setMenuVisible(false)}
+      >
+        <View style={tds.menuOverlay}>
+          <ButtonGeneric
+            style={{ flex: 1 }}
+            handleBtn={() => setMenuVisible(false)}
+          >
+            <View />
+          </ButtonGeneric>
+          <View
+            style={[
+              tds.menuCard,
+              { top: insets.top + 52, right: 16 },
+            ]}
+          >
+            {isRep ? (
+              <ButtonGeneric
+                style={tds.menuItem}
+                handleBtn={() => {
+                  setMenuVisible(false);
+                  setConfirmDelete(true);
+                }}
+              >
+                <Ionicons name="trash-outline" size={18} color={colors.danger} />
+                <Text style={[tds.menuItemText, { color: colors.danger }]}>
+                  Elimina squadra
+                </Text>
+              </ButtonGeneric>
+            ) : (
+              <ButtonGeneric
+                style={tds.menuItem}
+                handleBtn={() => {
+                  setMenuVisible(false);
+                  setConfirmLeave(true);
+                }}
+              >
+                <Ionicons
+                  name="exit-outline"
+                  size={18}
+                  color={colors.danger}
+                />
+                <Text style={[tds.menuItemText, { color: colors.danger }]}>
+                  Lascia squadra
+                </Text>
+              </ButtonGeneric>
+            )}
+          </View>
+        </View>
+      </Modal>
+
+      {/* Leave team confirmation modal */}
+      <Modal
+        visible={confirmLeave}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setConfirmLeave(false)}
+      >
+        <View style={tds.modalOverlay}>
+          <View style={tds.modalCard}>
+            <View style={tds.modalAvatar}>
+              <Ionicons name="exit-outline" size={28} color={colors.danger} />
+            </View>
+            <Text style={tds.modalTitle}>Lascia squadra</Text>
+            <Text style={tds.modalBody}>
+              Sei sicuro di voler lasciare{"\n"}
+              <Text style={tds.modalMemberName}>{team.name}</Text>?
+            </Text>
+            <Text style={tds.modalWarning}>
+              Questa azione non può essere annullata.
+            </Text>
+            <View style={tds.modalActions}>
+              <ButtonLink
+                style={tds.modalCancelBtn}
+                text="Annulla"
+                handleBtn={() => setConfirmLeave(false)}
+              />
+              <ButtonLink
+                style={tds.modalRemoveBtn}
+                text="Lascia"
+                handleBtn={async () => {
+                  setConfirmLeave(false);
+                  try {
+                    await leaveTeam(teamId);
+                  } catch {
+                    // optimistic update already reverted by mutation
+                  }
+                  navigation.goBack();
+                }}
+              />
+            </View>
+          </View>
+        </View>
+      </Modal>
+
+      {/* Delete team confirmation modal */}
+      <Modal
+        visible={confirmDelete}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setConfirmDelete(false)}
+      >
+        <View style={tds.modalOverlay}>
+          <View style={tds.modalCard}>
+            <View style={tds.modalAvatar}>
+              <Ionicons name="trash-outline" size={28} color={colors.danger} />
+            </View>
+            <Text style={tds.modalTitle}>Elimina squadra</Text>
+            <Text style={tds.modalBody}>
+              Sei sicuro di voler eliminare{"\n"}
+              <Text style={tds.modalMemberName}>{team.name}</Text>?
+            </Text>
+            <Text style={tds.modalWarning}>
+              Tutti i membri verranno rimossi. Questa azione non può essere
+              annullata.
+            </Text>
+            <View style={tds.modalActions}>
+              <ButtonLink
+                style={tds.modalCancelBtn}
+                text="Annulla"
+                handleBtn={() => setConfirmDelete(false)}
+              />
+              <ButtonLink
+                style={tds.modalRemoveBtn}
+                text="Elimina"
+                handleBtn={async () => {
+                  setConfirmDelete(false);
+                  try {
+                    await deleteTeam(teamId);
+                  } catch {
+                    // optimistic update already reverted by mutation
+                  }
+                  navigation.goBack();
+                }}
+              />
+            </View>
           </View>
         </View>
       </Modal>

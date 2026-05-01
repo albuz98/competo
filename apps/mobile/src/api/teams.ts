@@ -5,7 +5,7 @@ import {
   generateTeamMember,
 } from "../mock/team";
 import { Team, AppUser, PendingInvite } from "../types/team";
-import { isMocking, apiFetch } from "./config";
+import { apiFetch } from "./config";
 import { mockFlags } from "./mockFlags";
 import { faker } from "@faker-js/faker";
 
@@ -32,13 +32,13 @@ function getMockPendingInvites(): PendingInvite[] {
     pendingInviteCache = [
       {
         id: 1,
-        teamId: "external-team-1",
+        teamId: 22,
         teamName: "Milano United",
         sport: "Calcio",
-        fromUserId: "user-ext-1",
+        fromUserId: 2,
         fromFirstName: "Marco",
         fromLastName: "Bianchi",
-        toUserId: "__current__",
+        toUserId: 0,
         createdAt: new Date(Date.now() - 7200000).toISOString(),
       },
     ];
@@ -47,7 +47,7 @@ function getMockPendingInvites(): PendingInvite[] {
 }
 
 export async function fetchUserTeams(token: string): Promise<Team[]> {
-  if (isMocking && mockFlags.IS_MOCKING_FETCH_USER_TEAMS) {
+  if (mockFlags.IS_MOCKING_FETCH_USER_TEAMS) {
     await new Promise((r) => setTimeout(r, 400));
     return [...getMockTeamCache()]; // shallow copy — prevents cache mutations from aliasing React state
   }
@@ -59,13 +59,13 @@ export async function createTeam(
   sport: string,
   token: string,
   representative?: {
-    id: string;
+    id: number;
     firstName: string;
     lastName: string;
     username: string;
   },
 ): Promise<Team> {
-  if (isMocking && mockFlags.IS_MOCKING_CREATE_TEAM) {
+  if (mockFlags.IS_MOCKING_CREATE_TEAM) {
     // Duplicate name check: same representative can't have two teams with same name
     if (mockTeamCache && representative) {
       const duplicate = mockTeamCache.find(
@@ -84,7 +84,7 @@ export async function createTeam(
       ? { ...representative, role: TeamRole.REPRESENTATIVE }
       : generateTeamMember(TeamRole.REPRESENTATIVE);
     const newTeam: Team = {
-      id: faker.string.uuid(),
+      id: faker.number.int(),
       name,
       sport,
       members: [rep],
@@ -100,109 +100,24 @@ export async function createTeam(
   );
 }
 
-export async function inviteMember(
-  teamId: string,
-  appUser: AppUser,
-  token: string,
-): Promise<void> {
-  if (isMocking && mockFlags.IS_MOCKING_INVITE_MEMBER) {
-    // Mock path: create pending invite, do NOT add to team.members
-    const team = getMockTeamCache().find((t) => t.id === teamId);
-    if (!team) return;
-    if (team.members.find((m) => m.id === appUser.id)) return; // already member
-    if (
-      getMockPendingInvites().find(
-        (i) => i.teamId === teamId && i.toUserId === appUser.id,
-      )
-    )
-      return; // already invited
-    const rep = team.members.find((m) => m.role === "representative");
-    getMockPendingInvites().push({
-      id: Number(appUser.id),
-      teamId: team.id,
-      teamName: team.name,
-      sport: team.sport,
-      fromUserId: rep?.id ?? "",
-      fromFirstName: rep?.firstName ?? "",
-      fromLastName: rep?.lastName ?? "",
-      toUserId: appUser.id,
-      createdAt: new Date().toISOString(),
-    });
-    return;
-  }
-  return apiFetch<void>(
-    `/teams/${encodeURIComponent(teamId)}/invite`,
-    { method: "POST", body: JSON.stringify({ userId: appUser.id }) },
-    token,
-  );
-}
-
-export async function removeMember(
-  teamId: string,
-  memberId: string,
-  token: string,
-): Promise<void> {
-  if (isMocking && mockFlags.IS_MOCKING_REMOVE_MEMBER) {
-    await new Promise<void>((res) => setTimeout(res, 300));
-    const team = getMockTeamCache().find((t) => t.id === teamId);
-    if (!team) throw new Error("Squadra non trovata");
-    const member = team.members.find((m) => m.id === memberId);
-    if (!member) throw new Error("Membro non trovato");
-    if (member.role === "representative")
-      throw new Error("Non puoi rimuovere il rappresentante");
-    team.members = team.members.filter((m) => m.id !== memberId);
-    return;
-  }
-  return apiFetch<void>(
-    `/teams/${encodeURIComponent(teamId)}/members/${encodeURIComponent(memberId)}`,
-    { method: "DELETE" },
-    token,
-  );
-}
-
-export async function searchUsers(
-  query: string,
-  token: string,
-): Promise<AppUser[]> {
-  if (isMocking && mockFlags.IS_MOCKING_SEARCH_USERS) {
-    await new Promise((r) => setTimeout(r, 250));
-    const all = getMockUsersCache();
-    if (!query.trim()) return all.slice(0, 10);
-    const q = query.toLowerCase();
-    return all.filter(
-      (u) =>
-        u.username.toLowerCase().includes(q) ||
-        u.firstName.toLowerCase().includes(q) ||
-        u.lastName.toLowerCase().includes(q),
-    );
-  }
-  return apiFetch<AppUser[]>(
-    `/users/search?q=${encodeURIComponent(query)}`,
-    {},
-    token,
-  );
-}
-
 export async function getPendingInvites(
-  userId: string,
+  userId: number,
   token: string,
 ): Promise<PendingInvite[]> {
-  if (isMocking && mockFlags.IS_MOCKING_GET_PENDING_INVITES) {
+  if (mockFlags.IS_MOCKING_GET_PENDING_INVITES) {
     await new Promise((r) => setTimeout(r, 300));
-    return getMockPendingInvites().filter(
-      (i) => i.toUserId === userId || i.toUserId === "__current__",
-    );
+    return getMockPendingInvites().filter((i) => i.toUserId === userId);
   }
   return apiFetch<PendingInvite[]>("/teams/invites/pending", {}, token);
 }
 
 export async function updateMemberRole(
-  teamId: string,
-  memberId: string,
+  teamId: number,
+  memberId: number,
   newRole: TeamRole,
   token: string,
 ): Promise<void> {
-  if (isMocking && mockFlags.IS_MOCKING_UPDATE_MEMBER_ROLE) {
+  if (mockFlags.IS_MOCKING_UPDATE_MEMBER_ROLE) {
     await new Promise((r) => setTimeout(r, 300));
     const team = getMockTeamCache().find((t) => t.id === teamId);
     if (!team) throw new Error("Squadra non trovata");
@@ -232,18 +147,151 @@ export async function updateMemberRole(
   );
 }
 
+export async function deleteTeam(teamId: number, token: string): Promise<void> {
+  if (mockFlags.IS_MOCKING_DELETE_TEAM) {
+    await new Promise<void>((res) => setTimeout(res, 300));
+    const idx = getMockTeamCache().findIndex((t) => t.id === teamId);
+    if (idx === -1) throw new Error("Squadra non trovata");
+    getMockTeamCache().splice(idx, 1);
+    return;
+  }
+  return apiFetch<void>(
+    `/teams/${encodeURIComponent(teamId)}`,
+    { method: "DELETE" },
+    token,
+  );
+}
+
+export async function leaveTeam(
+  teamId: number,
+  userId: number,
+  token: string,
+): Promise<void> {
+  if (mockFlags.IS_MOCKING_LEAVE_TEAM) {
+    await new Promise<void>((res) => setTimeout(res, 300));
+    const team = getMockTeamCache().find((t) => t.id === teamId);
+    if (!team) throw new Error("Squadra non trovata");
+    team.members = team.members.filter((m) => m.id !== userId);
+    return;
+  }
+  return apiFetch<void>(
+    `/teams/${encodeURIComponent(teamId)}/leave`,
+    { method: "POST" },
+    token,
+  );
+}
+
 //--------------------- IT'S OK ------------------------------
+export async function inviteMember(
+  teamId: number,
+  appUser: AppUser,
+  token: string,
+): Promise<void> {
+  if (mockFlags.IS_MOCKING_INVITE_MEMBER) {
+    // Mock path: create pending invite, do NOT add to team.members
+    const team = getMockTeamCache().find((t) => t.id === teamId);
+    if (!team) return;
+    if (team.members.find((m) => m.id === appUser.id)) return; // already member
+    if (
+      getMockPendingInvites().find(
+        (i) => i.teamId === teamId && i.toUserId === appUser.id,
+      )
+    )
+      return; // already invited
+    const rep = team.members.find((m) => m.role === "representative");
+    getMockPendingInvites().push({
+      id: appUser.id,
+      teamId: team.id,
+      teamName: team.name,
+      sport: team.sport,
+      fromUserId: rep?.id ?? 0,
+      fromFirstName: rep?.firstName ?? "",
+      fromLastName: rep?.lastName ?? "",
+      toUserId: appUser.id,
+      createdAt: new Date().toISOString(),
+    });
+    return;
+  }
+  return apiFetch<void>(
+    `/api/v1/teams/${teamId}/invitations`,
+    {
+      method: "POST",
+      body: JSON.stringify({
+        invited_user_id: appUser.id,
+        role: TeamRole.PLAYER,
+      }),
+    },
+    token,
+  );
+}
+
+export async function removeMember(
+  teamId: number,
+  memberId: number,
+  token: string,
+): Promise<void> {
+  if (mockFlags.IS_MOCKING_REMOVE_MEMBER) {
+    await new Promise<void>((res) => setTimeout(res, 300));
+    const team = getMockTeamCache().find((t) => t.id === teamId);
+    if (!team) throw new Error("Squadra non trovata");
+    const member = team.members.find((m) => m.id === memberId);
+    if (!member) throw new Error("Membro non trovato");
+    if (member.role === "representative")
+      throw new Error("Non puoi rimuovere il rappresentante");
+    team.members = team.members.filter((m) => m.id !== memberId);
+    return;
+  }
+  return apiFetch<void>(
+    `/api/v1/teams/${encodeURIComponent(teamId)}/members/${encodeURIComponent(memberId)}`,
+    { method: "DELETE" },
+    token,
+  );
+}
+
+export async function searchUsers(
+  query: string,
+  token: string,
+): Promise<AppUser[]> {
+  if (mockFlags.IS_MOCKING_SEARCH_USERS) {
+    await new Promise((r) => setTimeout(r, 250));
+    const all = getMockUsersCache();
+    if (!query.trim()) return all.slice(0, 10);
+    const q = query.toLowerCase();
+    return all.filter(
+      (u) =>
+        u.username.toLowerCase().includes(q) ||
+        (u.firstName && u.firstName.toLowerCase().includes(q)) ||
+        (u.lastName && u.lastName.toLowerCase().includes(q)),
+    );
+  }
+  const res = await apiFetch<{
+    data: {
+      id: number;
+      username: string;
+      first_name: string;
+      last_name: string;
+    }[];
+    pagination: Record<string, unknown>;
+  }>(`/api/v1/users/search?q=${encodeURIComponent(query)}`, {}, token);
+  return res.data.map((u) => ({
+    id: u.id,
+    username: u.username,
+    firstName: u.first_name,
+    lastName: u.last_name,
+  }));
+}
+
 export async function acceptInvite(
   inviteId: number,
   currentUser: {
-    id: string;
+    id: number;
     firstName: string;
     lastName: string;
     username: string;
   },
   token: string,
 ): Promise<void> {
-  if (isMocking && mockFlags.IS_MOCKING_ACCEPT_INVITE) {
+  if (mockFlags.IS_MOCKING_ACCEPT_INVITE) {
     await new Promise((r) => setTimeout(r, 400));
     const invites = getMockPendingInvites();
     const invite = invites.find((i) => i.id === inviteId);
@@ -285,7 +333,7 @@ export async function declineInvite(
   inviteId: number,
   token: string,
 ): Promise<void> {
-  if (isMocking && mockFlags.IS_MOCKING_REJECT_INVITE) {
+  if (mockFlags.IS_MOCKING_REJECT_INVITE) {
     await new Promise((r) => setTimeout(r, 300));
     pendingInviteCache = getMockPendingInvites().filter(
       (i) => i.id !== inviteId,

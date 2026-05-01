@@ -9,7 +9,7 @@ export type RootStackParamList = {
     tournamentId: string;
     entryFee: string;
     tournamentName: string;
-    teamId?: string;
+    teamId?: number;
     teamName?: string;
   };
   TeamSelect: {
@@ -21,8 +21,8 @@ export type RootStackParamList = {
   Notifiche: undefined;
   Teams: undefined;
   CreateTeam: undefined;
-  TeamDetail: { teamId: string };
-  InvitePlayers: { teamId: string };
+  TeamDetail: { teamId: number };
+  InvitePlayers: { teamId: number };
   InviteCollaborators: { profileId: string };
   OrganizerTournamentDetail: { tournamentId: string };
   CreateTournamentSchedule: undefined;
