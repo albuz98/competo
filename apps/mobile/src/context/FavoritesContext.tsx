@@ -17,9 +17,9 @@ import { queryKeys } from "../lib/queryKeys";
 interface FavoritesContextType {
   favorites: Tournament[];
   addFavorite: (tournament: Tournament) => void;
-  removeFavorite: (tournamentId: string) => void;
-  isFavorite: (tournamentId: string) => boolean;
-  wasAddedWhenFull: (tournamentId: string) => boolean;
+  removeFavorite: (tournamentId: number) => void;
+  isFavorite: (tournamentId: number) => boolean;
+  wasAddedWhenFull: (tournamentId: number) => boolean;
 }
 
 const FavoritesContext = createContext<FavoritesContextType | null>(null);
@@ -30,7 +30,7 @@ export function FavoritesProvider({ children }: { children: ReactNode }) {
 
   // Tracks IDs of full tournaments at the time they were bookmarked — used to
   // notify the user when a spot opens up. Pure local state, not persisted.
-  const [fullWhenAddedIds, setFullWhenAddedIds] = useState<string[]>([]);
+  const [fullWhenAddedIds, setFullWhenAddedIds] = useState<number[]>([]);
 
   // ─── Query ─────────────────────────────────────────────────────────────────
 
@@ -55,7 +55,7 @@ export function FavoritesProvider({ children }: { children: ReactNode }) {
     if (user) apiAdd(tournament, user.token).catch(() => {});
   };
 
-  const removeFavorite = (tournamentId: string) => {
+  const removeFavorite = (tournamentId: number) => {
     qc.setQueryData<Tournament[]>(queryKeys.favorites(), (old = []) =>
       old.filter((t) => t.id !== tournamentId),
     );
@@ -63,10 +63,10 @@ export function FavoritesProvider({ children }: { children: ReactNode }) {
     if (user) apiRemove(tournamentId, user.token).catch(() => {});
   };
 
-  const isFavorite = (tournamentId: string) =>
+  const isFavorite = (tournamentId: number) =>
     favorites.some((t) => t.id === tournamentId);
 
-  const wasAddedWhenFull = (tournamentId: string) =>
+  const wasAddedWhenFull = (tournamentId: number) =>
     fullWhenAddedIds.includes(tournamentId);
 
   return (

@@ -116,7 +116,7 @@ export default function TournamentListScreen() {
     if (!user) {
       navigation.navigate(NavigationEnum.LOGIN, {
         redirect: "tournament",
-        tournamentId: tournament.id,
+        tournamentId: String(tournament.id),
       });
     } else {
       navigation.navigate(NavigationEnum.TOURNAMENT_DETAIL, {
@@ -156,7 +156,7 @@ export default function TournamentListScreen() {
     <SafeAreaView style={styles.container} edges={["bottom"]}>
       <FlatList
         data={tournaments}
-        keyExtractor={(item) => item.id}
+        keyExtractor={(item) => String(item.id)}
         renderItem={({ item }) => (
           <TournamentCard tournament={item} onPress={() => handlePress(item)} />
         )}

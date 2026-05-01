@@ -60,8 +60,8 @@ export async function createTeam(
   token: string,
   representative?: {
     id: string;
-    first_name: string;
-    last_name: string;
+    firstName: string;
+    lastName: string;
     username: string;
   },
 ): Promise<Team> {
@@ -123,8 +123,8 @@ export async function inviteMember(
       teamName: team.name,
       sport: team.sport,
       fromUserId: rep?.id ?? "",
-      fromFirstName: rep?.first_name ?? "",
-      fromLastName: rep?.last_name ?? "",
+      fromFirstName: rep?.firstName ?? "",
+      fromLastName: rep?.lastName ?? "",
       toUserId: appUser.id,
       createdAt: new Date().toISOString(),
     });
@@ -172,8 +172,8 @@ export async function searchUsers(
     return all.filter(
       (u) =>
         u.username.toLowerCase().includes(q) ||
-        u.first_name.toLowerCase().includes(q) ||
-        u.last_name.toLowerCase().includes(q),
+        u.firstName.toLowerCase().includes(q) ||
+        u.lastName.toLowerCase().includes(q),
     );
   }
   return apiFetch<AppUser[]>(
@@ -200,8 +200,8 @@ export async function acceptInvite(
   inviteId: string,
   currentUser: {
     id: string;
-    first_name: string;
-    last_name: string;
+    firstName: string;
+    lastName: string;
     username: string;
   },
   token: string,
@@ -221,8 +221,8 @@ export async function acceptInvite(
         members: [
           {
             id: invite.fromUserId,
-            first_name: invite.fromFirstName,
-            last_name: invite.fromLastName,
+            firstName: invite.fromFirstName,
+            lastName: invite.fromLastName,
             username: `${invite.fromFirstName.toLowerCase()}`,
             role: TeamRole.REPRESENTATIVE,
           },

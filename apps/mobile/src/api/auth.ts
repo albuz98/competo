@@ -1,6 +1,6 @@
 import { mockProfile } from "../mock/profile";
 import { LoginCredentials, RegisterCredentials } from "../types/auth";
-import { Gender, User } from "../types/user";
+import { Gender, PlayerProfile, User, UserRole } from "../types/user";
 import { isMocking, apiFetch } from "./config";
 import { mockFlags } from "./mockFlags";
 
@@ -9,7 +9,20 @@ import { mockFlags } from "./mockFlags";
 export async function fetchProfile(token: string): Promise<User> {
   if (isMocking && mockFlags.IS_MOCKING_FETCH_PROFILE)
     return { ...mockProfile };
-  return apiFetch<User>("/auth/profile", {}, token);
+  const userData = await apiFetch<User>("/api/v1/users/me", {}, token);
+  if (!userData.profiles || userData.profiles.length === 0) {
+    const playerProfile: PlayerProfile = {
+      id: userData.id,
+      role: UserRole.PLAYER,
+      username: userData.username,
+      first_name: userData.first_name,
+      last_name: userData.last_name,
+      avatarUrl: userData.avatarUrl,
+    };
+    userData.profiles = [playerProfile];
+    userData.currentProfileId = userData.id;
+  }
+  return userData;
 }
 
 // Register the Expo push token for this device so the backend can send server-side notifications.

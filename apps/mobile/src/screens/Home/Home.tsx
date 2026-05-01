@@ -198,11 +198,11 @@ export default function Home() {
 
   const activeChips = getActiveChips(activeFilters);
 
-  const goToDetail = (id: string) => {
+  const goToDetail = (id: number) => {
     if (!user) {
       navigation.navigate(NavigationEnum.LOGIN, {
         redirect: "tournament",
-        tournamentId: id,
+        tournamentId: String(id),
       });
     } else {
       navigation.navigate(NavigationEnum.TOURNAMENT_DETAIL, {
@@ -211,11 +211,11 @@ export default function Home() {
     }
   };
 
-  const goToMyTournament = (id: string) => {
+  const goToMyTournament = (id: number) => {
     if (!user) {
       navigation.navigate(NavigationEnum.LOGIN, {
         redirect: "tournament",
-        tournamentId: id,
+        tournamentId: String(id),
       });
     } else {
       navigation.navigate(NavigationEnum.MY_TOURNAMENT_DETAIL, {

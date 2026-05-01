@@ -3,8 +3,8 @@ export type RootStackParamList = {
   Login: { redirect?: "tournament"; tournamentId?: string };
   Register: undefined;
   MainTabs: undefined;
-  TournamentDetail: { tournamentId: string; justRegistered?: boolean };
-  MyTournamentDetail: { tournamentId: string };
+  TournamentDetail: { tournamentId: number; justRegistered?: boolean };
+  MyTournamentDetail: { tournamentId: number };
   Payment: {
     tournamentId: string;
     entryFee: string;

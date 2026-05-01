@@ -10,7 +10,7 @@ export async function fetchFavorites(token: string): Promise<Tournament[]> {
     await new Promise((r) => setTimeout(r, 300));
     return [...mockFavoritesCache];
   }
-  return apiFetch<Tournament[]>("/favorites", {}, token);
+  return apiFetch<Tournament[]>("/api/v1/users/me/favorites", {}, token);
 }
 
 // In real mode only the tournament ID is sent; the full object is needed in mock mode
@@ -26,14 +26,14 @@ export async function addFavorite(
     return;
   }
   return apiFetch<void>(
-    `/favorites/${tournament.id}`,
+    `/api/v1/users/me/favorites/${tournament.id}`,
     { method: "POST" },
     token,
   );
 }
 
 export async function removeFavorite(
-  tournamentId: string,
+  tournamentId: number,
   token: string,
 ): Promise<void> {
   if (isMocking && mockFlags.IS_MOCKING_REMOVE_FAVORITE) {
@@ -43,7 +43,7 @@ export async function removeFavorite(
     return;
   }
   return apiFetch<void>(
-    `/favorites/${tournamentId}`,
+    `/api/v1/users/me/favorites/${tournamentId}`,
     { method: "DELETE" },
     token,
   );

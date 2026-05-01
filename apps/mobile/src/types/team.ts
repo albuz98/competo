@@ -14,8 +14,8 @@ export interface PendingInvite {
 
 export interface TeamMember {
   id: string;
-  first_name: string;
-  last_name: string;
+  firstName: string;
+  lastName: string;
   username: string;
   avatarUrl?: string;
   role: TeamRole;
@@ -32,8 +32,8 @@ export interface Team {
 
 export interface AppUser {
   id: string;
-  first_name: string;
-  last_name: string;
+  firstName: string;
+  lastName: string;
   username: string;
   avatarUrl?: string;
 }

@@ -131,7 +131,7 @@ export interface OrganizerTournamentDetail extends MyTournament {
 export type TournamentStatus = "upcoming" | "ongoing" | "completed";
 
 export interface Tournament {
-  id: string;
+  id: number;
   name: string;
   game: string;
   startDate: string;

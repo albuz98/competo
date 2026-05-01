@@ -32,7 +32,7 @@ const NOUNS = [
   "Challenge",
 ];
 
-export function generateTournament(id?: string): Tournament {
+export function generateTournament(id?: number): Tournament {
   const status = faker.helpers.arrayElement(STATUSES);
   const maxParticipants = faker.helpers.arrayElement([8, 16, 32, 64, 128]);
   const hasLogo = faker.datatype.boolean();
@@ -54,7 +54,7 @@ export function generateTournament(id?: string): Tournament {
   ).toISOString();
 
   return {
-    id: id ?? faker.string.uuid(),
+    id: id ?? faker.number.int(),
     name: `${faker.helpers.arrayElement(ADJECTIVES)} ${faker.helpers.arrayElement(NOUNS)} ${new Date(startDate).getFullYear()}`,
     game: faker.helpers.arrayElement(GAMES),
     startDate,
@@ -216,7 +216,7 @@ function generateKnockoutStructure(): TournamentStructure {
   };
 }
 
-export function generateMyTournament(id?: string, index = -1): MyTournament {
+export function generateMyTournament(id?: number, index = -1): MyTournament {
   const base = generateTournament(id);
   const isOrganizer = index === 0 || index === 1;
   const isGenerated = index >= 2 || index === -1;

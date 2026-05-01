@@ -123,7 +123,7 @@ export default function Favorites() {
       ) : (
         <FlatList
           data={favorites}
-          keyExtractor={(t) => t.id}
+          keyExtractor={(t) => String(t.id)}
           contentContainerStyle={{
             padding: 16,
             paddingBottom: insets.bottom + 20,

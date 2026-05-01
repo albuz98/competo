@@ -41,7 +41,7 @@ export function addToMockCache(tournament: Tournament) {
   getMockCache().push(tournament);
 }
 
-export function getMockTournamentIds(): string[] {
+export function getMockTournamentIds(): number[] {
   return getMockCache().map((t) => t.id);
 }
 
@@ -54,7 +54,7 @@ export async function fetchTournaments(): Promise<Tournament[]> {
   return apiFetch<Tournament[]>("/tournaments");
 }
 
-export async function fetchTournament(id: string): Promise<Tournament> {
+export async function fetchTournament(id: number): Promise<Tournament> {
   if (isMocking && mockFlags.IS_MOCKING_FETCH_TOURNAMENT) {
     await new Promise((r) => setTimeout(r, 400));
     const found = getMockCache().find((t) => t.id === id);
@@ -75,7 +75,9 @@ export function getMyTournamentsCache(): MyTournament[] {
   return myTournamentsCache;
 }
 
-export async function fetchMyTournaments(token: string): Promise<MyTournament[]> {
+export async function fetchMyTournaments(
+  token: string,
+): Promise<MyTournament[]> {
   if (isMocking && mockFlags.IS_MOCKING_FETCH_MY_TOURNAMENTS) {
     await new Promise((r) => setTimeout(r, 500));
     return getMyTournamentsCache();
@@ -83,17 +85,24 @@ export async function fetchMyTournaments(token: string): Promise<MyTournament[]>
   return apiFetch<MyTournament[]>("/my-tournaments", {}, token);
 }
 
-export async function fetchMyTournament(id: string, token: string): Promise<MyTournament> {
+export async function fetchMyTournament(
+  id: number,
+  token: string,
+): Promise<MyTournament> {
   if (isMocking && mockFlags.IS_MOCKING_FETCH_MY_TOURNAMENT) {
     await new Promise((r) => setTimeout(r, 300));
     const found = getMyTournamentsCache().find((t) => t.id === id);
     return found ?? generateMyTournament(id);
   }
-  return apiFetch<MyTournament>(`/my-tournaments/${encodeURIComponent(id)}`, {}, token);
+  return apiFetch<MyTournament>(
+    `/my-tournaments/${encodeURIComponent(id)}`,
+    {},
+    token,
+  );
 }
 
 export async function signUpForTournament(
-  tournamentId: string,
+  tournamentId: number,
   token: string,
   teamId?: string,
 ): Promise<void> {
@@ -157,7 +166,7 @@ export async function createTournament(
 }
 
 export async function activateTournament(
-  tournamentId: string,
+  tournamentId: number,
   token: string,
 ): Promise<void> {
   if (isMocking && mockFlags.IS_MOCKING_ACTIVATE_TOURNAMENT) {
@@ -175,9 +184,9 @@ export async function activateTournament(
 
 // ─── Organizer tournament management ─────────────────────────────────────────
 
-let organizerCacheMap: Map<string, OrganizerTournamentDetail> | null = null;
+let organizerCacheMap: Map<number, OrganizerTournamentDetail> | null = null;
 
-function getOrganizerCache(): Map<string, OrganizerTournamentDetail> {
+function getOrganizerCache(): Map<number, OrganizerTournamentDetail> {
   if (!organizerCacheMap) {
     organizerCacheMap = new Map();
     getMyTournamentsCache()
@@ -193,7 +202,7 @@ function getOrganizerCache(): Map<string, OrganizerTournamentDetail> {
 }
 
 export async function fetchOrganizerTournament(
-  id: string,
+  id: number,
   token: string,
 ): Promise<OrganizerTournamentDetail> {
   if (isMocking && mockFlags.IS_MOCKING_FETCH_ORGANIZER_TOURNAMENT) {
@@ -216,7 +225,7 @@ export async function fetchOrganizerTournament(
 }
 
 export async function approveTeam(
-  tournamentId: string,
+  tournamentId: number,
   teamId: string,
   token: string,
 ): Promise<void> {
@@ -240,7 +249,7 @@ export async function approveTeam(
 }
 
 export async function rejectTeam(
-  tournamentId: string,
+  tournamentId: number,
   teamId: string,
   token: string,
 ): Promise<void> {
@@ -259,7 +268,7 @@ export async function rejectTeam(
 }
 
 export async function removeTeam(
-  tournamentId: string,
+  tournamentId: number,
   teamId: string,
   token: string,
 ): Promise<void> {
