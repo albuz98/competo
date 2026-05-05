@@ -293,7 +293,13 @@ export function TeamsProvider({ children }: { children: ReactNode }) {
   });
 
   const leaveTeamMutation = useMutation({
-    mutationFn: ({ teamId, targetUserId }: { teamId: number; targetUserId: number }) => {
+    mutationFn: ({
+      teamId,
+      targetUserId,
+    }: {
+      teamId: number;
+      targetUserId: number;
+    }) => {
       if (!user) return Promise.reject(new Error("Not authenticated"));
       return apiLeaveTeam(teamId, targetUserId, user.token);
     },
@@ -310,7 +316,10 @@ export function TeamsProvider({ children }: { children: ReactNode }) {
         qc.setQueryData<Team[]>(queryKeys.teams(), (old = []) =>
           old.map((t) =>
             t.id === teamId
-              ? { ...t, members: t.members.filter((m) => m.id !== targetUserId) }
+              ? {
+                  ...t,
+                  members: t.members.filter((m) => m.id !== targetUserId),
+                }
               : t,
           ),
         );
@@ -386,8 +395,14 @@ export function TeamsProvider({ children }: { children: ReactNode }) {
     return deleteTeamMutation.mutateAsync(teamId);
   };
 
-  const leaveTeam = async (teamId: number, targetUserId?: number): Promise<void> => {
-    return leaveTeamMutation.mutateAsync({ teamId, targetUserId: targetUserId ?? user!.id });
+  const leaveTeam = async (
+    teamId: number,
+    targetUserId?: number,
+  ): Promise<void> => {
+    return leaveTeamMutation.mutateAsync({
+      teamId,
+      targetUserId: targetUserId ?? user!.id,
+    });
   };
 
   const updateTeam = async (

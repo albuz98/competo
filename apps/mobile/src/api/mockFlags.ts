@@ -7,22 +7,33 @@ export const mockFlags = {
   // ─── Auth ─────────────────────────────────────────────────────────────────
   IS_MOCKING_LOGIN: false,
   IS_MOCKING_REGISTER: false,
-  IS_MOCKING_FETCH_PROFILE: false,
+  IS_MOCKING_LOGOUT: false,
 
-  // ─── Favorites ────────────────────────────────────────────────────────────
+  // ─── Users ───────────────────────────────────────────────────────────────
+  IS_MOCKING_FETCH_PROFILE: false,
+  //delete - Delete me
+  //patch - Update me
+  //get - get player profile
+  //put - upsert player profile
+  //get - get my invitations
+  IS_MOCKING_SEARCH_USERS: false,
   IS_MOCKING_FETCH_FAVORITES: false,
   IS_MOCKING_ADD_FAVORITE: false,
   IS_MOCKING_REMOVE_FAVORITE: false,
+  //post - register device token
+  //delete - deletedevice token
 
   // ─── Teams ────────────────────────────────────────────────────────────────
+  IS_MOCKING_CREATE_TEAM: false,
+  IS_MOCKING_FETCH_TEAM_DETAIL: false,
+  //patch - Update team
+  IS_MOCKING_DELETE_TEAM: false,
+  IS_MOCKING_FETCH_TEAM_MEMBERS: false,
+  IS_MOCKING_LEAVE_TEAM: false,
+  //get - gei invitations
+  IS_MOCKING_INVITE_MEMBER: false,
   IS_MOCKING_ACCEPT_INVITE: false,
   IS_MOCKING_REJECT_INVITE: false,
-  IS_MOCKING_SEARCH_USERS: false,
-  IS_MOCKING_INVITE_MEMBER: false,
-  IS_MOCKING_REMOVE_MEMBER: false,
-  IS_MOCKING_CREATE_TEAM: false,
-  IS_MOCKING_DELETE_TEAM: false,
-  IS_MOCKING_LEAVE_TEAM: true,
 
   // ──────────────────────────────────────────────────────────────────────────
   IS_MOCKING_FORGOT_PASSWORD: true,
@@ -41,6 +52,7 @@ export const mockFlags = {
   IS_MOCKING_FETCH_ORGANIZER_TOURNAMENT: true,
   IS_MOCKING_APPROVE_TEAM: true,
   IS_MOCKING_REJECT_TEAM_FROM_TOURNAMENT: true,
+  IS_MOCKING_REMOVE_MEMBER: true,
   IS_MOCKING_REMOVE_TEAM_FROM_TOURNAMENT: true,
 
   // ─── Teams ───────────────────────────────────────────────────────────────-

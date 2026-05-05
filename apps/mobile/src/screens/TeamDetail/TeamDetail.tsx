@@ -8,6 +8,7 @@ import {
   TextInput,
   Image,
   TouchableOpacity,
+  ActivityIndicator,
 } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import { tds } from "./TeamDetail.styles";
@@ -22,172 +23,61 @@ import {
   NavigationEnum,
   type RootStackParamList,
 } from "../../types/navigation";
-import type { TeamMember } from "../../types/team";
+import { ROLE_LABEL, type TeamMemberResponse } from "../../types/team";
 import { TeamRole } from "../../constants/team";
 import { useTeams } from "../../context/TeamsContext";
 import { useAuth } from "../../context/AuthContext";
 import { colorGradient, colors } from "../../theme/colors";
 import {
   ButtonBack,
-  ButtonBorderColored,
   ButtonFullColored,
   ButtonGeneric,
   ButtonIcon,
   ButtonLink,
 } from "../../components/core/Button/Button";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { fetchTeamDetail, fetchTeamMembers } from "../../api/teams";
+import { queryKeys } from "../../lib/queryKeys";
+import { MemberRow } from "../../components/MemberRow/MemberRow";
 
 type Props = NativeStackScreenProps<RootStackParamList, "TeamDetail">;
-
-const ROLE_LABEL: Record<string, string> = {
-  [TeamRole.REPRESENTATIVE]: "Rappresentante",
-  [TeamRole.PLAYER]: "Calciatore",
-  [TeamRole.COACH]: "Allenatore",
-  [TeamRole.GOLKEEPER]: "Portiere",
-};
-
-const HAS_JERSEY: Record<string, boolean> = {
-  [TeamRole.REPRESENTATIVE]: true,
-  [TeamRole.PLAYER]: true,
-  [TeamRole.GOLKEEPER]: true,
-  [TeamRole.COACH]: false,
-};
-
-function MemberRow({
-  member,
-  currentUserIsRep,
-  onRemove,
-  onChangeRole,
-  onEditJersey,
-}: {
-  member: TeamMember;
-  currentUserIsRep: boolean;
-  onRemove: () => void;
-  onChangeRole: () => void;
-  onEditJersey: () => void;
-}) {
-  const initials =
-    (member.firstName ? member.firstName[0] : "") +
-    (member.lastName ? member.lastName[0] : "");
-  const isRep = member.role === "representative";
-  const showJersey = HAS_JERSEY[member.role] === true;
-
-  return (
-    <View style={[tds.memberRow, isRep && tds.memberRowRep]}>
-      <View style={[tds.memberAvatar, isRep && tds.memberAvatarRep]}>
-        {isRep ? (
-          <LinearGradient colors={colorGradient} style={tds.memberAvatarInner}>
-            <Text style={tds.memberAvatarText}>{initials.toUpperCase()}</Text>
-          </LinearGradient>
-        ) : (
-          <View
-            style={[tds.memberAvatarInner, { backgroundColor: colors.gray }]}
-          >
-            <Text style={[tds.memberAvatarText, { color: colors.placeholder }]}>
-              {initials.toUpperCase()}
-            </Text>
-          </View>
-        )}
-      </View>
-      <View style={{ flex: 1 }}>
-        <View style={tds.memberNameRow}>
-          <Text style={tds.memberName}>
-            {member.firstName} {member.lastName}
-          </Text>
-          {isRep && (
-            <View style={tds.crownBadge}>
-              <Ionicons
-                name="star"
-                size={10}
-                color={colors.primaryGradientMid}
-              />
-              <Text style={tds.crownText}>Cap.</Text>
-            </View>
-          )}
-        </View>
-        <View
-          style={{
-            flexDirection: "row",
-            alignItems: "center",
-            gap: 6,
-            marginTop: 2,
-          }}
-        >
-          <Text style={tds.memberUsername}>@{member.username}</Text>
-          {!isRep &&
-            (currentUserIsRep ? (
-              <ButtonBorderColored
-                handleBtn={onChangeRole}
-                iconRight={
-                  <Ionicons
-                    name="chevron-down"
-                    size={10}
-                    color={colors.placeholder}
-                  />
-                }
-                text={ROLE_LABEL[member.role] ?? member.role}
-              />
-            ) : (
-              <View style={tds.rolePillStatic}>
-                <Text style={tds.rolePillText}>
-                  {ROLE_LABEL[member.role] ?? member.role}
-                </Text>
-              </View>
-            ))}
-        </View>
-      </View>
-      {/* Jersey number — solo calciatore/portiere */}
-      {showJersey && (
-        <ButtonGeneric
-          handleBtn={currentUserIsRep ? onEditJersey : () => {}}
-          style={[tds.jerseyBadge, currentUserIsRep && tds.jerseyBadgeEditable]}
-        >
-          {member.jerseyNumber != null ? (
-            <Text
-              style={[
-                tds.jerseyText,
-                currentUserIsRep && tds.jerseyTextEditable,
-              ]}
-            >
-              #{member.jerseyNumber}
-            </Text>
-          ) : (
-            <Text style={tds.jerseyEmpty}>+</Text>
-          )}
-        </ButtonGeneric>
-      )}
-      {currentUserIsRep && !isRep ? (
-        <ButtonIcon
-          handleBtn={onRemove}
-          icon={
-            <Ionicons
-              name="person-remove-outline"
-              size={18}
-              color={colors.primary}
-            />
-          }
-        />
-      ) : null}
-    </View>
-  );
-}
 
 export default function TeamDetail({ route, navigation }: Props) {
   const { teamId } = route.params;
   const {
-    getTeamById,
     sentPendingInvites,
     updateMemberRole,
-    updateMemberJersey,
     deleteTeam,
     leaveTeam,
     updateTeam,
-  } = useTeams() as any;
+  } = useTeams();
   const { user } = useAuth();
+  const qc = useQueryClient();
   const insets = useSafeAreaInsets();
-  const team = getTeamById(teamId);
-  const [confirmTarget, setConfirmTarget] = useState<TeamMember | null>(null);
-  const [roleTarget, setRoleTarget] = useState<TeamMember | null>(null);
-  const [jerseyTarget, setJerseyTarget] = useState<TeamMember | null>(null);
+
+  const {
+    data: teamDetail,
+    isLoading: loadingDetail,
+    error: detailError,
+  } = useQuery({
+    queryKey: queryKeys.teamDetail(teamId),
+    queryFn: () => fetchTeamDetail(teamId, user!.token),
+    enabled: !!user,
+  });
+
+  const { data: members = [], isLoading: loadingMembers } = useQuery({
+    queryKey: queryKeys.teamMembers(teamId),
+    queryFn: () => fetchTeamMembers(teamId, user!.token),
+    enabled: !!user,
+  });
+
+  const [confirmTarget, setConfirmTarget] = useState<TeamMemberResponse | null>(
+    null,
+  );
+  const [roleTarget, setRoleTarget] = useState<TeamMemberResponse | null>(null);
+  const [jerseyTarget, setJerseyTarget] = useState<TeamMemberResponse | null>(
+    null,
+  );
   const [jerseyInput, setJerseyInput] = useState("");
   const [menuVisible, setMenuVisible] = useState(false);
   const [confirmLeave, setConfirmLeave] = useState(false);
@@ -197,28 +87,39 @@ export default function TeamDetail({ route, navigation }: Props) {
   const [editLogoUri, setEditLogoUri] = useState<string | undefined>(undefined);
 
   const isRep =
-    team?.members.find((m: TeamMember) => m.id === user?.id)?.role ===
+    members.find((m: TeamMemberResponse) => m.user_id === user?.id)?.role ===
     "representative";
 
-  const handleRemoveMember = async (memberId: number) => {
+  const handleRemoveMember = async (userId: number) => {
     try {
-      await leaveTeam(teamId, memberId);
+      await leaveTeam(teamId, userId);
+      qc.invalidateQueries({ queryKey: queryKeys.teamMembers(teamId) });
     } catch {
       console.error("Impossibile rimuovere il membro. Riprova.");
     }
   };
 
-  const handleChangeRole = async (memberId: number, newRole: TeamRole) => {
+  const handleChangeRole = async (userId: number, newRole: TeamRole) => {
     try {
-      await updateMemberRole(teamId, memberId, newRole);
+      await updateMemberRole(teamId, userId, newRole);
+      qc.invalidateQueries({ queryKey: queryKeys.teamMembers(teamId) });
     } catch (e: any) {
-      // Error is swallowed — the optimistic update will revert automatically
       console.error(e?.message);
     }
     setRoleTarget(null);
   };
 
-  if (!team) {
+  if (loadingDetail || loadingMembers) {
+    return (
+      <SafeAreaView style={tds.root} edges={["top"]}>
+        <View style={tds.centerBox}>
+          <ActivityIndicator color={colors.primary} />
+        </View>
+      </SafeAreaView>
+    );
+  }
+
+  if (!teamDetail || detailError) {
     return (
       <SafeAreaView style={tds.root} edges={["top"]}>
         <View style={tds.centerBox}>
@@ -228,9 +129,9 @@ export default function TeamDetail({ route, navigation }: Props) {
     );
   }
 
-  const initials = team.name.slice(0, 2).toUpperCase();
-  const sortedMembers = [...team.members].sort(
-    (a: TeamMember, b: TeamMember) =>
+  const initials = teamDetail.name.slice(0, 2).toUpperCase();
+  const sortedMembers = [...members].sort(
+    (a: TeamMemberResponse, b: TeamMemberResponse) =>
       a.role === "representative" ? -1 : b.role === "representative" ? 1 : 0,
   );
 
@@ -260,23 +161,21 @@ export default function TeamDetail({ route, navigation }: Props) {
             </View>
             <View style={tds.headerBody}>
               <View style={tds.teamAvatarLarge}>
-                {team.logoUrl ? (
+                {teamDetail.logo_url ? (
                   <Image
-                    source={{ uri: team.logoUrl }}
+                    source={{ uri: teamDetail.logo_url }}
                     style={tds.teamAvatarImage}
                   />
                 ) : (
                   <Text style={tds.teamAvatarLargeText}>{initials}</Text>
                 )}
               </View>
-              <Text style={tds.teamName}>{team.name}</Text>
+              <Text style={tds.teamName}>{teamDetail.name}</Text>
               <View style={tds.sportChip}>
                 <Ionicons name="football" size={12} color={colors.white} />
-                <Text style={tds.sportChipText}>{team.sport}</Text>
+                <Text style={tds.sportChipText}>{teamDetail.sport}</Text>
               </View>
-              <Text style={tds.membersCount}>
-                {team.members.length} giocatori
-              </Text>
+              <Text style={tds.membersCount}>{members.length} giocatori</Text>
             </View>
           </SafeAreaView>
         </LinearGradient>
@@ -284,7 +183,7 @@ export default function TeamDetail({ route, navigation }: Props) {
         {/* Members list */}
         <View style={tds.section}>
           <Text style={tds.sectionTitle}>Giocatori</Text>
-          {sortedMembers.map((m: TeamMember) => (
+          {sortedMembers.map((m: TeamMemberResponse) => (
             <MemberRow
               key={m.id}
               member={m}
@@ -345,7 +244,7 @@ export default function TeamDetail({ route, navigation }: Props) {
               }
               handleBtn={() =>
                 navigation.navigate(NavigationEnum.INVITE_PLAYERS, {
-                  teamId: team.id,
+                  teamId: teamDetail.id,
                 })
               }
               isColored
@@ -396,7 +295,7 @@ export default function TeamDetail({ route, navigation }: Props) {
                 text="Rimuovi"
                 handleBtn={() => {
                   if (confirmTarget) {
-                    handleRemoveMember(confirmTarget.id);
+                    handleRemoveMember(confirmTarget.user_id);
                     setConfirmTarget(null);
                   }
                 }}
@@ -426,9 +325,9 @@ export default function TeamDetail({ route, navigation }: Props) {
                 const isOccupied =
                   !isCurrent &&
                   (role === TeamRole.COACH || role === TeamRole.GOLKEEPER) &&
-                  team?.members.some(
-                    (m: TeamMember) =>
-                      m.role === role && m.id !== roleTarget?.id,
+                  members.some(
+                    (m: TeamMemberResponse) =>
+                      m.role === role && m.user_id !== roleTarget?.user_id,
                   );
                 return (
                   <ButtonGeneric
@@ -440,7 +339,7 @@ export default function TeamDetail({ route, navigation }: Props) {
                     ]}
                     handleBtn={() => {
                       if (!isOccupied && roleTarget)
-                        handleChangeRole(roleTarget.id, role);
+                        handleChangeRole(roleTarget.user_id, role);
                     }}
                   >
                     <Text
@@ -493,8 +392,8 @@ export default function TeamDetail({ route, navigation }: Props) {
                 style={tds.menuItem}
                 handleBtn={() => {
                   setMenuVisible(false);
-                  setEditName(team.name);
-                  setEditLogoUri(team.logoUrl);
+                  setEditName(teamDetail.name);
+                  setEditLogoUri(teamDetail.logo_url || undefined);
                   setEditTeamVisible(true);
                 }}
               >
@@ -552,7 +451,7 @@ export default function TeamDetail({ route, navigation }: Props) {
             <Text style={tds.modalTitle}>Lascia squadra</Text>
             <Text style={tds.modalBody}>
               Sei sicuro di voler lasciare{"\n"}
-              <Text style={tds.modalMemberName}>{team.name}</Text>?
+              <Text style={tds.modalMemberName}>{teamDetail.name}</Text>?
             </Text>
             <Text style={tds.modalWarning}>
               Questa azione non può essere annullata.
@@ -592,7 +491,7 @@ export default function TeamDetail({ route, navigation }: Props) {
             <Text style={tds.modalTitle}>Elimina squadra</Text>
             <Text style={tds.modalBody}>
               Sei sicuro di voler eliminare{"\n"}
-              <Text style={tds.modalMemberName}>{team.name}</Text>?
+              <Text style={tds.modalMemberName}>{teamDetail.name}</Text>?
             </Text>
             <Text style={tds.modalWarning}>
               Tutti i membri verranno rimossi. Questa azione non può essere
@@ -705,6 +604,9 @@ export default function TeamDetail({ route, navigation }: Props) {
                       name: trimmed,
                       logoUrl: editLogoUri,
                     });
+                    qc.invalidateQueries({
+                      queryKey: queryKeys.teamDetail(teamId),
+                    });
                   } catch {
                     // optimistic update reverts on error
                   }
@@ -769,10 +671,14 @@ export default function TeamDetail({ route, navigation }: Props) {
                   if (!jerseyTarget) return;
                   const num = parseInt(jerseyInput, 10);
                   const valid = !isNaN(num) && num >= 1 && num <= 99;
-                  updateMemberJersey(
-                    teamId,
-                    jerseyTarget.id,
-                    valid ? num : undefined,
+                  qc.setQueryData<TeamMemberResponse[]>(
+                    queryKeys.teamMembers(teamId),
+                    (old = []) =>
+                      old.map((m) =>
+                        m.user_id === jerseyTarget.user_id
+                          ? { ...m, jerseyNumber: valid ? num : undefined }
+                          : m,
+                      ),
                   );
                   setJerseyTarget(null);
                 }}

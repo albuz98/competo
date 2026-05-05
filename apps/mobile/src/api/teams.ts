@@ -6,7 +6,13 @@ import {
   getMockUsersCache,
   mockTeamCache,
 } from "../mock/team";
-import { Team, AppUser, PendingInvite } from "../types/team";
+import {
+  Team,
+  AppUser,
+  PendingInvite,
+  TeamDetailResponse,
+  TeamMemberResponse,
+} from "../types/team";
 import { apiFetch } from "./config";
 import { mockFlags } from "./mockFlags";
 import { faker } from "@faker-js/faker";
@@ -82,6 +88,60 @@ export async function updateTeam(
   return apiFetch<void>(
     `/teams/${encodeURIComponent(teamId)}`,
     { method: "PATCH", body: JSON.stringify(updates) },
+    token,
+  );
+}
+
+export async function fetchTeamDetail(
+  teamId: number,
+  token: string,
+): Promise<TeamDetailResponse> {
+  if (mockFlags.IS_MOCKING_FETCH_TEAM_DETAIL) {
+    await new Promise<void>((r) => setTimeout(r, 300));
+    const team = getMockTeamCache().find((t) => t.id === teamId);
+    if (!team) throw new Error("Squadra non trovata");
+    return {
+      id: team.id,
+      name: team.name,
+      sport: team.sport,
+      format: "",
+      city: "",
+      logo_url: team.logoUrl ?? "",
+      rating: 0,
+      representative_id:
+        team.members.find((m) => m.role === TeamRole.REPRESENTATIVE)?.id ?? 0,
+    };
+  }
+  return apiFetch<TeamDetailResponse>(
+    `/api/v1/teams/${encodeURIComponent(teamId)}`,
+    {},
+    token,
+  );
+}
+
+export async function fetchTeamMembers(
+  teamId: number,
+  token: string,
+): Promise<TeamMemberResponse[]> {
+  if (mockFlags.IS_MOCKING_FETCH_TEAM_MEMBERS) {
+    await new Promise<void>((r) => setTimeout(r, 300));
+    const team = getMockTeamCache().find((t) => t.id === teamId);
+    if (!team) return [];
+    return team.members.map((m) => ({
+      id: m.id,
+      user_id: m.id,
+      role: m.role,
+      is_active: true,
+      joined_at: team.createdAt,
+      firstName: m.firstName,
+      lastName: m.lastName,
+      username: m.username,
+      jerseyNumber: m.jerseyNumber,
+    }));
+  }
+  return apiFetch<TeamMemberResponse[]>(
+    `/api/v1/teams/${encodeURIComponent(teamId)}/members`,
+    {},
     token,
   );
 }

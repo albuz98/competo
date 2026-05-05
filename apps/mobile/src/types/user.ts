@@ -45,6 +45,7 @@ export interface User {
   username: string;
   email: string;
   token: string;
+  refreshToken?: string;
   birthdate?: string;
   location?: string;
   gender?: Gender;

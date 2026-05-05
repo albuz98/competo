@@ -38,3 +38,41 @@ export interface AppUser {
   username: string;
   avatarUrl?: string;
 }
+
+export interface TeamDetailResponse {
+  id: number;
+  name: string;
+  sport: string;
+  format: string;
+  city: string;
+  logo_url: string;
+  rating: number;
+  representative_id: number;
+}
+
+export interface TeamMemberResponse {
+  id: number;
+  user_id: number;
+  role: string;
+  is_active: boolean;
+  joined_at: string;
+  // Enriched in mock mode only
+  firstName?: string;
+  lastName?: string;
+  username?: string;
+  jerseyNumber?: number;
+}
+
+export const ROLE_LABEL: Record<string, string> = {
+  [TeamRole.REPRESENTATIVE]: "Rappresentante",
+  [TeamRole.PLAYER]: "Calciatore",
+  [TeamRole.COACH]: "Allenatore",
+  [TeamRole.GOLKEEPER]: "Portiere",
+};
+
+export const HAS_JERSEY: Record<string, boolean> = {
+  [TeamRole.REPRESENTATIVE]: true,
+  [TeamRole.PLAYER]: true,
+  [TeamRole.GOLKEEPER]: true,
+  [TeamRole.COACH]: false,
+};

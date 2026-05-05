@@ -101,7 +101,7 @@ export async function login(credentials: LoginCredentials): Promise<User> {
     return { ...mockProfile };
   }
 
-  const { access_token } = await apiFetch<AuthTokenResponse>(
+  const { access_token, refresh_token } = await apiFetch<AuthTokenResponse>(
     "/api/v1/auth/login",
     {
       method: "POST",
@@ -109,7 +109,22 @@ export async function login(credentials: LoginCredentials): Promise<User> {
     },
   );
   const userData = await fetchProfile(access_token);
-  return { ...userData, token: access_token };
+  return { ...userData, token: access_token, refreshToken: refresh_token };
+}
+
+export async function logout(
+  refreshToken: string,
+  token: string,
+): Promise<void> {
+  if (isMocking && mockFlags.IS_MOCKING_LOGOUT) return;
+  return apiFetch<void>(
+    "/api/v1/auth/logout",
+    {
+      method: "POST",
+      body: JSON.stringify({ refresh_token: refreshToken }),
+    },
+    token,
+  );
 }
 
 export async function register(
@@ -126,7 +141,7 @@ export async function register(
     };
   }
 
-  const { access_token } = await apiFetch<AuthTokenResponse>(
+  const { access_token, refresh_token } = await apiFetch<AuthTokenResponse>(
     "/api/v1/auth/register",
     {
       method: "POST",
@@ -134,5 +149,5 @@ export async function register(
     },
   );
   const userData = await fetchProfile(access_token);
-  return { ...userData, token: access_token };
+  return { ...userData, token: access_token, refreshToken: refresh_token };
 }

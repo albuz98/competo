@@ -13,6 +13,7 @@ import {
   register as apiRegister,
   updateProfile as apiUpdateProfile,
   fetchProfile,
+  logout as apiLogout,
 } from "../api/auth";
 import { OrganizerProfile, User, UserProfile, UserRole } from "../types/user";
 import {
@@ -23,6 +24,7 @@ import {
 import { AppUser } from "../types/team";
 
 const TOKEN_KEY = "authToken";
+const REFRESH_TOKEN_KEY = "refreshToken";
 
 interface AuthContextType {
   user: User | null;
@@ -87,6 +89,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     mutationFn: (credentials: LoginCredentials) => apiLogin(credentials),
     onSuccess: async (userData) => {
       await SecureStore.setItemAsync(TOKEN_KEY, userData.token);
+      if (userData.refreshToken) {
+        await SecureStore.setItemAsync(REFRESH_TOKEN_KEY, userData.refreshToken);
+      }
       setUser(userData);
       setError(null);
     },
@@ -100,6 +105,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     mutationFn: (credentials: RegisterCredentials) => apiRegister(credentials),
     onSuccess: async (userData) => {
       await SecureStore.setItemAsync(TOKEN_KEY, userData.token);
+      if (userData.refreshToken) {
+        await SecureStore.setItemAsync(REFRESH_TOKEN_KEY, userData.refreshToken);
+      }
       setUser(userData);
       setError(null);
     },
@@ -143,10 +151,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const logout = () => {
+    const token = user?.token ?? "";
+    SecureStore.getItemAsync(REFRESH_TOKEN_KEY)
+      .then((refreshToken) => {
+        if (refreshToken) {
+          apiLogout(refreshToken, token).catch(() => {});
+        }
+      })
+      .catch(() => {});
     SecureStore.deleteItemAsync(TOKEN_KEY).catch(() => {});
+    SecureStore.deleteItemAsync(REFRESH_TOKEN_KEY).catch(() => {});
     setUser(null);
     setLocation(undefined);
-    // Clear all user-scoped cached data
     qc.clear();
   };
 
