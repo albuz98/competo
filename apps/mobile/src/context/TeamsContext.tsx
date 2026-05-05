@@ -17,6 +17,7 @@ import {
   updateMemberRole as updateMemberRoleAPI,
   deleteTeam as apiDeleteTeam,
   leaveTeam as apiLeaveTeam,
+  updateTeam as apiUpdateTeam,
 } from "../api/teams";
 import { TeamRole } from "../constants/team";
 import { TeamFormat, TeamSport } from "../constants/generals";
@@ -28,7 +29,11 @@ interface TeamsContextType {
   loading: boolean;
   pendingReceivedInvites: PendingInvite[];
   sentPendingInvites: PendingInvite[];
-  createTeam: (name: string, format: TeamFormat, representativeRole: TeamRole) => Promise<Team>;
+  createTeam: (
+    name: string,
+    format: TeamFormat,
+    representativeRole: TeamRole,
+  ) => Promise<Team>;
   addMember: (teamId: number, appUser: AppUser) => Promise<void>;
   removeMember: (teamId: number, memberId: number) => Promise<void>;
   acceptInvite: (inviteId: number) => Promise<void>;
@@ -44,7 +49,11 @@ interface TeamsContextType {
     jerseyNumber: number | undefined,
   ) => void;
   deleteTeam: (teamId: number) => Promise<void>;
-  leaveTeam: (teamId: number) => Promise<void>;
+  leaveTeam: (teamId: number, targetUserId?: number) => Promise<void>;
+  updateTeam: (
+    teamId: number,
+    updates: { name?: string; logoUrl?: string },
+  ) => Promise<void>;
   getTeamById: (id: number) => Team | undefined;
   refreshTeams: () => Promise<void>;
 }
@@ -256,17 +265,56 @@ export function TeamsProvider({ children }: { children: ReactNode }) {
     },
   });
 
-  const leaveTeamMutation = useMutation({
-    mutationFn: (teamId: number) => {
+  const updateTeamMutation = useMutation({
+    mutationFn: ({
+      teamId,
+      updates,
+    }: {
+      teamId: number;
+      updates: { name?: string; logoUrl?: string };
+    }) => {
       if (!user) return Promise.reject(new Error("Not authenticated"));
-      return apiLeaveTeam(teamId, user.id, user.token);
+      return apiUpdateTeam(teamId, updates, user.token);
     },
-    onMutate: async (teamId) => {
+    onMutate: async ({ teamId, updates }) => {
       await qc.cancelQueries({ queryKey: queryKeys.teams() });
       const prev = qc.getQueryData<Team[]>(queryKeys.teams());
       qc.setQueryData<Team[]>(queryKeys.teams(), (old = []) =>
-        old.filter((t) => t.id !== teamId),
+        old.map((t) => (t.id === teamId ? { ...t, ...updates } : t)),
       );
+      return { prev };
+    },
+    onError: (_err, _vars, ctx) => {
+      if (ctx?.prev) qc.setQueryData(queryKeys.teams(), ctx.prev);
+    },
+    onSettled: () => {
+      qc.invalidateQueries({ queryKey: queryKeys.teams() });
+    },
+  });
+
+  const leaveTeamMutation = useMutation({
+    mutationFn: ({ teamId, targetUserId }: { teamId: number; targetUserId: number }) => {
+      if (!user) return Promise.reject(new Error("Not authenticated"));
+      return apiLeaveTeam(teamId, targetUserId, user.token);
+    },
+    onMutate: async ({ teamId, targetUserId }) => {
+      await qc.cancelQueries({ queryKey: queryKeys.teams() });
+      const prev = qc.getQueryData<Team[]>(queryKeys.teams());
+      if (targetUserId === user?.id) {
+        // current user is leaving — remove the whole team from the list
+        qc.setQueryData<Team[]>(queryKeys.teams(), (old = []) =>
+          old.filter((t) => t.id !== teamId),
+        );
+      } else {
+        // rep is removing a member — remove only that member
+        qc.setQueryData<Team[]>(queryKeys.teams(), (old = []) =>
+          old.map((t) =>
+            t.id === teamId
+              ? { ...t, members: t.members.filter((m) => m.id !== targetUserId) }
+              : t,
+          ),
+        );
+      }
       return { prev };
     },
     onError: (_err, _vars, ctx) => {
@@ -338,8 +386,15 @@ export function TeamsProvider({ children }: { children: ReactNode }) {
     return deleteTeamMutation.mutateAsync(teamId);
   };
 
-  const leaveTeam = async (teamId: number): Promise<void> => {
-    return leaveTeamMutation.mutateAsync(teamId);
+  const leaveTeam = async (teamId: number, targetUserId?: number): Promise<void> => {
+    return leaveTeamMutation.mutateAsync({ teamId, targetUserId: targetUserId ?? user!.id });
+  };
+
+  const updateTeam = async (
+    teamId: number,
+    updates: { name?: string; logoUrl?: string },
+  ): Promise<void> => {
+    return updateTeamMutation.mutateAsync({ teamId, updates });
   };
 
   const getTeamById = (id: number) => teams.find((t) => t.id === id);
@@ -366,6 +421,7 @@ export function TeamsProvider({ children }: { children: ReactNode }) {
         updateMemberJersey,
         deleteTeam,
         leaveTeam,
+        updateTeam,
         getTeamById,
         refreshTeams,
       }}

@@ -6,7 +6,10 @@ import {
   StatusBar,
   Modal,
   TextInput,
+  Image,
+  TouchableOpacity,
 } from "react-native";
+import * as ImagePicker from "expo-image-picker";
 import { tds } from "./TeamDetail.styles";
 import {
   SafeAreaView,
@@ -172,12 +175,12 @@ export default function TeamDetail({ route, navigation }: Props) {
   const { teamId } = route.params;
   const {
     getTeamById,
-    removeMember,
     sentPendingInvites,
     updateMemberRole,
     updateMemberJersey,
     deleteTeam,
     leaveTeam,
+    updateTeam,
   } = useTeams() as any;
   const { user } = useAuth();
   const insets = useSafeAreaInsets();
@@ -189,6 +192,9 @@ export default function TeamDetail({ route, navigation }: Props) {
   const [menuVisible, setMenuVisible] = useState(false);
   const [confirmLeave, setConfirmLeave] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
+  const [editTeamVisible, setEditTeamVisible] = useState(false);
+  const [editName, setEditName] = useState("");
+  const [editLogoUri, setEditLogoUri] = useState<string | undefined>(undefined);
 
   const isRep =
     team?.members.find((m: TeamMember) => m.id === user?.id)?.role ===
@@ -196,7 +202,7 @@ export default function TeamDetail({ route, navigation }: Props) {
 
   const handleRemoveMember = async (memberId: number) => {
     try {
-      await removeMember(teamId, memberId);
+      await leaveTeam(teamId, memberId);
     } catch {
       console.error("Impossibile rimuovere il membro. Riprova.");
     }
@@ -254,7 +260,14 @@ export default function TeamDetail({ route, navigation }: Props) {
             </View>
             <View style={tds.headerBody}>
               <View style={tds.teamAvatarLarge}>
-                <Text style={tds.teamAvatarLargeText}>{initials}</Text>
+                {team.logoUrl ? (
+                  <Image
+                    source={{ uri: team.logoUrl }}
+                    style={tds.teamAvatarImage}
+                  />
+                ) : (
+                  <Text style={tds.teamAvatarLargeText}>{initials}</Text>
+                )}
               </View>
               <Text style={tds.teamName}>{team.name}</Text>
               <View style={tds.sportChip}>
@@ -474,21 +487,34 @@ export default function TeamDetail({ route, navigation }: Props) {
           >
             <View />
           </ButtonGeneric>
-          <View
-            style={[
-              tds.menuCard,
-              { top: insets.top + 52, right: 16 },
-            ]}
-          >
-            {isRep ? (
+          <View style={[tds.menuCard, { top: insets.top + 52, right: 16 }]}>
+            {isRep && (
               <ButtonGeneric
                 style={tds.menuItem}
+                handleBtn={() => {
+                  setMenuVisible(false);
+                  setEditName(team.name);
+                  setEditLogoUri(team.logoUrl);
+                  setEditTeamVisible(true);
+                }}
+              >
+                <Ionicons name="pencil-outline" size={18} color={colors.dark} />
+                <Text style={tds.menuItemText}>Modifica squadra</Text>
+              </ButtonGeneric>
+            )}
+            {isRep ? (
+              <ButtonGeneric
+                style={[tds.menuItem, tds.menuItemDanger]}
                 handleBtn={() => {
                   setMenuVisible(false);
                   setConfirmDelete(true);
                 }}
               >
-                <Ionicons name="trash-outline" size={18} color={colors.danger} />
+                <Ionicons
+                  name="trash-outline"
+                  size={18}
+                  color={colors.danger}
+                />
                 <Text style={[tds.menuItemText, { color: colors.danger }]}>
                   Elimina squadra
                 </Text>
@@ -501,11 +527,7 @@ export default function TeamDetail({ route, navigation }: Props) {
                   setConfirmLeave(true);
                 }}
               >
-                <Ionicons
-                  name="exit-outline"
-                  size={18}
-                  color={colors.danger}
-                />
+                <Ionicons name="exit-outline" size={18} color={colors.danger} />
                 <Text style={[tds.menuItemText, { color: colors.danger }]}>
                   Lascia squadra
                 </Text>
@@ -546,11 +568,7 @@ export default function TeamDetail({ route, navigation }: Props) {
                 text="Lascia"
                 handleBtn={async () => {
                   setConfirmLeave(false);
-                  try {
-                    await leaveTeam(teamId);
-                  } catch {
-                    // optimistic update already reverted by mutation
-                  }
+                  await leaveTeam(teamId);
                   navigation.goBack();
                 }}
               />
@@ -597,6 +615,99 @@ export default function TeamDetail({ route, navigation }: Props) {
                     // optimistic update already reverted by mutation
                   }
                   navigation.goBack();
+                }}
+              />
+            </View>
+          </View>
+        </View>
+      </Modal>
+
+      {/* Edit team modal */}
+      <Modal
+        visible={editTeamVisible}
+        transparent
+        animationType="slide"
+        onRequestClose={() => setEditTeamVisible(false)}
+      >
+        <View style={tds.modalOverlay}>
+          <View style={tds.modalCard}>
+            <Text style={tds.modalTitle}>Modifica squadra</Text>
+
+            {/* Logo preview + pick button */}
+            <TouchableOpacity
+              style={tds.logoPickerContainer}
+              onPress={async () => {
+                const result = await ImagePicker.launchImageLibraryAsync({
+                  mediaTypes: ["images"],
+                  allowsEditing: true,
+                  aspect: [1, 1],
+                  quality: 0.8,
+                });
+                if (!result.canceled && result.assets.length > 0) {
+                  setEditLogoUri(result.assets[0].uri);
+                }
+              }}
+            >
+              {editLogoUri ? (
+                <Image
+                  source={{ uri: editLogoUri }}
+                  style={tds.logoPickerImage}
+                />
+              ) : (
+                <View style={tds.logoPickerPlaceholder}>
+                  <Text style={tds.logoPickerInitials}>
+                    {editName.slice(0, 2).toUpperCase() || initials}
+                  </Text>
+                </View>
+              )}
+              <View style={tds.logoPickerBadge}>
+                <Ionicons name="camera" size={14} color={colors.white} />
+              </View>
+            </TouchableOpacity>
+
+            {editLogoUri ? (
+              <ButtonLink
+                style={{ marginBottom: 16 }}
+                text="Rimuovi logo"
+                handleBtn={() => setEditLogoUri(undefined)}
+              />
+            ) : null}
+
+            {/* Name input */}
+            <TextInput
+              style={tds.editNameInput}
+              value={editName}
+              onChangeText={setEditName}
+              placeholder="Nome squadra"
+              placeholderTextColor={colors.grayDark}
+              maxLength={40}
+              autoCorrect={false}
+            />
+
+            <View style={tds.modalActions}>
+              <ButtonLink
+                style={tds.modalCancelBtn}
+                text="Annulla"
+                handleBtn={() => setEditTeamVisible(false)}
+              />
+              <ButtonLink
+                style={[
+                  tds.modalRemoveBtn,
+                  { backgroundColor: colors.primary },
+                ]}
+                text="Salva"
+                handleBtn={async () => {
+                  const trimmed = editName.trim();
+                  if (!trimmed) return;
+                  setEditTeamVisible(false);
+                  try {
+                    await updateTeam(teamId, {
+                      name: trimmed,
+                      logoUrl: editLogoUri,
+                    });
+                  } catch {
+                    // optimistic update reverts on error
+                  }
                 }}
               />
             </View>

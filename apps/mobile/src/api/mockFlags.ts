@@ -21,6 +21,8 @@ export const mockFlags = {
   IS_MOCKING_INVITE_MEMBER: false,
   IS_MOCKING_REMOVE_MEMBER: false,
   IS_MOCKING_CREATE_TEAM: false,
+  IS_MOCKING_DELETE_TEAM: false,
+  IS_MOCKING_LEAVE_TEAM: true,
 
   // ──────────────────────────────────────────────────────────────────────────
   IS_MOCKING_FORGOT_PASSWORD: true,
@@ -46,8 +48,7 @@ export const mockFlags = {
   IS_MOCKING_GET_PENDING_INVITES: true,
   IS_MOCKING_GET_SENT_INVITES: true,
   IS_MOCKING_UPDATE_MEMBER_ROLE: true,
-  IS_MOCKING_DELETE_TEAM: true,
-  IS_MOCKING_LEAVE_TEAM: true,
+  IS_MOCKING_UPDATE_TEAM: true,
 
   // ─── Organizer ────────────────────────────────────────────────────────────
   IS_MOCKING_SUBMIT_ORGANIZER_PROFILE: true,

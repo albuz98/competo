@@ -28,6 +28,7 @@ export interface Team {
   sport: string;
   members: TeamMember[];
   createdAt: string;
+  logoUrl?: string;
 }
 
 export interface AppUser {

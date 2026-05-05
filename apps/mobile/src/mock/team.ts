@@ -1,7 +1,11 @@
 import { faker } from "@faker-js/faker";
-import { AppUser, Team, TeamMember } from "../types/team";
+import { AppUser, PendingInvite, Team, TeamMember } from "../types/team";
 import { GAMES } from "../constants/generals";
 import { TeamRole } from "../constants/team";
+
+export let mockTeamCache: Team[] | null = null;
+let mockUsersCache: AppUser[] | null = null;
+let pendingInviteCache: PendingInvite[] | null = null;
 
 export function generateTeamMember(
   role: TeamRole = TeamRole.PLAYER,
@@ -11,9 +15,9 @@ export function generateTeamMember(
     role === TeamRole.GOLKEEPER ||
     role === TeamRole.REPRESENTATIVE;
   return {
-    id: faker.string.uuid(),
-    first_name: faker.person.firstName(),
-    last_name: faker.person.lastName(),
+    id: faker.number.int(),
+    firstName: faker.person.firstName(),
+    lastName: faker.person.lastName(),
     username: faker.internet.username(),
     role,
     ...(hasJersey
@@ -22,7 +26,7 @@ export function generateTeamMember(
   };
 }
 
-export function generateTeam(id?: string): Team {
+export function generateTeam(id?: number): Team {
   const memberCount = faker.number.int({ min: 2, max: 8 });
   const members: TeamMember[] = [
     generateTeamMember(TeamRole.REPRESENTATIVE),
@@ -39,7 +43,7 @@ export function generateTeam(id?: string): Team {
     nonReps[1].role = TeamRole.COACH;
   }
   return {
-    id: id ?? faker.string.uuid(),
+    id: id ?? faker.number.int(),
     name: `${faker.location.city()} ${faker.helpers.arrayElement(["FC", "SC", "United", "Tigers", "Eagles"])}`,
     sport: faker.helpers.arrayElement(GAMES),
     members,
@@ -53,13 +57,46 @@ export function generateTeams(count = 3): Team[] {
 
 export function generateAppUser(): AppUser {
   return {
-    id: faker.string.uuid(),
-    first_name: faker.person.firstName(),
-    last_name: faker.person.lastName(),
+    id: faker.number.int(),
+    firstName: faker.person.firstName(),
+    lastName: faker.person.lastName(),
     username: faker.internet.username(),
   };
 }
 
 export function generateAppUsers(count = 30): AppUser[] {
   return Array.from({ length: count }, () => generateAppUser());
+}
+
+export function getMockTeamCache(): Team[] {
+  if (!mockTeamCache) {
+    mockTeamCache = generateTeams(3);
+  }
+  return mockTeamCache;
+}
+
+export function getMockUsersCache(): AppUser[] {
+  if (!mockUsersCache) {
+    mockUsersCache = generateAppUsers(30);
+  }
+  return mockUsersCache;
+}
+
+export function getMockPendingInvites(): PendingInvite[] {
+  if (!pendingInviteCache) {
+    pendingInviteCache = [
+      {
+        id: 1,
+        teamId: 22,
+        teamName: "Milano United",
+        sport: "Calcio",
+        fromUserId: 2,
+        fromFirstName: "Marco",
+        fromLastName: "Bianchi",
+        toUserId: 0,
+        createdAt: new Date(Date.now() - 7200000).toISOString(),
+      },
+    ];
+  }
+  return pendingInviteCache;
 }
