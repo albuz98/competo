@@ -63,6 +63,22 @@ export interface TeamMemberResponse {
   jerseyNumber?: number;
 }
 
+export type InvitationStatus = "pending" | "accepted" | "declined";
+
+export interface TeamInvitation {
+  id: number;
+  team_id: number;
+  invited_user_id: number;
+  invited_by: number;
+  status: InvitationStatus;
+  created_at: string;
+  resolved_at: string | null;
+  // Enriched in mock mode only
+  firstName?: string;
+  lastName?: string;
+  username?: string;
+}
+
 export const ROLE_LABEL: Record<string, string> = {
   [TeamRole.REPRESENTATIVE]: "Rappresentante",
   [TeamRole.PLAYER]: "Calciatore",

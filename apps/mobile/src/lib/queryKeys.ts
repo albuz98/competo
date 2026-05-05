@@ -20,6 +20,7 @@ export const queryKeys = {
   teams: () => ["teams"] as const,
   teamDetail: (teamId: number) => ["teamDetail", teamId] as const,
   teamMembers: (teamId: number) => ["teamMembers", teamId] as const,
+  teamInvitations: (teamId: number) => ["teamInvitations", teamId] as const,
   pendingInvites: () => ["pendingInvites"] as const,
   sentInvites: (teamId: string) => ["sentInvites", teamId] as const,
 

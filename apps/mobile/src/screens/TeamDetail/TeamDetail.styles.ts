@@ -153,6 +153,20 @@ export const tds = StyleSheet.create({
     paddingVertical: 4,
   },
   pendingBadgeText: { fontSize: 11, color: colors.brown, fontWeight: "700" },
+  inviteBadgeAccepted: {
+    backgroundColor: "#d1fae5",
+    borderRadius: 20,
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+  },
+  inviteBadgeTextAccepted: { fontSize: 11, color: colors.success, fontWeight: "700" },
+  inviteBadgeDeclined: {
+    backgroundColor: colors.gray,
+    borderRadius: 20,
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+  },
+  inviteBadgeTextDeclined: { fontSize: 11, color: colors.placeholder, fontWeight: "700" },
 
   jerseyBadge: {
     minWidth: 32,

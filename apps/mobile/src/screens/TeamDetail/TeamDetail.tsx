@@ -36,7 +36,11 @@ import {
   ButtonLink,
 } from "../../components/core/Button/Button";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { fetchTeamDetail, fetchTeamMembers } from "../../api/teams";
+import {
+  fetchTeamDetail,
+  fetchTeamMembers,
+  fetchTeamInvitations,
+} from "../../api/teams";
 import { queryKeys } from "../../lib/queryKeys";
 import { MemberRow } from "../../components/MemberRow/MemberRow";
 
@@ -44,13 +48,7 @@ type Props = NativeStackScreenProps<RootStackParamList, "TeamDetail">;
 
 export default function TeamDetail({ route, navigation }: Props) {
   const { teamId } = route.params;
-  const {
-    sentPendingInvites,
-    updateMemberRole,
-    deleteTeam,
-    leaveTeam,
-    updateTeam,
-  } = useTeams();
+  const { updateMemberRole, deleteTeam, leaveTeam, updateTeam } = useTeams();
   const { user } = useAuth();
   const qc = useQueryClient();
   const insets = useSafeAreaInsets();
@@ -71,6 +69,18 @@ export default function TeamDetail({ route, navigation }: Props) {
     enabled: !!user,
   });
 
+  const isRep = members.find(
+    (m: TeamMemberResponse) => m.user_id === teamDetail?.representative_id,
+  )
+    ? true
+    : false;
+
+  const { data: teamInvitations = [] } = useQuery({
+    queryKey: queryKeys.teamInvitations(teamId),
+    queryFn: () => fetchTeamInvitations(teamId, user!.token),
+    enabled: !!user && isRep,
+  });
+
   const [confirmTarget, setConfirmTarget] = useState<TeamMemberResponse | null>(
     null,
   );
@@ -85,10 +95,6 @@ export default function TeamDetail({ route, navigation }: Props) {
   const [editTeamVisible, setEditTeamVisible] = useState(false);
   const [editName, setEditName] = useState("");
   const [editLogoUri, setEditLogoUri] = useState<string | undefined>(undefined);
-
-  const isRep =
-    members.find((m: TeamMemberResponse) => m.user_id === user?.id)?.role ===
-    "representative";
 
   const handleRemoveMember = async (userId: number) => {
     try {
@@ -200,35 +206,50 @@ export default function TeamDetail({ route, navigation }: Props) {
           ))}
         </View>
 
-        {/* Pending sent invites — only visible to representative */}
-        {isRep &&
-          (() => {
-            const sentForThisTeam = (sentPendingInvites as any[]).filter(
-              (i: any) => i.teamId === teamId,
-            );
-            if (sentForThisTeam.length === 0) return null;
-            return (
-              <View style={[tds.section, { marginTop: 12 }]}>
-                <Text style={tds.sectionTitle}>INVITI IN ATTESA</Text>
-                {sentForThisTeam.map((invite: any) => (
-                  <View key={invite.id} style={tds.pendingInviteRow}>
-                    <View style={tds.pendingInviteAvatar}>
-                      <Text style={tds.pendingInviteAvatarText}>?</Text>
-                    </View>
-                    <View style={{ flex: 1 }}>
-                      <Text style={tds.pendingInviteName}>Invito inviato</Text>
-                      <Text style={tds.pendingInviteSub}>
-                        In attesa di conferma
-                      </Text>
-                    </View>
-                    <View style={tds.pendingBadge}>
-                      <Text style={tds.pendingBadgeText}>In attesa</Text>
-                    </View>
+        {/* Sent invitations — only visible to the representative */}
+        {isRep && teamInvitations.length > 0 && (
+          <View style={[tds.section, { marginTop: 12 }]}>
+            <Text style={tds.sectionTitle}>INVITI</Text>
+            {teamInvitations.map((invite) => {
+              const name =
+                invite.firstName && invite.lastName
+                  ? `${invite.firstName} ${invite.lastName}`
+                  : (invite.username ?? `#${invite.invited_user_id}`);
+              const initials = name.slice(0, 2).toUpperCase();
+              const badgeStyle =
+                invite.status === "accepted"
+                  ? tds.inviteBadgeAccepted
+                  : invite.status === "declined"
+                    ? tds.inviteBadgeDeclined
+                    : tds.pendingBadge;
+              const badgeTextStyle =
+                invite.status === "accepted"
+                  ? tds.inviteBadgeTextAccepted
+                  : invite.status === "declined"
+                    ? tds.inviteBadgeTextDeclined
+                    : tds.pendingBadgeText;
+              const badgeLabel =
+                invite.status === "accepted"
+                  ? "Accettato"
+                  : invite.status === "declined"
+                    ? "Rifiutato"
+                    : "In attesa";
+              return (
+                <View key={invite.id} style={tds.pendingInviteRow}>
+                  <View style={tds.pendingInviteAvatar}>
+                    <Text style={tds.pendingInviteAvatarText}>{initials}</Text>
                   </View>
-                ))}
-              </View>
-            );
-          })()}
+                  <View style={{ flex: 1 }}>
+                    <Text style={tds.pendingInviteName}>{name}</Text>
+                  </View>
+                  <View style={badgeStyle}>
+                    <Text style={badgeTextStyle}>{badgeLabel}</Text>
+                  </View>
+                </View>
+              );
+            })}
+          </View>
+        )}
 
         {/* Invite button — only visible to the representative */}
         {isRep && (

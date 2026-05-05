@@ -30,7 +30,7 @@ export const mockFlags = {
   IS_MOCKING_DELETE_TEAM: false,
   IS_MOCKING_FETCH_TEAM_MEMBERS: false,
   IS_MOCKING_LEAVE_TEAM: false,
-  //get - gei invitations
+  IS_MOCKING_GET_TEAM_INVITATIONS: false,
   IS_MOCKING_INVITE_MEMBER: false,
   IS_MOCKING_ACCEPT_INVITE: false,
   IS_MOCKING_REJECT_INVITE: false,

@@ -12,6 +12,8 @@ import {
   PendingInvite,
   TeamDetailResponse,
   TeamMemberResponse,
+  TeamInvitation,
+  InvitationStatus,
 } from "../types/team";
 import { apiFetch } from "./config";
 import { mockFlags } from "./mockFlags";
@@ -92,6 +94,7 @@ export async function updateTeam(
   );
 }
 
+//--------------------- IT'S OK ------------------------------
 export async function fetchTeamDetail(
   teamId: number,
   token: string,
@@ -114,6 +117,36 @@ export async function fetchTeamDetail(
   }
   return apiFetch<TeamDetailResponse>(
     `/api/v1/teams/${encodeURIComponent(teamId)}`,
+    {},
+    token,
+  );
+}
+
+export async function fetchTeamInvitations(
+  teamId: number,
+  token: string,
+): Promise<TeamInvitation[]> {
+  if (mockFlags.IS_MOCKING_GET_TEAM_INVITATIONS) {
+    await new Promise<void>((r) => setTimeout(r, 300));
+    const invites = getMockPendingInvites().filter((i) => i.teamId === teamId);
+    return invites.map((i) => {
+      const user = getMockUsersCache().find((u) => u.id === i.toUserId);
+      return {
+        id: i.id,
+        team_id: i.teamId,
+        invited_user_id: i.toUserId,
+        invited_by: i.fromUserId,
+        status: "pending" as InvitationStatus,
+        created_at: i.createdAt,
+        resolved_at: null,
+        firstName: user?.firstName,
+        lastName: user?.lastName,
+        username: user?.username,
+      };
+    });
+  }
+  return apiFetch<TeamInvitation[]>(
+    `/api/v1/teams/${encodeURIComponent(teamId)}/invitations`,
     {},
     token,
   );
@@ -146,7 +179,6 @@ export async function fetchTeamMembers(
   );
 }
 
-//--------------------- IT'S OK ------------------------------
 export async function leaveTeam(
   teamId: number,
   userId: number,
