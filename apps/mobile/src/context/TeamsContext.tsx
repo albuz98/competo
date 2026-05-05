@@ -19,6 +19,7 @@ import {
   leaveTeam as apiLeaveTeam,
 } from "../api/teams";
 import { TeamRole } from "../constants/team";
+import { TeamFormat, TeamSport } from "../constants/generals";
 import { Team, PendingInvite, AppUser } from "../types/team";
 import { queryKeys } from "../lib/queryKeys";
 
@@ -27,7 +28,7 @@ interface TeamsContextType {
   loading: boolean;
   pendingReceivedInvites: PendingInvite[];
   sentPendingInvites: PendingInvite[];
-  createTeam: (name: string, sport: string) => Promise<Team>;
+  createTeam: (name: string, format: TeamFormat, representativeRole: TeamRole) => Promise<Team>;
   addMember: (teamId: number, appUser: AppUser) => Promise<void>;
   removeMember: (teamId: number, memberId: number) => Promise<void>;
   acceptInvite: (inviteId: number) => Promise<void>;
@@ -78,16 +79,31 @@ export function TeamsProvider({ children }: { children: ReactNode }) {
   // ─── Mutations ────────────────────────────────────────────────────────────
 
   const createTeamMutation = useMutation({
-    mutationFn: ({ name, sport }: { name: string; sport: string }) => {
-      const representative = user
-        ? {
-            id: user.id,
-            firstName: user.first_name ?? "",
-            lastName: user.last_name ?? "",
-            username: user.username ?? "",
-          }
-        : { id: 0, firstName: "", lastName: "", username: "" };
-      return apiCreateTeam(name, sport, user?.token ?? "", representative);
+    mutationFn: ({
+      name,
+      format,
+      representativeRole,
+    }: {
+      name: string;
+      format: TeamFormat;
+      representativeRole: TeamRole;
+    }) => {
+      if (!user) return Promise.reject(new Error("Not authenticated"));
+      const representative = {
+        id: user.id,
+        firstName: user.first_name ?? "",
+        lastName: user.last_name ?? "",
+        username: user.username ?? "",
+        city: user.location ?? "",
+      };
+      return apiCreateTeam(
+        name,
+        TeamSport.FOOTBALL,
+        format,
+        representativeRole,
+        user.token,
+        representative,
+      );
     },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: queryKeys.teams() });
@@ -263,8 +279,12 @@ export function TeamsProvider({ children }: { children: ReactNode }) {
 
   // ─── Public API ───────────────────────────────────────────────────────────
 
-  const createTeam = async (name: string, sport: string): Promise<Team> => {
-    return createTeamMutation.mutateAsync({ name, sport });
+  const createTeam = async (
+    name: string,
+    format: TeamFormat,
+    representativeRole: TeamRole,
+  ): Promise<Team> => {
+    return createTeamMutation.mutateAsync({ name, format, representativeRole });
   };
 
   const addMember = async (teamId: number, appUser: AppUser): Promise<void> => {

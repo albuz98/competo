@@ -24,6 +24,10 @@ export default function Settings() {
     (p) => p.role === UserRole.ORGANIZER,
   );
 
+  const handleRefereeProfile = () => {
+    navigation.navigate(NavigationEnum.CREATE_REFEREE_PROFILE);
+  };
+
   const handleEditProfile = () => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (navigation as any).navigate(NavigationEnum.MAIN_TABS, {
@@ -128,6 +132,25 @@ export default function Settings() {
               </Pressable>
             </>
           )}
+
+          <View style={styles.divider} />
+          <Pressable style={styles.row} onPress={handleRefereeProfile}>
+            <View
+              style={[styles.rowIcon, { backgroundColor: colors.purpleBlueBg }]}
+            >
+              <Ionicons
+                name="ribbon-outline"
+                size={20}
+                color={colors.purpleBlue}
+              />
+            </View>
+            <Text style={styles.rowText}>Sei un arbitro?</Text>
+            <Ionicons
+              name="chevron-forward"
+              size={18}
+              color={colors.grayDark}
+            />
+          </Pressable>
         </View>
 
         <View style={{ flex: 1 }} />

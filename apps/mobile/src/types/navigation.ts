@@ -30,6 +30,7 @@ export type RootStackParamList = {
   TournamentHistory: undefined;
   Settings: undefined;
   CreateOrganizerProfile: undefined;
+  CreateRefereeProfile: undefined;
   ChangePassword: undefined;
   TwoFactorAuth: undefined;
 };
@@ -69,6 +70,7 @@ export enum NavigationEnum {
   TOURNAMENT_HISTORY = "TournamentHistory",
   SETTINGS = "Settings",
   CREATE_ORGANIZER_PROFILE = "CreateOrganizerProfile",
+  CREATE_REFEREE_PROFILE = "CreateRefereeProfile",
   CHANGE_PASSWORD = "ChangePassword",
   TWO_FACTOR_AUTH = "TwoFactorAuth",
 }

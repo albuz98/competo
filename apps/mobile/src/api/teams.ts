@@ -57,12 +57,15 @@ export async function fetchUserTeams(token: string): Promise<Team[]> {
 export async function createTeam(
   name: string,
   sport: string,
+  format: string,
+  representative_role: string,
   token: string,
   representative?: {
     id: number;
     firstName: string;
     lastName: string;
     username: string;
+    city: string;
   },
 ): Promise<Team> {
   if (mockFlags.IS_MOCKING_CREATE_TEAM) {
@@ -94,8 +97,17 @@ export async function createTeam(
     return newTeam;
   }
   return apiFetch<Team>(
-    "/teams",
-    { method: "POST", body: JSON.stringify({ name: name.trim(), sport }) },
+    "/api/v1/teams",
+    {
+      method: "POST",
+      body: JSON.stringify({
+        name: name.trim(),
+        sport,
+        format,
+        city: representative?.city,
+        representative_role,
+      }),
+    },
     token,
   );
 }

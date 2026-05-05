@@ -3,6 +3,7 @@ import {
   View,
   Text,
   TextInput,
+  TouchableOpacity,
   StatusBar,
   ScrollView,
   KeyboardAvoidingView,
@@ -24,7 +25,8 @@ import {
 } from "../../components/core/Button/Button";
 import { sizesEnum } from "../../theme/dimension";
 import { colors } from "../../theme/colors";
-import { GAMES } from "../../constants/generals";
+import { TEAM_FORMAT_OPTIONS, TeamFormat } from "../../constants/generals";
+import { TeamRole } from "../../constants/team";
 
 type Props = NativeStackScreenProps<RootStackParamList, "CreateTeam">;
 
@@ -32,19 +34,20 @@ export default function CreateTeam({ navigation }: Props) {
   const { createTeam } = useTeams();
   const insets = useSafeAreaInsets();
   const [name, setName] = useState("");
-  const [sport, setSport] = useState("");
+  const [format, setFormat] = useState<TeamFormat | null>(null);
+  const [representativeRole, setRepresentativeRole] = useState<TeamRole.PLAYER | TeamRole.COACH | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [createError, setCreateError] = useState<string | null>(null);
 
-  const isValid = name.trim().length >= 2 && sport.length > 0;
+  const isValid = name.trim().length >= 2 && format !== null && representativeRole !== null;
 
   const handleCreate = async () => {
-    if (!isValid || loading) return;
+    if (!isValid || loading || format === null || representativeRole === null) return;
     setLoading(true);
     setError(null);
     try {
-      const team = await createTeam(name.trim(), sport);
+      const team = await createTeam(name.trim(), format, representativeRole);
       navigation.replace(NavigationEnum.TEAM_DETAIL, { teamId: team.id });
     } catch (e) {
       setCreateError(e instanceof Error ? e.message : "Errore nella creazione");
@@ -129,17 +132,51 @@ export default function CreateTeam({ navigation }: Props) {
               showsHorizontalScrollIndicator={false}
               contentContainerStyle={cs.sportsList}
             >
-              {GAMES.map((g) => (
+              {TEAM_FORMAT_OPTIONS.map((opt) => (
                 <ButtonBorderColored
-                  key={g}
-                  handleBtn={() => setSport(g)}
-                  text={g}
+                  key={opt.format}
+                  handleBtn={() => setFormat(opt.format)}
+                  text={opt.label}
                   isColored
                   size={sizesEnum.medium}
-                  isActive={sport === g}
+                  isActive={format === opt.format}
                 />
               ))}
             </ScrollView>
+
+            {/* Role selector */}
+            <Text style={[cs.label, { marginTop: 24 }]}>IL TUO RUOLO</Text>
+            <View style={cs.roleRow}>
+              <TouchableOpacity
+                style={[cs.roleCard, representativeRole === TeamRole.PLAYER && cs.roleCardActive]}
+                onPress={() => setRepresentativeRole(TeamRole.PLAYER)}
+                activeOpacity={0.7}
+              >
+                <Ionicons
+                  name="football-outline"
+                  size={28}
+                  color={representativeRole === TeamRole.PLAYER ? colors.primary : colors.grayDark}
+                />
+                <Text style={[cs.roleCardLabel, representativeRole === TeamRole.PLAYER && cs.roleCardLabelActive]}>
+                  Giocatore
+                </Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={[cs.roleCard, representativeRole === TeamRole.COACH && cs.roleCardActive]}
+                onPress={() => setRepresentativeRole(TeamRole.COACH)}
+                activeOpacity={0.7}
+              >
+                <Ionicons
+                  name="stopwatch-outline"
+                  size={28}
+                  color={representativeRole === TeamRole.COACH ? colors.primary : colors.grayDark}
+                />
+                <Text style={[cs.roleCardLabel, representativeRole === TeamRole.COACH && cs.roleCardLabelActive]}>
+                  Allenatore
+                </Text>
+              </TouchableOpacity>
+            </View>
 
             {error && (
               <View style={cs.errorBox}>

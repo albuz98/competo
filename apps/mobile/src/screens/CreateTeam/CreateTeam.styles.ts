@@ -40,6 +40,25 @@ export const cs = StyleSheet.create({
   inputHint: { fontSize: 11, color: '#cbd5e1', marginTop: 5 },
 
   sportsList: { gap: 8, paddingVertical: 4 },
+
+  roleRow: { flexDirection: 'row', gap: 12, marginTop: 4 },
+  roleCard: {
+    flex: 1,
+    alignItems: 'center',
+    paddingVertical: 18,
+    paddingHorizontal: 8,
+    backgroundColor: '#fff',
+    borderRadius: 14,
+    borderWidth: 1.5,
+    borderColor: '#e2e8f0',
+    gap: 8,
+  },
+  roleCardActive: {
+    borderColor: '#E8601A',
+    backgroundColor: '#FFF8F5',
+  },
+  roleCardLabel: { fontSize: 14, fontWeight: '700', color: '#1e293b' },
+  roleCardLabelActive: { color: '#E8601A' },
   errorBox: {
     backgroundColor: '#fef2f2',
     borderRadius: 12,

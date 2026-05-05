@@ -20,6 +20,7 @@ export const mockFlags = {
   IS_MOCKING_SEARCH_USERS: false,
   IS_MOCKING_INVITE_MEMBER: false,
   IS_MOCKING_REMOVE_MEMBER: false,
+  IS_MOCKING_CREATE_TEAM: false,
 
   // ──────────────────────────────────────────────────────────────────────────
   IS_MOCKING_FORGOT_PASSWORD: true,
@@ -40,8 +41,7 @@ export const mockFlags = {
   IS_MOCKING_REJECT_TEAM_FROM_TOURNAMENT: true,
   IS_MOCKING_REMOVE_TEAM_FROM_TOURNAMENT: true,
 
-  // ─── Teams ────────────────────────────────────────────────────────────────
-  IS_MOCKING_CREATE_TEAM: true,
+  // ─── Teams ───────────────────────────────────────────────────────────────-
   IS_MOCKING_FETCH_USER_TEAMS: true,
   IS_MOCKING_GET_PENDING_INVITES: true,
   IS_MOCKING_GET_SENT_INVITES: true,

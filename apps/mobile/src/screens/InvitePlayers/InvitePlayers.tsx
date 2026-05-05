@@ -19,57 +19,14 @@ import {
   ButtonFullColored,
   ButtonIcon,
 } from "../../components/core/Button/Button";
-import { sizesEnum } from "../../theme/dimension";
 import { TabBar } from "../../components/core/TabBar/TabBar";
 import { colors } from "../../theme/colors";
 import { InputBoxSearch } from "../../components/core/InputBoxSearch/InputBoxSearch";
 import { AppUser, Team } from "../../types/team";
+import { UserRowInvitation } from "../../components/UserRowInvitation/UserRowInvitation";
 
 type Props = NativeStackScreenProps<RootStackParamList, "InvitePlayers">;
 type Tab = "cerca" | "condividi";
-
-interface UseRowProps {
-  user: AppUser;
-  alreadyMember: boolean;
-  invited: boolean;
-  onInvite: () => void;
-}
-
-function UserRow({ user, alreadyMember, invited, onInvite }: UseRowProps) {
-  const initials =
-    (user.firstName ? user.firstName[0] : "") +
-    (user.lastName ? user.lastName[0] : "");
-  return (
-    <View style={ip.userRow}>
-      <View style={ip.userAvatar}>
-        <Text style={ip.userAvatarText}>{initials.toUpperCase()}</Text>
-      </View>
-      <View style={{ flex: 1 }}>
-        <Text style={ip.userName}>
-          {user.firstName} {user.lastName}
-        </Text>
-        <Text style={ip.userUsername}>@{user.username}</Text>
-      </View>
-      {alreadyMember ? (
-        <View style={ip.alreadyBadge}>
-          <Text style={ip.alreadyBadgeText}>Già membro</Text>
-        </View>
-      ) : invited ? (
-        <View style={ip.invitedBadge}>
-          <Ionicons name="checkmark" size={14} color={colors.success} />
-          <Text style={ip.invitedBadgeText}>In attesa</Text>
-        </View>
-      ) : (
-        <ButtonFullColored
-          text="Invita"
-          handleBtn={onInvite}
-          isColored
-          size={sizesEnum.small}
-        />
-      )}
-    </View>
-  );
-}
 
 export default function InvitePlayers({ route, navigation }: Props) {
   const { teamId } = route.params;
@@ -222,7 +179,7 @@ export default function InvitePlayers({ route, navigation }: Props) {
                   : undefined
               }
               renderResult={(u, _i, _onPress) => (
-                <UserRow
+                <UserRowInvitation
                   key={u.id}
                   user={u}
                   alreadyMember={memberIds.has(u.id)}
