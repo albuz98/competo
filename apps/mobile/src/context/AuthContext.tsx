@@ -38,13 +38,13 @@ interface AuthContextType {
   logout: () => void;
   clearError: () => void;
   updateLocation: (location: string) => void;
-  switchProfile: (profileId: string) => void;
+  switchProfile: (profileId: number) => void;
   updateProfile: (data: UpdateProfileData) => Promise<void>;
   updateOrgProfileData: (
-    profileId: string,
+    profileId: number,
     updates: Partial<OrganizerProfile>,
   ) => void;
-  addCollaborator: (profileId: string, appUser: AppUser) => void;
+  addCollaborator: (profileId: number, appUser: AppUser) => void;
   addOrganizerProfile: (orgName: string) => void;
 }
 
@@ -90,7 +90,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     onSuccess: async (userData) => {
       await SecureStore.setItemAsync(TOKEN_KEY, userData.token);
       if (userData.refreshToken) {
-        await SecureStore.setItemAsync(REFRESH_TOKEN_KEY, userData.refreshToken);
+        await SecureStore.setItemAsync(
+          REFRESH_TOKEN_KEY,
+          userData.refreshToken,
+        );
       }
       setUser(userData);
       setError(null);
@@ -106,7 +109,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     onSuccess: async (userData) => {
       await SecureStore.setItemAsync(TOKEN_KEY, userData.token);
       if (userData.refreshToken) {
-        await SecureStore.setItemAsync(REFRESH_TOKEN_KEY, userData.refreshToken);
+        await SecureStore.setItemAsync(
+          REFRESH_TOKEN_KEY,
+          userData.refreshToken,
+        );
       }
       setUser(userData);
       setError(null);
@@ -173,7 +179,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setUser((prev) => (prev ? { ...prev, location: loc } : prev));
   };
 
-  const switchProfile = (profileId: string) => {
+  const switchProfile = (profileId: number) => {
     setUser((prev) => (prev ? { ...prev, currentProfileId: profileId } : prev));
   };
 
@@ -182,7 +188,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     await updateProfileMutation.mutateAsync(data);
   };
 
-  const addCollaborator = (profileId: string, appUser: AppUser) => {
+  const addCollaborator = (profileId: number, appUser: AppUser) => {
     setUser((prev) => {
       if (!prev) return prev;
       return {
@@ -204,7 +210,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setUser((prev) => {
       if (!prev) return prev;
       const newProfile: OrganizerProfile = {
-        id: `org-${Date.now()}`,
+        id: Number(`org-${Date.now()}`),
         role: UserRole.ORGANIZER,
         orgName,
         isCreator: true,
@@ -220,7 +226,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const updateOrgProfileData = (
-    profileId: string,
+    profileId: number,
     updates: Partial<OrganizerProfile>,
   ) => {
     setUser((prev) =>

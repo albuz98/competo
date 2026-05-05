@@ -16,7 +16,7 @@ export enum UserRole {
 export type OrganizerCollaborator = AppUser;
 
 export type PlayerProfile = {
-  id: string;
+  id: number;
   role: UserRole.PLAYER;
   username: string;
   first_name?: string;
@@ -26,7 +26,7 @@ export type PlayerProfile = {
 };
 
 export type OrganizerProfile = {
-  id: string;
+  id: number;
   role: UserRole.ORGANIZER;
   avatarUrl?: string;
   orgName: string;
@@ -47,6 +47,7 @@ export interface User {
   token: string;
   refreshToken?: string;
   birthdate?: string;
+  phone?: string;
   location?: string;
   gender?: Gender;
   avatarUrl?: string;
@@ -55,7 +56,7 @@ export interface User {
   playedTournaments?: PlayedTournamentRecord[];
   organizedTournaments?: OrganizedTournamentRecord[];
   profiles?: UserProfile[];
-  currentProfileId?: string;
+  currentProfileId?: number;
 }
 
 export interface PlayedTournamentRecord {

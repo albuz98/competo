@@ -12,7 +12,7 @@ export const mockFlags = {
   // ─── Users ───────────────────────────────────────────────────────────────
   IS_MOCKING_FETCH_PROFILE: false,
   //delete - Delete me
-  //patch - Update me
+  IS_MOCKING_UPDATE_PROFILE: false,
   //get - get player profile
   //put - upsert player profile
   //get - get my invitations
@@ -37,7 +37,6 @@ export const mockFlags = {
 
   // ──────────────────────────────────────────────────────────────────────────
   IS_MOCKING_FORGOT_PASSWORD: true,
-  IS_MOCKING_UPDATE_PROFILE: true,
   IS_MOCKING_REGISTER_PUSH_TOKEN: true,
 
   // ─── Tournaments ──────────────────────────────────────────────────────────

@@ -1,6 +1,6 @@
 import React from "react";
 import { Pressable, View, Text } from "react-native";
-import { ButtonIcon, ButtonLink } from "../core/Button/Button";
+import { ButtonBack, ButtonIcon, ButtonLink } from "../core/Button/Button";
 import { colors } from "../../theme/colors";
 import Entypo from "@expo/vector-icons/Entypo";
 import { Ionicons } from "@expo/vector-icons";
@@ -53,17 +53,7 @@ export const TopBarProfile = ({
           </View>
         ) : (
           <View style={styles.containerHeaderText}>
-            <ButtonIcon
-              handleBtn={handleDiscard}
-              icon={
-                <Ionicons
-                  name="arrow-back"
-                  size={22}
-                  color={colors.dark}
-                />
-              }
-              style={styles.backBtn}
-            />
+            <ButtonBack handleBtn={handleDiscard} isArrowBack={false} />
             <Text style={styles.headerText}>Modifica profilo</Text>
           </View>
         )}

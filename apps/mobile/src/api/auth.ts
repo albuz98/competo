@@ -53,10 +53,25 @@ export async function forgotPassword(email: string): Promise<void> {
   });
 }
 
+interface UpdateMeApiResponse {
+  id: number;
+  username: string;
+  email: string;
+  first_name: string;
+  last_name: string;
+  birthdate: string;
+  phone: string;
+  avatar_url: string;
+  is_active: boolean;
+}
+
 export async function updateProfile(
   data: {
     first_name?: string;
     last_name?: string;
+    email?: string;
+    birthdate?: string;
+    phone?: string;
     username?: string;
     location?: string;
     gender?: Gender;
@@ -71,19 +86,40 @@ export async function updateProfile(
     if (!currentUser) throw new Error("Not authenticated");
     return {
       ...currentUser,
-      ...(data.first_name !== undefined ? { first_name: data.first_name } : {}),
-      ...(data.last_name !== undefined ? { last_name: data.last_name } : {}),
+      ...(data.first_name ? { first_name: data.first_name } : {}),
+      ...(data.last_name ? { last_name: data.last_name } : {}),
+      ...(data.email ? { email: data.email } : {}),
+      ...(data.birthdate ? { birthdate: data.birthdate } : {}),
+      ...(data.phone ? { phone: data.phone } : {}),
       ...(data.username ? { username: data.username } : {}),
-      ...(data.location !== undefined ? { location: data.location } : {}),
-      ...(data.gender !== undefined ? { gender: data.gender } : {}),
-      ...(data.avatarUrl !== undefined ? { avatarUrl: data.avatarUrl } : {}),
+      ...(data.location ? { location: data.location } : {}),
+      ...(data.gender ? { gender: data.gender } : {}),
+      ...(data.avatarUrl ? { avatarUrl: data.avatarUrl } : {}),
     };
   }
-  return apiFetch<User>(
-    "/auth/profile",
-    { method: "PATCH", body: JSON.stringify(data) },
+  const body: Record<string, string> = {};
+  if (data.email) body.email = data.email;
+  if (data.first_name) body.first_name = data.first_name;
+  if (data.last_name) body.last_name = data.last_name;
+  if (data.birthdate) body.birthdate = data.birthdate;
+  if (data.phone) body.phone = data.phone;
+  const res = await apiFetch<UpdateMeApiResponse>(
+    "/api/v1/users/me",
+    { method: "PATCH", body: JSON.stringify(body) },
     token,
   );
+  if (!currentUser) throw new Error("Not authenticated");
+  return {
+    ...currentUser,
+    id: res.id,
+    username: res.username,
+    email: res.email,
+    first_name: res.first_name,
+    last_name: res.last_name,
+    birthdate: res.birthdate,
+    phone: res.phone,
+    avatarUrl: res.avatar_url ?? currentUser.avatarUrl,
+  };
 }
 
 interface AuthTokenResponse {

@@ -70,6 +70,13 @@ export default function ProfilePlayer({
     onDirty?.();
   };
 
+  const formatBirthdate = (raw: string) => {
+    const digits = raw.replace(/\D/g, "").slice(0, 8);
+    if (digits.length <= 2) return digits;
+    if (digits.length <= 4) return `${digits.slice(0, 2)}-${digits.slice(2)}`;
+    return `${digits.slice(0, 2)}-${digits.slice(2, 4)}-${digits.slice(4)}`;
+  };
+
   const handleSetLocation: React.Dispatch<React.SetStateAction<string>> = (
     v,
   ) => {
@@ -206,7 +213,9 @@ export default function ProfilePlayer({
               label="Data di nascita"
               value={form.birthdate}
               keyboardType="number-pad"
-              onChangeText={(v) => updateForm({ birthdate: v })}
+              maxLength={10}
+              placeholder="gg-mm-aaaa"
+              onChangeText={(v) => updateForm({ birthdate: formatBirthdate(v) })}
             />
             <InputBoxRow
               label="Email"
