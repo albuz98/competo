@@ -9,7 +9,11 @@ export const styles = StyleSheet.create({
     justifyContent: "space-between",
     paddingHorizontal: 16,
     paddingTop: 8,
-    paddingBottom: 8,
+  },
+  headerLeft: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 4,
   },
   headerTitle: {
     fontSize: 18,
@@ -33,5 +37,10 @@ export const styles = StyleSheet.create({
     shadowRadius: 8,
     elevation: 3,
     overflow: "hidden",
+  },
+  arrowBack: {
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center",
   },
 });

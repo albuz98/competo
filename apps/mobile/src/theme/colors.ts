@@ -13,6 +13,7 @@ export const colors = {
   successBg: "#dcfce7",
   disabled: "#e2e8f0",
   disabledBg: "#f8fafc",
+  disabledText: "#505358",
   opacized: "rgba(0,0,0,0.25)",
   opacizedBgInput: "rgba(0, 0, 0, 0.15)",
   darkSemiOpacized: "rgba(0,0,0,0.5)",

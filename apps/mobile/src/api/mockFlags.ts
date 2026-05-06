@@ -35,7 +35,7 @@ export const mockFlags = {
   IS_MOCKING_ACCEPT_INVITE: false,
   IS_MOCKING_REJECT_INVITE: false,
 
-  // ──────────────────────────────────────────────────────────────────────────
+  // ──────────────────────────── TO DO ───────────────────────────────────────
   IS_MOCKING_FORGOT_PASSWORD: true,
   IS_MOCKING_REGISTER_PUSH_TOKEN: true,
 

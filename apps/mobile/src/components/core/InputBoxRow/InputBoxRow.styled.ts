@@ -47,7 +47,7 @@ export const styles = StyleSheet.create({
     borderBottomColor: colors.danger,
   },
   rowInputDisabled: {
-    color: colors.placeholder,
+    color: colors.disabledText,
     borderBottomColor: colors.disabled,
   },
   rowError: {

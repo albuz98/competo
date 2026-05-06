@@ -193,7 +193,7 @@ export const pStyles = StyleSheet.create({
     color: colors.placeholder,
     textTransform: "uppercase",
     letterSpacing: 0.5,
-    marginBottom: 8,
+    marginBottom: 2,
   },
 
   // ── Gender selector ────────────────────────────────────────────

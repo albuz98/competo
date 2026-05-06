@@ -6,7 +6,7 @@ import {
   KeyboardAvoidingView,
   Platform,
 } from "react-native";
-import { ButtonLink } from "../../components/core/Button/Button";
+import { ButtonBack, ButtonLink } from "../../components/core/Button/Button";
 import { InputBoxRow } from "../../components/core/InputBoxRow/InputBoxRow";
 import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
@@ -67,7 +67,10 @@ export const ChangePassword = () => {
     >
       <SafeAreaView style={styles.root} edges={["top"]}>
         <View style={styles.header}>
-          <Text style={styles.headerTitle}>Cambia password</Text>
+          <View style={styles.arrowBack}>
+            <ButtonBack handleBtn={goBackToEditProfile} isArrowBack={false} />
+            <Text style={styles.headerTitle}>Cambia password</Text>
+          </View>
           <ButtonLink
             text={saving ? "..." : "FATTO"}
             handleBtn={handleSave}

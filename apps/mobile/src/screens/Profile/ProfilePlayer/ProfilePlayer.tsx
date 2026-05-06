@@ -201,11 +201,13 @@ export default function ProfilePlayer({
             />
             <InputBoxRow
               label="Nome"
+              placeholder="Nome"
               value={form.first_name}
               onChangeText={(v) => updateForm({ first_name: v })}
             />
             <InputBoxRow
               label="Cognome"
+              placeholder="Cognome"
               value={form.last_name}
               onChangeText={(v) => updateForm({ last_name: v })}
             />
@@ -215,10 +217,13 @@ export default function ProfilePlayer({
               keyboardType="number-pad"
               maxLength={10}
               placeholder="gg-mm-aaaa"
-              onChangeText={(v) => updateForm({ birthdate: formatBirthdate(v) })}
+              onChangeText={(v) =>
+                updateForm({ birthdate: formatBirthdate(v) })
+              }
             />
             <InputBoxRow
               label="Email"
+              placeholder="Email"
               value={form.email}
               keyboardType="email-address"
               autoCorrect={false}
