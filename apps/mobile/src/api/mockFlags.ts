@@ -10,7 +10,7 @@ export const mockFlags = {
   IS_MOCKING_LOGOUT: false,
 
   // ─── Users ───────────────────────────────────────────────────────────────
-  IS_MOCKING_FETCH_PROFILE: false,
+  IS_MOCKING_FETCH_PROFILE: true,
   //delete - Delete me
   IS_MOCKING_UPDATE_PROFILE: false,
   //get - get player profile

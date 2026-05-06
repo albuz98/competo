@@ -1,12 +1,14 @@
-import { View, Text } from "react-native";
+import { View, Text, TouchableOpacity } from "react-native";
 import { s } from "../CreateTournamentSchedule.styles";
 import { Ionicons } from "@expo/vector-icons";
 import { colors } from "../../../theme/colors";
 import { Stepper } from "../../../components/core/Stepper/Stepper";
+import { InputBox } from "../../../components/core/InputBox/InputBox";
 import { estimateTotalMatches } from "../../../functions/tournamet";
 import {
   TournamentFormat,
   TournamentPhaseKind,
+  PlayerLimitMode,
 } from "../../../constants/tournament";
 
 interface renderStep3Props {
@@ -17,7 +19,39 @@ interface renderStep3Props {
   format: TournamentFormat;
   phaseKind: TournamentPhaseKind;
   maxGroups: number;
+  playerLimitMode: PlayerLimitMode;
+  setPlayerLimitMode: React.Dispatch<React.SetStateAction<PlayerLimitMode>>;
+  maxPlayersPerTeam: number;
+  setMaxPlayersPerTeam: React.Dispatch<React.SetStateAction<number>>;
+  extraPlayerCost: string;
+  setExtraPlayerCost: React.Dispatch<React.SetStateAction<string>>;
 }
+
+const PLAYER_LIMIT_OPTIONS: {
+  value: PlayerLimitMode;
+  label: string;
+  sub: string;
+  icon: string;
+}[] = [
+  {
+    value: PlayerLimitMode.MAX,
+    label: "Numero massimo",
+    sub: "Imposta il numero massimo di giocatori per squadra",
+    icon: "people-outline",
+  },
+  {
+    value: PlayerLimitMode.MAX_WITH_EXTRA,
+    label: "Massimo + quota extra",
+    sub: "Oltre il limite ogni giocatore in più paga una quota aggiuntiva",
+    icon: "cash-outline",
+  },
+  {
+    value: PlayerLimitMode.UNLIMITED,
+    label: "Illimitato",
+    sub: "Nessun limite al numero di giocatori per squadra",
+    icon: "infinite-outline",
+  },
+];
 
 export function renderStep3({
   setNumGroups,
@@ -27,6 +61,12 @@ export function renderStep3({
   format,
   phaseKind,
   maxGroups,
+  playerLimitMode,
+  setPlayerLimitMode,
+  maxPlayersPerTeam,
+  setMaxPlayersPerTeam,
+  extraPlayerCost,
+  setExtraPlayerCost,
 }: renderStep3Props) {
   const teamsPerGroup = Math.ceil(numTeams / effGroups);
   const lastGroupSize = numTeams - (effGroups - 1) * teamsPerGroup;
@@ -113,6 +153,65 @@ export function renderStep3({
             </View>
           </View>
         </>
+      )}
+
+      {/* Player limit */}
+      <Text style={s.sectionLabel}>Giocatori per squadra</Text>
+      {PLAYER_LIMIT_OPTIONS.map((opt) => (
+        <TouchableOpacity
+          key={opt.value}
+          style={[
+            s.optionCard,
+            { flexDirection: "row", alignItems: "center", marginBottom: 8, paddingHorizontal: 14, paddingVertical: 12, gap: 12 },
+            playerLimitMode === opt.value && s.optionCardSelected,
+          ]}
+          onPress={() => setPlayerLimitMode(opt.value)}
+          activeOpacity={0.8}
+        >
+          <View style={[s.optionCardIcon, playerLimitMode === opt.value && s.optionCardIconSelected]}>
+            <Ionicons
+              name={opt.icon as any}
+              size={18}
+              color={playerLimitMode === opt.value ? colors.white : colors.placeholder}
+            />
+          </View>
+          <View style={s.optionCardBody}>
+            <Text style={s.optionCardTitle}>{opt.label}</Text>
+            <Text style={s.optionCardSub}>{opt.sub}</Text>
+          </View>
+          <View style={[s.optionCardCheck, playerLimitMode === opt.value && s.optionCardCheckSelected]}>
+            {playerLimitMode === opt.value && (
+              <Ionicons name="checkmark" size={13} color={colors.white} />
+            )}
+          </View>
+        </TouchableOpacity>
+      ))}
+
+      {playerLimitMode !== PlayerLimitMode.UNLIMITED && (
+        <View style={s.fieldRow}>
+          <View style={s.optionCardBody}>
+            <Text style={s.fieldLabel}>Max giocatori per squadra</Text>
+            <Text style={s.fieldSub}>Limite massimo di iscritti per team</Text>
+          </View>
+          <Stepper value={maxPlayersPerTeam} min={1} max={50} onChange={setMaxPlayersPerTeam} />
+        </View>
+      )}
+
+      {playerLimitMode === PlayerLimitMode.MAX_WITH_EXTRA && (
+        <View style={s.numberInputRow}>
+          <Text style={s.fieldLabel}>Quota per giocatore extra (€)</Text>
+          <View style={s.fieldMinInput}>
+            <InputBox
+              value={extraPlayerCost}
+              onChangeText={setExtraPlayerCost}
+              keyboardType="decimal-pad"
+              placeholder="0"
+              isDark={false}
+              isBorderless
+            />
+            <Text style={s.numberInputSuffix}>€</Text>
+          </View>
+        </View>
       )}
 
       {/* Estimated matches (hidden for single-phase knockout) */}

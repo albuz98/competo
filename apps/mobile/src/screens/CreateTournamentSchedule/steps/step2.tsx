@@ -1,4 +1,4 @@
-import { View, Text } from "react-native";
+import { View, Text, TouchableOpacity } from "react-native";
 import { s } from "../CreateTournamentSchedule.styles";
 import { colors } from "../../../theme/colors";
 import { Ionicons } from "@expo/vector-icons";
@@ -11,11 +11,15 @@ import { ButtonGeneric } from "../../../components/core/Button/Button";
 interface renderStep2Props {
   tournamentMode: TournamentMode;
   setTournamentMode: React.Dispatch<React.SetStateAction<TournamentMode>>;
+  campionatoDoubleRound: boolean;
+  setCampionatoDoubleRound: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export function renderStep2({
   tournamentMode,
   setTournamentMode,
+  campionatoDoubleRound,
+  setCampionatoDoubleRound,
 }: renderStep2Props) {
   return (
     <>
@@ -65,6 +69,54 @@ export function renderStep2({
           </View>
         </ButtonGeneric>
       ))}
+
+      {tournamentMode === TournamentMode.CAMPIONATO && (
+        <>
+          <Text style={s.sectionLabel}>Gare</Text>
+          <View style={s.halfToggleRow}>
+            <TouchableOpacity
+              style={[
+                s.halfToggleBtn,
+                campionatoDoubleRound && {
+                  borderColor: colors.primary,
+                  backgroundColor: colors.primary + "18",
+                },
+              ]}
+              onPress={() => setCampionatoDoubleRound(true)}
+              activeOpacity={0.8}
+            >
+              <Text
+                style={[
+                  s.halfToggleBtnText,
+                  campionatoDoubleRound && { color: colors.primary },
+                ]}
+              >
+                Andata e Ritorno
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[
+                s.halfToggleBtn,
+                !campionatoDoubleRound && {
+                  borderColor: colors.primary,
+                  backgroundColor: colors.primary + "18",
+                },
+              ]}
+              onPress={() => setCampionatoDoubleRound(false)}
+              activeOpacity={0.8}
+            >
+              <Text
+                style={[
+                  s.halfToggleBtnText,
+                  !campionatoDoubleRound && { color: colors.primary },
+                ]}
+              >
+                Solo Andata
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </>
+      )}
     </>
   );
 }

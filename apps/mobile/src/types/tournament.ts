@@ -5,6 +5,7 @@ import {
   TeamRegistrationStatus,
   TournamentGender,
   FinalDayRound,
+  PlayerLimitMode,
 } from "../constants/tournament";
 import { PlayerStats } from "./stats";
 
@@ -96,6 +97,12 @@ export interface CreateTournamentPayload {
   insuranceCost?: number;
   sportRegulation?: string;
   gender?: string;
+  campionatoDoubleRound?: boolean;
+  playerLimitMode?: PlayerLimitMode;
+  maxPlayersPerTeam?: number;
+  extraPlayerCost?: number;
+  tempoEffettivoGironi?: boolean;
+  tempoEffettivoFinale?: boolean;
 }
 
 export interface TournametNumberPartecipants {

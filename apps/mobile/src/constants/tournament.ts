@@ -84,6 +84,14 @@ export function tournamentModeToConfig(mode: TournamentMode): {
 }
 
 export const DAY_LABELS = ["D", "L", "M", "M", "G", "V", "S"];
+// Display order Mon→Sun (underlying values remain 0=Sun…6=Sat)
+export const DAY_ORDER = [1, 2, 3, 4, 5, 6, 0];
+
+export enum PlayerLimitMode {
+  MAX = "max",
+  MAX_WITH_EXTRA = "max_with_extra",
+  UNLIMITED = "unlimited",
+}
 
 export enum FinalDayRound {
   QUARTI = "quarti",

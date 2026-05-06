@@ -2,6 +2,7 @@ import React from "react";
 import { TouchableOpacity, View, Text, Alert, Switch } from "react-native";
 import {
   DAY_LABELS,
+  DAY_ORDER,
   FINAL_DAY_ROUNDS,
   FinalDayRound,
   ROUND_MATCHES,
@@ -439,19 +440,19 @@ export function renderStep5({
         <>
           <Text style={s.sectionLabel}>Giorni di gioco</Text>
           <View style={s.daysRow}>
-            {DAY_LABELS.map((label, idx) => (
+            {DAY_ORDER.map((dayIdx) => (
               <TouchableOpacity
-                key={idx}
-                style={[s.dayBtn, playDays.includes(idx) && s.dayBtnSelected]}
-                onPress={() => toggleDay(idx)}
+                key={dayIdx}
+                style={[s.dayBtn, playDays.includes(dayIdx) && s.dayBtnSelected]}
+                onPress={() => toggleDay(dayIdx)}
               >
                 <Text
                   style={[
                     s.dayBtnText,
-                    playDays.includes(idx) && s.dayBtnTextSelected,
+                    playDays.includes(dayIdx) && s.dayBtnTextSelected,
                   ]}
                 >
-                  {label}
+                  {DAY_LABELS[dayIdx]}
                 </Text>
               </TouchableOpacity>
             ))}

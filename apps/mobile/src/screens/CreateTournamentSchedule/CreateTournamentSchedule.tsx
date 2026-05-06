@@ -18,6 +18,7 @@ import { renderStep5 } from "./steps/step5";
 import { renderStepRegolamento } from "./steps/stepRegolamento";
 import {
   FinalDayRound,
+  PlayerLimitMode,
   STEP_TITLES_TOURNAMENT,
   SportRegulation,
   TournamentGender,
@@ -79,12 +80,18 @@ export default function CreateTournamentSchedule({ navigation }: Props) {
   const [tournamentMode, setTournamentMode] = useState<TournamentMode>(
     TournamentMode.CAMPIONATO,
   );
+  const [campionatoDoubleRound, setCampionatoDoubleRound] = useState(true);
   const { phaseKind, format, knockoutFormat } =
     tournamentModeToConfig(tournamentMode);
 
   // Step 4: Participants (informed by structure)
   const [numTeams, setNumTeams] = useState(8);
   const [numGroups, setNumGroups] = useState(2);
+  const [playerLimitMode, setPlayerLimitMode] = useState<PlayerLimitMode>(
+    PlayerLimitMode.MAX,
+  );
+  const [maxPlayersPerTeam, setMaxPlayersPerTeam] = useState(20);
+  const [extraPlayerCost, setExtraPlayerCost] = useState("");
 
   // Derived: effective groups capped by teams
   const maxGroups = Math.max(2, Math.floor(numTeams / 2));
@@ -98,12 +105,14 @@ export default function CreateTournamentSchedule({ navigation }: Props) {
   const [gironiHalfDuration, setGironiHalfDuration] = useState(45);
   const [gironiHalfBreak, setGironiHalfBreak] = useState(5);
   const [gironiTimeBetween, setGironiTimeBetween] = useState(15);
+  const [gironiTempoEffettivo, setGironiTempoEffettivo] = useState(false);
 
   // Fase finale match settings
   const [finaleTwoHalves, setFinaleTwoHalves] = useState(false);
   const [finaleHalfDuration, setFinaleHalfDuration] = useState(45);
   const [finaleHalfBreak, setFinaleHalfBreak] = useState(5);
   const [finaleTimeBetween, setFinaleTimeBetween] = useState(15);
+  const [finaleTempoEffettivo, setFinaleTempoEffettivo] = useState(false);
 
   // Derived: total match duration per phase
   const gironiMatchDuration = gironiTwoHalves
@@ -262,6 +271,24 @@ export default function CreateTournamentSchedule({ navigation }: Props) {
       insuranceCost: insuranceCost ? parseFloat(insuranceCost) : undefined,
       sportRegulation: sportRegulation ?? undefined,
       gender,
+      campionatoDoubleRound:
+        tournamentMode === TournamentMode.CAMPIONATO
+          ? campionatoDoubleRound
+          : undefined,
+      playerLimitMode,
+      maxPlayersPerTeam:
+        playerLimitMode !== PlayerLimitMode.UNLIMITED
+          ? maxPlayersPerTeam
+          : undefined,
+      extraPlayerCost:
+        playerLimitMode === PlayerLimitMode.MAX_WITH_EXTRA && extraPlayerCost
+          ? parseFloat(extraPlayerCost)
+          : undefined,
+      tempoEffettivoGironi: gironiTempoEffettivo,
+      tempoEffettivoFinale:
+        phaseKind === TournamentPhaseKind.MULTI
+          ? finaleTempoEffettivo
+          : undefined,
     };
     createMutation.mutate(payload);
   }, [
@@ -290,6 +317,13 @@ export default function CreateTournamentSchedule({ navigation }: Props) {
     insuranceCost,
     sportRegulation,
     gender,
+    tournamentMode,
+    campionatoDoubleRound,
+    playerLimitMode,
+    maxPlayersPerTeam,
+    extraPlayerCost,
+    gironiTempoEffettivo,
+    finaleTempoEffettivo,
     createMutation,
   ]);
 
@@ -374,6 +408,8 @@ export default function CreateTournamentSchedule({ navigation }: Props) {
           renderStep2({
             tournamentMode,
             setTournamentMode,
+            campionatoDoubleRound,
+            setCampionatoDoubleRound,
           })}
         {step === 4 &&
           renderStep3({
@@ -384,6 +420,12 @@ export default function CreateTournamentSchedule({ navigation }: Props) {
             format,
             phaseKind,
             maxGroups,
+            playerLimitMode,
+            setPlayerLimitMode,
+            maxPlayersPerTeam,
+            setMaxPlayersPerTeam,
+            extraPlayerCost,
+            setExtraPlayerCost,
           })}
         {step === 5 &&
           renderStep4({
@@ -400,6 +442,8 @@ export default function CreateTournamentSchedule({ navigation }: Props) {
               setHalfBreak: setGironiHalfBreak,
               timeBetween: gironiTimeBetween,
               setTimeBetween: setGironiTimeBetween,
+              tempoEffettivo: gironiTempoEffettivo,
+              setTempoEffettivo: setGironiTempoEffettivo,
             },
             finale: {
               twoHalves: finaleTwoHalves,
@@ -410,6 +454,8 @@ export default function CreateTournamentSchedule({ navigation }: Props) {
               setHalfBreak: setFinaleHalfBreak,
               timeBetween: finaleTimeBetween,
               setTimeBetween: setFinaleTimeBetween,
+              tempoEffettivo: finaleTempoEffettivo,
+              setTempoEffettivo: setFinaleTempoEffettivo,
             },
           })}
         {step === 6 &&

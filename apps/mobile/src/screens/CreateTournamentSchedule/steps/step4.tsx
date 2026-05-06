@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, TouchableOpacity } from "react-native";
+import { View, Text, TouchableOpacity, Switch } from "react-native";
 import { Stepper } from "../../../components/core/Stepper/Stepper";
 import { Ionicons } from "@expo/vector-icons";
 import { s } from "../CreateTournamentSchedule.styles";
@@ -16,6 +16,8 @@ export interface PhaseSettings {
   setHalfBreak: React.Dispatch<React.SetStateAction<number>>;
   timeBetween: number;
   setTimeBetween: React.Dispatch<React.SetStateAction<number>>;
+  tempoEffettivo: boolean;
+  setTempoEffettivo: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 interface renderStep4Props {
@@ -131,6 +133,24 @@ function PhaseSettingsPanel({
           />
           <Text style={s.numberInputSuffix}>min</Text>
         </View>
+      </View>
+
+      <View style={s.toggleRow}>
+        <View>
+          <Text style={s.toggleLabel}>Tempo effettivo</Text>
+          <Text style={s.toggleSub}>
+            Il cronometro si ferma a gioco fermo
+          </Text>
+        </View>
+        <Switch
+          value={settings.tempoEffettivo}
+          onValueChange={settings.setTempoEffettivo}
+          trackColor={{
+            false: colors.disabled,
+            true: colors.primaryGradientMid,
+          }}
+          thumbColor={colors.white}
+        />
       </View>
 
       <View style={[s.infoBox, { marginBottom: 4 }]}>
