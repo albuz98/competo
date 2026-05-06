@@ -125,12 +125,12 @@ export default function CreateTournamentSchedule({ navigation }: Props) {
   // Step 6: Calendar
   const [isSingleDay, setIsSingleDay] = useState(true);
   const [startDate, setStartDate] = useState(todayISO());
-  const [startHour, setStartHour] = useState(9);
+  const [startHour, setStartHour] = useState(9 * 60);
   const [playDays, setPlayDays] = useState<number[]>([6]);
   const [maxMatchesPerDay, setMaxMatchesPerDay] = useState(2);
   const [hasFinalDay, setHasFinalDay] = useState(false);
   const [finalDayDate, setFinalDayDate] = useState(todayISO());
-  const [finalDayHour, setFinalDayHour] = useState(9);
+  const [finalDayHour, setFinalDayHour] = useState(9 * 60);
   const [finalDayStartRound, setFinalDayStartRound] =
     useState<FinalDayRound | null>(FinalDayRound.SEMIFINALI);
   const [activeDateField, setActiveDateField] = useState<
@@ -168,6 +168,13 @@ export default function CreateTournamentSchedule({ navigation }: Props) {
     }
     if (step === 1 && !location.trim()) {
       Alert.alert("Luogo mancante", "Inserisci il luogo del torneo.");
+      return false;
+    }
+    if (step === 1 && !tournamentCost.trim()) {
+      Alert.alert(
+        "Costo iscrizione mancante",
+        "Inserisci il costo di iscrizione al torneo.",
+      );
       return false;
     }
     if (step === 2 && !sportRegulation) {
@@ -248,13 +255,17 @@ export default function CreateTournamentSchedule({ navigation }: Props) {
       restMinutes: 0,
       travelMinutes: gironiTimeBetween,
       startDate,
-      startHour,
+      startHour: Math.floor(startHour / 60),
+      startMinute: startHour % 60,
       playDays: isSingleDay ? [0, 1, 2, 3, 4, 5, 6] : playDays,
       maxMatchesPerDayPerTeam: isSingleDay ? 999 : cappedPerDay,
       maxMatchesPerDay: isSingleDay ? undefined : cappedPerDay,
       hasFinalDay: isSingleDay ? false : hasFinalDay,
       finalDayDate: !isSingleDay && hasFinalDay ? finalDayDate : undefined,
-      finalDayHour: !isSingleDay && hasFinalDay ? finalDayHour : undefined,
+      finalDayHour:
+        !isSingleDay && hasFinalDay ? Math.floor(finalDayHour / 60) : undefined,
+      finalDayMinute:
+        !isSingleDay && hasFinalDay ? finalDayHour % 60 : undefined,
       finalDayStartRound:
         !isSingleDay && hasFinalDay && finalDayStartRound
           ? finalDayStartRound
@@ -329,7 +340,11 @@ export default function CreateTournamentSchedule({ navigation }: Props) {
 
   function isStepValid(): boolean {
     if (step === 1) {
-      return tournamentName.trim().length > 0 && location.trim().length > 0;
+      return (
+        tournamentName.trim().length > 0 &&
+        location.trim().length > 0 &&
+        tournamentCost.trim().length > 0
+      );
     }
     if (step === 2) {
       return sportRegulation !== null;

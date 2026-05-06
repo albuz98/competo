@@ -27,13 +27,15 @@ export interface GeneratorConfig {
   restMinutes: number;
   travelMinutes: number;
   startDate: string; // YYYY-MM-DD
-  startHour: number;
+  startHour: number; // 0-23
+  startMinute?: number; // 0 or 30
   playDays: number[]; // 0=Sun..6=Sat
   maxMatchesPerDayPerTeam: number;
   maxMatchesPerDay?: number; // total matches per day across all fields
   hasFinalDay: boolean;
   finalDayDate?: string; // YYYY-MM-DD — exact date for quarters/semis/final when hasFinalDay
-  finalDayHour?: number; // start hour for the final day (6-22)
+  finalDayHour?: number; // start hour for the final day (0-23)
+  finalDayMinute?: number; // 0 or 30
   finalDayStartRound?: FinalDayRound; // first round on the final day; all subsequent rounds are included
   singleDay?: boolean; // if true, no end-of-day cutoff
 }

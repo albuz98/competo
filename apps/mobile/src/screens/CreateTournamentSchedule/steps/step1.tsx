@@ -88,7 +88,10 @@ export function renderStep1({
             <Ionicons name="card-outline" size={16} color={colors.primary} />
           </View>
           <View style={s.costBody}>
-            <Text style={s.costLabel}>Costo iscrizione</Text>
+            <Text style={s.costLabel}>
+              Costo iscrizione{" "}
+              <Text style={{ color: colors.primary }}>*</Text>
+            </Text>
             <Text style={s.costSub}>Per squadra</Text>
           </View>
           <TextInput

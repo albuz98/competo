@@ -32,13 +32,14 @@ function advanceToNextPlayDay(
   from: Date,
   playDays: number[],
   startHour: number,
+  startMinute = 0,
 ): Date {
   const d = new Date(
     from.getFullYear(),
     from.getMonth(),
     from.getDate() + 1,
     startHour,
-    0,
+    startMinute,
     0,
     0,
   );
@@ -156,7 +157,8 @@ function scheduleRounds(
   let matchId = 1;
 
   const [yr, mo, da] = config.startDate.split("-").map(Number);
-  let currentDate = new Date(yr, mo - 1, da, config.startHour, 0, 0, 0);
+  const sm = config.startMinute ?? 0;
+  let currentDate = new Date(yr, mo - 1, da, config.startHour, sm, 0, 0);
 
   // Advance to first valid play day
   while (!config.playDays.includes(currentDate.getDay())) {
@@ -165,7 +167,7 @@ function scheduleRounds(
       currentDate.getMonth(),
       currentDate.getDate() + 1,
       config.startHour,
-      0,
+      sm,
       0,
       0,
     );
@@ -241,12 +243,15 @@ function scheduleRounds(
       ) {
         // Jump to the exact final day date chosen by the user
         const [fy, fm, fd] = config.finalDayDate.split("-").map(Number);
-        currentDate = new Date(fy, fm - 1, fd, config.startHour, 0, 0, 0);
+        const fdh = config.finalDayHour ?? config.startHour;
+        const fdm = config.finalDayMinute ?? sm;
+        currentDate = new Date(fy, fm - 1, fd, fdh, fdm, 0, 0);
       } else {
         currentDate = advanceToNextPlayDay(
           currentDate,
           config.playDays,
           config.startHour,
+          sm,
         );
       }
     }
@@ -262,6 +267,7 @@ function scheduleRounds(
           currentDate,
           config.playDays,
           config.startHour,
+          sm,
         );
       }
 
@@ -309,6 +315,7 @@ function scheduleRounds(
           currentDate,
           config.playDays,
           config.startHour,
+          sm,
         );
       }
     }

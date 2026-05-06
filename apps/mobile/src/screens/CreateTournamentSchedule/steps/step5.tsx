@@ -244,7 +244,7 @@ export function renderStep5({
   const maxPerDayCap = Math.max(numFields, matchInfo5.total - 1);
   const slot = matchDuration + restMinutes + travelMinutes;
   const durationMins = totalSR > 0 ? (totalSR - 1) * slot + matchDuration : 0;
-  const endTotalMins = startHour * 60 + durationMins;
+  const endTotalMins = startHour + durationMins;
   const endHour = Math.floor(endTotalMins / 60);
   const endMin = endTotalMins % 60;
   const endTimeStr = `${endHour % 24}:${String(endMin).padStart(2, "0")}`;
@@ -276,7 +276,7 @@ export function renderStep5({
       : null;
 
   const finalDayEndMins = finalDayStats
-    ? finalDayHour * 60 + finalDayStats.durationMins
+    ? finalDayHour + finalDayStats.durationMins
     : 0;
   const finalDayEndStr = finalDayStats
     ? `${Math.floor(finalDayEndMins / 60) % 24}:${String(finalDayEndMins % 60).padStart(2, "0")}`
@@ -382,10 +382,17 @@ export function renderStep5({
         </View>
         <Stepper
           value={startHour}
-          min={6}
-          max={22}
+          min={6 * 60}
+          max={22 * 60}
+          step={30}
           onChange={setStartHour}
-          fmt={(h) => `${h}:00`}
+          fmt={(v) => `${Math.floor(v / 60)}:${String(v % 60).padStart(2, "0")}`}
+          parse={(text) => {
+            const m = text.match(/^(\d+):(\d+)$/);
+            if (m) return parseInt(m[1], 10) * 60 + parseInt(m[2], 10);
+            return parseInt(text, 10) * 60;
+          }}
+          editable={false}
         />
       </View>
 
@@ -543,10 +550,19 @@ export function renderStep5({
                 </View>
                 <Stepper
                   value={finalDayHour}
-                  min={6}
-                  max={22}
+                  min={6 * 60}
+                  max={22 * 60}
+                  step={30}
                   onChange={setFinalDayHour}
-                  fmt={(h) => `${h}:00`}
+                  fmt={(v) =>
+                    `${Math.floor(v / 60)}:${String(v % 60).padStart(2, "0")}`
+                  }
+                  parse={(text) => {
+                    const m = text.match(/^(\d+):(\d+)$/);
+                    if (m) return parseInt(m[1], 10) * 60 + parseInt(m[2], 10);
+                    return parseInt(text, 10) * 60;
+                  }}
+                  editable={false}
                 />
               </View>
 

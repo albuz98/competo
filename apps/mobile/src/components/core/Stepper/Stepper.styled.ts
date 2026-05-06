@@ -16,7 +16,11 @@ export const s = StyleSheet.create({
     fontSize: 16,
     fontWeight: "800",
     color: colors.dark,
-    minWidth: 30,
+    minWidth: 40,
     textAlign: "center",
+    paddingVertical: 4,
+    borderBottomWidth: 1,
+    borderColor: colors.primaryGradientEnd,
+    borderRadius: 5,
   },
 });

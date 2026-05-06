@@ -1,4 +1,5 @@
-import { View, Text } from "react-native";
+import React, { useState } from "react";
+import { View, TextInput } from "react-native";
 import { s } from "./Stepper.styled";
 import { Ionicons } from "@expo/vector-icons";
 import { colors } from "../../../theme/colors";
@@ -10,13 +11,45 @@ interface StepperProps {
   max: number;
   onChange: (v: number) => void;
   fmt?: (v: number) => string;
+  parse?: (text: string) => number;
+  step?: number;
+  editable?: boolean;
 }
-export function Stepper({ value, min, max, onChange, fmt }: StepperProps) {
+
+export function Stepper({
+  value,
+  min,
+  max,
+  onChange,
+  fmt,
+  parse,
+  step = 1,
+  editable = true,
+}: StepperProps) {
+  const [focused, setFocused] = useState(false);
+  const [inputText, setInputText] = useState("");
+
+  const displayValue = focused ? inputText : (fmt ? fmt(value) : String(value));
+
+  function handleFocus() {
+    setInputText(fmt ? fmt(value) : String(value));
+    setFocused(true);
+  }
+
+  function handleBlur() {
+    setFocused(false);
+    const raw = parse ? parse(inputText) : parseInt(inputText, 10);
+    if (!isNaN(raw)) {
+      const snapped = Math.round(raw / step) * step;
+      onChange(Math.min(max, Math.max(min, snapped)));
+    }
+  }
+
   return (
     <View style={s.stepper}>
       <ButtonGeneric
         style={[s.stepperBtn, value > min && s.stepperBtnActive]}
-        handleBtn={() => onChange(Math.max(min, value - 1))}
+        handleBtn={() => onChange(Math.max(min, value - step))}
         disabled={value <= min}
       >
         <Ionicons
@@ -25,10 +58,19 @@ export function Stepper({ value, min, max, onChange, fmt }: StepperProps) {
           color={value > min ? colors.primary : colors.placeholder}
         />
       </ButtonGeneric>
-      <Text style={s.stepperValue}>{fmt ? fmt(value) : value}</Text>
+      <TextInput
+        style={s.stepperValue}
+        value={displayValue}
+        onChangeText={setInputText}
+        onFocus={handleFocus}
+        onBlur={handleBlur}
+        keyboardType="numeric"
+        selectTextOnFocus
+        editable={editable}
+      />
       <ButtonGeneric
         style={[s.stepperBtn, value < max && s.stepperBtnActive]}
-        handleBtn={() => onChange(Math.min(max, value + 1))}
+        handleBtn={() => onChange(Math.min(max, value + step))}
         disabled={value >= max}
       >
         <Ionicons
