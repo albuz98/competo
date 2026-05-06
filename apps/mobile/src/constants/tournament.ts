@@ -126,8 +126,9 @@ export const FINAL_DAY_ROUNDS: {
 
 export enum SportRegulation {
   CALCIO_5 = "calcio_5",
-  KING_LEAGUE = "king_league",
-  FUTSAL = "futsal",
+  KINGS_LEAGUE = "kings_league",
+  CALCIO_7 = "calcio_7",
+  CALCIO_9 = "calcio_9",
   CALCIO_11 = "calcio_11",
 }
 
@@ -150,16 +151,22 @@ export const SPORT_REGULATIONS: {
     downloadUrl: "https://example.com/regolamento-calcio-a-5.pdf",
   },
   {
-    value: SportRegulation.KING_LEAGUE,
+    value: SportRegulation.KINGS_LEAGUE,
     label: "Kings League",
     icon: "trophy-outline",
     downloadUrl: "https://example.com/regolamento-king-league.pdf",
   },
   {
-    value: SportRegulation.FUTSAL,
-    label: "Futsal",
+    value: SportRegulation.CALCIO_7,
+    label: "Calcio a 7",
     icon: "flash-outline",
-    downloadUrl: "https://example.com/regolamento-futsal.pdf",
+    downloadUrl: "https://example.com/regolamento-calcio-a-7.pdf",
+  },
+  {
+    value: SportRegulation.CALCIO_9,
+    label: "Calcio a 9",
+    icon: "expand-outline",
+    downloadUrl: "https://example.com/regolamento-calcio-a-9.pdf",
   },
   {
     value: SportRegulation.CALCIO_11,
