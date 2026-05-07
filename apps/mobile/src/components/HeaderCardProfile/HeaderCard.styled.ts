@@ -54,6 +54,15 @@ export const styles = StyleSheet.create({
     justifyContent: "space-between",
     paddingVertical: 4,
   },
+  infoTopRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
+  extraBottomRow: {
+    alignSelf: "flex-end",
+    marginTop: 8,
+  },
   email: { fontSize: 13, color: colors.placeholder, marginTop: 4 },
   infoRow: {
     flexDirection: "row",

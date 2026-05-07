@@ -32,6 +32,7 @@ interface HeaderCardProps {
   edit: boolean;
   updateProfile: (data: UpdateProfileData) => Promise<void>;
   handleStartEdit?: () => void;
+  extraBottom?: React.ReactNode;
 }
 
 export const HeaderCardProfile = ({
@@ -47,6 +48,7 @@ export const HeaderCardProfile = ({
   edit,
   updateProfile,
   handleStartEdit,
+  extraBottom,
 }: HeaderCardProps) => {
   const [qrOpen, setQrOpen] = useState(false);
   const navigation =
@@ -91,89 +93,91 @@ export const HeaderCardProfile = ({
         </View>
 
         {!edit && (
-          <View style={styles.infoSection}>
-            {/* Testo info */}
-            <View
-              style={{
-                flex: 1,
-                justifyContent: "flex-start",
-              }}
-            >
-              {!hideName && (
-                <View style={styles.infoRow}>
-                  <Ionicons name="person" size={13} color={colors.primary} />
-                  <Text style={styles.infoText}>
-                    {displayName ??
-                      (`${user?.first_name ?? ""} ${user?.last_name ?? ""}`.trim() ||
-                        (user?.username ?? ""))}
-                  </Text>
-                </View>
-              )}
-              {(subtitle ?? user?.location) ? (
-                <View style={styles.infoRow}>
-                  <Ionicons
-                    name="location-sharp"
-                    size={13}
-                    color={colors.primary}
-                  />
-                  <Text style={styles.infoText}>
-                    {subtitle ?? user?.location}
-                  </Text>
-                </View>
-              ) : null}
-              {birthdate ? (
-                <View style={styles.infoRow}>
-                  <Ionicons
-                    name="calendar-outline"
-                    size={13}
-                    color={colors.primary}
-                  />
-                  <Text style={styles.infoText}>
-                    {formatDateOfBirth(birthdate)}
-                  </Text>
-                </View>
-              ) : null}
-              {gender ? (
-                <View style={styles.infoRow}>
-                  <Ionicons
-                    name={GENDER_ICONS[gender]}
-                    size={13}
-                    color={colors.primary}
-                  />
-                  <Text style={styles.infoText}>{GENDER_LABELS[gender]}</Text>
-                </View>
-              ) : null}
-            </View>
-
-            {/* Azioni destra */}
-            <View style={styles.actionsCol}>
-              {handleStartEdit && (
-                <ButtonBorderColored
-                  isColored
-                  handleBtn={handleStartEdit}
-                  size={sizesEnum.medium}
-                  text="Modifica"
-                  iconLeft={
+          <View style={[styles.infoSection, extraBottom ? { flexDirection: "column", alignItems: "stretch" } : {}]}>
+            {/* Top row: info + actions */}
+            <View style={extraBottom ? styles.infoTopRow : { flex: 1, flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
+              <View style={{ flex: 1, justifyContent: "flex-start" }}>
+                {!hideName && (
+                  <View style={styles.infoRow}>
+                    <Ionicons name="person" size={13} color={colors.primary} />
+                    <Text style={styles.infoText}>
+                      {displayName ??
+                        (`${user?.first_name ?? ""} ${user?.last_name ?? ""}`.trim() ||
+                          (user?.username ?? ""))}
+                    </Text>
+                  </View>
+                )}
+                {(subtitle ?? user?.location) ? (
+                  <View style={styles.infoRow}>
                     <Ionicons
-                      name="create-outline"
-                      size={20}
+                      name="location-sharp"
+                      size={13}
+                      color={colors.primary}
+                    />
+                    <Text style={styles.infoText}>
+                      {subtitle ?? user?.location}
+                    </Text>
+                  </View>
+                ) : null}
+                {birthdate ? (
+                  <View style={styles.infoRow}>
+                    <Ionicons
+                      name="calendar-outline"
+                      size={13}
+                      color={colors.primary}
+                    />
+                    <Text style={styles.infoText}>
+                      {formatDateOfBirth(birthdate)}
+                    </Text>
+                  </View>
+                ) : null}
+                {gender ? (
+                  <View style={styles.infoRow}>
+                    <Ionicons
+                      name={GENDER_ICONS[gender]}
+                      size={13}
+                      color={colors.primary}
+                    />
+                    <Text style={styles.infoText}>{GENDER_LABELS[gender]}</Text>
+                  </View>
+                ) : null}
+              </View>
+
+              {/* Azioni destra */}
+              <View style={styles.actionsCol}>
+                {handleStartEdit && (
+                  <ButtonBorderColored
+                    isColored
+                    handleBtn={handleStartEdit}
+                    size={sizesEnum.medium}
+                    text="Modifica"
+                    iconLeft={
+                      <Ionicons
+                        name="create-outline"
+                        size={20}
+                        color={colors.primary}
+                      />
+                    }
+                  />
+                )}
+                <ButtonIcon
+                  handleBtn={() => setQrOpen(true)}
+                  icon={
+                    <Ionicons
+                      name="qr-code-outline"
+                      size={18}
                       color={colors.primary}
                     />
                   }
+                  style={styles.qrBtn}
                 />
-              )}
-              <ButtonIcon
-                handleBtn={() => setQrOpen(true)}
-                icon={
-                  <Ionicons
-                    name="qr-code-outline"
-                    size={18}
-                    color={colors.primary}
-                  />
-                }
-                style={styles.qrBtn}
-              />
+              </View>
             </View>
+
+            {/* Bottom slot */}
+            {extraBottom && (
+              <View style={styles.extraBottomRow}>{extraBottom}</View>
+            )}
           </View>
         )}
 
