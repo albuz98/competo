@@ -1,4 +1,4 @@
-import type { MatchStats, PlayerCareerStats } from "./stats";
+import type { CoachMatchStats, MatchStats, PlayerCareerStats } from "./stats";
 import { TournamentResult } from "../constants/tournament";
 import { AppUser } from "./team";
 
@@ -38,6 +38,12 @@ export type OrganizerProfile = {
 // Discriminated union: ogni profilo è esplicito sul suo ruolo
 export type UserProfile = PlayerProfile | OrganizerProfile;
 
+export interface CoachedTeamRecord {
+  id: number;
+  name: string;
+  sport: string;
+}
+
 export interface User {
   id: number;
   first_name?: string;
@@ -53,7 +59,10 @@ export interface User {
   avatarUrl?: string;
   isEmailConfirmed?: boolean;
   matchStats?: MatchStats;
+  coachStats?: CoachMatchStats;
   playedTournaments?: PlayedTournamentRecord[];
+  coachedTournaments?: PlayedTournamentRecord[];
+  coachedTeams?: CoachedTeamRecord[];
   organizedTournaments?: OrganizedTournamentRecord[];
   profiles?: UserProfile[];
   currentProfileId?: number;
@@ -77,4 +86,9 @@ export interface OrganizedTournamentRecord {
   location: string;
   totalTeams: number;
   totalPrizeMoney: string; // e.g. "$5,000"
+}
+
+export enum ViewModeProfile {
+  PLAYER = "player",
+  COACH = "coach",
 }

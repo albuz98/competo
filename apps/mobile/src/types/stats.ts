@@ -23,3 +23,32 @@ export interface PlayerCareerStats {
   yellowCards: number;
   redCards: number;
 }
+
+export interface CoachMatchStats {
+  wins: number;
+  draws: number;
+  losses: number;
+  tournamentsWon: number;
+  tournamentsPlayed: number;
+  matchesPlayed: number;
+  yellowCards: number;
+  redCards: number;
+}
+
+export interface TeamStats {
+  wins: number;
+  draws: number;
+  losses: number;
+  tournamentsWon: number;
+  tournamentsPlayed: number;
+  matchesPlayed: number;
+  goalsScored: number;
+  yellowCards: number;
+  redCards: number;
+}
+
+export interface TeamPlayerGoalStat {
+  playerId: number;
+  playerName: string;
+  goals: number;
+}
