@@ -1,29 +1,16 @@
-import React, { useRef, useCallback, useState, useEffect } from "react";
+import React, { useRef, useCallback, useState } from "react";
 import { useFocusEffect } from "@react-navigation/native";
-import { Alert, View, Text, ScrollView, TouchableOpacity } from "react-native";
+import { View, Text, ScrollView } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { Ionicons } from "@expo/vector-icons";
-import { useNavigation } from "@react-navigation/native";
-import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useAuth } from "../../../context/AuthContext";
 import { useTeams } from "../../../context/TeamsContext";
-import { RootStackParamList } from "../../../types/navigation";
-import { colorGradient, colors } from "../../../theme/colors";
-import {
-  ButtonBorderColored,
-  ButtonFullColored,
-  ButtonGeneric,
-  ButtonLink,
-} from "../../../components/core/Button/Button";
-import LocationSearch from "../../../components/core/LocationSearch/LocationSearch";
-import { Gender, PlayerProfile } from "../../../types/user";
-import { LinearGradient } from "expo-linear-gradient";
-import { InputBoxRow } from "../../../components/core/InputBoxRow/InputBoxRow";
+import { Gender, ViewModeProfile } from "../../../types/user";
 import { HeaderCardProfile } from "../../../components/HeaderCardProfile/HeaderCard";
-import { pStyles } from "./ProfilePlayer.styled";
-import { RESULT_CONFIG, TournamentResult } from "../../../constants/tournament";
 import { styles } from "../Profile.styles";
-import { GENDER_OPTIONS } from "../../../constants/user";
+import { Switcher } from "../../../components/core/Switcher/Switcher";
+import { CoachView } from "./SubComponents/CoachView";
+import { PlayerView } from "./SubComponents/PlayerView";
+import { EditProfile } from "./SubComponents/EditProfile";
 
 export interface PlayerFormRef {
   first_name: string;
@@ -36,7 +23,6 @@ export interface PlayerFormRef {
 }
 
 interface ProfilePlayerProps {
-  currentProfile: PlayerProfile | null;
   saving: boolean;
   edit: boolean;
   gender: Gender | null;
@@ -46,7 +32,6 @@ interface ProfilePlayerProps {
 }
 
 export default function ProfilePlayer({
-  currentProfile,
   saving,
   edit,
   gender,
@@ -56,80 +41,11 @@ export default function ProfilePlayer({
 }: ProfilePlayerProps) {
   const { user, updateProfile } = useAuth();
   const { refreshTeams } = useTeams();
-  const [form, setForm] = useState({
-    first_name: "",
-    last_name: "",
-    username: "",
-    location: "",
-    birthdate: "",
-    email: "",
-  });
+  const [viewMode, setViewMode] = useState<ViewModeProfile>(
+    ViewModeProfile.PLAYER,
+  );
 
-  const updateForm = (patch: Partial<typeof form>) => {
-    setForm((f) => ({ ...f, ...patch }));
-    onDirty?.();
-  };
-
-  const formatBirthdate = (raw: string) => {
-    const digits = raw.replace(/\D/g, "").slice(0, 8);
-    if (digits.length <= 2) return digits;
-    if (digits.length <= 4) return `${digits.slice(0, 2)}-${digits.slice(2)}`;
-    return `${digits.slice(0, 2)}-${digits.slice(2, 4)}-${digits.slice(4)}`;
-  };
-
-  const handleSetLocation: React.Dispatch<React.SetStateAction<string>> = (
-    v,
-  ) => {
-    setForm((f) => ({
-      ...f,
-      location: typeof v === "function" ? v(f.location) : v,
-    }));
-    onDirty?.();
-  };
-
-  const [sendingCode, setSendingCode] = useState(false);
-  const [codeSent, setCodeSent] = useState(false);
-  const [verificationCode, setVerificationCode] = useState("");
-  const [verifyingCode, setVerifyingCode] = useState(false);
-  const [emailVerified, setEmailVerified] = useState(false);
-
-  useEffect(() => {
-    setCodeSent(false);
-    setVerificationCode("");
-    setEmailVerified(false);
-  }, [form.email]);
-
-  useEffect(() => {
-    if (formRef) {
-      formRef.current = { ...form, emailVerified };
-    }
-  }, [form, emailVerified]);
-
-  const handleSendCode = async () => {
-    setSendingCode(true);
-    await new Promise((r) => setTimeout(r, 1000));
-    setSendingCode(false);
-    setCodeSent(true);
-  };
-
-  const handleVerifyCode = async () => {
-    setVerifyingCode(true);
-    await new Promise((r) => setTimeout(r, 800));
-    setVerifyingCode(false);
-    if (verificationCode === "123456") {
-      setEmailVerified(true);
-    } else {
-      Alert.alert(
-        "Codice non valido",
-        "Il codice inserito non è corretto. Riprova.",
-      );
-    }
-  };
-
-  const navigation =
-    useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const insets = useSafeAreaInsets();
-  const { teams } = useTeams();
 
   const scrollRef = useRef<ScrollView>(null);
   const savedScrollY = useRef(0);
@@ -147,19 +63,6 @@ export default function ProfilePlayer({
     }, [user?.id]),
   );
 
-  useEffect(() => {
-    if (edit) {
-      setForm({
-        first_name: user?.first_name ?? "",
-        last_name: user?.last_name ?? "",
-        username: user?.username ?? "",
-        location: user?.location ?? "",
-        birthdate: user?.birthdate ?? "",
-        email: user?.email ?? "",
-      });
-    }
-  }, [edit]);
-
   if (!user) {
     return (
       <View style={styles.root}>
@@ -167,6 +70,11 @@ export default function ProfilePlayer({
       </View>
     );
   }
+
+  const VIEW_MODE_OPTIONS = [
+    { label: "Allenatore", value: ViewModeProfile.COACH },
+    { label: "Giocatore", value: ViewModeProfile.PLAYER },
+  ];
 
   return (
     <View style={{ flex: 1 }}>
@@ -191,399 +99,30 @@ export default function ProfilePlayer({
           saving={saving}
           edit={edit}
           updateProfile={updateProfile}
-        >
-          <View style={styles.cardEditFields}>
-            <InputBoxRow
-              label="Username"
-              value={form.username}
-              onChangeText={(v) => updateForm({ username: v })}
-              disabled
-            />
-            <InputBoxRow
-              label="Nome"
-              placeholder="Nome"
-              value={form.first_name}
-              onChangeText={(v) => updateForm({ first_name: v })}
-            />
-            <InputBoxRow
-              label="Cognome"
-              placeholder="Cognome"
-              value={form.last_name}
-              onChangeText={(v) => updateForm({ last_name: v })}
-            />
-            <InputBoxRow
-              label="Data di nascita"
-              value={form.birthdate}
-              keyboardType="number-pad"
-              maxLength={10}
-              placeholder="gg-mm-aaaa"
-              onChangeText={(v) =>
-                updateForm({ birthdate: formatBirthdate(v) })
-              }
-            />
-            <InputBoxRow
-              label="Email"
-              placeholder="Email"
-              value={form.email}
-              keyboardType="email-address"
-              autoCorrect={false}
-              onChangeText={(v) => updateForm({ email: v })}
-            />
-            {form.email.length > 0 &&
-              !emailVerified &&
-              (!user.isEmailConfirmed || form.email !== user.email) && (
-                <View style={pStyles.sendCodeRow}>
-                  <ButtonBorderColored
-                    isColored
-                    handleBtn={handleSendCode}
-                    loading={sendingCode}
-                    text={codeSent ? "Riinvia codice" : "Invia codice conferma"}
-                  />
-                  {codeSent && (
-                    <>
-                      <InputBoxRow
-                        label="Codice di verifica"
-                        value={verificationCode}
-                        onChangeText={setVerificationCode}
-                        keyboardType="number-pad"
-                        maxLength={6}
-                        placeholder="123456"
-                      />
-                      <ButtonFullColored
-                        text="Conferma email"
-                        handleBtn={handleVerifyCode}
-                        isDisabled={
-                          verificationCode.length < 6 || verifyingCode
-                        }
-                        loading={verifyingCode}
-                        isColored
-                      />
-                    </>
-                  )}
-                </View>
-              )}
-            {emailVerified && (
-              <View style={pStyles.emailVerifiedRow}>
-                <Ionicons
-                  name="checkmark-circle"
-                  size={16}
-                  color={colors.success}
-                />
-                <Text style={pStyles.emailVerifiedText}>Email verificata</Text>
-              </View>
-            )}
-            <View style={pStyles.locationSection}>
-              <Text style={pStyles.locationLabel}>Posizione</Text>
-              <LocationSearch
-                key={`location-${edit}`}
-                setLocation={handleSetLocation}
-                initialValue={user?.location ?? ""}
-                isConfirmed={!!user?.location}
-                onConfirm={(address) =>
-                  setForm((f) => ({ ...f, location: address }))
-                }
-                isRow
+          extraBottom={
+            !edit ? (
+              <Switcher
+                options={VIEW_MODE_OPTIONS}
+                value={viewMode}
+                onChange={setViewMode}
               />
-            </View>
-            <View style={pStyles.genderRow}>
-              <Text style={pStyles.genderLabel}>Sesso</Text>
-              <View style={pStyles.genderOptions}>
-                {GENDER_OPTIONS.map((opt, idx) => {
-                  const selected = gender === opt.value;
-                  const isFirst = idx === 0;
-                  const isLast = idx === GENDER_OPTIONS.length - 1;
-                  return (
-                    <TouchableOpacity
-                      key={opt.value}
-                      style={[
-                        pStyles.genderOption,
-                        selected && pStyles.genderOptionSelected,
-                        isFirst && pStyles.genderOptionFirst,
-                        isLast && pStyles.genderOptionLast,
-                      ]}
-                      onPress={() => onGenderChange(opt.value)}
-                      activeOpacity={0.7}
-                    >
-                      <Text
-                        style={[
-                          pStyles.genderOptionText,
-                          selected && pStyles.genderOptionTextSelected,
-                        ]}
-                      >
-                        {opt.label}
-                      </Text>
-                    </TouchableOpacity>
-                  );
-                })}
-              </View>
-            </View>
-          </View>
+            ) : undefined
+          }
+        >
+          <EditProfile
+            edit={edit}
+            formRef={formRef}
+            gender={gender}
+            onGenderChange={onGenderChange}
+            onDirty={onDirty}
+          />
         </HeaderCardProfile>
 
-        {/* ── Statistiche Partite ────────────────── */}
-        {user.matchStats && !edit && (
-          <>
-            <View style={styles.teamsHeader}>
-              <Text style={styles.teamsTitle}>Statistiche Partite</Text>
-            </View>
-            <View style={pStyles.statsCard}>
-              <View style={pStyles.statsCardInner}>
-                <View style={pStyles.statsRow}>
-                  <View style={pStyles.statBubble}>
-                    <Text style={[pStyles.statNum, { color: colors.success }]}>
-                      {user.matchStats.wins}
-                    </Text>
-                    <Text style={pStyles.statLabel}>Vittorie</Text>
-                  </View>
-                  <View style={pStyles.statDivider} />
-                  <View style={pStyles.statBubble}>
-                    <Text
-                      style={[pStyles.statNum, { color: colors.placeholder }]}
-                    >
-                      {user.matchStats.draws}
-                    </Text>
-                    <Text style={pStyles.statLabel}>Pareggi</Text>
-                  </View>
-                  <View style={pStyles.statDivider} />
-                  <View style={pStyles.statBubble}>
-                    <Text style={[pStyles.statNum, { color: colors.danger }]}>
-                      {user.matchStats.losses}
-                    </Text>
-                    <Text style={pStyles.statLabel}>Sconfitte</Text>
-                  </View>
-                </View>
-                <View style={pStyles.statsTourneyRow}>
-                  <View style={pStyles.statTourney}>
-                    <Ionicons
-                      name="trophy-outline"
-                      size={18}
-                      color={colors.primaryGradientMid}
-                    />
-                    <Text style={pStyles.statTourneyNum}>
-                      {user.matchStats.tournamentsWon}
-                    </Text>
-                    <Text style={pStyles.statTourneyLabel}>Tornei vinti</Text>
-                  </View>
-                  <View style={pStyles.statTourneyDivider} />
-                  <View style={pStyles.statTourney}>
-                    <Ionicons
-                      name="medal-outline"
-                      size={18}
-                      color={colors.placeholder}
-                    />
-                    <Text style={pStyles.statTourneyNum}>
-                      {user.matchStats.tournamentsPlayed}
-                    </Text>
-                    <Text style={pStyles.statTourneyLabel}>Tornei giocati</Text>
-                  </View>
-                  <View style={pStyles.statTourneyDivider} />
-                  <View style={pStyles.statTourney}>
-                    <Ionicons
-                      name="football-outline"
-                      size={18}
-                      color={colors.placeholder}
-                    />
-                    <Text style={pStyles.statTourneyNum}>
-                      {user.matchStats.matchesPlayed}
-                    </Text>
-                    <Text style={pStyles.statTourneyLabel}>Partite totali</Text>
-                  </View>
-                </View>
-              </View>
-            </View>
-          </>
-        )}
+        {/* ── PLAYER VIEW ─────────────────────────────── */}
+        {viewMode === "player" && !edit && <PlayerView />}
 
-        {/* ── Statistiche individuali ───────────────── */}
-        {!edit && currentProfile?.careerStats && (
-          <>
-            <View style={styles.teamsHeader}>
-              <Text style={styles.teamsTitle}>
-                {currentProfile.careerStats.playerRole === "portiere"
-                  ? "Statistiche portiere"
-                  : "Statistiche individuali"}
-              </Text>
-            </View>
-            <View style={pStyles.careerCard}>
-              <View style={pStyles.careerCardInner}>
-                <View style={pStyles.careerBubble}>
-                  <Text style={[pStyles.careerNum, { color: colors.primary }]}>
-                    {currentProfile.careerStats.playerRole === "portiere"
-                      ? (currentProfile.careerStats.goalsConceded ?? 0)
-                      : (currentProfile.careerStats.goals ?? 0)}
-                  </Text>
-                  <Text style={pStyles.careerLabel}>
-                    {currentProfile.careerStats.playerRole === "portiere"
-                      ? "Gol subiti"
-                      : "Gol"}
-                  </Text>
-                </View>
-                <View style={pStyles.careerDivider} />
-                <View style={pStyles.careerBubble}>
-                  <Text
-                    style={[
-                      pStyles.careerNum,
-                      { color: colors.primaryGradientEnd },
-                    ]}
-                  >
-                    {currentProfile.careerStats.yellowCards}
-                  </Text>
-                  <Text style={pStyles.careerLabel}>Gialli</Text>
-                </View>
-                <View style={pStyles.careerDivider} />
-                <View style={pStyles.careerBubble}>
-                  <Text style={[pStyles.careerNum, { color: colors.danger }]}>
-                    {currentProfile.careerStats.redCards}
-                  </Text>
-                  <Text style={pStyles.careerLabel}>Rossi</Text>
-                </View>
-              </View>
-            </View>
-          </>
-        )}
-
-        {/* ── Storico tornei ────────────────────────── */}
-        {!edit &&
-          user.playedTournaments &&
-          user.playedTournaments.length > 0 && (
-            <>
-              <View style={styles.teamsHeader}>
-                <Text style={styles.teamsTitle}>Storico tornei</Text>
-                {user.playedTournaments.length > 3 && (
-                  <ButtonLink
-                    text="Vedi tutti"
-                    handleBtn={() => navigation.navigate("TournamentHistory")}
-                    color={colors.primaryGradientMid}
-                    isColored
-                    isBold
-                  />
-                )}
-              </View>
-              {[...user.playedTournaments]
-                .sort(
-                  (a, b) =>
-                    new Date(b.date).getTime() - new Date(a.date).getTime(),
-                )
-                .slice(0, 3)
-                .map((t) => {
-                  const cfg = RESULT_CONFIG[t.result];
-                  return (
-                    <View key={t.id} style={pStyles.historyCard}>
-                      <View style={pStyles.historyIconBox}>
-                        <Text style={pStyles.historyIconText}>
-                          {t.result === TournamentResult.WON
-                            ? "🥇"
-                            : t.result === TournamentResult.SECOND
-                              ? "🥈"
-                              : t.result === TournamentResult.THIRD
-                                ? "🥉"
-                                : "💔"}
-                        </Text>
-                      </View>
-                      <View style={pStyles.historyInfo}>
-                        <Text style={pStyles.historyName} numberOfLines={1}>
-                          {t.name}
-                        </Text>
-                        <Text style={pStyles.historyMeta}>
-                          {new Date(t.date).toLocaleDateString("it-IT", {
-                            day: "2-digit",
-                            month: "short",
-                            year: "numeric",
-                          })}{" "}
-                          · {t.location}
-                        </Text>
-                        <Text style={pStyles.historyTeam}>{t.teamName}</Text>
-                      </View>
-                      <View
-                        style={[
-                          pStyles.historyBadge,
-                          {
-                            backgroundColor:
-                              t.result === TournamentResult.ELIMINATED
-                                ? colors.white
-                                : cfg?.color,
-                          },
-                        ]}
-                      >
-                        <Text style={pStyles.historyBadgeText}>
-                          {cfg?.label}
-                        </Text>
-                      </View>
-                    </View>
-                  );
-                })}
-            </>
-          )}
-
-        {/* ── Le mie squadre ─────────────────────── */}
-        {!edit && (
-          <>
-            <View style={styles.teamsHeader}>
-              <Text style={styles.teamsTitle}>Le mie squadre</Text>
-              <ButtonLink
-                text="Vedi tutte"
-                handleBtn={() => navigation.navigate("Teams")}
-                color={colors.primaryGradientMid}
-                isColored
-                isBold
-              />
-            </View>
-
-            {teams.length === 0 ? (
-              <ButtonGeneric
-                style={styles.createTeamCard}
-                handleBtn={() => navigation.navigate("CreateTeam")}
-              >
-                <LinearGradient
-                  colors={colorGradient}
-                  style={styles.createTeamIcon}
-                >
-                  <Ionicons name="add" size={22} color={colors.white} />
-                </LinearGradient>
-                <View style={{ flex: 1 }}>
-                  <Text style={styles.createTeamTitle}>Crea una squadra</Text>
-                  <Text style={styles.createTeamSub}>
-                    Invita amici e partecipa ai tornei insieme
-                  </Text>
-                </View>
-                <Ionicons
-                  name="chevron-forward"
-                  size={18}
-                  color={colors.grayDark}
-                />
-              </ButtonGeneric>
-            ) : (
-              <ScrollView
-                horizontal
-                showsHorizontalScrollIndicator={false}
-                contentContainerStyle={styles.teamsScroll}
-              >
-                {teams.slice(0, 5).map((team) => (
-                  <ButtonGeneric
-                    key={team.id}
-                    style={styles.teamMiniCard}
-                    handleBtn={() =>
-                      navigation.navigate("TeamDetail", { teamId: team.id })
-                    }
-                  >
-                    <LinearGradient
-                      colors={colorGradient}
-                      style={styles.teamMiniAvatar}
-                    >
-                      <Text style={styles.teamMiniAvatarText}>
-                        {team.name.slice(0, 2).toUpperCase()}
-                      </Text>
-                    </LinearGradient>
-                    <Text style={styles.teamMiniName} numberOfLines={2}>
-                      {team.name}
-                    </Text>
-                    <Text style={styles.teamMiniSport}>{team.sport}</Text>
-                  </ButtonGeneric>
-                ))}
-              </ScrollView>
-            )}
-          </>
-        )}
+        {/* ── COACH VIEW ──────────────────────────────── */}
+        {viewMode === "coach" && !edit && <CoachView />}
       </ScrollView>
     </View>
   );

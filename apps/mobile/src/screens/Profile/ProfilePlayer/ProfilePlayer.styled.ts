@@ -164,6 +164,20 @@ export const pStyles = StyleSheet.create({
     color: colors.dark,
   },
 
+  // ── Coach card decorations ─────────────────────────────────────
+  coachCardYellow: {
+    width: 16,
+    height: 20,
+    borderRadius: 3,
+    backgroundColor: colors.primaryGradientEnd,
+  },
+  coachCardRed: {
+    width: 16,
+    height: 20,
+    borderRadius: 3,
+    backgroundColor: colors.danger,
+  },
+
   // ── Email verification ─────────────────────────────────────────
   sendCodeRow: {
     paddingHorizontal: 16,
