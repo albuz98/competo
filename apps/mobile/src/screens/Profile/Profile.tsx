@@ -234,7 +234,6 @@ export default function Profile() {
             />
           ) : (
             <ProfilePlayer
-              currentProfile={currentProfile}
               saving={saving}
               edit={edit}
               gender={form.gender}

@@ -14,7 +14,7 @@ import { PlayerStats } from "../types/stats";
 import { User, UserRole } from "../types/user";
 
 export const mockProfile: User = {
-  id: "mock-user-001",
+  id: 1,
   first_name: "Mario",
   last_name: "Rossi",
   username: "mario.rossi",
@@ -108,10 +108,10 @@ export const mockProfile: User = {
       teamName: "FC Stars",
     },
   ],
-  currentProfileId: "mock-user-001",
+  currentProfileId: 1,
   profiles: [
     {
-      id: "mock-user-001",
+      id: 1,
       username: "mario.rossi",
       avatarUrl: undefined,
       role: UserRole.PLAYER,
@@ -125,22 +125,22 @@ export const mockProfile: User = {
       },
     },
     {
-      id: "mock-user-002",
+      id: 2,
       avatarUrl: undefined,
       role: UserRole.ORGANIZER,
       orgName: "Parona Sport",
       isCreator: true,
       collaborators: [
         {
-          id: "collab-001",
-          first_name: "Luca",
-          last_name: "Ferrari",
+          id: 11,
+          firstName: "Luca",
+          lastName: "Ferrari",
           username: "luca.ferrari",
         },
         {
-          id: "collab-002",
-          first_name: "Anna",
-          last_name: "Conti",
+          id: 22,
+          firstName: "Anna",
+          lastName: "Conti",
           username: "anna.conti",
         },
       ],

@@ -13,7 +13,7 @@ import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 interface ModalSwitchProfileProps {
   changeProfileModal: boolean;
   setChangeProfileModal: (open: boolean) => void;
-  switchProfile: (profileId: string) => void;
+  switchProfile: (profileId: number) => void;
   user: User;
   currentProfile: UserProfile | null;
 }
