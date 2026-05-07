@@ -1,4 +1,5 @@
 import { TeamRole } from "../constants/team";
+import { TournamentResult } from "../constants/tournament";
 
 export interface PendingInvite {
   id: number;
@@ -19,6 +20,7 @@ export interface TeamMember {
   username: string;
   avatarUrl?: string;
   role: TeamRole;
+  gameRole?: TeamRole;
   jerseyNumber?: number;
 }
 
@@ -54,6 +56,7 @@ export interface TeamMemberResponse {
   id: number;
   user_id: number;
   role: string;
+  gameRole?: string;
   is_active: boolean;
   joined_at: string;
   // Enriched in mock mode only
@@ -77,6 +80,22 @@ export interface TeamInvitation {
   firstName?: string;
   lastName?: string;
   username?: string;
+}
+
+export interface TeamTournamentPlayerGoal {
+  playerId: number;
+  playerName: string;
+  goals: number;
+}
+
+export interface TeamTournamentRecord {
+  id: string;
+  name: string;
+  sport: string;
+  date: string;
+  location: string;
+  result: TournamentResult;
+  scorers: TeamTournamentPlayerGoal[];
 }
 
 export const ROLE_LABEL: Record<string, string> = {

@@ -4,6 +4,9 @@ import {
   getMockPendingInvites,
   getMockTeamCache,
   getMockUsersCache,
+  getOrGenerateTeamGoalScorers,
+  getOrGenerateTeamStats,
+  getOrGenerateTeamTournaments,
   mockTeamCache,
 } from "../mock/team";
 import {
@@ -14,7 +17,9 @@ import {
   TeamMemberResponse,
   TeamInvitation,
   InvitationStatus,
+  TeamTournamentRecord,
 } from "../types/team";
+import { TeamPlayerGoalStat, TeamStats } from "../types/stats";
 import { apiFetch } from "./config";
 import { mockFlags } from "./mockFlags";
 import { faker } from "@faker-js/faker";
@@ -50,8 +55,10 @@ export async function updateMemberRole(
     if (!team) throw new Error("Squadra non trovata");
     const member = team.members.find((m) => m.id === memberId);
     if (!member) throw new Error("Membro non trovato");
-    if (member.role === TeamRole.REPRESENTATIVE)
-      throw new Error("Non puoi cambiare il ruolo del rappresentante");
+    if (member.role === TeamRole.REPRESENTATIVE) {
+      member.gameRole = newRole;
+      return;
+    }
     if (newRole === TeamRole.COACH) {
       const existing = team.members.find(
         (m) => m.role === TeamRole.COACH && m.id !== memberId,
@@ -76,7 +83,7 @@ export async function updateMemberRole(
 
 export async function updateTeam(
   teamId: number,
-  updates: { name?: string; logoUrl?: string },
+  updates: { name?: string; logoUrl?: string; sport?: string },
   token: string,
 ): Promise<void> {
   if (mockFlags.IS_MOCKING_UPDATE_TEAM) {
@@ -85,6 +92,7 @@ export async function updateTeam(
     if (!team) throw new Error("Squadra non trovata");
     if (updates.name !== undefined) team.name = updates.name;
     if (updates.logoUrl !== undefined) team.logoUrl = updates.logoUrl;
+    if (updates.sport !== undefined) team.sport = updates.sport;
     return;
   }
   return apiFetch<void>(
@@ -170,6 +178,7 @@ export async function fetchTeamMembers(
       lastName: m.lastName,
       username: m.username,
       jerseyNumber: m.jerseyNumber,
+      gameRole: m.gameRole,
     }));
   }
   return apiFetch<TeamMemberResponse[]>(
@@ -243,7 +252,11 @@ export async function createTeam(
     }
     await new Promise((r) => setTimeout(r, 400));
     const rep = representative
-      ? { ...representative, role: TeamRole.REPRESENTATIVE }
+      ? {
+          ...representative,
+          role: TeamRole.REPRESENTATIVE,
+          gameRole: representative_role as TeamRole,
+        }
       : generateTeamMember(TeamRole.REPRESENTATIVE);
     const newTeam: Team = {
       id: faker.number.int(),
@@ -430,6 +443,55 @@ export async function declineInvite(
   return apiFetch<void>(
     `/api/v1/teams/invitations/${encodeURIComponent(inviteId)}/decline`,
     { method: "POST" },
+    token,
+  );
+}
+
+export async function fetchTeamStats(
+  teamId: number,
+  token: string,
+): Promise<TeamStats> {
+  if (mockFlags.IS_MOCKING_FETCH_TEAM_STATS) {
+    await new Promise((r) => setTimeout(r, 200));
+    return getOrGenerateTeamStats(teamId);
+  }
+  return apiFetch<TeamStats>(
+    `/api/v1/teams/${encodeURIComponent(teamId)}/stats`,
+    {},
+    token,
+  );
+}
+
+export async function fetchTeamGoalScorers(
+  teamId: number,
+  token: string,
+): Promise<TeamPlayerGoalStat[]> {
+  if (mockFlags.IS_MOCKING_FETCH_TEAM_GOAL_SCORERS) {
+    await new Promise((r) => setTimeout(r, 200));
+    const team = getMockTeamCache().find((t) => t.id === teamId);
+    if (!team) return [];
+    return getOrGenerateTeamGoalScorers(teamId, team.members);
+  }
+  return apiFetch<TeamPlayerGoalStat[]>(
+    `/api/v1/teams/${encodeURIComponent(teamId)}/scorers`,
+    {},
+    token,
+  );
+}
+
+export async function fetchTeamTournaments(
+  teamId: number,
+  token: string,
+): Promise<TeamTournamentRecord[]> {
+  if (mockFlags.IS_MOCKING_FETCH_TEAM_TOURNAMENTS) {
+    await new Promise((r) => setTimeout(r, 200));
+    const team = getMockTeamCache().find((t) => t.id === teamId);
+    if (!team) return [];
+    return getOrGenerateTeamTournaments(teamId, team.members);
+  }
+  return apiFetch<TeamTournamentRecord[]>(
+    `/api/v1/teams/${encodeURIComponent(teamId)}/tournaments`,
+    {},
     token,
   );
 }

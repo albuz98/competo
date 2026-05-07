@@ -20,7 +20,7 @@ import {
   updateTeam as apiUpdateTeam,
 } from "../api/teams";
 import { TeamRole } from "../constants/team";
-import { TeamFormat, TeamSport } from "../constants/generals";
+import { TeamFormat, TeamSport, TEAM_FORMAT_OPTIONS } from "../constants/generals";
 import { Team, PendingInvite, AppUser } from "../types/team";
 import { queryKeys } from "../lib/queryKeys";
 
@@ -52,7 +52,7 @@ interface TeamsContextType {
   leaveTeam: (teamId: number, targetUserId?: number) => Promise<void>;
   updateTeam: (
     teamId: number,
-    updates: { name?: string; logoUrl?: string },
+    updates: { name?: string; logoUrl?: string; sport?: string },
   ) => Promise<void>;
   getTeamById: (id: number) => Team | undefined;
   refreshTeams: () => Promise<void>;
@@ -105,9 +105,11 @@ export function TeamsProvider({ children }: { children: ReactNode }) {
         username: user.username ?? "",
         city: user.location ?? "",
       };
+      const formatOption = TEAM_FORMAT_OPTIONS.find((o) => o.format === format);
+      const sportLabel = formatOption?.label ?? TeamSport.FOOTBALL;
       return apiCreateTeam(
         name,
-        TeamSport.FOOTBALL,
+        sportLabel,
         format,
         representativeRole,
         user.token,
@@ -271,7 +273,7 @@ export function TeamsProvider({ children }: { children: ReactNode }) {
       updates,
     }: {
       teamId: number;
-      updates: { name?: string; logoUrl?: string };
+      updates: { name?: string; logoUrl?: string; sport?: string };
     }) => {
       if (!user) return Promise.reject(new Error("Not authenticated"));
       return apiUpdateTeam(teamId, updates, user.token);
@@ -407,7 +409,7 @@ export function TeamsProvider({ children }: { children: ReactNode }) {
 
   const updateTeam = async (
     teamId: number,
-    updates: { name?: string; logoUrl?: string },
+    updates: { name?: string; logoUrl?: string; sport?: string },
   ): Promise<void> => {
     return updateTeamMutation.mutateAsync({ teamId, updates });
   };

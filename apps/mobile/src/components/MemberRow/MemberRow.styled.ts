@@ -46,6 +46,16 @@ export const tds = StyleSheet.create({
     paddingVertical: 3,
   },
   rolePillText: { fontSize: 10, color: colors.placeholder, fontWeight: "600" },
+  rolePillEditable: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 3,
+    backgroundColor: colors.primarySelectedBg,
+    borderRadius: 20,
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+  },
+  rolePillEditableText: { fontSize: 10, color: colors.primary, fontWeight: "700" },
   jerseyBadge: {
     minWidth: 32,
     height: 32,

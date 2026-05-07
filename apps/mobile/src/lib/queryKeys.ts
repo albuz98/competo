@@ -21,6 +21,9 @@ export const queryKeys = {
   teamDetail: (teamId: number) => ["teamDetail", teamId] as const,
   teamMembers: (teamId: number) => ["teamMembers", teamId] as const,
   teamInvitations: (teamId: number) => ["teamInvitations", teamId] as const,
+  teamStats: (teamId: number) => ["teamStats", teamId] as const,
+  teamGoalScorers: (teamId: number) => ["teamGoalScorers", teamId] as const,
+  teamTournaments: (teamId: number) => ["teamTournaments", teamId] as const,
   pendingInvites: () => ["pendingInvites"] as const,
   sentInvites: (teamId: string) => ["sentInvites", teamId] as const,
 

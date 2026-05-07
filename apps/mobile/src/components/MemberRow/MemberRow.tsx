@@ -3,22 +3,20 @@ import { HAS_JERSEY, ROLE_LABEL, TeamMemberResponse } from "../../types/team";
 import { LinearGradient } from "expo-linear-gradient";
 import { colorGradient, colors } from "../../theme/colors";
 import { Ionicons } from "@expo/vector-icons";
-import {
-  ButtonBorderColored,
-  ButtonGeneric,
-  ButtonIcon,
-} from "../core/Button/Button";
+import { ButtonGeneric, ButtonIcon } from "../core/Button/Button";
 import { tds } from "./MemberRow.styled";
 
 export function MemberRow({
   member,
   currentUserIsRep,
+  editMode = false,
   onRemove,
   onChangeRole,
   onEditJersey,
 }: {
   member: TeamMemberResponse;
   currentUserIsRep: boolean;
+  editMode?: boolean;
   onRemove: () => void;
   onChangeRole: () => void;
   onEditJersey: () => void;
@@ -64,63 +62,71 @@ export function MemberRow({
         </View>
         <View
           style={{
-            flexDirection: "row",
-            alignItems: "center",
+            flexDirection: "column",
+            alignItems: "flex-start",
             gap: 6,
             marginTop: 2,
           }}
         >
           <Text style={tds.memberUsername}>@{member.username}</Text>
-          {!isRep &&
-            (currentUserIsRep ? (
-              <ButtonBorderColored
+          {(() => {
+            const displayRole = isRep ? member.gameRole : member.role;
+            if (!displayRole) return null;
+            return editMode && currentUserIsRep ? (
+              <ButtonGeneric
                 handleBtn={onChangeRole}
-                iconRight={
-                  <Ionicons
-                    name="chevron-down"
-                    size={10}
-                    color={colors.placeholder}
-                  />
-                }
-                text={ROLE_LABEL[member.role] ?? member.role}
-              />
+                style={tds.rolePillEditable}
+              >
+                <Text style={tds.rolePillEditableText}>
+                  {ROLE_LABEL[displayRole] ?? displayRole}
+                </Text>
+                <Ionicons
+                  name="chevron-down"
+                  size={10}
+                  color={colors.primary}
+                />
+              </ButtonGeneric>
             ) : (
               <View style={tds.rolePillStatic}>
                 <Text style={tds.rolePillText}>
-                  {ROLE_LABEL[member.role] ?? member.role}
+                  {ROLE_LABEL[displayRole] ?? displayRole}
                 </Text>
               </View>
-            ))}
+            );
+          })()}
         </View>
       </View>
-      {/* Jersey number — solo calciatore/portiere */}
-      {showJersey && (
-        <ButtonGeneric
-          handleBtn={currentUserIsRep ? onEditJersey : () => {}}
-          style={[tds.jerseyBadge, currentUserIsRep && tds.jerseyBadgeEditable]}
-        >
-          {member.jerseyNumber != null ? (
-            <Text
-              style={[
-                tds.jerseyText,
-                currentUserIsRep && tds.jerseyTextEditable,
-              ]}
-            >
-              #{member.jerseyNumber}
-            </Text>
-          ) : (
-            <Text style={tds.jerseyEmpty}>+</Text>
-          )}
-        </ButtonGeneric>
-      )}
-      {currentUserIsRep && !isRep ? (
+
+      {/* Jersey — editable in edit mode, read-only otherwise */}
+      {showJersey &&
+        (editMode && currentUserIsRep ? (
+          <ButtonGeneric
+            handleBtn={onEditJersey}
+            style={[tds.jerseyBadge, tds.jerseyBadgeEditable]}
+          >
+            {member.jerseyNumber != null ? (
+              <Text style={[tds.jerseyText, tds.jerseyTextEditable]}>
+                #{member.jerseyNumber}
+              </Text>
+            ) : (
+              <Text style={tds.jerseyEmpty}>+</Text>
+            )}
+          </ButtonGeneric>
+        ) : member.jerseyNumber != null ? (
+          <View style={tds.jerseyBadge}>
+            <Text style={tds.jerseyText}>#{member.jerseyNumber}</Text>
+          </View>
+        ) : null)}
+
+      {/* Remove — only in edit mode */}
+      {currentUserIsRep && !isRep && editMode ? (
         <ButtonIcon
           handleBtn={onRemove}
           icon={
             <Ionicons
               name="person-remove-outline"
               size={18}
-              color={colors.primary}
+              color={colors.danger}
             />
           }
         />

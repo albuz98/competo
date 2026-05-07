@@ -78,6 +78,60 @@ export const tds = StyleSheet.create({
   sportChipText: { color: colors.white, fontSize: 12, fontWeight: "600" },
   membersCount: { color: colors.grayOpacized, fontSize: 12, marginTop: 6 },
 
+  // ── Sport select (edit mode) ───────────────────────────────────
+  sportSelectBtn: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 6,
+    backgroundColor: "rgba(255,255,255,0.18)",
+    borderRadius: 20,
+    paddingHorizontal: 14,
+    paddingVertical: 7,
+    marginTop: 10,
+    borderWidth: 1.5,
+    borderColor: "rgba(255,255,255,0.5)",
+  },
+  sportSelectText: {
+    fontSize: 13,
+    fontWeight: "700",
+    color: colors.white,
+  },
+
+  // ── Inline edit mode ───────────────────────────────────────────
+  saveBtn: {
+    color: colors.white,
+    fontSize: 16,
+    fontWeight: "700",
+    paddingHorizontal: 4,
+    paddingVertical: 4,
+  },
+  teamNameInput: {
+    color: colors.white,
+    fontSize: 22,
+    fontWeight: "800",
+    textAlign: "center",
+    borderBottomWidth: 1.5,
+    borderBottomColor: "rgba(255,255,255,0.5)",
+    paddingVertical: 4,
+    marginTop: 8,
+    marginBottom: 2,
+    minWidth: 160,
+    maxWidth: 260,
+  },
+  avatarEditBadge: {
+    position: "absolute",
+    bottom: 0,
+    right: -2,
+    width: 26,
+    height: 26,
+    borderRadius: 13,
+    backgroundColor: colors.primary,
+    alignItems: "center",
+    justifyContent: "center",
+    borderWidth: 2,
+    borderColor: "rgba(255,255,255,0.9)",
+  },
+
   section: {
     backgroundColor: colors.white,
     marginHorizontal: 16,
@@ -296,6 +350,255 @@ export const tds = StyleSheet.create({
     color: colors.dark,
     marginBottom: 20,
   },
+  // ── Tab bar ────────────────────────────────────────────────────
+  tabBar: {
+    flexDirection: "row",
+    marginHorizontal: 16,
+    marginTop: 14,
+    backgroundColor: colors.white,
+    borderRadius: 12,
+    padding: 4,
+    shadowColor: colors.black,
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.06,
+    shadowRadius: 4,
+    elevation: 2,
+  },
+  tabBtn: {
+    flex: 1,
+    paddingVertical: 8,
+    borderRadius: 9,
+    alignItems: "center",
+  },
+  tabBtnActive: {
+    backgroundColor: colors.primary,
+  },
+  tabBtnText: {
+    fontSize: 11,
+    fontWeight: "700",
+    color: colors.placeholder,
+  },
+  tabBtnTextActive: {
+    color: colors.white,
+  },
+
+  // ── Stats card (Statistiche tab) ───────────────────────────────
+  statsCard: {
+    marginHorizontal: 16,
+    borderRadius: 16,
+    shadowColor: colors.black,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.07,
+    shadowRadius: 8,
+    elevation: 3,
+  },
+  statsCardInner: {
+    backgroundColor: colors.white,
+    borderRadius: 16,
+    overflow: "hidden",
+  },
+  statsRow: {
+    flexDirection: "row",
+    paddingVertical: 20,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.gray,
+  },
+  statBubble: {
+    flex: 1,
+    alignItems: "center",
+  },
+  statNum: {
+    fontSize: 28,
+    fontWeight: "800",
+    lineHeight: 32,
+  },
+  statLabel: {
+    fontSize: 11,
+    color: colors.placeholder,
+    marginTop: 4,
+    textTransform: "uppercase",
+    letterSpacing: 0.4,
+  },
+  statDivider: {
+    width: 1,
+    backgroundColor: colors.gray,
+    alignSelf: "stretch",
+  },
+  statsTourneyRow: {
+    flexDirection: "row",
+    paddingVertical: 14,
+  },
+  statTourney: {
+    flex: 1,
+    alignItems: "center",
+    gap: 3,
+  },
+  statTourneyNum: {
+    fontSize: 18,
+    fontWeight: "800",
+    color: colors.dark,
+  },
+  statTourneyLabel: {
+    fontSize: 10,
+    color: colors.placeholder,
+    textTransform: "uppercase",
+    letterSpacing: 0.3,
+  },
+  statTourneyDivider: {
+    width: 1,
+    backgroundColor: colors.gray,
+    alignSelf: "stretch",
+  },
+  cardIndicatorYellow: {
+    width: 16,
+    height: 20,
+    borderRadius: 3,
+    backgroundColor: colors.primaryGradientEnd,
+  },
+  cardIndicatorRed: {
+    width: 16,
+    height: 20,
+    borderRadius: 3,
+    backgroundColor: colors.danger,
+  },
+
+  // ── Goal scorers (Classifica tab) ──────────────────────────────
+  scorerRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: 16,
+    paddingVertical: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.gray,
+    gap: 10,
+  },
+  scorerRankBox: {
+    width: 24,
+    alignItems: "center",
+  },
+  scorerRank: {
+    fontSize: 13,
+    fontWeight: "800",
+    color: colors.grayDark,
+  },
+  scorerAvatar: {},
+  scorerAvatarGradient: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  scorerAvatarText: {
+    color: colors.white,
+    fontSize: 13,
+    fontWeight: "800",
+  },
+  scorerName: {
+    flex: 1,
+    fontSize: 13,
+    fontWeight: "600",
+    color: colors.dark,
+  },
+  scorerGoalsBadge: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 4,
+    backgroundColor: colors.primarySelectedBg,
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 20,
+  },
+  scorerGoals: {
+    fontSize: 13,
+    fontWeight: "800",
+    color: colors.primary,
+  },
+
+  // ── Tournament accordion (Tornei tab) ──────────────────────────
+  tournamentAccordion: {
+    backgroundColor: colors.white,
+    marginHorizontal: 16,
+    marginBottom: 8,
+    borderRadius: 14,
+    overflow: "hidden",
+    shadowColor: colors.black,
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.05,
+    shadowRadius: 4,
+    elevation: 1,
+  },
+  tournamentAccordionHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    padding: 14,
+    gap: 10,
+  },
+  tournamentAccordionIcon: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: colors.gray,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  tournamentAccordionIconText: {
+    fontSize: 18,
+  },
+  tournamentAccordionName: {
+    fontSize: 14,
+    fontWeight: "700",
+    color: colors.dark,
+    marginBottom: 2,
+  },
+  tournamentAccordionMeta: {
+    fontSize: 11,
+    color: colors.placeholder,
+  },
+  tournamentBadge: {
+    paddingHorizontal: 9,
+    paddingVertical: 4,
+    borderRadius: 20,
+  },
+  tournamentBadgeText: {
+    fontSize: 11,
+    fontWeight: "700",
+    color: colors.dark,
+  },
+  tournamentScorers: {
+    borderTopWidth: 1,
+    borderTopColor: colors.gray,
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    gap: 8,
+  },
+  tournamentScorerRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+    paddingVertical: 4,
+  },
+  tournamentScorerName: {
+    flex: 1,
+    fontSize: 13,
+    fontWeight: "600",
+    color: colors.dark,
+  },
+  tournamentScorerGoals: {
+    fontSize: 12,
+    fontWeight: "700",
+    color: colors.primary,
+  },
+
+  // ── Empty state ────────────────────────────────────────────────
+  emptyText: {
+    fontSize: 13,
+    color: colors.placeholder,
+    textAlign: "center",
+    paddingVertical: 24,
+    paddingHorizontal: 16,
+  },
+
   modalWarning: {
     fontSize: 12,
     color: colors.placeholder,

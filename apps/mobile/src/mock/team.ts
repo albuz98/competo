@@ -1,7 +1,9 @@
 import { faker } from "@faker-js/faker";
-import { AppUser, PendingInvite, Team, TeamMember } from "../types/team";
+import { AppUser, PendingInvite, Team, TeamMember, TeamTournamentRecord } from "../types/team";
 import { GAMES } from "../constants/generals";
 import { TeamRole } from "../constants/team";
+import { TeamPlayerGoalStat, TeamStats } from "../types/stats";
+import { TournamentResult } from "../constants/tournament";
 
 export let mockTeamCache: Team[] | null = null;
 let mockUsersCache: AppUser[] | null = null;
@@ -14,12 +16,17 @@ export function generateTeamMember(
     role === TeamRole.PLAYER ||
     role === TeamRole.GOLKEEPER ||
     role === TeamRole.REPRESENTATIVE;
+  const gameRole =
+    role === TeamRole.REPRESENTATIVE
+      ? faker.helpers.arrayElement([TeamRole.PLAYER, TeamRole.GOLKEEPER])
+      : undefined;
   return {
     id: faker.number.int(),
     firstName: faker.person.firstName(),
     lastName: faker.person.lastName(),
     username: faker.internet.username(),
     role,
+    ...(gameRole ? { gameRole } : {}),
     ...(hasJersey
       ? { jerseyNumber: faker.number.int({ min: 1, max: 99 }) }
       : {}),
@@ -80,6 +87,97 @@ export function getMockUsersCache(): AppUser[] {
     mockUsersCache = generateAppUsers(30);
   }
   return mockUsersCache;
+}
+
+const teamStatsCache = new Map<number, TeamStats>();
+const teamGoalScorersCache = new Map<number, TeamPlayerGoalStat[]>();
+const teamTournamentsCache = new Map<number, TeamTournamentRecord[]>();
+
+export function getOrGenerateTeamStats(teamId: number): TeamStats {
+  if (!teamStatsCache.has(teamId)) {
+    const mp = faker.number.int({ min: 10, max: 60 });
+    const wins = faker.number.int({ min: 3, max: mp });
+    const losses = faker.number.int({ min: 0, max: mp - wins });
+    const draws = mp - wins - losses;
+    teamStatsCache.set(teamId, {
+      wins,
+      draws,
+      losses,
+      tournamentsWon: faker.number.int({ min: 0, max: 4 }),
+      tournamentsPlayed: faker.number.int({ min: 2, max: 8 }),
+      matchesPlayed: mp,
+      goalsScored: faker.number.int({ min: wins * 2, max: wins * 4 + 10 }),
+      yellowCards: faker.number.int({ min: 0, max: 20 }),
+      redCards: faker.number.int({ min: 0, max: 5 }),
+    });
+  }
+  return teamStatsCache.get(teamId)!;
+}
+
+export function getOrGenerateTeamGoalScorers(
+  teamId: number,
+  members: TeamMember[],
+): TeamPlayerGoalStat[] {
+  if (!teamGoalScorersCache.has(teamId)) {
+    const scorers = members
+      .filter((m) => m.role !== TeamRole.COACH)
+      .map((m) => ({
+        playerId: m.id,
+        playerName: `${m.firstName ?? ""} ${m.lastName ?? ""}`.trim() || m.username,
+        goals: faker.number.int({ min: 0, max: 15 }),
+      }))
+      .sort((a, b) => b.goals - a.goals);
+    teamGoalScorersCache.set(teamId, scorers);
+  }
+  return teamGoalScorersCache.get(teamId)!;
+}
+
+const TOURNAMENT_NAMES = [
+  "Coppa Primavera",
+  "Summer Cup",
+  "Winter League",
+  "Pro Cup",
+  "City League",
+  "Elite Trophy",
+  "Gran Premio",
+];
+const RESULTS: TournamentResult[] = [
+  TournamentResult.WON,
+  TournamentResult.SECOND,
+  TournamentResult.THIRD,
+  TournamentResult.ELIMINATED,
+];
+
+export function getOrGenerateTeamTournaments(
+  teamId: number,
+  members: TeamMember[],
+): TeamTournamentRecord[] {
+  if (!teamTournamentsCache.has(teamId)) {
+    const count = faker.number.int({ min: 2, max: 5 });
+    const scorers = members.filter((m) => m.role !== TeamRole.COACH);
+    const records: TeamTournamentRecord[] = Array.from({ length: count }, (_, i) => {
+      const scorersInTournament = scorers
+        .filter(() => faker.datatype.boolean())
+        .map((m) => ({
+          playerId: m.id,
+          playerName: `${m.firstName ?? ""} ${m.lastName ?? ""}`.trim() || m.username,
+          goals: faker.number.int({ min: 1, max: 5 }),
+        }))
+        .filter((s) => s.goals > 0)
+        .sort((a, b) => b.goals - a.goals);
+      return {
+        id: `team-t-${teamId}-${i}`,
+        name: `${faker.helpers.arrayElement(TOURNAMENT_NAMES)} ${2023 + i}`,
+        sport: faker.helpers.arrayElement(GAMES),
+        date: faker.date.past({ years: 2 }).toISOString(),
+        location: `${faker.location.city()}, Italia`,
+        result: faker.helpers.arrayElement(RESULTS),
+        scorers: scorersInTournament,
+      };
+    });
+    teamTournamentsCache.set(teamId, records);
+  }
+  return teamTournamentsCache.get(teamId)!;
 }
 
 export function getMockPendingInvites(): PendingInvite[] {
