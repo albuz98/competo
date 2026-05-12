@@ -42,6 +42,14 @@ export const tds = StyleSheet.create({
     alignItems: "center",
     color: colors.white,
   },
+  modalApproveBtn: {
+    flex: 1,
+    backgroundColor: colors.primaryGradientEnd,
+    borderRadius: 50,
+    paddingVertical: 14,
+    alignItems: "center",
+    color: colors.white,
+  },
   modalTitle: {
     fontSize: 18,
     fontWeight: "800",

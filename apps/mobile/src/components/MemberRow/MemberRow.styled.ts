@@ -81,7 +81,8 @@ export const tds = StyleSheet.create({
     color: colors.primaryGradientMid,
   },
   jerseyTextEditable: {
-    color: colors.primary,
+    borderBottomColor: colors.primaryGradientMid,
+    borderBottomWidth: 1,
   },
   jerseyEmpty: {
     fontSize: 18,

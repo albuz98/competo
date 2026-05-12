@@ -385,7 +385,7 @@ export default function TeamDetail({ route, navigation }: Props) {
         visible={confirmTarget !== null}
         onClose={() => setConfirmTarget(null)}
         handleBtnCancel={() => setConfirmTarget(null)}
-        handleBtnApprove={() => {
+        handleBtnRemove={() => {
           if (confirmTarget) {
             handleRemoveMember(confirmTarget.user_id);
             setConfirmTarget(null);
@@ -555,7 +555,7 @@ export default function TeamDetail({ route, navigation }: Props) {
         visible={confirmLeave}
         onClose={() => setConfirmLeave(false)}
         handleBtnCancel={() => setConfirmLeave(false)}
-        handleBtnApprove={async () => {
+        handleBtnRemove={async () => {
           setConfirmLeave(false);
           await leaveTeam(teamId);
           navigation.goBack();
@@ -579,7 +579,7 @@ export default function TeamDetail({ route, navigation }: Props) {
         visible={confirmDelete}
         onClose={() => setConfirmDelete(false)}
         handleBtnCancel={() => setConfirmDelete(false)}
-        handleBtnApprove={async () => {
+        handleBtnRemove={async () => {
           setConfirmDelete(false);
           await deleteTeam(teamId);
           navigation.goBack();

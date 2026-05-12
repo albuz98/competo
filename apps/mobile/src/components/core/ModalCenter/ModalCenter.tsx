@@ -8,6 +8,7 @@ export const ModalCenter = ({
   onClose,
   children,
   handleBtnCancel,
+  handleBtnRemove,
   handleBtnApprove,
   title,
 }: {
@@ -15,6 +16,7 @@ export const ModalCenter = ({
   onClose: () => void;
   children: React.ReactNode;
   handleBtnCancel?: () => void;
+  handleBtnRemove?: () => void;
   handleBtnApprove?: () => void;
   title?: string;
 }) => {
@@ -37,10 +39,17 @@ export const ModalCenter = ({
                 handleBtn={handleBtnCancel}
               />
             )}
-            {handleBtnApprove && (
+            {handleBtnRemove && (
               <ButtonLink
                 style={tds.modalRemoveBtn}
                 text="Rimuovi"
+                handleBtn={handleBtnRemove}
+              />
+            )}
+            {handleBtnApprove && (
+              <ButtonLink
+                style={tds.modalApproveBtn}
+                text="Salva"
                 handleBtn={handleBtnApprove}
               />
             )}
