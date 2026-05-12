@@ -5,7 +5,6 @@ import { colorGradient, colors } from "../../theme/colors";
 import { Ionicons } from "@expo/vector-icons";
 import { ButtonGeneric, ButtonIcon } from "../core/Button/Button";
 import { tds } from "./MemberRow.styled";
-import { TeamRole } from "../../constants/team";
 
 export function MemberRow({
   member,
