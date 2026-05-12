@@ -25,7 +25,8 @@ export function MemberRow({
     (member.firstName ? member.firstName[0] : "") +
     (member.lastName ? member.lastName[0] : "");
   const isRep = member.role === "representative";
-  const showJersey = HAS_JERSEY[member.role] === true;
+  const effectiveRole = isRep ? (member.gameRole ?? member.role) : member.role;
+  const showJersey = HAS_JERSEY[effectiveRole] === true;
 
   return (
     <View style={[tds.memberRow, isRep && tds.memberRowRep]}>
