@@ -40,7 +40,6 @@ export const s = StyleSheet.create({
   input: {
     flex: 1,
     fontSize: 15,
-    fontWeight: "600",
     paddingVertical: 0,
   },
   clearBtn: {

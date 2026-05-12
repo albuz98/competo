@@ -19,6 +19,8 @@ interface LocationSearchProps {
   onConfirm: (address: string, lat?: number, lng?: number) => void;
   setLocation: React.Dispatch<React.SetStateAction<string>>;
   isRow?: boolean;
+  isObbligatory?: boolean;
+  labelName?: string;
 }
 
 enum Mode {
@@ -35,6 +37,8 @@ export default function LocationSearch({
   onConfirm,
   setLocation,
   isRow,
+  isObbligatory = false,
+  labelName,
 }: LocationSearchProps) {
   const [selectedSuggestion, setSelectedSuggestion] =
     useState<Suggestion | null>(
@@ -79,100 +83,128 @@ export default function LocationSearch({
   // ── Preview: map + confirm/change buttons ───────────────────────────────────
   if (mode === Mode.PREVIEW && selectedSuggestion) {
     return (
-      <View style={ls.container}>
-        <View style={ls.selectedAddressBox}>
-          <Text style={ls.selectedAddressText}>
-            {selectedSuggestion.displayName}
+      <>
+        {labelName && (
+          <Text style={ls.sectionLabel}>
+            {labelName}{" "}
+            {isObbligatory && <Text style={{ color: colors.primary }}>*</Text>}
           </Text>
-        </View>
+        )}
+        <View style={ls.container}>
+          <View style={ls.selectedAddressBox}>
+            <Text style={ls.selectedAddressText}>
+              {selectedSuggestion.displayName}
+            </Text>
+          </View>
 
-        <MapView
-          style={ls.mapPreview}
-          scrollEnabled={false}
-          pointerEvents="none"
-          region={{
-            latitude: selectedSuggestion.lat,
-            longitude: selectedSuggestion.lng,
-            latitudeDelta: 0.01,
-            longitudeDelta: 0.01,
-          }}
-        >
-          <Marker
-            coordinate={{
+          <MapView
+            style={ls.mapPreview}
+            scrollEnabled={false}
+            pointerEvents="none"
+            region={{
               latitude: selectedSuggestion.lat,
               longitude: selectedSuggestion.lng,
+              latitudeDelta: 0.01,
+              longitudeDelta: 0.01,
             }}
-          />
-        </MapView>
+          >
+            <Marker
+              coordinate={{
+                latitude: selectedSuggestion.lat,
+                longitude: selectedSuggestion.lng,
+              }}
+            />
+          </MapView>
 
-        <View style={ls.btnRow}>
-          <TouchableOpacity style={ls.btnChange} onPress={handleChange}>
-            <Text style={ls.btnChangeText}>Cambia</Text>
-          </TouchableOpacity>
+          <View style={ls.btnRow}>
+            <TouchableOpacity style={ls.btnChange} onPress={handleChange}>
+              <Text style={ls.btnChangeText}>Cambia</Text>
+            </TouchableOpacity>
 
-          <TouchableOpacity style={ls.btnConfirm} onPress={handleConfirm}>
-            <LinearGradient
-              colors={colorGradient}
-              start={{ x: 0, y: 0 }}
-              end={{ x: 1, y: 0 }}
-              style={ls.btnConfirmInner}
-            >
-              <Text style={ls.btnConfirmText}>Conferma</Text>
-            </LinearGradient>
-          </TouchableOpacity>
+            <TouchableOpacity style={ls.btnConfirm} onPress={handleConfirm}>
+              <LinearGradient
+                colors={colorGradient}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 0 }}
+                style={ls.btnConfirmInner}
+              >
+                <Text style={ls.btnConfirmText}>Conferma</Text>
+              </LinearGradient>
+            </TouchableOpacity>
+          </View>
         </View>
-      </View>
+      </>
     );
   }
 
   // ── Done: confirmed address display ────────────────────────────────────────
   if (mode === "done" && selectedSuggestion) {
     return (
-      <View style={ls.container}>
-        <View style={ls.confirmedRow}>
-          <Ionicons name="checkmark-circle" size={18} color={colors.success} />
-          <Text style={ls.confirmedText} numberOfLines={2}>
-            {selectedSuggestion.displayName}
+      <>
+        {labelName && (
+          <Text style={ls.sectionLabel}>
+            {labelName}{" "}
+            {isObbligatory && <Text style={{ color: colors.primary }}>*</Text>}
           </Text>
-          <TouchableOpacity onPress={handleClearDone} hitSlop={8}>
-            <Feather name="x" size={18} color={colors.placeholder} />
-          </TouchableOpacity>
+        )}
+        <View style={ls.container}>
+          <View style={ls.confirmedRow}>
+            <Ionicons
+              name="checkmark-circle"
+              size={18}
+              color={colors.success}
+            />
+            <Text style={ls.confirmedText} numberOfLines={2}>
+              {selectedSuggestion.displayName}
+            </Text>
+            <TouchableOpacity onPress={handleClearDone} hitSlop={8}>
+              <Feather name="x" size={18} color={colors.placeholder} />
+            </TouchableOpacity>
+          </View>
         </View>
-      </View>
+      </>
     );
   }
 
   // ── Search: input + suggestions ────────────────────────────────────────────
   return (
-    <View style={ls.container}>
-      <InputBoxSearch<Suggestion>
-        placeholder="Cerca indirizzo..."
-        defaultValue={initialValue}
-        onSearch={(q) => searchNominatim(q).then((r) => r.slice(0, 5))}
-        onSelect={handleSelectSuggestion}
-        onQueryChange={(q) => {
-          if (q === "") setLocation("");
-        }}
-        minChars={isMocking ? 1 : 3}
-        emptyMessage="Nessun risultato trovato"
-        isRow={isRow}
-        renderResult={(suggestion, index, onPress) => (
-          <TouchableOpacity
-            key={index}
-            style={ls.suggestionItem}
-            onPress={onPress}
-          >
-            <Ionicons
-              name="location-outline"
-              size={16}
-              color={colors.placeholder}
-            />
-            <Text style={ls.suggestionText} numberOfLines={2}>
-              {suggestion.displayName}
-            </Text>
-          </TouchableOpacity>
-        )}
-      />
-    </View>
+    <>
+      {labelName && (
+        <Text style={ls.sectionLabel}>
+          {labelName}{" "}
+          {isObbligatory && <Text style={{ color: colors.primary }}>*</Text>}
+        </Text>
+      )}
+      <View style={ls.container}>
+        <InputBoxSearch<Suggestion>
+          placeholder="Cerca indirizzo..."
+          defaultValue={initialValue}
+          onSearch={(q) => searchNominatim(q).then((r) => r.slice(0, 5))}
+          onSelect={handleSelectSuggestion}
+          onQueryChange={(q) => {
+            if (q === "") setLocation("");
+          }}
+          minChars={isMocking ? 1 : 3}
+          emptyMessage="Nessun risultato trovato"
+          isRow={isRow}
+          renderResult={(suggestion, index, onPress) => (
+            <TouchableOpacity
+              key={index}
+              style={ls.suggestionItem}
+              onPress={onPress}
+            >
+              <Ionicons
+                name="location-outline"
+                size={16}
+                color={colors.placeholder}
+              />
+              <Text style={ls.suggestionText} numberOfLines={2}>
+                {suggestion.displayName}
+              </Text>
+            </TouchableOpacity>
+          )}
+        />
+      </View>
+    </>
   );
 }

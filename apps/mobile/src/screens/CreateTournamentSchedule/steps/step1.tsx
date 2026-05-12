@@ -45,29 +45,25 @@ export function renderStep1({
         Inserisci le informazioni principali del torneo.
       </Text>
 
-      <Text style={s.sectionLabel}>
-        Nome del torneo <Text style={{ color: colors.primary }}>*</Text>
-      </Text>
       <InputBox
         value={tournamentName}
         onChangeText={setTournamentName}
         placeholder="Nome torneo"
         isDark={false}
+        labelName="Nome del torneo"
+        isObbligatory
       />
 
-      <Text style={s.sectionLabel}>Descrizione</Text>
       <InputBox
         value={description}
         onChangeText={setDescription}
-        placeholder="Descrivi il torneo (opzionale)"
+        placeholder="Descrivi il torneo"
         isDark={false}
         isMultiline
         numberOfLines={5}
+        labelName="Descrizione"
       />
 
-      <Text style={s.sectionLabel}>
-        Luogo <Text style={{ color: colors.primary }}>*</Text>
-      </Text>
       <LocationSearch
         setLocation={setLocation}
         initialValue={location}
@@ -79,6 +75,8 @@ export function renderStep1({
           setLocationLat(lat);
           setLocationLng(lng);
         }}
+        labelName="Luogo"
+        isObbligatory
       />
 
       <Text style={s.sectionLabel}>Costi</Text>
@@ -89,8 +87,7 @@ export function renderStep1({
           </View>
           <View style={s.costBody}>
             <Text style={s.costLabel}>
-              Costo iscrizione{" "}
-              <Text style={{ color: colors.primary }}>*</Text>
+              Costo iscrizione <Text style={{ color: colors.primary }}>*</Text>
             </Text>
             <Text style={s.costSub}>Per squadra</Text>
           </View>

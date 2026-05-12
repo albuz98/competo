@@ -15,7 +15,13 @@ import {
   fetchProfile,
   logout as apiLogout,
 } from "../api/auth";
-import { OrganizerProfile, User, UserProfile, UserRole } from "../types/user";
+import {
+  OrganizerProfile,
+  RefereeProfile,
+  User,
+  UserProfile,
+  UserRole,
+} from "../types/user";
 import {
   LoginCredentials,
   RegisterCredentials,
@@ -46,6 +52,7 @@ interface AuthContextType {
   ) => void;
   addCollaborator: (profileId: number, appUser: AppUser) => void;
   addOrganizerProfile: (orgName: string) => void;
+  addRefereeProfile: (data: Pick<RefereeProfile, "firstName" | "lastName" | "association" | "memberNumber" | "memberSection" | "sports" | "categories" | "refereeRoles" | "baseRate" | "rateType" | "travelAvailable" | "travelRatePerKm" | "maxTravelKm" | "consecutiveHoursRange">) => void;
 }
 
 const AuthContext = createContext<AuthContextType | null>(null);
@@ -225,6 +232,41 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     });
   };
 
+  const addRefereeProfile = (
+    data: Pick<
+      RefereeProfile,
+      | "firstName"
+      | "lastName"
+      | "association"
+      | "memberNumber"
+      | "memberSection"
+      | "sports"
+      | "categories"
+      | "refereeRoles"
+      | "baseRate"
+      | "rateType"
+      | "travelAvailable"
+      | "travelRatePerKm"
+      | "maxTravelKm"
+      | "consecutiveHoursRange"
+    >,
+  ) => {
+    setUser((prev) => {
+      if (!prev) return prev;
+      const newProfile: RefereeProfile = {
+        id: Date.now(),
+        role: UserRole.REFEREE,
+        ...data,
+        pendingApproval: true,
+      };
+      return {
+        ...prev,
+        profiles: [...(prev.profiles ?? []), newProfile],
+        currentProfileId: newProfile.id,
+      };
+    });
+  };
+
   const updateOrgProfileData = (
     profileId: number,
     updates: Partial<OrganizerProfile>,
@@ -262,6 +304,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         updateOrgProfileData,
         addCollaborator,
         addOrganizerProfile,
+        addRefereeProfile,
       }}
     >
       {children}

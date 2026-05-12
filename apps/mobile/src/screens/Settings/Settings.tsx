@@ -13,6 +13,7 @@ import { colors } from "../../theme/colors";
 import { ButtonBack } from "../../components/core/Button/Button";
 import { styles } from "./Settings.styles";
 import { UserRole } from "../../types/user";
+import CardIcon from "../../../assets/icons/whistle.svg";
 
 export default function Settings() {
   const navigation =
@@ -22,6 +23,10 @@ export default function Settings() {
 
   const isAlreadyOrganizer = user?.profiles?.some(
     (p) => p.role === UserRole.ORGANIZER,
+  );
+
+  const isAlreadyReferee = user?.profiles?.some(
+    (p) => p.role === UserRole.REFEREE,
   );
 
   const handleRefereeProfile = () => {
@@ -133,24 +138,27 @@ export default function Settings() {
             </>
           )}
 
-          <View style={styles.divider} />
-          <Pressable style={styles.row} onPress={handleRefereeProfile}>
-            <View
-              style={[styles.rowIcon, { backgroundColor: colors.purpleBlueBg }]}
-            >
-              <Ionicons
-                name="ribbon-outline"
-                size={20}
-                color={colors.purpleBlue}
-              />
-            </View>
-            <Text style={styles.rowText}>Sei un arbitro?</Text>
-            <Ionicons
-              name="chevron-forward"
-              size={18}
-              color={colors.grayDark}
-            />
-          </Pressable>
+          {!isAlreadyReferee && (
+            <>
+              <View style={styles.divider} />
+              <Pressable style={styles.row} onPress={handleRefereeProfile}>
+                <View
+                  style={[
+                    styles.rowIcon,
+                    { backgroundColor: colors.purpleBlueBg },
+                  ]}
+                >
+                  <CardIcon width={18} height={18} color={colors.purpleBlue} />
+                </View>
+                <Text style={styles.rowText}>Sei un arbitro?</Text>
+                <Ionicons
+                  name="chevron-forward"
+                  size={18}
+                  color={colors.grayDark}
+                />
+              </Pressable>
+            </>
+          )}
         </View>
 
         <View style={{ flex: 1 }} />

@@ -35,14 +35,13 @@ export function renderStep1({
         Dicci come si chiama la tua organizzazione e che tipo di ente è.
       </Text>
 
-      <Text style={s.sectionLabel}>
-        Nome organizzazione <Text style={{ color: colors.primary }}>*</Text>
-      </Text>
       <InputBox
         value={orgName}
         onChangeText={setOrgName}
         placeholder="Es. ASD Calcio Milano"
         isDark={false}
+        labelName="Nome organizzazione"
+        isObbligatory
       />
 
       <Text style={s.sectionLabel}>
@@ -83,20 +82,17 @@ export function renderStep1({
 
       {entityType === "altro" && (
         <>
-          <Text style={s.sectionLabel}>
-            Specifica il tipo di ente{" "}
-            <Text style={{ color: colors.primary }}>*</Text>
-          </Text>
           <InputBox
             value={customEntityType}
             onChangeText={setCustomEntityType}
             placeholder="Es. Fondazione sportiva, Ente del terzo settore…"
             isDark={false}
+            labelName="Specifica il tipo di ente"
+            isObbligatory
           />
         </>
       )}
 
-      <Text style={s.sectionLabel}>Descrizione</Text>
       <InputBox
         value={description}
         onChangeText={setDescription}
@@ -104,6 +100,7 @@ export function renderStep1({
         isDark={false}
         isMultiline
         numberOfLines={4}
+        labelName="Descrizione"
       />
     </>
   );

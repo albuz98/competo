@@ -45,7 +45,9 @@ export const TopBarProfile = ({
             <Text style={styles.headerText}>
               {currentProfile?.role === UserRole.ORGANIZER
                 ? currentProfile.orgName
-                : currentProfile?.username}
+                : currentProfile?.role === UserRole.REFEREE
+                  ? `${currentProfile.firstName} ${currentProfile.lastName}`
+                  : currentProfile?.username}
             </Text>
             {hasMultipleProfile && (
               <Entypo name="chevron-down" size={20} color="black" />
