@@ -13,7 +13,7 @@ import {
   Platform,
   ScrollView,
 } from "react-native";
-import { styles } from "./Modal.styled";
+import { styles } from "./ModalBottom.styled";
 
 interface ModalViewerProps {
   isOpen: boolean;
@@ -120,7 +120,10 @@ export const ModalViewer = forwardRef<ModalViewerRef, ModalViewerProps>(
         ]}
         {...(!scrollable ? modalPanResponder.panHandlers : {})}
       >
-        <View style={styles.dragZone} {...(scrollable ? modalPanResponder.panHandlers : {})}>
+        <View
+          style={styles.dragZone}
+          {...(scrollable ? modalPanResponder.panHandlers : {})}
+        >
           <View style={styles.modalHandle} />
         </View>
         {scrollable ? (
@@ -132,7 +135,9 @@ export const ModalViewer = forwardRef<ModalViewerRef, ModalViewerProps>(
           >
             {children}
           </ScrollView>
-        ) : children}
+        ) : (
+          children
+        )}
       </Animated.View>
     );
 

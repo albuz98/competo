@@ -23,7 +23,7 @@ export type RootStackParamList = {
   CreateTeam: undefined;
   TeamDetail: { teamId: number };
   InvitePlayers: { teamId: number };
-  InviteCollaborators: { profileId: string };
+  InviteCollaborators: { profileId: number };
   OrganizerTournamentDetail: { tournamentId: string };
   CreateTournamentSchedule: undefined;
   TournamentScheduleResult: undefined;

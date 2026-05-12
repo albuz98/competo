@@ -4,8 +4,8 @@ import { dp } from "./DatePicker.styled";
 import { MONTHS } from "../../../constants/generals";
 import { ITEM_H } from "./constants";
 import { ButtonGeneric } from "../Button/Button";
-import { ModalViewer, ModalViewerRef } from "../Modal/Modal";
 import { daysInMonth, parseISO, toISO } from "../../../functions/general";
+import { ModalViewer, ModalViewerRef } from "../ModalBottom/ModalBottom";
 
 export interface DatePickerModalProps {
   visible: boolean;

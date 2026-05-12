@@ -32,7 +32,7 @@ import { oStyles } from "./ProfileOrganizer.styled";
 import { HeaderCardProfile } from "../../../components/HeaderCardProfile/HeaderCard";
 import { InputBoxRow } from "../../../components/core/InputBoxRow/InputBoxRow";
 import { LinearGradient } from "expo-linear-gradient";
-import { ModalViewer } from "../../../components/core/Modal/Modal";
+import { ModalViewer } from "../../../components/core/ModalBottom/ModalBottom";
 
 interface ProfileOrganizerProps {
   currentProfile: OrganizerProfile | null;
@@ -276,12 +276,12 @@ export default function ProfileOrganizer({
                     >
                       <View style={oStyles.collaboratorAvatar}>
                         <Text style={oStyles.collaboratorAvatarText}>
-                          {collab.first_name.slice(0, 1).toUpperCase()}
+                          {collab.firstName?.slice(0, 1).toUpperCase()}
                         </Text>
                       </View>
                       <View style={oStyles.collaboratorInfo}>
                         <Text style={oStyles.collaboratorName}>
-                          {collab.first_name} {collab.last_name}
+                          {collab.firstName} {collab.lastName}
                         </Text>
                         <Text style={oStyles.collaboratorUsername}>
                           @{collab.username}

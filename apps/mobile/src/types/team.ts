@@ -111,3 +111,10 @@ export const HAS_JERSEY: Record<string, boolean> = {
   [TeamRole.GOLKEEPER]: true,
   [TeamRole.COACH]: false,
 };
+
+export enum TeamTab {
+  MEMBER = "membri",
+  STATS = "statistiche",
+  CLASSIFICATION_GOLEADOR = "classifica",
+  TOURNAMENTS = "tornei",
+}

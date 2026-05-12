@@ -50,11 +50,11 @@ export const tds = StyleSheet.create({
     width: 72,
     height: 72,
     borderRadius: 36,
-    backgroundColor: colors.grayOpacized,
+    backgroundColor: colors.opacized,
     alignItems: "center",
     justifyContent: "center",
     marginBottom: 12,
-    borderWidth: 3,
+    borderWidth: 2,
     borderColor: colors.grayOpacized,
   },
   teamAvatarLargeText: { color: colors.white, fontSize: 28, fontWeight: "900" },
@@ -213,15 +213,36 @@ export const tds = StyleSheet.create({
     paddingHorizontal: 10,
     paddingVertical: 4,
   },
-  inviteBadgeTextAccepted: { fontSize: 11, color: colors.success, fontWeight: "700" },
+  inviteBadgeTextAccepted: {
+    fontSize: 11,
+    color: colors.success,
+    fontWeight: "700",
+  },
   inviteBadgeDeclined: {
     backgroundColor: colors.gray,
     borderRadius: 20,
     paddingHorizontal: 10,
     paddingVertical: 4,
   },
-  inviteBadgeTextDeclined: { fontSize: 11, color: colors.placeholder, fontWeight: "700" },
+  inviteBadgeTextDeclined: {
+    fontSize: 11,
+    color: colors.placeholder,
+    fontWeight: "700",
+  },
 
+  inputJersey: {
+    width: "100%",
+    borderWidth: 1.5,
+    borderColor: colors.primarySelectedBg,
+    borderRadius: 12,
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    fontSize: 28,
+    fontWeight: "800",
+    color: colors.dark,
+    textAlign: "center",
+    marginBottom: 20,
+  },
   jerseyBadge: {
     minWidth: 32,
     height: 32,
@@ -248,24 +269,11 @@ export const tds = StyleSheet.create({
     lineHeight: 22,
   },
 
-  modalOverlay: {
-    flex: 1,
-    backgroundColor: colors.opacized,
-    alignItems: "center",
-    justifyContent: "center",
-    padding: 32,
-  },
-  modalCard: {
-    backgroundColor: colors.white,
-    borderRadius: 20,
-    padding: 24,
-    alignItems: "center",
-    width: "100%",
-    shadowColor: colors.black,
-    shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.15,
-    shadowRadius: 24,
-    elevation: 10,
+  modalWarning: {
+    fontSize: 12,
+    color: colors.placeholder,
+    marginBottom: 24,
+    textAlign: "center",
   },
   modalAvatar: {
     width: 64,
@@ -282,12 +290,6 @@ export const tds = StyleSheet.create({
     fontSize: 22,
     fontWeight: "800",
     color: colors.danger,
-  },
-  modalTitle: {
-    fontSize: 18,
-    fontWeight: "800",
-    color: colors.dark,
-    marginBottom: 10,
   },
   modalBody: {
     fontSize: 14,
@@ -349,37 +351,6 @@ export const tds = StyleSheet.create({
     fontWeight: "700",
     color: colors.dark,
     marginBottom: 20,
-  },
-  // ── Tab bar ────────────────────────────────────────────────────
-  tabBar: {
-    flexDirection: "row",
-    marginHorizontal: 16,
-    marginTop: 14,
-    backgroundColor: colors.white,
-    borderRadius: 12,
-    padding: 4,
-    shadowColor: colors.black,
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.06,
-    shadowRadius: 4,
-    elevation: 2,
-  },
-  tabBtn: {
-    flex: 1,
-    paddingVertical: 8,
-    borderRadius: 9,
-    alignItems: "center",
-  },
-  tabBtnActive: {
-    backgroundColor: colors.primary,
-  },
-  tabBtnText: {
-    fontSize: 11,
-    fontWeight: "700",
-    color: colors.placeholder,
-  },
-  tabBtnTextActive: {
-    color: colors.white,
   },
 
   // ── Stats card (Statistiche tab) ───────────────────────────────
@@ -597,31 +568,5 @@ export const tds = StyleSheet.create({
     textAlign: "center",
     paddingVertical: 24,
     paddingHorizontal: 16,
-  },
-
-  modalWarning: {
-    fontSize: 12,
-    color: colors.placeholder,
-    marginBottom: 24,
-    textAlign: "center",
-  },
-  modalActions: {
-    flexDirection: "row",
-    gap: 12,
-    width: "100%",
-  },
-  modalCancelBtn: {
-    flex: 1,
-    backgroundColor: colors.gray,
-    borderRadius: 50,
-    paddingVertical: 14,
-    alignItems: "center",
-  },
-  modalRemoveBtn: {
-    flex: 1,
-    backgroundColor: colors.danger,
-    borderRadius: 50,
-    paddingVertical: 14,
-    alignItems: "center",
   },
 });

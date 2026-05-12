@@ -40,12 +40,16 @@ export const tds = StyleSheet.create({
   },
   memberUsername: { fontSize: 12, color: colors.placeholder, marginTop: 1 },
   rolePillStatic: {
-    backgroundColor: colors.gray,
-    borderRadius: 20,
-    paddingHorizontal: 8,
+    paddingHorizontal: 5,
     paddingVertical: 3,
+    borderLeftWidth: 1,
+    borderColor: colors.primaryGradientMid,
   },
-  rolePillText: { fontSize: 10, color: colors.placeholder, fontWeight: "600" },
+  rolePillText: {
+    fontSize: 10,
+    color: colors.primaryGradientMid,
+    fontWeight: "600",
+  },
   rolePillEditable: {
     flexDirection: "row",
     alignItems: "center",
@@ -55,12 +59,15 @@ export const tds = StyleSheet.create({
     paddingHorizontal: 8,
     paddingVertical: 3,
   },
-  rolePillEditableText: { fontSize: 10, color: colors.primary, fontWeight: "700" },
+  rolePillEditableText: {
+    fontSize: 10,
+    color: colors.primary,
+    fontWeight: "700",
+  },
   jerseyBadge: {
     minWidth: 32,
     height: 32,
     borderRadius: 16,
-    backgroundColor: colors.gray,
     alignItems: "center",
     justifyContent: "center",
     paddingHorizontal: 6,
@@ -71,7 +78,7 @@ export const tds = StyleSheet.create({
   jerseyText: {
     fontSize: 13,
     fontWeight: "800",
-    color: colors.placeholder,
+    color: colors.primaryGradientMid,
   },
   jerseyTextEditable: {
     color: colors.primary,

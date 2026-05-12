@@ -11,13 +11,13 @@ import { UpdateProfileData } from "../../types/auth";
 import { User } from "../../types/user";
 import { AvatarData, Avatar } from "../core/Avatar/Avatar";
 import { ButtonIcon, ButtonBorderColored } from "../core/Button/Button";
-import { ModalViewer } from "../core/Modal/Modal";
 import { styles } from "./HeaderCard.styled";
 import SimpleLineIcons from "@expo/vector-icons/SimpleLineIcons";
 import { RootStackParamList } from "../../types/navigation";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useNavigation } from "@react-navigation/native";
 import { GENDER_ICONS, GENDER_LABELS } from "../../constants/user";
+import { ModalViewer } from "../core/ModalBottom/ModalBottom";
 
 interface HeaderCardProps {
   user: User | null;
@@ -93,9 +93,27 @@ export const HeaderCardProfile = ({
         </View>
 
         {!edit && (
-          <View style={[styles.infoSection, extraBottom ? { flexDirection: "column", alignItems: "stretch" } : {}]}>
+          <View
+            style={[
+              styles.infoSection,
+              extraBottom
+                ? { flexDirection: "column", alignItems: "stretch" }
+                : {},
+            ]}
+          >
             {/* Top row: info + actions */}
-            <View style={extraBottom ? styles.infoTopRow : { flex: 1, flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
+            <View
+              style={
+                extraBottom
+                  ? styles.infoTopRow
+                  : {
+                      flex: 1,
+                      flexDirection: "row",
+                      alignItems: "center",
+                      justifyContent: "space-between",
+                    }
+              }
+            >
               <View style={{ flex: 1, justifyContent: "flex-start" }}>
                 {!hideName && (
                   <View style={styles.infoRow}>

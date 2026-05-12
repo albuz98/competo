@@ -1,5 +1,4 @@
 import React from "react";
-import { ModalViewer } from "../core/Modal/Modal";
 import { View, Text, Pressable, Image } from "react-native";
 import { colors, colorGradient } from "../../theme/colors";
 import { NavigationEnum, RootStackParamList } from "../../types/navigation";
@@ -10,6 +9,7 @@ import { styles } from "./ModalSwitchProfile.styled";
 import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import CardIcon from "../../../assets/icons/whistle.svg";
+import { ModalViewer } from "../core/ModalBottom/ModalBottom";
 interface ModalSwitchProfileProps {
   changeProfileModal: boolean;
   setChangeProfileModal: (open: boolean) => void;

@@ -1,10 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import {
-  View,
-  Text,
-  ActivityIndicator,
-  Animated,
-} from "react-native";
+import { View, Text, ActivityIndicator, Animated } from "react-native";
 import LocationSearch from "../../components/core/LocationSearch/LocationSearch";
 import MapView, { Circle, Marker } from "react-native-maps";
 import type { Region } from "react-native-maps";
@@ -27,9 +22,9 @@ import {
   ButtonSelectable,
 } from "../../components/core/Button/Button";
 import { colors } from "../../theme/colors";
-import { ModalViewer } from "../../components/core/Modal/Modal";
 import { generateTournaments } from "../../mock/tournaments";
 import { Tournament } from "../../types/tournament";
+import { ModalViewer } from "../../components/core/ModalBottom/ModalBottom";
 
 const DEFAULT = { lat: 45.4642, lng: 9.19 }; // Milan fallback
 const RADIUS_OPTIONS = [5, 10, 20, 50];
@@ -69,7 +64,10 @@ export default function Explore() {
   // Edit modal state
   const [editModal, setEditModal] = useState(false);
   const [modalLocStr, setModalLocStr] = useState("");
-  const [modalLocCoords, setModalLocCoords] = useState<{ lat: number; lng: number } | null>(null);
+  const [modalLocCoords, setModalLocCoords] = useState<{
+    lat: number;
+    lng: number;
+  } | null>(null);
   const [modalLocKey, setModalLocKey] = useState(0);
   const [modalRadius, setModalRadius] = useState(10);
 
@@ -389,7 +387,11 @@ export default function Explore() {
         }
         style={[styles.recenterBtn, { bottom: insets.bottom + 90 }]}
       />
-      <ModalViewer isOpen={editModal} onClose={() => setEditModal(false)} scrollable>
+      <ModalViewer
+        isOpen={editModal}
+        onClose={() => setEditModal(false)}
+        scrollable
+      >
         <Text style={styles.modalTitle}>Modifica area di ricerca</Text>
         <Text style={styles.modalLabel}>POSIZIONE</Text>
         <LocationSearch
