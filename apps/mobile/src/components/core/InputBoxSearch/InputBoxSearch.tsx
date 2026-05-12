@@ -293,7 +293,7 @@ export function InputBoxSearch<T>({
           onChangeText={handleQueryChange}
           placeholder={placeholder}
           placeholderTextColor={
-            isDark ? colors.grayOpacized : colors.opacizedBgInput
+            isDark ? colors.grayOpacized : colors.placeholder
           }
           autoCapitalize="none"
           autoCorrect={false}

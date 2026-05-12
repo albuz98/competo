@@ -113,4 +113,13 @@ export const ls = StyleSheet.create({
     fontWeight: "600",
     lineHeight: 18,
   },
+  sectionLabel: {
+    fontSize: 11,
+    fontWeight: "700",
+    color: colors.grayDark,
+    textTransform: "uppercase",
+    letterSpacing: 0.8,
+    marginBottom: 8,
+    marginTop: 16,
+  },
 });

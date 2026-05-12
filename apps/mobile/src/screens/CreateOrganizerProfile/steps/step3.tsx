@@ -49,36 +49,32 @@ export function renderStep3({
         </Text>
       </View>
 
-      <Text style={s.sectionLabel}>
-        Codice Fiscale / P.IVA <Text style={{ color: colors.primary }}>*</Text>
-      </Text>
       <InputBox
         value={taxCode}
         onChangeText={(v) => setTaxCode(v.toUpperCase())}
         placeholder="RSSMRA80A01H501Z oppure 12345678901"
         isDark={false}
         autoCapitalize="characters"
+        labelName="Codice Fiscale / P.IVA"
+        isObbligatory
       />
 
-      <Text style={s.sectionLabel}>
-        Nome referente legale <Text style={{ color: colors.primary }}>*</Text>
-      </Text>
       <InputBox
         value={legalRepName}
         onChangeText={setLegalRepName}
         placeholder="Nome"
         isDark={false}
+        labelName="Nome referente legale"
+        isObbligatory
       />
 
-      <Text style={s.sectionLabel}>
-        Cognome referente legale{" "}
-        <Text style={{ color: colors.primary }}>*</Text>
-      </Text>
       <InputBox
         value={legalRepSurname}
         onChangeText={setLegalRepSurname}
         placeholder="Cognome"
         isDark={false}
+        labelName="Cognome referente legale"
+        isObbligatory
       />
 
       <Text style={s.sectionLabel}>Forma giuridica</Text>

@@ -10,7 +10,7 @@ import { daysInMonth, parseISO, toISO } from "../../../functions/general";
 export interface DatePickerModalProps {
   visible: boolean;
   currentValue: string; // YYYY-MM-DD or ""
-  minDate: string; // YYYY-MM-DD
+  minDate?: string; // YYYY-MM-DD
   onConfirm: (iso: string) => void;
   onCancel: () => void;
 }
@@ -23,9 +23,12 @@ export function DatePickerModal({
   onCancel,
 }: DatePickerModalProps) {
   const today = new Date();
-  const minParsed = parseISO(minDate);
+  const minParsed = minDate ? parseISO(minDate) : null;
 
-  const START_YEAR = Math.max(today.getFullYear(), minParsed.year);
+  const START_YEAR = Math.max(
+    today.getFullYear(),
+    minParsed?.year || today.getFullYear(),
+  );
   const END_YEAR = START_YEAR + 5;
 
   const years: number[] = Array.from(
@@ -33,7 +36,7 @@ export function DatePickerModal({
     (_, i) => START_YEAR + i,
   );
 
-  const initial = parseISO(currentValue || minDate);
+  const initial = parseISO(currentValue ?? minDate);
   const clampedInitialYear = Math.min(
     Math.max(initial.year, START_YEAR),
     END_YEAR,
@@ -80,7 +83,7 @@ export function DatePickerModal({
   // Reset selection and scroll when modal opens
   useEffect(() => {
     if (!visible) return;
-    const next = parseISO(currentValue || minDate);
+    const next = parseISO(currentValue ?? minDate);
     const clampedYear = Math.min(Math.max(next.year, START_YEAR), END_YEAR);
     setSelYear(clampedYear);
     setSelMonth(next.month);

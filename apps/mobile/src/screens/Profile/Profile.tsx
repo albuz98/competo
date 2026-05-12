@@ -59,6 +59,7 @@ export default function Profile() {
   const [changeProfileModal, setChangeProfileModal] = useState(false);
   const [isDirty, setIsDirty] = useState(false);
   const isOrganizerProfile = currentProfile?.role === UserRole.ORGANIZER;
+  const isRefereeProfile = currentProfile?.role === UserRole.REFEREE;
   const mounted = useRef(false);
   const playerFormRef = useRef<PlayerFormRef>({
     first_name: "",
@@ -105,6 +106,13 @@ export default function Profile() {
       Alert.alert(
         "Profilo in revisione",
         "Non puoi modificare il profilo organizzatore fino all'approvazione da parte del team Competo.",
+      );
+      return;
+    }
+    if (isRefereeProfile && currentProfile?.role === UserRole.REFEREE && currentProfile.pendingApproval) {
+      Alert.alert(
+        "Profilo in revisione",
+        "Non puoi modificare il profilo arbitro fino all'approvazione da parte del team Competo.",
       );
       return;
     }

@@ -3,7 +3,7 @@ import { colors } from "../../../theme/colors";
 
 export const styles = StyleSheet.create({
   wrapper: {
-    marginBottom: 16,
+    marginBottom: 0,
   },
   input: {
     borderRadius: 12,
@@ -20,5 +20,14 @@ export const styles = StyleSheet.create({
     right: 14,
     top: 4,
     bottom: 0,
+  },
+  sectionLabel: {
+    fontSize: 11,
+    fontWeight: "700",
+    color: colors.grayDark,
+    textTransform: "uppercase",
+    letterSpacing: 0.8,
+    marginBottom: 8,
+    marginTop: 16,
   },
 });

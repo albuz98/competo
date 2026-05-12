@@ -2,24 +2,7 @@ import { StyleSheet } from "react-native";
 import { colors } from "../../theme/colors";
 
 export const s = StyleSheet.create({
-  root: { flex: 1, backgroundColor: colors.gray },
-
-  header: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingHorizontal: 16,
-    paddingTop: 8,
-    paddingBottom: 12,
-    gap: 12,
-  },
-  headerTitle: {
-    flex: 1,
-    fontSize: 18,
-    fontWeight: "800",
-    color: colors.dark,
-  },
-
-  scroll: { paddingHorizontal: 16, paddingTop: 20, paddingBottom: 40 },
+  scroll: { paddingHorizontal: 16, paddingTop: 20, paddingBottom: 32 },
 
   heroBox: {
     flexDirection: "row",
@@ -55,6 +38,18 @@ export const s = StyleSheet.create({
     lineHeight: 17,
   },
 
+  sectionTitle: {
+    fontSize: 20,
+    fontWeight: "800",
+    color: colors.dark,
+    marginBottom: 4,
+  },
+  sectionSub: {
+    fontSize: 13,
+    color: colors.placeholder,
+    marginBottom: 18,
+    lineHeight: 18,
+  },
   sectionLabel: {
     fontSize: 11,
     fontWeight: "700",
@@ -62,34 +57,6 @@ export const s = StyleSheet.create({
     textTransform: "uppercase",
     letterSpacing: 0.8,
     marginBottom: 8,
-    marginTop: 20,
-  },
-
-  inputWrap: {
-    backgroundColor: colors.white,
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: colors.disabled,
-    paddingHorizontal: 14,
-    paddingVertical: 12,
-    marginBottom: 10,
-  },
-  inputLabel: {
-    fontSize: 11,
-    fontWeight: "700",
-    color: colors.placeholder,
-    textTransform: "uppercase",
-    letterSpacing: 0.5,
-    marginBottom: 4,
-  },
-  input: {
-    fontSize: 15,
-    fontWeight: "600",
-    color: colors.dark,
-    padding: 0,
-  },
-  inputFocused: {
-    borderColor: colors.primary,
   },
 
   chipsRow: { flexDirection: "row", flexWrap: "wrap", gap: 8, marginBottom: 8 },
@@ -116,7 +83,7 @@ export const s = StyleSheet.create({
     padding: 14,
     borderWidth: 1,
     borderColor: colors.lightBlue,
-    marginTop: 20,
+    marginTop: 8,
     marginBottom: 8,
   },
   infoBoxText: {
@@ -126,19 +93,112 @@ export const s = StyleSheet.create({
     lineHeight: 18,
   },
 
-  submitBtn: {
-    backgroundColor: colors.purpleBlue,
+  summaryCard: {
+    backgroundColor: colors.white,
     borderRadius: 14,
-    paddingVertical: 15,
-    alignItems: "center",
-    marginTop: 24,
+    padding: 16,
+    borderWidth: 1,
+    borderColor: colors.disabled,
+    marginBottom: 16,
+    gap: 10,
   },
-  submitBtnDisabled: {
-    backgroundColor: colors.disabled,
+  summaryRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "flex-start",
+    gap: 8,
   },
-  submitBtnText: {
-    fontSize: 15,
+  summaryKey: {
+    fontSize: 12,
+    color: colors.placeholder,
+    fontWeight: "600",
+    flex: 1,
+  },
+  summaryVal: {
+    fontSize: 13,
+    color: colors.dark,
     fontWeight: "700",
-    color: colors.white,
+    flex: 2,
+    textAlign: "right",
+  },
+  summaryDivider: { height: 1, backgroundColor: colors.gray },
+
+  checkRow: {
+    flexDirection: "row",
+    alignItems: "flex-start",
+    gap: 12,
+    backgroundColor: colors.white,
+    borderRadius: 12,
+    padding: 14,
+    borderWidth: 1,
+    borderColor: colors.disabled,
+    marginBottom: 8,
+  },
+  checkBox: {
+    width: 22,
+    height: 22,
+    borderRadius: 6,
+    borderWidth: 2,
+    borderColor: colors.disabled,
+    alignItems: "center",
+    justifyContent: "center",
+    marginTop: 1,
+  },
+  checkBoxChecked: {
+    backgroundColor: colors.primary,
+    borderColor: colors.primary,
+  },
+  checkText: { flex: 1, fontSize: 13, color: colors.dark, lineHeight: 19 },
+  checkLink: { color: colors.primary, fontWeight: "700" },
+
+  segmentedRow: {
+    flexDirection: "row",
+    gap: 10,
+    marginBottom: 18,
+  },
+  segmentedItem: {
+    flex: 1,
+    borderRadius: 12,
+    borderWidth: 1.5,
+    borderColor: colors.disabled,
+    backgroundColor: colors.white,
+    paddingVertical: 12,
+    paddingHorizontal: 10,
+    alignItems: "center",
+  },
+  segmentedItemActive: {
+    borderColor: colors.purpleBlue,
+    backgroundColor: colors.purpleBlueBg,
+  },
+  segmentedText: {
+    fontSize: 16,
+    fontWeight: "800",
+    color: colors.placeholder,
+  },
+  segmentedTextActive: {
+    color: colors.purpleBlue,
+  },
+  segmentedSub: {
+    fontSize: 10,
+    color: colors.placeholder,
+    marginTop: 2,
+    textAlign: "center",
+  },
+  segmentedSubActive: {
+    color: colors.purpleBlue,
+  },
+
+  hintBox: {
+    flexDirection: "row",
+    alignItems: "flex-start",
+    gap: 6,
+    marginBottom: 12,
+    paddingHorizontal: 2,
+  },
+  hintBoxText: {
+    flex: 1,
+    fontSize: 11,
+    color: colors.placeholder,
+    lineHeight: 16,
   },
 });

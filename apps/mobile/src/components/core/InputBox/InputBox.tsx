@@ -5,6 +5,7 @@ import {
   TextInput,
   TextInputSubmitEditingEvent,
   View,
+  Text,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { styles } from "./InputBox.styles";
@@ -35,6 +36,9 @@ interface InputBoxProps {
   returnKeyType?: ReturnKeyTypeOptions;
   isError?: boolean;
   isBorderless?: boolean;
+  isObbligatory?: boolean;
+  labelName?: string;
+  handleOnFocus?: () => void;
 }
 
 export const InputBox = ({
@@ -56,59 +60,74 @@ export const InputBox = ({
   onSubmitEditing,
   isError,
   isBorderless = false,
+  isObbligatory = false,
+  labelName,
+  handleOnFocus,
 }: InputBoxProps) => {
   const [hidden, setHidden] = useState(true);
 
   return (
-    <View>
-      <TextInput
-        style={[
-          styles.input,
-          isError && styles.inputError,
-          (secureTextEntry || deleteText) && styles.inputWithIcon,
-          {
-            borderWidth: isBorderless ? 0 : 1,
-            borderColor: isBorderless ? colors.transparent : colors.disabled,
-            backgroundColor: isDark ? colors.opacizedBgInput : colors.white,
-            color: isDark ? colors.white : colors.black,
-          },
-        ]}
-        value={value}
-        onChangeText={onChangeText}
-        placeholder={placeholder}
-        keyboardType={keyboardType}
-        autoCapitalize={autoCapitalize}
-        autoComplete={autoComplete}
-        placeholderTextColor={isDark ? colors.grayOpacized : colors.placeholder}
-        returnKeyType={returnKeyType}
-        onSubmitEditing={onSubmitEditing}
-        secureTextEntry={secureTextEntry && hidden}
-        autoCorrect={autoCorrect}
-        maxLength={maxLength}
-        textContentType={textContentType}
-        multiline={isMultiline}
-        numberOfLines={numberOfLines}
-      />
-      {secureTextEntry && (
-        <ButtonIcon
-          style={styles.iconBtn}
-          handleBtn={() => setHidden((h) => !h)}
-          icon={
-            <Ionicons
-              name={hidden ? "eye-outline" : "eye-off-outline"}
-              size={20}
-              color={colors.grayOpacized}
-            />
+    <>
+      {labelName && (
+        <Text style={styles.sectionLabel}>
+          {labelName}{" "}
+          {isObbligatory && <Text style={{ color: colors.primary }}>*</Text>}
+        </Text>
+      )}
+      <View style={styles.wrapper}>
+        <TextInput
+          style={[
+            styles.input,
+            isError && styles.inputError,
+            (secureTextEntry || deleteText) && styles.inputWithIcon,
+            {
+              borderWidth: isBorderless ? 0 : 1,
+              borderColor: isBorderless ? colors.transparent : colors.disabled,
+              backgroundColor: isDark ? colors.opacizedBgInput : colors.white,
+              color: isDark ? colors.white : colors.black,
+            },
+          ]}
+          value={value}
+          onChangeText={onChangeText}
+          placeholder={placeholder}
+          keyboardType={keyboardType}
+          autoCapitalize={autoCapitalize}
+          autoComplete={autoComplete}
+          placeholderTextColor={
+            isDark ? colors.grayOpacized : colors.placeholder
           }
+          returnKeyType={returnKeyType}
+          onSubmitEditing={onSubmitEditing}
+          secureTextEntry={secureTextEntry && hidden}
+          autoCorrect={autoCorrect}
+          maxLength={maxLength}
+          textContentType={textContentType}
+          multiline={isMultiline}
+          numberOfLines={numberOfLines}
+          onFocus={handleOnFocus}
+          showSoftInputOnFocus={handleOnFocus ? false : true}
         />
-      )}
-      {deleteText && (
-        <ButtonIcon
-          style={styles.iconBtn}
-          handleBtn={() => deleteText()}
-          icon={<Feather name="x" size={20} color={colors.placeholder} />}
-        />
-      )}
-    </View>
+        {secureTextEntry && (
+          <ButtonIcon
+            style={styles.iconBtn}
+            handleBtn={() => setHidden((h) => !h)}
+            icon={
+              <Ionicons
+                name={hidden ? "eye-outline" : "eye-off-outline"}
+                size={20}
+                color={colors.grayOpacized}
+              />
+            }
+          />
+        )}
+        {deleteText && (
+          <ButtonIcon
+            style={styles.iconBtn}
+            handleBtn={() => deleteText()}
+            icon={<Feather name="x" size={20} color={colors.placeholder} />}
+          />
+        )}
+      </View>
+    </>
   );
 };

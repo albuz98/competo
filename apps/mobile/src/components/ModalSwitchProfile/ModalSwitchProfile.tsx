@@ -9,7 +9,7 @@ import { User, UserProfile, UserRole } from "../../types/user";
 import { styles } from "./ModalSwitchProfile.styled";
 import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
-
+import CardIcon from "../../../assets/icons/whistle.svg";
 interface ModalSwitchProfileProps {
   changeProfileModal: boolean;
   setChangeProfileModal: (open: boolean) => void;
@@ -37,7 +37,9 @@ export const ModalSwitchProfile = ({
     const avatarUrl =
       profile.role === UserRole.PLAYER
         ? (profile.avatarUrl ?? user.avatarUrl)
-        : profile.avatarUrl;
+        : profile.role === UserRole.ORGANIZER
+          ? profile.avatarUrl
+          : undefined;
 
     if (avatarUrl) {
       return (
@@ -47,6 +49,15 @@ export const ModalSwitchProfile = ({
         />
       );
     }
+
+    const icon: React.ReactNode =
+      profile.role === UserRole.ORGANIZER ? (
+        <Ionicons name="business" size={20} color={colors.white} />
+      ) : profile.role === UserRole.REFEREE ? (
+        <CardIcon width={20} height={20} color={colors.white} />
+      ) : profile.role === UserRole.PLAYER ? (
+        <Ionicons name="person" size={20} color={colors.white} />
+      ) : null;
 
     return (
       <LinearGradient
@@ -61,11 +72,7 @@ export const ModalSwitchProfile = ({
           justifyContent: "center",
         }}
       >
-        <Ionicons
-          name={profile.role === UserRole.ORGANIZER ? "business" : "person"}
-          size={20}
-          color={colors.white}
-        />
+        {icon}
       </LinearGradient>
     );
   };
@@ -114,7 +121,9 @@ export const ModalSwitchProfile = ({
                 >
                   {profile.role === UserRole.ORGANIZER
                     ? profile.orgName
-                    : profile.username}
+                    : profile.role === UserRole.REFEREE
+                      ? `${profile.firstName} ${profile.lastName}`
+                      : profile.username}
                 </Text>
                 {profile.role === UserRole.PLAYER &&
                   (user?.first_name || user?.last_name) && (
@@ -137,6 +146,19 @@ export const ModalSwitchProfile = ({
                     }}
                   >
                     {`${profile.collaborators?.length ?? 0} collaborator${(profile.collaborators?.length ?? 0) === 1 ? "e" : "i"}`}
+                  </Text>
+                )}
+                {profile.role === UserRole.REFEREE && (
+                  <Text
+                    style={{
+                      fontSize: 12,
+                      color: colors.placeholder,
+                      marginTop: 2,
+                    }}
+                  >
+                    {profile.pendingApproval
+                      ? "In attesa di verifica"
+                      : `Arbitro · ${profile.categories.join(", ")}`}
                   </Text>
                 )}
               </View>

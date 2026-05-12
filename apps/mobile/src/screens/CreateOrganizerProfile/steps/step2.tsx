@@ -81,9 +81,6 @@ export function renderStep2({
         contattarti.
       </Text>
 
-      <Text style={s.sectionLabel}>
-        Sede operativa <Text style={{ color: colors.primary }}>*</Text>
-      </Text>
       <LocationSearch
         setLocation={setAddress}
         initialValue={address}
@@ -95,12 +92,10 @@ export function renderStep2({
           setAddressLat(lat);
           setAddressLng(lng);
         }}
+        labelName="Sede operativa"
+        isObbligatory
       />
 
-      <Text style={s.sectionLabel}>
-        Email pubblica di contatto{" "}
-        <Text style={{ color: colors.primary }}>*</Text>
-      </Text>
       <InputBox
         value={contactEmail}
         onChangeText={setContactEmail}
@@ -108,17 +103,24 @@ export function renderStep2({
         isDark={false}
         keyboardType="email-address"
         autoCapitalize="none"
+        labelName="Email pubblica di contatto"
+        isObbligatory
       />
 
-      <Text style={s.sectionLabel}>
-        Telefono <Text style={{ color: colors.primary }}>*</Text>
-      </Text>
-
       {phoneVerified ? (
-        <View style={ls.verifiedBox}>
-          <Ionicons name="checkmark-circle" size={20} color={colors.success} />
-          <Text style={ls.verifiedText}>Numero verificato: {phone}</Text>
-        </View>
+        <>
+          <Text style={s.sectionLabel}>
+            Numero di telefono <Text style={{ color: colors.primary }}>*</Text>
+          </Text>
+          <View style={ls.verifiedBox}>
+            <Ionicons
+              name="checkmark-circle"
+              size={20}
+              color={colors.success}
+            />
+            <Text style={ls.verifiedText}>Numero verificato: {phone}</Text>
+          </View>
+        </>
       ) : (
         <>
           <InputBox
@@ -134,6 +136,8 @@ export function renderStep2({
             placeholder="+39 333 000 0000"
             isDark={false}
             keyboardType="phone-pad"
+            labelName="Numero di telefono"
+            isObbligatory
           />
 
           {phoneIsValid && (
@@ -163,16 +167,14 @@ export function renderStep2({
                 </Text>
               </View>
 
-              <Text style={[s.sectionLabel, { marginTop: 12 }]}>
-                Inserisci il codice ricevuto{" "}
-                <Text style={{ color: colors.primary }}>*</Text>
-              </Text>
               <InputBox
                 value={phoneCodeInput}
                 onChangeText={setPhoneCodeInput}
                 placeholder="000000"
                 isDark={false}
                 keyboardType="number-pad"
+                labelName="Codice di verifica"
+                isObbligatory
               />
 
               {phoneCodeInput.length === 6 && !phoneVerified && (
@@ -198,7 +200,6 @@ export function renderStep2({
         </>
       )}
 
-      <Text style={s.sectionLabel}>Sito web</Text>
       <InputBox
         value={website}
         onChangeText={setWebsite}
@@ -206,6 +207,7 @@ export function renderStep2({
         isDark={false}
         autoCapitalize="none"
         keyboardType="url"
+        labelName="Sito web"
       />
     </>
   );

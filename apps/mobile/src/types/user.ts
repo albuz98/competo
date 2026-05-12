@@ -11,6 +11,7 @@ export enum Gender {
 export enum UserRole {
   PLAYER = "player",
   ORGANIZER = "organizer",
+  REFEREE = "referee",
 }
 
 export type OrganizerCollaborator = AppUser;
@@ -35,8 +36,30 @@ export type OrganizerProfile = {
   pendingApproval?: boolean;
 };
 
+export type RefereeAssociation = "AIA" | "CSI";
+
+export type RefereeProfile = {
+  id: number;
+  role: UserRole.REFEREE;
+  firstName: string;
+  lastName: string;
+  association: RefereeAssociation;
+  memberNumber: string;
+  memberSection?: string;
+  sports: string[];
+  categories: string[];
+  refereeRoles?: string[];
+  baseRate: number;
+  rateType: "partita" | "ora";
+  travelAvailable: boolean;
+  travelRatePerKm?: number;
+  maxTravelKm?: number;
+  consecutiveHoursRange: string;
+  pendingApproval?: boolean;
+};
+
 // Discriminated union: ogni profilo è esplicito sul suo ruolo
-export type UserProfile = PlayerProfile | OrganizerProfile;
+export type UserProfile = PlayerProfile | OrganizerProfile | RefereeProfile;
 
 export interface CoachedTeamRecord {
   id: number;

@@ -14,6 +14,7 @@ import { Gender } from "../../../../types/user";
 import { PlayerFormRef } from "../ProfilePlayer";
 import { colors } from "../../../../theme/colors";
 import { Ionicons } from "@expo/vector-icons";
+import { DatePickerModal } from "../../../../components/core/DatePicker/DatePicker";
 
 interface EditProfileProps {
   gender: Gender | null;
@@ -41,6 +42,7 @@ export const EditProfile = ({
     birthdate: "",
     email: "",
   });
+  const [activeDatePicker, setActiveDatePicker] = useState<boolean>(false);
 
   const [codeSent, setCodeSent] = useState(false);
   const [verificationCode, setVerificationCode] = useState("");
@@ -116,122 +118,145 @@ export const EditProfile = ({
 
   if (!user) return;
 
+  function handlePickerConfirm(iso: string) {
+    updateForm({ birthdate: formatBirthdate(iso) });
+    setActiveDatePicker(false);
+  }
+
+  function handlePickerCancel() {
+    setActiveDatePicker(false);
+  }
+
   return (
-    <View style={styles.cardEditFields}>
-      <InputBoxRow
-        label="Username"
-        value={form.username}
-        onChangeText={(v) => updateForm({ username: v })}
-        disabled
+    <>
+      <DatePickerModal
+        visible={activeDatePicker}
+        currentValue={form.birthdate}
+        onConfirm={handlePickerConfirm}
+        onCancel={handlePickerCancel}
       />
-      <InputBoxRow
-        label="Nome"
-        placeholder="Nome"
-        value={form.first_name}
-        onChangeText={(v) => updateForm({ first_name: v })}
-      />
-      <InputBoxRow
-        label="Cognome"
-        placeholder="Cognome"
-        value={form.last_name}
-        onChangeText={(v) => updateForm({ last_name: v })}
-      />
-      <InputBoxRow
-        label="Data di nascita"
-        value={form.birthdate}
-        keyboardType="number-pad"
-        maxLength={10}
-        placeholder="gg-mm-aaaa"
-        onChangeText={(v) => updateForm({ birthdate: formatBirthdate(v) })}
-      />
-      <InputBoxRow
-        label="Email"
-        placeholder="Email"
-        value={form.email}
-        keyboardType="email-address"
-        autoCorrect={false}
-        onChangeText={(v) => updateForm({ email: v })}
-      />
-      {form.email.length > 0 &&
-        !emailVerified &&
-        (!user.isEmailConfirmed || form.email !== user.email) && (
-          <View style={pStyles.sendCodeRow}>
-            <ButtonBorderColored
-              isColored
-              handleBtn={handleSendCode}
-              loading={sendingCode}
-              text={codeSent ? "Riinvia codice" : "Invia codice conferma"}
+      <View style={styles.cardEditFields}>
+        <InputBoxRow
+          label="Username"
+          value={form.username}
+          onChangeText={(v) => updateForm({ username: v })}
+          disabled
+        />
+        <InputBoxRow
+          label="Nome"
+          placeholder="Nome"
+          value={form.first_name}
+          onChangeText={(v) => updateForm({ first_name: v })}
+        />
+        <InputBoxRow
+          label="Cognome"
+          placeholder="Cognome"
+          value={form.last_name}
+          onChangeText={(v) => updateForm({ last_name: v })}
+        />
+        <InputBoxRow
+          label="Data di nascita"
+          value={form.birthdate}
+          keyboardType="number-pad"
+          maxLength={10}
+          placeholder="gg-mm-aaaa"
+          onChangeText={(v) => updateForm({ birthdate: formatBirthdate(v) })}
+        />
+        <InputBoxRow
+          label="Email"
+          placeholder="Email"
+          value={form.email}
+          keyboardType="email-address"
+          autoCorrect={false}
+          onChangeText={(v) => updateForm({ email: v })}
+        />
+        {form.email.length > 0 &&
+          !emailVerified &&
+          (!user.isEmailConfirmed || form.email !== user.email) && (
+            <View style={pStyles.sendCodeRow}>
+              <ButtonBorderColored
+                isColored
+                handleBtn={handleSendCode}
+                loading={sendingCode}
+                text={codeSent ? "Riinvia codice" : "Invia codice conferma"}
+              />
+              {codeSent && (
+                <>
+                  <InputBoxRow
+                    label="Codice di verifica"
+                    value={verificationCode}
+                    onChangeText={setVerificationCode}
+                    keyboardType="number-pad"
+                    maxLength={6}
+                    placeholder="123456"
+                  />
+                  <ButtonFullColored
+                    text="Conferma email"
+                    handleBtn={handleVerifyCode}
+                    isDisabled={verificationCode.length < 6 || verifyingCode}
+                    loading={verifyingCode}
+                    isColored
+                  />
+                </>
+              )}
+            </View>
+          )}
+        {emailVerified && (
+          <View style={pStyles.emailVerifiedRow}>
+            <Ionicons
+              name="checkmark-circle"
+              size={16}
+              color={colors.success}
             />
-            {codeSent && (
-              <>
-                <InputBoxRow
-                  label="Codice di verifica"
-                  value={verificationCode}
-                  onChangeText={setVerificationCode}
-                  keyboardType="number-pad"
-                  maxLength={6}
-                  placeholder="123456"
-                />
-                <ButtonFullColored
-                  text="Conferma email"
-                  handleBtn={handleVerifyCode}
-                  isDisabled={verificationCode.length < 6 || verifyingCode}
-                  loading={verifyingCode}
-                  isColored
-                />
-              </>
-            )}
+            <Text style={pStyles.emailVerifiedText}>Email verificata</Text>
           </View>
         )}
-      {emailVerified && (
-        <View style={pStyles.emailVerifiedRow}>
-          <Ionicons name="checkmark-circle" size={16} color={colors.success} />
-          <Text style={pStyles.emailVerifiedText}>Email verificata</Text>
+        <View style={pStyles.locationSection}>
+          <Text style={pStyles.locationLabel}>Posizione</Text>
+          <LocationSearch
+            key={`location-${edit}`}
+            setLocation={handleSetLocation}
+            initialValue={user?.location ?? ""}
+            isConfirmed={!!user?.location}
+            onConfirm={(address) =>
+              setForm((f) => ({ ...f, location: address }))
+            }
+            isRow
+          />
         </View>
-      )}
-      <View style={pStyles.locationSection}>
-        <Text style={pStyles.locationLabel}>Posizione</Text>
-        <LocationSearch
-          key={`location-${edit}`}
-          setLocation={handleSetLocation}
-          initialValue={user?.location ?? ""}
-          isConfirmed={!!user?.location}
-          onConfirm={(address) => setForm((f) => ({ ...f, location: address }))}
-          isRow
-        />
-      </View>
-      <View style={pStyles.genderRow}>
-        <Text style={pStyles.genderLabel}>Sesso</Text>
-        <View style={pStyles.genderOptions}>
-          {GENDER_OPTIONS.map((opt, idx) => {
-            const selected = gender === opt.value;
-            const isFirst = idx === 0;
-            const isLast = idx === GENDER_OPTIONS.length - 1;
-            return (
-              <TouchableOpacity
-                key={opt.value}
-                style={[
-                  pStyles.genderOption,
-                  selected && pStyles.genderOptionSelected,
-                  isFirst && pStyles.genderOptionFirst,
-                  isLast && pStyles.genderOptionLast,
-                ]}
-                onPress={() => onGenderChange(opt.value)}
-                activeOpacity={0.7}
-              >
-                <Text
+        <View style={pStyles.genderRow}>
+          <Text style={pStyles.genderLabel}>Sesso</Text>
+          <View style={pStyles.genderOptions}>
+            {GENDER_OPTIONS.map((opt, idx) => {
+              const selected = gender === opt.value;
+              const isFirst = idx === 0;
+              const isLast = idx === GENDER_OPTIONS.length - 1;
+              return (
+                <TouchableOpacity
+                  key={opt.value}
                   style={[
-                    pStyles.genderOptionText,
-                    selected && pStyles.genderOptionTextSelected,
+                    pStyles.genderOption,
+                    selected && pStyles.genderOptionSelected,
+                    isFirst && pStyles.genderOptionFirst,
+                    isLast && pStyles.genderOptionLast,
                   ]}
+                  onPress={() => onGenderChange(opt.value)}
+                  activeOpacity={0.7}
                 >
-                  {opt.label}
-                </Text>
-              </TouchableOpacity>
-            );
-          })}
+                  <Text
+                    style={[
+                      pStyles.genderOptionText,
+                      selected && pStyles.genderOptionTextSelected,
+                    ]}
+                  >
+                    {opt.label}
+                  </Text>
+                </TouchableOpacity>
+              );
+            })}
+          </View>
         </View>
       </View>
-    </View>
+    </>
   );
 };
