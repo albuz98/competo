@@ -28,13 +28,17 @@ import { generateTournaments } from "../../mock/tournaments";
 import { MyTournament, Tournament } from "../../types/tournament";
 import { FilterPanel } from "../../components/FilterPanel/FilterPanel";
 import { FilterState, SortOption } from "../../types/filters";
-import { PRICE_MAX } from "../../constants/filters";
+import {
+  EMPTY_FILTERS,
+  ENTRY_FEE_ORDER,
+  PRICE_MAX,
+} from "../../constants/filters";
 import { VerticalCard } from "../../components/core/VerticalCard/VerticalCard";
 import { BigCard } from "../../components/core/BigCard/BigCard";
 import { SmallCard } from "../../components/core/SmallCard/SmallCard";
 
 type HomeNavProp = CompositeNavigationProp<
-  BottomTabNavigationProp<MainTabParamList, "Home">,
+  BottomTabNavigationProp<MainTabParamList, NavigationEnum.HOME>,
   NativeStackNavigationProp<RootStackParamList>
 >;
 
@@ -47,22 +51,6 @@ const ALL_TOURNAMENTS = generateTournaments(12);
 const RECOMMENDED = ALL_TOURNAMENTS.slice(0, 6);
 
 // ─── Filter helpers ───────────────────────────────────────────────────────────
-
-const EMPTY_FILTERS: FilterState = {
-  games: [],
-  genders: [],
-  minPrice: 0,
-  maxPrice: PRICE_MAX,
-  sortBy: null,
-};
-
-const ENTRY_FEE_ORDER: Record<string, number> = {
-  Free: 0,
-  $10: 10,
-  $25: 25,
-  $50: 50,
-  $100: 100,
-};
 
 function applyFilters(
   tournaments: Tournament[],

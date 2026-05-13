@@ -1,8 +1,7 @@
 import React, { useRef, useState, useEffect } from "react";
 import { View, Text, FlatList, ListRenderItem } from "react-native";
 import { dp } from "./DatePicker.styled";
-import { MONTHS } from "../../../constants/generals";
-import { ITEM_H } from "./constants";
+import { DATEPICKER_ITEM_H, MONTHS } from "../../../constants/generals";
 import { ButtonGeneric } from "../Button/Button";
 import { daysInMonth, parseISO, toISO } from "../../../functions/general";
 import { ModalViewer, ModalViewerRef } from "../ModalBottom/ModalBottom";
@@ -163,8 +162,8 @@ export function DatePickerModal({
   }
 
   const getItemLayout = (_: any, index: number) => ({
-    length: ITEM_H,
-    offset: ITEM_H * index,
+    length: DATEPICKER_ITEM_H,
+    offset: DATEPICKER_ITEM_H * index,
     index,
   });
 
@@ -203,7 +202,7 @@ export function DatePickerModal({
             showsVerticalScrollIndicator={false}
             style={dp.list}
             contentContainerStyle={dp.listContent}
-            snapToInterval={ITEM_H}
+            snapToInterval={DATEPICKER_ITEM_H}
             decelerationRate="fast"
             onScrollToIndexFailed={() => {}}
           />
@@ -221,7 +220,7 @@ export function DatePickerModal({
             showsVerticalScrollIndicator={false}
             style={dp.list}
             contentContainerStyle={dp.listContent}
-            snapToInterval={ITEM_H}
+            snapToInterval={DATEPICKER_ITEM_H}
             decelerationRate="fast"
             onScrollToIndexFailed={() => {}}
           />
@@ -239,7 +238,7 @@ export function DatePickerModal({
             showsVerticalScrollIndicator={false}
             style={dp.list}
             contentContainerStyle={dp.listContent}
-            snapToInterval={ITEM_H}
+            snapToInterval={DATEPICKER_ITEM_H}
             decelerationRate="fast"
             onScrollToIndexFailed={() => {}}
           />

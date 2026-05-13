@@ -34,9 +34,21 @@ export const TEAM_FORMAT_OPTIONS: {
   format: TeamFormat;
   sport: TeamSport;
 }[] = [
-  { label: "Calcio a 5", format: TeamFormat.FIVE_A_SIDE, sport: TeamSport.FOOTBALL },
-  { label: "Calcio a 7", format: TeamFormat.SEVEN_A_SIDE, sport: TeamSport.FOOTBALL },
-  { label: "Calcio a 11", format: TeamFormat.ELEVEN_A_SIDE, sport: TeamSport.FOOTBALL },
+  {
+    label: "Calcio a 5",
+    format: TeamFormat.FIVE_A_SIDE,
+    sport: TeamSport.FOOTBALL,
+  },
+  {
+    label: "Calcio a 7",
+    format: TeamFormat.SEVEN_A_SIDE,
+    sport: TeamSport.FOOTBALL,
+  },
+  {
+    label: "Calcio a 11",
+    format: TeamFormat.ELEVEN_A_SIDE,
+    sport: TeamSport.FOOTBALL,
+  },
 ];
 
 export type inputTextContentType =
@@ -64,3 +76,7 @@ export type inputTextContentType =
 export type textAutoCapitalize = "none" | "sentences" | "words" | "characters";
 
 export const GAMES = ["Calcio a 5", "Calcio a 7", "Calcio a 11"];
+
+export const DATEPICKER_ITEM_H = 48;
+export const DATEPICKER_VISIBLE_ITEMS = 5;
+export const DATEPICKER_H = DATEPICKER_ITEM_H * DATEPICKER_VISIBLE_ITEMS;

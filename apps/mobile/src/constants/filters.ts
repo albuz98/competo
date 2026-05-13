@@ -1,4 +1,4 @@
-import { SortOption } from "../types/filters";
+import { FilterState, SortOption } from "../types/filters";
 
 export const PRICE_MAX = 5000;
 export const THUMB_SIZE = 26;
@@ -21,3 +21,19 @@ export const SORT_OPTIONS: {
     icon: "trending-down-outline",
   },
 ];
+
+export const EMPTY_FILTERS: FilterState = {
+  games: [],
+  genders: [],
+  minPrice: 0,
+  maxPrice: PRICE_MAX,
+  sortBy: null,
+};
+
+export const ENTRY_FEE_ORDER: Record<string, number> = {
+  Free: 0,
+  $10: 10,
+  $25: 25,
+  $50: 50,
+  $100: 100,
+};

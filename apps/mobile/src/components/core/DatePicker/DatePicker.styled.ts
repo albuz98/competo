@@ -1,6 +1,6 @@
 import { StyleSheet } from "react-native";
 import { colors } from "../../../theme/colors";
-import { ITEM_H, PICKER_H } from "./constants";
+import { DATEPICKER_H, DATEPICKER_ITEM_H } from "../../../constants/generals";
 
 export const dp = StyleSheet.create({
   overlay: {
@@ -46,7 +46,7 @@ export const dp = StyleSheet.create({
     flexDirection: "row",
     paddingHorizontal: 8,
     paddingTop: 8,
-    height: PICKER_H + 24,
+    height: DATEPICKER_H + 24,
   },
   column: {
     flex: 1,
@@ -61,16 +61,16 @@ export const dp = StyleSheet.create({
     marginBottom: 4,
   },
   list: {
-    height: PICKER_H,
-    maxHeight: PICKER_H,
+    height: DATEPICKER_H,
+    maxHeight: DATEPICKER_H,
     width: "100%",
     flexGrow: 0,
   },
   listContent: {
-    paddingVertical: (PICKER_H - ITEM_H) / 2,
+    paddingVertical: (DATEPICKER_H - DATEPICKER_ITEM_H) / 2,
   },
   item: {
-    height: ITEM_H,
+    height: DATEPICKER_ITEM_H,
     alignItems: "center",
     justifyContent: "center",
     borderRadius: 10,

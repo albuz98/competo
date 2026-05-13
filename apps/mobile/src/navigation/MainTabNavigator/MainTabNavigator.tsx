@@ -12,18 +12,9 @@ import Notifications from "../../screens/Notifications/Notifications";
 import Profile from "../../screens/Profile/Profile";
 import { colors } from "../../theme/colors";
 import { useNotifications } from "../../context/NotificationsContext";
+import { TAB_ICONS } from "../../constants/navigation";
 
 const Tab = createBottomTabNavigator<MainTabParamList>();
-
-type IoniconsName = React.ComponentProps<typeof Ionicons>["name"];
-
-const TAB_ICONS: Record<string, [IoniconsName, IoniconsName]> = {
-  Home: ["home", "home-outline"],
-  Explore: ["compass", "compass-outline"],
-  Favorites: ["bookmark", "bookmark-outline"],
-  Notifications: ["notifications", "notifications-outline"],
-  Profile: ["person", "person-outline"],
-};
 
 export default function MainTabNavigator() {
   const insets = useSafeAreaInsets();
