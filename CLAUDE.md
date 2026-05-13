@@ -58,16 +58,20 @@ npm run web         # starts the web app (apps/web)
 ```
 src/
 ├── types/
-│   ├── index.ts            # Re-exports; RootStackParamList lives here
-│   ├── user.ts             # User, UserProfile discriminated union, PlayerProfile, OrganizerProfile
+│   ├── navigation.ts       # RootStackParamList, MainTabParamList, NavigationEnum
+│   ├── user.ts             # User, UserProfile discriminated union, PlayerProfile, OrganizerProfile, RefereeProfile, UserRole enum, Gender enum
 │   ├── auth.ts             # LoginCredentials, RegisterCredentials, UpdateProfileData
 │   ├── team.ts             # Team, TeamMember, PendingInvite, AppUser, TeamRole
 │   ├── tournament.ts       # Tournament, MyTournament, TournamentRegisteredTeam, TeamRegistrationStatus
 │   ├── organizer.ts        # OrganizerOnboardingData, EntityType, LegalForm
-│   └── components.ts       # Shared component prop types
+│   ├── stats.ts            # PlayerCareerStats, MatchStats, CoachMatchStats
+│   ├── filters.ts          # Filter-related types
+│   ├── general.ts          # General shared types
+│   └── location.ts         # Location/geolocation types
 ├── constants/
-│   ├── user.ts             # UserRole enum (PLAYER | ORGANIZER)
+│   ├── user.ts             # GENDER_LABELS, GENDER_ICONS, GENDER_OPTIONS (Gender enum is in types/user.ts)
 │   ├── tournament.ts       # PHASES, SINGLE_FORMATS, KO_FORMATS, STEP_TITLES_TOURNAMENT, GAMES, SPORT_EMOJI
+│   ├── referee.ts          # Referee-specific constants
 │   └── organizer.ts        # STEP_TITLES_ORGANIZER, ENTITY_TYPES, LEGAL_FORMS (with labels/icons)
 ├── theme/
 │   ├── colors.ts           # Brand color constants (import instead of hardcoding hex)
@@ -101,15 +105,20 @@ src/
 │   │   └── MainTabNavigator.styles.ts
 │   └── navigationRef.ts             # Global navigation ref for use outside components
 ├── components/             # Shared UI components (each in their own subdirectory)
-│   ├── AuthLayout/
-│   ├── AuthErrorBox/
+│   ├── core/               # Core primitives
 │   ├── Avatar/
+│   ├── BigCard/ Card/ SmallCard/ VerticalCard/  # Card variants
 │   ├── Button/
-│   ├── CompetoLogo/
-│   ├── DividerAccess/
-│   ├── InputBox/
-│   ├── OnboardingCarousel/
-│   └── TabBar/
+│   ├── DatePicker/
+│   ├── InputBox/ InputBoxRow/ InputBoxSearch/   # Input variants
+│   ├── LocationSearch/     # Nominatim-backed location autocomplete
+│   ├── ModalBottom/ ModalCenter/  # Modal wrappers
+│   ├── Popup/
+│   ├── RangeSlider/
+│   ├── Stepper/            # Multi-step form progress indicator
+│   ├── StructureSchedule/  # Schedule layout component
+│   ├── Switcher/ TabSwitcher/  # Toggle/tab switchers
+│   └── (AuthLayout, AuthErrorBox, CompetoLogo, DividerAccess, Logo, OnboardingCarousel, TabBar)
 └── screens/                # Each screen in its own subdirectory: Screen/Screen.tsx + Screen/Screen.styles.ts
     ├── Home/               # Feed: I Tuoi Tornei + Esplora + map
     ├── Explore/            # Tournament discovery with map
@@ -122,9 +131,12 @@ src/
     ├── TournamentScheduleResult/  # Generated schedule preview
     ├── OrganizerProfile/          # View-only organizer profile
     ├── CreateOrganizerProfile/    # 5-step organizer onboarding form
+    ├── CreateRefereeProfile/      # 5-step referee onboarding form (steps/ subdirectory)
     ├── InviteCollaborators/       # Add collaborators to organizer profile
     ├── TournamentHistory/         # Past tournaments list
     ├── Settings/
+    ├── ChangePassword/     # Change password form
+    ├── TwoFactorAuth/      # 2FA setup/verification
     ├── TeamSelect/         # Team picker modal (before payment)
     ├── Payment/            # Card payment form
     ├── Teams/              # Full teams list
@@ -135,7 +147,13 @@ src/
     ├── Register/
     ├── ChoseAccess/        # Entry screen for unauthenticated users (login / register choice)
     ├── ForgotPassword/
-    └── Notifications/
+    ├── Notifications/
+    ├── FilterPanel/        # Screen-level component: tournament filter panel
+    ├── HeaderCardProfile/  # Screen-level component: profile card header
+    ├── MemberRow/          # Screen-level component: team member row
+    ├── ModalSwitchProfile/ # Screen-level component: profile switcher modal
+    ├── TopBarProfile/      # Screen-level component: profile top bar
+    └── UserRowInvitation/  # Screen-level component: user row for invite lists
 ```
 
 ---
@@ -190,11 +208,11 @@ queryKeys.userSearch(query); // ['userSearch', query]
 
 ## User profile system
 
-`User` has a `profiles: UserProfile[]` array and a `currentProfileId` pointer. `UserProfile` is a discriminated union:
+`User` has a `profiles: UserProfile[]` array and a `currentProfileId` pointer. `UserProfile` is a discriminated union (defined in `src/types/user.ts`):
 
 ```ts
-type UserProfile = PlayerProfile | OrganizerProfile;
-// discriminant: profile.role (UserRole.PLAYER | UserRole.ORGANIZER)
+type UserProfile = PlayerProfile | OrganizerProfile | RefereeProfile;
+// discriminant: profile.role (UserRole.PLAYER | UserRole.ORGANIZER | UserRole.REFEREE)
 ```
 
 `AuthContext` exposes:
@@ -236,6 +254,8 @@ Five steps defined in `src/constants/organizer.ts` `STEP_TITLES_ORGANIZER`:
 
 ### Stack routes (`RootStackParamList`)
 
+Defined in `src/types/navigation.ts`. All route names are also available as `NavigationEnum` (enum in the same file — always use the enum, never raw strings).
+
 Initial route is `ChoseAccess` when logged out, `MainTabs` when a persisted token exists (resolved during `bootstrapping`).
 
 | Route                       | Screen                   | Notes                                                                |
@@ -247,14 +267,16 @@ Initial route is `ChoseAccess` when logged out, `MainTabs` when a persisted toke
 | `ForgotPassword`            | ForgotPassword           |                                                                      |
 | `TournamentDetail`          | TournamentDetail         | `tournamentId`, `justRegistered?`                                    |
 | `MyTournamentDetail`        | MyTournamentDetail       | `tournamentId`                                                       |
-| `OrganizerTournamentDetail` | _(not yet implemented)_  | `tournamentId` — route defined, screen not yet created               |
+| `OrganizerTournamentDetail` | _(not yet implemented)_  | `tournamentId` — route defined in type, screen not yet created       |
 | `CreateTournamentSchedule`  | CreateTournamentSchedule | multi-step wizard                                                    |
 | `TournamentScheduleResult`  | TournamentScheduleResult | generated schedule preview                                           |
-| `OrganizerProfile`          | OrganizerProfile         | view-only                                                            |
 | `CreateOrganizerProfile`    | CreateOrganizerProfile   | 5-step onboarding                                                    |
+| `CreateRefereeProfile`      | CreateRefereeProfile     | 5-step referee onboarding                                            |
 | `InviteCollaborators`       | InviteCollaborators      | `profileId`                                                          |
 | `TournamentHistory`         | TournamentHistory        |                                                                      |
 | `Settings`                  | Settings                 |                                                                      |
+| `ChangePassword`            | ChangePassword           |                                                                      |
+| `TwoFactorAuth`             | TwoFactorAuth            |                                                                      |
 | `TeamSelect`                | TeamSelect               | Modal; `tournamentId`, `entryFee`, `tournamentName`                  |
 | `Payment`                   | Payment                  | `tournamentId`, `entryFee`, `tournamentName`, `teamId?`, `teamName?` |
 | `Teams`                     | Teams                    |                                                                      |
@@ -265,7 +287,7 @@ Initial route is `ChoseAccess` when logged out, `MainTabs` when a persisted toke
 
 ### Bottom tabs (`MainTabParamList`)
 
-`Home` · `Esplora` · `Preferiti` · `Profilo`
+`Home` · `Explore` · `Favorites` · `Notification` · `Profile` (`Profile` accepts optional `{ startEdit?: boolean }`)
 
 ---
 
