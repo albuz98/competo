@@ -138,6 +138,7 @@ export function TeamsProvider({ children }: { children: ReactNode }) {
         createdAt: new Date().toISOString(),
       };
       setSentPendingInvites((prev) => [...prev, newInvite]);
+      qc.invalidateQueries({ queryKey: queryKeys.teamInvitations(teamId) });
     },
   });
 

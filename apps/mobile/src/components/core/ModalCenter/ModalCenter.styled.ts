@@ -33,6 +33,7 @@ export const tds = StyleSheet.create({
     flexDirection: "row",
     gap: 12,
     width: "100%",
+    marginTop: 20,
   },
   modalRemoveBtn: {
     flex: 1,

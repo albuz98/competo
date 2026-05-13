@@ -27,11 +27,15 @@ import { sizesEnum } from "../../theme/dimension";
 import { colors } from "../../theme/colors";
 import { TEAM_FORMAT_OPTIONS, TeamFormat } from "../../constants/generals";
 import { TeamRole } from "../../constants/team";
+import { useQueryClient } from "@tanstack/react-query";
+import { queryKeys } from "../../lib/queryKeys";
+import type { TeamDetailResponse, TeamMemberResponse } from "../../types/team";
 
 type Props = NativeStackScreenProps<RootStackParamList, "CreateTeam">;
 
 export default function CreateTeam({ navigation }: Props) {
   const { createTeam } = useTeams();
+  const qc = useQueryClient();
   const insets = useSafeAreaInsets();
   const [name, setName] = useState("");
   const [format, setFormat] = useState<TeamFormat | null>(null);
@@ -48,6 +52,32 @@ export default function CreateTeam({ navigation }: Props) {
     setError(null);
     try {
       const team = await createTeam(name.trim(), format, representativeRole);
+      const rep = team.members.find((m) => m.role === TeamRole.REPRESENTATIVE);
+      qc.setQueryData<TeamDetailResponse>(queryKeys.teamDetail(team.id), {
+        id: team.id,
+        name: team.name,
+        sport: team.sport,
+        format: "",
+        city: "",
+        logo_url: team.logoUrl ?? "",
+        rating: 0,
+        representative_id: rep?.id ?? 0,
+      });
+      qc.setQueryData<TeamMemberResponse[]>(
+        queryKeys.teamMembers(team.id),
+        team.members.map((m) => ({
+          id: m.id,
+          user_id: m.id,
+          role: m.role,
+          is_active: true,
+          joined_at: team.createdAt,
+          firstName: m.firstName,
+          lastName: m.lastName,
+          username: m.username,
+          jerseyNumber: m.jerseyNumber,
+          gameRole: m.gameRole,
+        })),
+      );
       navigation.replace(NavigationEnum.TEAM_DETAIL, { teamId: team.id });
     } catch (e) {
       setCreateError(e instanceof Error ? e.message : "Errore nella creazione");
