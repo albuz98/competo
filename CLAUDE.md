@@ -58,7 +58,7 @@ npm run web         # starts the web app (apps/web)
 ```
 src/
 ├── types/
-│   ├── navigation.ts       # RootStackParamList, MainTabParamList, NavigationEnum
+│   ├── navigation.ts       # RootStackParamList, MainTabPlayerParamList, NavigationEnum
 │   ├── user.ts             # User, UserProfile discriminated union, PlayerProfile, OrganizerProfile, RefereeProfile, UserRole enum, Gender enum
 │   ├── auth.ts             # LoginCredentials, RegisterCredentials, UpdateProfileData
 │   ├── team.ts             # Team, TeamMember, PendingInvite, AppUser, TeamRole
@@ -285,7 +285,7 @@ Initial route is `ChoseAccess` when logged out, `MainTabs` when a persisted toke
 | `InvitePlayers`             | InvitePlayers            | `teamId`                                                             |
 | `Notifiche`                 | Notifications            |                                                                      |
 
-### Bottom tabs (`MainTabParamList`)
+### Bottom tabs (`MainTabPlayerParamList`)
 
 `Home` · `Explore` · `Favorites` · `Notification` · `Profile` (`Profile` accepts optional `{ startEdit?: boolean }`)
 

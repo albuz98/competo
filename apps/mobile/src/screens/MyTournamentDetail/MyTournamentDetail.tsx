@@ -451,7 +451,7 @@ export default function MyTournamentDetailScreen({ route, navigation }: Props) {
   }, [isGenerated]);
 
   const activateMutation = useMutation({
-    mutationFn: (id: string) => activateTournament(id, user?.token ?? ""),
+    mutationFn: (id: number) => activateTournament(id, user?.token ?? ""),
     onSuccess: (_data, id) => {
       qc.setQueryData<MyTournament>(
         queryKeys.myTournament(id),

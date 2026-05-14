@@ -19,7 +19,7 @@ import { useAuth } from "../../context/AuthContext";
 import { useTeams } from "../../context/TeamsContext";
 import {
   RootStackParamList,
-  MainTabParamList,
+  MainTabPlayerParamList,
   NavigationEnum,
 } from "../../types/navigation";
 import { styles } from "./Profile.styles";
@@ -28,6 +28,7 @@ import { Gender, UserRole } from "../../types/user";
 import { TopBarProfile } from "../../components/TopBarProfile/TopBarProfile";
 import ProfileOrganizer from "./ProfileOrganizer/ProfileOrganizer";
 import ProfilePlayer, { PlayerFormRef } from "./ProfilePlayer/ProfilePlayer";
+import ProfileReferee from "./ProfileReferee/ProfileReferee";
 import { ModalSwitchProfile } from "../../components/ModalSwitchProfile/ModalSwitchProfile";
 
 export default function Profile() {
@@ -54,11 +55,11 @@ export default function Profile() {
   });
   const navigation =
     useNavigation<NativeStackNavigationProp<RootStackParamList>>();
-  const route = useRoute<RouteProp<MainTabParamList, NavigationEnum.PROFILE>>();
+  const route =
+    useRoute<RouteProp<MainTabPlayerParamList, NavigationEnum.PROFILE>>();
   const insets = useSafeAreaInsets();
   const [changeProfileModal, setChangeProfileModal] = useState(false);
   const [isDirty, setIsDirty] = useState(false);
-  const isOrganizerProfile = currentProfile?.role === UserRole.ORGANIZER;
   const isRefereeProfile = currentProfile?.role === UserRole.REFEREE;
   const mounted = useRef(false);
   const playerFormRef = useRef<PlayerFormRef>({
@@ -109,7 +110,11 @@ export default function Profile() {
       );
       return;
     }
-    if (isRefereeProfile && currentProfile?.role === UserRole.REFEREE && currentProfile.pendingApproval) {
+    if (
+      isRefereeProfile &&
+      currentProfile?.role === UserRole.REFEREE &&
+      currentProfile.pendingApproval
+    ) {
       Alert.alert(
         "Profilo in revisione",
         "Non puoi modificare il profilo arbitro fino all'approvazione da parte del team Competo.",
@@ -159,7 +164,7 @@ export default function Profile() {
       updateOrgProfileData(currentProfile.id, { orgName: form.orgName });
     }
 
-    if (currentProfile?.role !== UserRole.ORGANIZER) {
+    if (currentProfile?.role === UserRole.PLAYER) {
       const pf = playerFormRef.current;
       const emailChanged = pf.email !== (user?.email ?? "");
 
@@ -232,7 +237,7 @@ export default function Profile() {
           navigation={navigation}
         />
         <View style={{ flex: 1 }}>
-          {isOrganizerProfile ? (
+          {currentProfile?.role === UserRole.ORGANIZER ? (
             <ProfileOrganizer
               currentProfile={currentProfile}
               saving={saving}
@@ -240,7 +245,9 @@ export default function Profile() {
               setEdit={setEdit}
               onDirty={() => setIsDirty(true)}
             />
-          ) : (
+          ) : currentProfile?.role === UserRole.REFEREE ? (
+            <ProfileReferee currentProfile={currentProfile} />
+          ) : currentProfile?.role === UserRole.PLAYER ? (
             <ProfilePlayer
               saving={saving}
               edit={edit}
@@ -252,7 +259,7 @@ export default function Profile() {
               onDirty={() => setIsDirty(true)}
               formRef={playerFormRef}
             />
-          )}
+          ) : null}
         </View>
         <ModalSwitchProfile
           changeProfileModal={changeProfileModal}

@@ -11,7 +11,7 @@ export const queryKeys = {
 
   // ─── My tournaments (authenticated) ───────────────────────────────────────
   myTournaments: () => ["myTournaments"] as const,
-  myTournament: (id: string) => ["myTournament", id] as const,
+  myTournament: (id: number) => ["myTournament", id] as const,
 
   // ─── Organizer ─────────────────────────────────────────────────────────────
   organizerTournament: (id: string) => ["organizerTournament", id] as const,

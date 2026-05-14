@@ -35,10 +35,18 @@ export type RootStackParamList = {
   TwoFactorAuth: undefined;
 };
 
-export type MainTabParamList = {
+export type MainTabPlayerParamList = {
   Home: undefined;
   Explore: undefined;
   Favorites: undefined;
+  Notification: undefined;
+  Profile: { startEdit?: boolean } | undefined;
+};
+
+export type MainTabOrganizerParamList = {
+  Home: undefined;
+  StatsOrganizer: undefined;
+  Wallet: undefined;
   Notification: undefined;
   Profile: { startEdit?: boolean } | undefined;
 };
@@ -73,4 +81,6 @@ export enum NavigationEnum {
   CREATE_REFEREE_PROFILE = "CreateRefereeProfile",
   CHANGE_PASSWORD = "ChangePassword",
   TWO_FACTOR_AUTH = "TwoFactorAuth",
+  WALLET = "Wallet",
+  STATS_ORGANIZER = "StatsOrganizer",
 }
