@@ -7,8 +7,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { Logo } from "../Logo/Logo";
 import { styles } from "./VerticalCard.styled";
 import { colorGradient, colors } from "../../../theme/colors";
-import { SMALL_W } from "../../../screens/Home/Home.styles";
-
+import { SMALL_W } from "../../../screens/Home/HomePlayer/HomePlayer.styled";
 interface VerticalCardProps {
   tournament: Tournament;
   index: number;

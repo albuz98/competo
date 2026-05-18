@@ -1,6 +1,6 @@
 import { StyleSheet } from "react-native";
 import { colors } from "../../../theme/colors";
-import { SMALL_W } from "../../../screens/Home/Home.styles";
+import { SMALL_W } from "../../../screens/Home/HomePlayer/HomePlayer.styled";
 
 export const styles = StyleSheet.create({
   smallCard: {

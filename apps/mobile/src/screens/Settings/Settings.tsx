@@ -13,7 +13,7 @@ import { colors } from "../../theme/colors";
 import { ButtonBack } from "../../components/core/Button/Button";
 import { styles } from "./Settings.styles";
 import { UserRole } from "../../types/user";
-import CardIcon from "../../../assets/icons/whistle.svg";
+// import CardIcon fr                    om "../../../assets/icons/whistle.svg";
 
 export default function Settings() {
   const navigation =
@@ -25,13 +25,13 @@ export default function Settings() {
     (p) => p.role === UserRole.ORGANIZER,
   );
 
-  const isAlreadyReferee = user?.profiles?.some(
-    (p) => p.role === UserRole.REFEREE,
-  );
+  // const isAlreadyReferee = user?.profiles?.some(
+  //   (p) => p.role === UserRole.REFEREE,
+  // );
 
-  const handleRefereeProfile = () => {
-    navigation.navigate(NavigationEnum.CREATE_REFEREE_PROFILE);
-  };
+  // const handleRefereeProfile = () => {
+  //   navigation.navigate(NavigationEnum.CREATE_REFEREE_PROFILE);
+  // };
 
   const handleEditProfile = () => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -89,9 +89,7 @@ export default function Settings() {
               color={colors.grayDark}
             />
           </Pressable>
-
           <View style={styles.divider} />
-
           <Pressable style={styles.row} onPress={handleTwoFactor}>
             <View
               style={[styles.rowIcon, { backgroundColor: colors.purpleBlueBg }]}
@@ -109,7 +107,6 @@ export default function Settings() {
               color={colors.grayDark}
             />
           </Pressable>
-
           {!isAlreadyOrganizer && (
             <>
               <View style={styles.divider} />
@@ -137,8 +134,8 @@ export default function Settings() {
               </Pressable>
             </>
           )}
-
-          {!isAlreadyReferee && (
+          {/*TODO - rferee profile creation flow*/}
+          {/* {!isAlreadyReferee && (
             <>
               <View style={styles.divider} />
               <Pressable style={styles.row} onPress={handleRefereeProfile}>
@@ -158,7 +155,7 @@ export default function Settings() {
                 />
               </Pressable>
             </>
-          )}
+          )} */}
         </View>
 
         <View style={{ flex: 1 }} />

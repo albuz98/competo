@@ -7,8 +7,8 @@ import { sizesEnum } from "../../../theme/dimension";
 import { Ionicons } from "@expo/vector-icons";
 import { colorGradient, colors } from "../../../theme/colors";
 import { Logo } from "../Logo/Logo";
-import { SMALL_W } from "../../../screens/Home/Home.styles";
 import { styles } from "./SmallCard.styled";
+import { SMALL_W } from "../../../screens/Home/HomePlayer/HomePlayer.styled";
 
 interface SmallCardProps {
   tournament: Tournament;

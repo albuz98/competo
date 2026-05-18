@@ -1,6 +1,5 @@
 import { LinearGradient } from "expo-linear-gradient";
 import { SPORT_EMOJI } from "../../../constants/generals";
-import { BIG_H, BIG_W } from "../../../screens/Home/Home.styles";
 import { Tournament } from "../../../types/tournament";
 import { ButtonGeneric } from "../Button/Button";
 import { Ionicons } from "@expo/vector-icons";
@@ -8,6 +7,10 @@ import { View, Text, ImageBackground } from "react-native";
 import { Logo } from "../Logo/Logo";
 import { styles } from "./BigCard.styled";
 import { colorGradient, colors } from "../../../theme/colors";
+import {
+  BIG_H,
+  BIG_W,
+} from "../../../screens/Home/HomePlayer/HomePlayer.styled";
 
 interface BigCardProps {
   tournament: Tournament;
