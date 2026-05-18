@@ -51,6 +51,7 @@ interface AuthContextType {
     updates: Partial<OrganizerProfile>,
   ) => void;
   addCollaborator: (profileId: number, appUser: AppUser) => void;
+  removeCollaborator: (profileId: number, collaboratorId: number) => void;
   addOrganizerProfile: (orgName: string) => void;
   addRefereeProfile: (data: Pick<RefereeProfile, "firstName" | "lastName" | "association" | "memberNumber" | "memberSection" | "sports" | "categories" | "refereeRoles" | "baseRate" | "rateType" | "travelAvailable" | "travelRatePerKm" | "maxTravelKm" | "consecutiveHoursRange">) => void;
 }
@@ -213,6 +214,25 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     });
   };
 
+  const removeCollaborator = (profileId: number, collaboratorId: number) => {
+    setUser((prev) => {
+      if (!prev) return prev;
+      return {
+        ...prev,
+        profiles: prev.profiles?.map((p) => {
+          if (p.id !== profileId || p.role !== UserRole.ORGANIZER) return p;
+          const org = p as OrganizerProfile;
+          return {
+            ...org,
+            collaborators: (org.collaborators ?? []).filter(
+              (c) => c.id !== collaboratorId,
+            ),
+          } as OrganizerProfile;
+        }),
+      };
+    });
+  };
+
   const addOrganizerProfile = (orgName: string) => {
     setUser((prev) => {
       if (!prev) return prev;
@@ -303,6 +323,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         updateProfile,
         updateOrgProfileData,
         addCollaborator,
+        removeCollaborator,
         addOrganizerProfile,
         addRefereeProfile,
       }}

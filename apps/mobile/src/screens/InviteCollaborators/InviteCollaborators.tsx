@@ -8,6 +8,7 @@ import {
   ActivityIndicator,
   Share,
 } from "react-native";
+import { ModalCenter } from "../../components/core/ModalCenter/ModalCenter";
 import {
   SafeAreaView,
   useSafeAreaInsets,
@@ -44,7 +45,7 @@ function UserRow({
   invited: boolean;
   onInvite: () => void;
 }) {
-  const initials = (user.first_name[0] ?? "") + (user.last_name[0] ?? "");
+  const initials = (user.firstName?.[0] ?? "") + (user.lastName?.[0] ?? "");
   return (
     <View style={ic.userRow}>
       <View style={ic.userAvatar}>
@@ -52,7 +53,7 @@ function UserRow({
       </View>
       <View style={{ flex: 1 }}>
         <Text style={ic.userName}>
-          {user.first_name} {user.last_name}
+          {user.firstName} {user.lastName}
         </Text>
         <Text style={ic.userUsername}>@{user.username}</Text>
       </View>
@@ -88,6 +89,7 @@ export default function InviteCollaborators({ route, navigation }: Props) {
   const [results, setResults] = useState<AppUser[]>([]);
   const [searching, setSearching] = useState(false);
   const [added, setAdded] = useState<Set<string>>(new Set());
+  const [pendingAdd, setPendingAdd] = useState<AppUser | null>(null);
   const searchTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const orgProfile = user?.profiles?.find(
@@ -121,13 +123,18 @@ export default function InviteCollaborators({ route, navigation }: Props) {
   }, [query]);
 
   const handleAdd = (appUser: AppUser) => {
+    setPendingAdd(appUser);
+  };
+
+  const confirmAdd = (appUser: AppUser) => {
     addCollaborator(profileId, appUser);
-    setAdded((prev) => new Set(prev).add(appUser.id));
+    setAdded((prev) => new Set(prev).add(String(appUser.id)));
     addNotification({
       title: "Collaboratore aggiunto",
-      body: `${appUser.first_name} ${appUser.last_name} è stato aggiunto come collaboratore di ${orgProfile?.orgName ?? ""}`,
+      body: `${appUser.firstName} ${appUser.lastName} è stato aggiunto come collaboratore di ${orgProfile?.orgName ?? ""}`,
       timestamp: new Date().toISOString(),
     });
+    setPendingAdd(null);
   };
 
   const handleShare = async () => {
@@ -232,13 +239,13 @@ export default function InviteCollaborators({ route, navigation }: Props) {
             ) : (
               <FlatList
                 data={results}
-                keyExtractor={(u) => u.id}
+                keyExtractor={(u) => String(u.id)}
                 contentContainerStyle={{ paddingBottom: insets.bottom + 20 }}
                 renderItem={({ item }) => (
                   <UserRow
                     user={item}
                     alreadyCollaborator={collaboratorIds.has(item.id)}
-                    invited={added.has(item.id)}
+                    invited={added.has(String(item.id))}
                     onInvite={() => handleAdd(item)}
                   />
                 )}
@@ -298,6 +305,29 @@ export default function InviteCollaborators({ route, navigation }: Props) {
           </View>
         )}
       </SafeAreaView>
+
+      {/* ── Modale conferma aggiunta collaboratore ─────── */}
+      <ModalCenter
+        visible={pendingAdd !== null}
+        onClose={() => setPendingAdd(null)}
+        title="Aggiungi collaboratore"
+        handleBtnCancel={() => setPendingAdd(null)}
+        handleBtnApprove={() => pendingAdd && confirmAdd(pendingAdd)}
+      >
+        <Text
+          style={{ fontSize: 14, color: colors.placeholder, textAlign: "center" }}
+        >
+          Vuoi aggiungere{" "}
+          <Text style={{ fontWeight: "700", color: colors.dark }}>
+            {pendingAdd?.firstName} {pendingAdd?.lastName}
+          </Text>{" "}
+          come collaboratore di{" "}
+          <Text style={{ fontWeight: "700", color: colors.dark }}>
+            {orgProfile?.orgName ?? "questa organizzazione"}
+          </Text>
+          ?
+        </Text>
+      </ModalCenter>
     </View>
   );
 }

@@ -32,6 +32,8 @@ import { oStyles } from "./ProfileOrganizer.styled";
 import { HeaderCardProfileOrganizer } from "../../../components/HeaderCardProfileOrganizer/HeaderCardProfileOrganizer";
 import { InputBoxRow } from "../../../components/core/InputBoxRow/InputBoxRow";
 import { LinearGradient } from "expo-linear-gradient";
+import { ModalCenter } from "../../../components/core/ModalCenter/ModalCenter";
+import { AppUser } from "../../../types/team";
 
 interface ProfileOrganizerProps {
   currentProfile: OrganizerProfile | null;
@@ -39,6 +41,7 @@ interface ProfileOrganizerProps {
   edit: boolean;
   setEdit: (edit: boolean) => void;
   onDirty?: () => void;
+  onOrgNameChange?: (v: string) => void;
 }
 
 export default function ProfileOrganizer({
@@ -47,8 +50,9 @@ export default function ProfileOrganizer({
   edit,
   setEdit,
   onDirty,
+  onOrgNameChange,
 }: ProfileOrganizerProps) {
-  const { user, updateProfile, updateOrgProfileData } = useAuth();
+  const { user, updateProfile, updateOrgProfileData, removeCollaborator } = useAuth();
   const { refreshTeams } = useTeams();
   const [form, setForm] = useState({
     orgName: "",
@@ -114,6 +118,7 @@ export default function ProfileOrganizer({
   }, [edit]);
 
   const [expandedCollaborators, setExpandedCollaborators] = useState(false);
+  const [confirmRemove, setConfirmRemove] = useState<AppUser | null>(null);
 
   const isPending = currentProfile?.pendingApproval === true;
 
@@ -219,6 +224,7 @@ export default function ProfileOrganizer({
             onChangeText={(v) => {
               setForm((f) => ({ ...f, orgName: v }));
               onDirty?.();
+              onOrgNameChange?.(v);
             }}
             isLast
           />
@@ -261,6 +267,24 @@ export default function ProfileOrganizer({
 
             {expandedCollaborators && (
               <>
+                {/* ── + Invita in cima ────────────────── */}
+                <View style={{ paddingHorizontal: 16, marginBottom: 4 }}>
+                  <ButtonLink
+                    text="+ Invita collaboratore"
+                    handleBtn={() =>
+                      currentProfile &&
+                      navigation.navigate(NavigationEnum.INVITE_COLLABORATORS, {
+                        profileId: currentProfile.id,
+                      })
+                    }
+                    color={colors.primary}
+                    fontSize={13}
+                    isColored
+                    isBold
+                  />
+                </View>
+
+                {/* ── Lista collaboratori ─────────────── */}
                 {collaborators.length > 0 ? (
                   collaborators.map((collab) => (
                     <View
@@ -280,6 +304,16 @@ export default function ProfileOrganizer({
                           @{collab.username}
                         </Text>
                       </View>
+                      <Pressable
+                        onPress={() => setConfirmRemove(collab)}
+                        hitSlop={8}
+                      >
+                        <Ionicons
+                          name="person-remove-outline"
+                          size={20}
+                          color={colors.danger}
+                        />
+                      </Pressable>
                     </View>
                   ))
                 ) : (
@@ -289,21 +323,6 @@ export default function ProfileOrganizer({
                     </Text>
                   </View>
                 )}
-                <View style={{ paddingHorizontal: 16, marginVertical: 8 }}>
-                  <ButtonLink
-                    text="+ Invita collaboratore"
-                    handleBtn={() =>
-                      currentProfile &&
-                      navigation.navigate(NavigationEnum.INVITE_COLLABORATORS, {
-                        profileId: currentProfile.id,
-                      })
-                    }
-                    color={colors.primary}
-                    fontSize={13}
-                    isColored
-                    isBold
-                  />
-                </View>
               </>
             )}
           </>
@@ -418,6 +437,30 @@ export default function ProfileOrganizer({
             </>
           ))}
       </ScrollView>
+
+      {/* ── Modale conferma rimozione collaboratore ─────── */}
+      <ModalCenter
+        visible={confirmRemove !== null}
+        onClose={() => setConfirmRemove(null)}
+        title="Rimuovi collaboratore"
+        handleBtnCancel={() => setConfirmRemove(null)}
+        handleBtnRemove={() => {
+          if (currentProfile && confirmRemove) {
+            removeCollaborator(currentProfile.id, confirmRemove.id);
+          }
+          setConfirmRemove(null);
+        }}
+      >
+        <Text
+          style={{ fontSize: 14, color: colors.placeholder, textAlign: "center" }}
+        >
+          Sei sicuro di voler rimuovere{" "}
+          <Text style={{ fontWeight: "700", color: colors.dark }}>
+            {confirmRemove?.firstName} {confirmRemove?.lastName}
+          </Text>{" "}
+          dai collaboratori?
+        </Text>
+      </ModalCenter>
     </View>
   );
 }

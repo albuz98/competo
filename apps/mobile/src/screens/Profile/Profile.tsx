@@ -244,6 +244,7 @@ export default function Profile() {
               edit={edit}
               setEdit={setEdit}
               onDirty={() => setIsDirty(true)}
+              onOrgNameChange={(v) => setForm((f) => ({ ...f, orgName: v }))}
             />
           ) : currentProfile?.role === UserRole.REFEREE ? (
             <ProfileReferee currentProfile={currentProfile} />
