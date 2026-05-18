@@ -5,7 +5,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useAuth } from "../../../context/AuthContext";
 import { useTeams } from "../../../context/TeamsContext";
 import { Gender, ViewModeProfile } from "../../../types/user";
-import { HeaderCardProfile } from "../../../components/HeaderCardProfile/HeaderCard";
+import { HeaderCardProfilePlayer } from "../../../components/HeaderCardProfilePlayer/HeaderCardProfilePlayer";
 import { styles } from "../Profile.styles";
 import { Switcher } from "../../../components/core/Switcher/Switcher";
 import { CoachView } from "./SubComponents/CoachView";
@@ -91,7 +91,7 @@ export default function ProfilePlayer({
           savedScrollY.current = e.nativeEvent.contentOffset.y;
         }}
       >
-        <HeaderCardProfile
+        <HeaderCardProfilePlayer
           user={user}
           subtitle={user.location}
           birthdate={user.birthdate}
@@ -116,7 +116,7 @@ export default function ProfilePlayer({
             onGenderChange={onGenderChange}
             onDirty={onDirty}
           />
-        </HeaderCardProfile>
+        </HeaderCardProfilePlayer>
 
         {/* ── PLAYER VIEW ─────────────────────────────── */}
         {viewMode === "player" && !edit && <PlayerView />}

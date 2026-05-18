@@ -34,6 +34,8 @@ export type OrganizerProfile = {
   isCreator: boolean;
   collaborators?: OrganizerCollaborator[];
   pendingApproval?: boolean;
+  isVerified?: boolean;
+  isPremium?: boolean;
 };
 
 export type RefereeAssociation = "AIA" | "CSI";

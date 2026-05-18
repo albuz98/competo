@@ -29,10 +29,9 @@ import {
   ButtonLink,
 } from "../../../components/core/Button/Button";
 import { oStyles } from "./ProfileOrganizer.styled";
-import { HeaderCardProfile } from "../../../components/HeaderCardProfile/HeaderCard";
+import { HeaderCardProfileOrganizer } from "../../../components/HeaderCardProfileOrganizer/HeaderCardProfileOrganizer";
 import { InputBoxRow } from "../../../components/core/InputBoxRow/InputBoxRow";
 import { LinearGradient } from "expo-linear-gradient";
-import { ModalViewer } from "../../../components/core/ModalBottom/ModalBottom";
 
 interface ProfileOrganizerProps {
   currentProfile: OrganizerProfile | null;
@@ -57,7 +56,6 @@ export default function ProfileOrganizer({
   const navigation =
     useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const insets = useSafeAreaInsets();
-  const [changeProfileModal, setChangeProfileModal] = useState(false);
   const isOrganizerProfile = currentProfile?.role === UserRole.ORGANIZER;
 
   useEffect(() => {
@@ -162,8 +160,6 @@ export default function ProfileOrganizer({
 
   const collaborators = currentProfile?.collaborators ?? [];
 
-  const countCollaborators = collaborators?.length ?? 0;
-
   if (!user) {
     return (
       <View style={styles.root}>
@@ -207,17 +203,14 @@ export default function ProfileOrganizer({
           </View>
         )}
 
-        {/* ── Header card (avatar + nome org + modifica) ───── */}
-        <HeaderCardProfile
+        {/* ── Header card organizzatore ────────────────────── */}
+        <HeaderCardProfileOrganizer
           user={user}
-          avatarProfile={currentProfile ?? undefined}
-          displayName={currentProfile?.orgName}
-          subtitle={`Collaboratori ${countCollaborators}`}
+          currentProfile={currentProfile}
           saving={saving}
           edit={edit && !isPending}
           updateProfile={handleOrgUpdateProfile}
           handleStartEdit={handleStartEditGuarded}
-          hideName
         >
           {/* Campi modificabili in edit mode */}
           <InputBoxRow
@@ -229,7 +222,7 @@ export default function ProfileOrganizer({
             }}
             isLast
           />
-        </HeaderCardProfile>
+        </HeaderCardProfileOrganizer>
 
         {/* ── Collaboratori (visualizzazione) ─────────────── */}
         {edit && !isPending && currentProfile?.isCreator && (
@@ -425,23 +418,6 @@ export default function ProfileOrganizer({
             </>
           ))}
       </ScrollView>
-      <ModalViewer
-        isOpen={changeProfileModal}
-        onClose={() => setChangeProfileModal(false)}
-      >
-        <View style={styles.headerModal}>
-          <Text style={styles.headerModalText}>I tuoi profili</Text>
-          <Pressable
-            onPress={() => {
-              setChangeProfileModal(false);
-              navigation.navigate(NavigationEnum.CREATE_ORGANIZER_PROFILE);
-            }}
-            hitSlop={8}
-          >
-            <Ionicons name="add" size={24} color={colors.primaryGradientMid} />
-          </Pressable>
-        </View>
-      </ModalViewer>
     </View>
   );
 }
