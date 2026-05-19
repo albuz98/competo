@@ -62,4 +62,9 @@ export const mockFlags = {
 
   // ─── Organizer ────────────────────────────────────────────────────────────
   IS_MOCKING_SUBMIT_ORGANIZER_PROFILE: true,
+
+  // ─── Chats ────────────────────────────────────────────────────────────────
+  IS_MOCKING_FETCH_CHATS: true,
+  IS_MOCKING_FETCH_CHAT_MESSAGES: true,
+  IS_MOCKING_SEND_CHAT_MESSAGE: true,
 };

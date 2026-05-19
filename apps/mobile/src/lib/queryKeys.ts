@@ -32,4 +32,8 @@ export const queryKeys = {
 
   // ─── Users ────────────────────────────────────────────────────────────────
   userSearch: (query: string) => ["userSearch", query] as const,
+
+  // ─── Chats ────────────────────────────────────────────────────────────────
+  chats: () => ["chats"] as const,
+  chatMessages: (chatId: number) => ["chatMessages", chatId] as const,
 } as const;

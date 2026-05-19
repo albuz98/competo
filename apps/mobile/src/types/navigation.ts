@@ -34,6 +34,8 @@ export type RootStackParamList = {
   ChangePassword: undefined;
   TwoFactorAuth: undefined;
   ChatDetail: { chatId: number; chatName: string; tournamentName: string };
+  WalletDetail: undefined;
+  StatsDetail: undefined;
 };
 
 export type MainTabPlayerParamList = {
@@ -86,4 +88,6 @@ export enum NavigationEnum {
   STATS_ORGANIZER = "StatsOrganizer",
   CHATS = "Chats",
   CHAT_DETAIL = "ChatDetail",
+  WALLET_DETAIL = "WalletDetail",
+  STATS_DETAIL = "StatsDetail",
 }

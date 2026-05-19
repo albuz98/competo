@@ -30,6 +30,8 @@ import { colors } from "../theme/colors";
 import { ChangePassword } from "../screens/ChangePassword/ChangePassword";
 import TwoFactorAuth from "../screens/TwoFactorAuth/TwoFactorAuth";
 import ChatDetail from "../screens/ChatDetail/ChatDetail";
+import WalletDetail from "../screens/WalletDetail/WalletDetail";
+import StatsDetail from "../screens/StatsDetail/StatsDetail";
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -192,6 +194,16 @@ export default function AppNavigator() {
         <Stack.Screen
           name={NavigationEnum.CHAT_DETAIL}
           component={ChatDetail}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name={NavigationEnum.WALLET_DETAIL}
+          component={WalletDetail}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name={NavigationEnum.STATS_DETAIL}
+          component={StatsDetail}
           options={{ headerShown: false }}
         />
       </Stack.Navigator>

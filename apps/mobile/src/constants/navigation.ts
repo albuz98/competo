@@ -12,5 +12,5 @@ export const TAB_ICONS: Record<string, [IoniconsName, IoniconsName]> = {
   //ORGANIZER
   Wallet: ["wallet", "wallet-outline"],
   StatsOrganizer: ["stats-chart", "stats-chart-outline"],
-  Messaggi: ["chatbubbles", "chatbubbles-outline"],
+  Chats: ["chatbubbles", "chatbubbles-outline"],
 };
