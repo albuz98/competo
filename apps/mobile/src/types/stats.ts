@@ -52,3 +52,22 @@ export interface TeamPlayerGoalStat {
   playerName: string;
   goals: number;
 }
+
+export interface OrganizerStatsOverview {
+  views: number;
+  viewsDelta: number;
+  usersReached: number;
+  usersReachedDelta: number;
+  newClients: number;
+  newClientsDelta: number;
+  linkTouches: number;
+  linkTouchesDelta: number;
+  month: string;
+}
+
+export interface OrganizerStatsSegment {
+  percentage: number;
+  color: string;
+  label: string;
+  count: number;
+}

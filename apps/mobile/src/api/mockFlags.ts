@@ -67,4 +67,12 @@ export const mockFlags = {
   IS_MOCKING_FETCH_CHATS: true,
   IS_MOCKING_FETCH_CHAT_MESSAGES: true,
   IS_MOCKING_SEND_CHAT_MESSAGE: true,
+
+  // ─── Wallet ───────────────────────────────────────────────────────────────
+  IS_MOCKING_FETCH_WALLET: true,
+  IS_MOCKING_FETCH_TRANSACTIONS: true,
+
+  // ─── Organizer Stats ──────────────────────────────────────────────────────
+  IS_MOCKING_FETCH_STATS_OVERVIEW: true,
+  IS_MOCKING_FETCH_STATS_SEGMENTS: true,
 };

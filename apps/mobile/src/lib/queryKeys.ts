@@ -36,4 +36,12 @@ export const queryKeys = {
   // ─── Chats ────────────────────────────────────────────────────────────────
   chats: () => ["chats"] as const,
   chatMessages: (chatId: number) => ["chatMessages", chatId] as const,
+
+  // ─── Wallet ───────────────────────────────────────────────────────────────
+  wallet: () => ["wallet"] as const,
+  transactions: () => ["transactions"] as const,
+
+  // ─── Organizer Stats ──────────────────────────────────────────────────────
+  statsOverview: () => ["statsOverview"] as const,
+  statsSegments: () => ["statsSegments"] as const,
 } as const;
