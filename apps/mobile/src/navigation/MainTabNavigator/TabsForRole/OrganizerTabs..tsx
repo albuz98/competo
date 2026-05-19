@@ -15,7 +15,7 @@ import { TAB_ICONS } from "../../../constants/navigation";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Wallet } from "../../../screens/Wallet/Wallet";
-import { StatsOrganizer } from "../../../screens/StatsOrganizer/StatsOrganizer";
+import Messaggi from "../../../screens/Messaggi/Messaggi";
 
 const Tab = createBottomTabNavigator<MainTabOrganizerParamList>();
 
@@ -64,9 +64,9 @@ export const OrganizerTabs = () => {
         options={{ title: NavigationEnum.WALLET }}
       />
       <Tab.Screen
-        name={NavigationEnum.STATS_ORGANIZER}
-        component={StatsOrganizer}
-        options={{ title: NavigationEnum.STATS_ORGANIZER }}
+        name={NavigationEnum.CHATS}
+        component={Messaggi}
+        options={{ title: NavigationEnum.CHATS }}
       />
       <Tab.Screen
         name={NavigationEnum.HOME}

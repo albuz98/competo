@@ -29,6 +29,7 @@ import Settings from "../screens/Settings/Settings";
 import { colors } from "../theme/colors";
 import { ChangePassword } from "../screens/ChangePassword/ChangePassword";
 import TwoFactorAuth from "../screens/TwoFactorAuth/TwoFactorAuth";
+import ChatDetail from "../screens/ChatDetail/ChatDetail";
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -186,6 +187,11 @@ export default function AppNavigator() {
         <Stack.Screen
           name={NavigationEnum.TWO_FACTOR_AUTH}
           component={TwoFactorAuth}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name={NavigationEnum.CHAT_DETAIL}
+          component={ChatDetail}
           options={{ headerShown: false }}
         />
       </Stack.Navigator>

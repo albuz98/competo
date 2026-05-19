@@ -33,6 +33,7 @@ export type RootStackParamList = {
   CreateRefereeProfile: undefined;
   ChangePassword: undefined;
   TwoFactorAuth: undefined;
+  ChatDetail: { chatId: number; chatName: string; tournamentName: string };
 };
 
 export type MainTabPlayerParamList = {
@@ -45,7 +46,7 @@ export type MainTabPlayerParamList = {
 
 export type MainTabOrganizerParamList = {
   Home: undefined;
-  StatsOrganizer: undefined;
+  Chats: undefined;
   Wallet: undefined;
   Notification: undefined;
   Profile: { startEdit?: boolean } | undefined;
@@ -83,4 +84,6 @@ export enum NavigationEnum {
   TWO_FACTOR_AUTH = "TwoFactorAuth",
   WALLET = "Wallet",
   STATS_ORGANIZER = "StatsOrganizer",
+  CHATS = "Chats",
+  CHAT_DETAIL = "ChatDetail",
 }

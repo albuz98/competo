@@ -1,0 +1,71 @@
+import { StyleSheet } from "react-native";
+import { colors } from "../../theme/colors";
+
+export const mg = StyleSheet.create({
+  root: { flex: 1, backgroundColor: colors.gray },
+  header: {
+    paddingHorizontal: 20,
+    paddingVertical: 16,
+    backgroundColor: colors.white,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.gray,
+  },
+  headerTitle: {
+    fontSize: 18,
+    fontWeight: "800",
+    color: colors.dark,
+    textAlign: "center",
+    letterSpacing: 1,
+    textTransform: "uppercase",
+  },
+  list: { flex: 1 },
+  row: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: colors.white,
+    paddingHorizontal: 16,
+    paddingVertical: 14,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomColor: colors.gray,
+    gap: 12,
+  },
+  avatarWrap: { position: "relative" },
+  avatar: {
+    width: 52,
+    height: 52,
+    borderRadius: 26,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  avatarText: { fontSize: 22 },
+  dot: {
+    position: "absolute",
+    bottom: 1,
+    right: 1,
+    width: 13,
+    height: 13,
+    borderRadius: 7,
+    borderWidth: 2,
+    borderColor: colors.white,
+  },
+  info: { flex: 1 },
+  chatName: {
+    fontSize: 15,
+    fontWeight: "700",
+    color: colors.dark,
+    marginBottom: 2,
+  },
+  lastMsg: {
+    fontSize: 13,
+    color: colors.primaryGradientMid,
+    fontWeight: "500",
+  },
+  lastMsgRead: {
+    fontSize: 13,
+    color: colors.placeholder,
+    fontWeight: "400",
+  },
+  time: { fontSize: 12, color: colors.grayDark },
+  empty: { flex: 1, alignItems: "center", justifyContent: "center", gap: 8 },
+  emptyText: { fontSize: 15, color: colors.placeholder },
+});
