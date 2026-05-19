@@ -6,7 +6,7 @@ export const mg = StyleSheet.create({
   header: {
     paddingHorizontal: 20,
     paddingVertical: 16,
-    backgroundColor: colors.white,
+    backgroundColor: colors.gray,
     borderBottomWidth: 1,
     borderBottomColor: colors.gray,
   },
@@ -16,7 +16,6 @@ export const mg = StyleSheet.create({
     color: colors.dark,
     textAlign: "center",
     letterSpacing: 1,
-    textTransform: "uppercase",
   },
   list: { flex: 1 },
   row: {
