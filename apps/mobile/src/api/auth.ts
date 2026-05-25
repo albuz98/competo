@@ -32,10 +32,10 @@ export async function registerPushToken(
 ): Promise<void> {
   if (isMocking && mockFlags.IS_MOCKING_REGISTER_PUSH_TOKEN) return;
   return apiFetch<void>(
-    "/auth/push-token",
+    "/api/v1/users/me/device-token",
     {
       method: "POST",
-      body: JSON.stringify({ pushToken }),
+      body: JSON.stringify({ token: pushToken, platform: "ios" }),
     },
     token,
   );

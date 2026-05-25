@@ -2,7 +2,7 @@ import Constants from 'expo-constants';
 
 export const isMocking: boolean = Constants.expoConfig?.extra?.mocking ?? true;
 export const apiUrl: string =
-  Constants.expoConfig?.extra?.apiUrl ?? 'https://api.competo.example.com';
+  Constants.expoConfig?.extra?.apiUrl ?? 'https://competo-be.onrender.com';
 
 const REQUEST_TIMEOUT_MS = 15_000;
 

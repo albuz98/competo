@@ -30,6 +30,8 @@ export const mockFlags = {
   IS_MOCKING_ACCEPT_INVITE: true,
   IS_MOCKING_REJECT_INVITE: true,
 
+  // ──────────────────────────── from competo ───────────────────────────────────────
+
   // ──────────────────────────── TO DO ───────────────────────────────────────
   IS_MOCKING_FORGOT_PASSWORD: true,
   IS_MOCKING_REGISTER_PUSH_TOKEN: true,

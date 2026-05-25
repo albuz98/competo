@@ -29,7 +29,7 @@ export async function fetchUserTeams(token: string): Promise<Team[]> {
     await new Promise((r) => setTimeout(r, 400));
     return [...getMockTeamCache()]; // shallow copy — prevents cache mutations from aliasing React state
   }
-  return apiFetch<Team[]>("/teams/mine", {}, token);
+  return apiFetch<Team[]>("/api/v1/teams/mine", {}, token);
 }
 
 export async function getPendingInvites(
@@ -40,7 +40,12 @@ export async function getPendingInvites(
     await new Promise((r) => setTimeout(r, 300));
     return getMockPendingInvites().filter((i) => i.toUserId === userId);
   }
-  return apiFetch<PendingInvite[]>("/teams/invites/pending", {}, token);
+  const res = await apiFetch<{ team_invitations: PendingInvite[]; org_invitations: unknown[] }>(
+    "/api/v1/users/me/invitations",
+    {},
+    token,
+  );
+  return res.team_invitations;
 }
 
 export async function updateMemberRole(
@@ -202,7 +207,7 @@ export async function leaveTeam(
   }
   return apiFetch<void>(
     `/api/v1/teams/${encodeURIComponent(teamId)}/members/${userId}`,
-    { method: "POST" },
+    { method: "DELETE" },
     token,
   );
 }

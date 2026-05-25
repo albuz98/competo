@@ -10,7 +10,12 @@ export async function fetchFavorites(token: string): Promise<Tournament[]> {
     await new Promise((r) => setTimeout(r, 300));
     return [...mockFavoritesCache];
   }
-  return apiFetch<Tournament[]>("/api/v1/users/me/favorites", {}, token);
+  const res = await apiFetch<{ tournament_id: number; saved_at: string; tournament: Tournament }[]>(
+    "/api/v1/users/me/favorites",
+    {},
+    token,
+  );
+  return res.map((r) => r.tournament);
 }
 
 // In real mode only the tournament ID is sent; the full object is needed in mock mode

@@ -51,7 +51,8 @@ export async function fetchTournaments(): Promise<Tournament[]> {
     return getMockCache();
   }
 
-  return apiFetch<Tournament[]>("/tournaments");
+  const res = await apiFetch<{ data: Tournament[]; pagination: unknown }>("/api/v1/tournaments/search");
+  return res.data;
 }
 
 export async function fetchTournament(id: number): Promise<Tournament> {
@@ -61,7 +62,7 @@ export async function fetchTournament(id: number): Promise<Tournament> {
     return found ?? generateTournament(id);
   }
 
-  return apiFetch<Tournament>(`/tournaments/${id}`);
+  return apiFetch<Tournament>(`/api/v1/tournaments/${id}`);
 }
 
 // ─── My tournaments (with bracket/groups data) ───────────────────────────────
@@ -121,8 +122,8 @@ export async function signUpForTournament(
   }
 
   return apiFetch<void>(
-    `/tournaments/${encodeURIComponent(tournamentId)}/signup`,
-    { method: "POST", body: JSON.stringify({ teamId }) },
+    `/api/v1/tournaments/${encodeURIComponent(tournamentId)}/registrations`,
+    { method: "POST", body: JSON.stringify({ team_id: teamId ? Number(teamId) : undefined }) },
     token,
   );
 }
@@ -143,9 +144,9 @@ export async function fetchNearbyTournaments(
   const params = new URLSearchParams({
     lat: String(lat),
     lng: String(lng),
-    radius: String(radiusKm),
+    radius_km: String(radiusKm),
   });
-  return apiFetch<Tournament[]>(`/tournaments/nearby?${params}`, {}, token);
+  return apiFetch<Tournament[]>(`/api/v1/tournaments/search/map?${params}`, {}, token);
 }
 
 export async function createTournament(
@@ -159,7 +160,7 @@ export async function createTournament(
     return output;
   }
   return apiFetch<GeneratorOutput>(
-    "/tournaments",
+    "/api/v1/tournaments",
     { method: "POST", body: JSON.stringify(payload) },
     token,
   );
@@ -176,7 +177,7 @@ export async function activateTournament(
     return;
   }
   return apiFetch<void>(
-    `/my-tournaments/${encodeURIComponent(tournamentId)}/activate`,
+    `/api/v1/tournaments/${encodeURIComponent(tournamentId)}/draw`,
     { method: "POST" },
     token,
   );
